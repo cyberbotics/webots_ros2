@@ -29,7 +29,7 @@ def main(args=None):
     optParser.add_option("--no-gui", dest="noGui", default="false", help="Start Webots with minimal GUI.")
     options, args = optParser.parse_args()
 
-    if 'WEBOTS_HOME' not in os.environ:
+    if 'WEBOTS_HOME' not in os.environ:  #TODO: failure if WEBOTS_HOME not set
         sys.exit('WEBOTS_HOME environment variable not defined.')
     command = [os.path.join(os.environ['WEBOTS_HOME'], 'webots'), '--mode=' + options.mode, options.world]
     if options.noGui == 'true':

@@ -31,6 +31,7 @@ setup(
         'console_scripts': [
             'example_controller = webots_ros2.example_controller:main',
             'webots_launcher = webots_ros2.webots_launcher:main',
+            'universal_robot = webots_ros2.universal_robot:main',
         ],
         'launch.frontend.launch_extension': [
             'launch_ros = launch_ros',

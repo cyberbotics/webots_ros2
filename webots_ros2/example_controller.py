@@ -54,8 +54,10 @@ class ExampleController(Node):
     def timer_callback(self):
         # Publish clock
         msg = Clock()
-        msg.clock.sec = int(self.robot.getTime())
-        msg.clock.nanosec =int((self.robot.getTime() - int(self.robot.getTime())) * 1000000)
+        time = self.robot.getTime()
+        msg.clock.sec = int(time)
+        # round prevents precision issues that can cause problems with ROS timers
+        msg.clock.nanosec = round(1000 * (time - msg.clock.secs)) * 1.0e+6
         self.clockPublisher.publish(msg)
         #self.get_logger().info('Time: "%lf"' % self.robot.getTime())
         # Publish distance sensor value
@@ -63,8 +65,7 @@ class ExampleController(Node):
         msg.data = self.frontSensor.getValue()
         self.sensorPublisher.publish(msg)
         # Robot step
-        self.robot.step(self.timestep)
-        if self.robot.getTime() > 10.0:
+        if self.robot.step(self.timestep) < 0.0:
             del self.robot
             sys.exit(0)
 

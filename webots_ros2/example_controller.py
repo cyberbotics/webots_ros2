@@ -57,7 +57,7 @@ class ExampleController(Node):
         time = self.robot.getTime()
         msg.clock.sec = int(time)
         # round prevents precision issues that can cause problems with ROS timers
-        msg.clock.nanosec = round(1000 * (time - msg.clock.secs)) * 1.0e+6
+        msg.clock.nanosec = int(round(1000 * (time - msg.clock.sec)) * 1.0e+6)
         self.clockPublisher.publish(msg)
         #self.get_logger().info('Time: "%lf"' % self.robot.getTime())
         # Publish distance sensor value

@@ -66,7 +66,8 @@ class ExampleController(Node):
         self.sensorPublisher.publish(msg)
         # Robot step
         if self.robot.step(self.timestep) < 0.0:
-            del self.robot
+            self.destroy_timer(self.timer)
+            self.destroy_node()
             sys.exit(0)
 
     def motor_callback(self, request, response):
@@ -81,11 +82,6 @@ def main(args=None):
     exampleController = ExampleController()
 
     rclpy.spin(exampleController)
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
-    exampleController.destroy_node()
     rclpy.shutdown()
 
 

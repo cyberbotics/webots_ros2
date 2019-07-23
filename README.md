@@ -16,7 +16,7 @@ ros2 launch webots_ros2 launcher.launch.py  # ros2 run webots_ros2 example_contr
 The action server can be tested directly using the ROS2 action CLI interface:
 
 ```
-ros2 action send_goal /follow_joint_trajectory corol_msgs/action/FollowJointTrajectory "{
+ros2 action send_goal /follow_joint_trajectory control_msgs/action/FollowJointTrajectory "{
   trajectory: {
     joint_names: [shoulder_pan_jointTODO, shoulder_lift_jointTODO, elbow_jointTODO, wrist_1_jointTODO, wrist_2_jointTODO, wrist_3_jointTODO],
     points: [ { positions: [0.2], velocities: [0.1] }, { positions: [0.2], velocities: [0.1] }, { positions: [0.2], velocities: [0.1] }, { positions: [0.2], velocities: [0.1] }, { positions: [0.2], velocities: [0.1] }, { positions: [0.2], velocities: [0.1] } ]

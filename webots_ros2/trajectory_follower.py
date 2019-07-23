@@ -19,7 +19,7 @@ import math
 
 import rclpy
 
-from control_msgs.msg import FollowJointTrajectoryAction
+from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
@@ -131,7 +131,7 @@ class TrajectoryFollower(object):
         self.trajectory = None
         self.joint_goal_tolerances = [0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
         self.server = ActionServer("follow_joint_trajectory",
-                                   FollowJointTrajectoryAction,
+                                   FollowJointTrajectory,
                                    self.on_goal, self.on_cancel, auto_start=False)
 
     def init_trajectory(self):

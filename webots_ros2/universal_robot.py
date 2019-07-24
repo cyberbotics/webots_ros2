@@ -26,6 +26,8 @@ if not 'WEBOTS_HOME' in os.environ:
 sys.path.append(os.environ['WEBOTS_HOME'] + '/lib/python%d%d' % (sys.version_info[0], sys.version_info[1]))
 from controller import Robot
 
+from webots_ros2.joint_state_publisher import JointStatePublisher
+
 from rosgraph_msgs.msg import Clock
 from builtin_interfaces.msg import Duration
 from control_msgs.action import FollowJointTrajectory
@@ -35,7 +37,6 @@ from rclpy.node import Node
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
 from rclpy.executors import MultiThreadedExecutor
 
-from sensor_msgs.msg import JointState
 
 def trajectory_is_finite(trajectory):
     """Check if trajectory contains infinite or NaN value."""
@@ -248,55 +249,6 @@ class TrajectoryFollower(object):
                         #self.goal_handle.succeed()
                         self.goal_handle = None
         return result
-
-
-class JointStatePublisher(object):
-    """Publish as a ROS topic the joint state."""
-
-    jointNames = [
-        'shoulder_pan_joint',
-        'shoulder_lift_joint',
-        'elbow_joint',
-        'wrist_1_joint',
-        'wrist_2_joint',
-        'wrist_3_joint'
-    ]
-
-    def __init__(self, robot, jointPrefix, node):
-        """Initialize the motors, position sensors and the topic."""
-        self.robot = robot
-        self.jointPrefix = jointPrefix
-        self.motors = []
-        self.sensors = []
-        self.timestep = int(robot.getBasicTimeStep())
-        self.last_joint_states = None
-        self.previousTime = 0
-        self.previousPosition = []
-        for name in JointStatePublisher.jointNames:
-            self.motors.append(robot.getMotor(name))
-            self.sensors.append(robot.getPositionSensor(name + '_sensor'))
-            self.sensors[-1].enable(self.timestep)
-            self.previousPosition.append(0)
-        self.publisher = node.create_publisher(JointState, 'joint_states', 1)
-
-
-    def publish(self):
-        """Publish the 'joint_states' topic with up to date value."""
-        msg = JointState()
-        #msg.header.stamp = rospy.get_rostime()
-        msg.header.frame_id = "From simulation state data"
-        msg.name = [s + self.jointPrefix for s in JointStatePublisher.jointNames]
-        msg.position = []
-        timeDifference = self.robot.getTime() - self.previousTime
-        for i in range(len(self.sensors)):
-            value = self.sensors[i].getValue()
-            msg.position.append(value)
-            msg.velocity.append((value - self.previousPosition[i]) / timeDifference if timeDifference > 0 else 0.0)
-            self.previousPosition[i] = value
-        msg.effort = [0.0] * 6
-        self.publisher.publish(msg)
-        self.last_joint_states = msg
-        self.previousTime = self.robot.getTime()
 
 
 class ActionServerNode(Node):

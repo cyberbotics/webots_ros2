@@ -14,7 +14,6 @@
 
 """Joint state publisher."""
 
-import rclpy
 from sensor_msgs.msg import JointState
 
 
@@ -61,7 +60,7 @@ class JointStatePublisher(object):
             msg.position.append(value)
             msg.velocity.append((value - self.previousPosition[i]) / timeDifference if timeDifference > 0 else 0.0)
             self.previousPosition[i] = value
-        msg.effort = [0] * 6
+        msg.effort = [0.0] * 6
         self.publisher.publish(msg)
         self.last_joint_states = msg
         self.previousTime = self.robot.getTime()

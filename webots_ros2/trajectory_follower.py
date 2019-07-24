@@ -17,10 +17,9 @@
 import copy
 import math
 
-import rclpy
-
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from builtin_interfaces.msg import Duration
 
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
 
@@ -70,7 +69,7 @@ def within_tolerance(a_vec, b_vec, tol_vec):
 def interp_cubic(p0, p1, t_abs):
     """Perform a cubic interpolation between two trajectory points."""
     T = (p1.time_from_start - p0.time_from_start).to_sec()
-    t = t_abs - p0.time_from_start.to_sec()
+    t = t_abs - (p0.time_from_start.sec + p0.time_from_start.nanosec * 1.0e-6)
     q = [0] * 6
     qdot = [0] * 6
     qddot = [0] * 6
@@ -83,7 +82,7 @@ def interp_cubic(p0, p1, t_abs):
         q[i] = a + b * t + c * t**2 + d * t**3
         qdot[i] = b + 2 * c * t + 3 * d * t**2
         qddot[i] = 2 * c + 6 * d * t
-    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot, time_from_start=Duration(t_abs))
+    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot, time_from_start=Duration(seconds=t_abs))
 
 
 def sample_trajectory(trajectory, t):
@@ -93,11 +92,11 @@ def sample_trajectory(trajectory, t):
     if t <= 0.0:
         return copy.deepcopy(trajectory.points[0])
     # Last point
-    if t >= trajectory.points[-1].time_from_start.to_sec():
+    if t >= (trajectory.points[-1].time_from_start.sec + trajectory.points[-1].time_from_start.nanosec * 1.0e-6):
         return copy.deepcopy(trajectory.points[-1])
     # Finds the (middle) segment containing t
     i = 0
-    while trajectory.points[i + 1].time_from_start.to_sec() < t:
+    while (trajectory.points[i + 1].time_from_start.sec + trajectory.points[i + 1].time_from_start.nanosec * 1.0e-6) < t:
         i += 1
     return interp_cubic(trajectory.points[i], trajectory.points[i + 1], t)
 
@@ -114,8 +113,9 @@ class TrajectoryFollower(object):
         'wrist_3_joint'
     ]
 
-    def __init__(self, robot, jointStatePublisher, jointPrefix, goal_time_tolerance=None):
+    def __init__(self, robot, node, jointStatePublisher, jointPrefix, goal_time_tolerance=None):
         self.robot = robot
+        self.node = node
         self.jointPrefix = jointPrefix
         self.prefixedJointNames = [s + self.jointPrefix for s in TrajectoryFollower.jointNames]
         self.jointStatePublisher = jointStatePublisher
@@ -130,9 +130,9 @@ class TrajectoryFollower(object):
         self.last_point_sent = True
         self.trajectory = None
         self.joint_goal_tolerances = [0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
-        self.server = ActionServer("follow_joint_trajectory",
-                                   FollowJointTrajectory,
-                                   self.on_goal, self.on_cancel, auto_start=False)
+        self.server = ActionServer(self.node, FollowJointTrajectory, "follow_joint_trajectory",
+                                   execute_callback=self.update,
+                                   goal_callback=self.on_goal, cancel_callback=self.on_cancel)
 
     def init_trajectory(self):
         """Initialize a new target trajectory."""
@@ -144,48 +144,48 @@ class TrajectoryFollower(object):
             positions=state.position if state else [0] * 6,
             velocities=[0] * 6,
             accelerations=[0] * 6,
-            time_from_start=Duration(0.0))]
+            time_from_start=Duration())]
 
     def start(self):
         """Initialize and start the action server."""
         self.init_trajectory()
-        self.server.start()
+        #self.server.start() TODO
         print("The action server for this driver has been started")
 
     def on_goal(self, goal_handle):
         """Handle a new goal trajectory command."""
+        self.node.get_logger().info(goal_handle.__class__.__name__)
         # Checks if the joints are just incorrect
-        if set(goal_handle.get_goal().trajectory.joint_names) != set(self.prefixedJointNames):
-            #rospy.logerr("Received a goal with incorrect joint names: (%s)" %
-            #             ', '.join(goal_handle.get_goal().trajectory.joint_names))
-            goal_handle.set_rejected()
-            return
+        if set(goal_handle.trajectory.joint_names) != set(self.prefixedJointNames):
+            #goal_handle.set_rejected()
+            self.node.get_logger().info("Received a goal with incorrect joint names: (%s)" % ', '.join(goal_handle.trajectory.joint_names))
+            return GoalResponse.REJECT
 
-        if not trajectory_is_finite(goal_handle.get_goal().trajectory):
-            #rospy.logerr("Received a goal with infinites or NaNs")
-            goal_handle.set_rejected(text="Received a goal with infinites or NaNs")
-            return
+        if not trajectory_is_finite(goal_handle.trajectory):
+            self.node.get_logger().info("Received a goal with infinites or NaNs")
+            #goal_handle.set_rejected(text="Received a goal with infinites or NaNs")
+            return GoalResponse.REJECT
 
         # Checks that the trajectory has velocities
-        if not has_velocities(goal_handle.get_goal().trajectory):
-            #rospy.logerr("Received a goal without velocities")
-            goal_handle.set_rejected(text="Received a goal without velocities")
-            return
+        if not has_velocities(goal_handle.trajectory):
+            self.node.get_logger().info("Received a goal without velocities")
+            #goal_handle.set_rejected(text="Received a goal without velocities")
+            return GoalResponse.REJECT
 
         # Orders the joints of the trajectory according to joint_names
-        reorder_trajectory_joints(goal_handle.get_goal().trajectory, self.prefixedJointNames)
+        reorder_trajectory_joints(goal_handle.trajectory, self.prefixedJointNames)
 
         # Inserts the current setpoint at the head of the trajectory
         now = self.robot.getTime()
         point0 = sample_trajectory(self.trajectory, now - self.trajectory_t0)
-        point0.time_from_start = Duration(0.0)
-        goal_handle.get_goal().trajectory.points.insert(0, point0)
+        point0.time_from_start = Duration()
+        goal_handle.trajectory.points.insert(0, point0)
         self.trajectory_t0 = now
 
         # Replaces the goal
         self.goal_handle = goal_handle
-        self.trajectory = goal_handle.get_goal().trajectory
-        goal_handle.set_accepted()
+        self.trajectory = goal_handle.trajectory
+        #goal_handle.accepted()
         return GoalResponse.ACCEPT
 
     def on_cancel(self, goal_handle):
@@ -194,16 +194,21 @@ class TrajectoryFollower(object):
             # stop the motors
             for i in range(len(TrajectoryFollower.jointNames)):
                 self.motors[i].setPosition(self.sensors[i].getValue())
-            self.goal_handle.set_canceled()
+            #self.goal_handle.set_canceled()
             self.goal_handle = None
         else:
-            goal_handle.set_canceled()
+            pass #goal_handle.set_canceled()
         return CancelResponse.ACCEPT
 
-    def update(self):
+    def update(self, goal_handle):
+        self.node.get_logger().info('aaa')
+        self.node.get_logger().info(goal_handle.__class__.__name__)
+        result = FollowJointTrajectory.Result()
+        result.error_code = result.SUCCESSFUL
+        self.node.get_logger().info(result.__class__.__name__)
         if self.robot and self.trajectory:
             now = self.robot.getTime()
-            if (now - self.trajectory_t0) <= self.trajectory.points[-1].time_from_start.to_sec():  # Sending intermediate points
+            if (now - self.trajectory_t0) <= (self.trajectory.points[-1].time_from_start.sec + self.trajectory.points[-1].time_from_start.nanosec * 1.0e-6):  # Sending intermediate points
                 self.last_point_sent = False
                 setpoint = sample_trajectory(self.trajectory, now - self.trajectory_t0)
                 for i in range(len(setpoint.positions)):
@@ -214,18 +219,19 @@ class TrajectoryFollower(object):
                 last_point = self.trajectory.points[-1]
                 state = self.jointStatePublisher.last_joint_states
                 position_in_tol = within_tolerance(state.position, last_point.positions, self.joint_goal_tolerances)
-                setpoint = sample_trajectory(self.trajectory, self.trajectory.points[-1].time_from_start.to_sec())
+                setpoint = sample_trajectory(self.trajectory, self.trajectory.points[-1].time_from_start.sec + self.trajectory.points[-1].time_from_start.nanosec * 1.0e-6)
                 for i in range(len(setpoint.positions)):
                     self.motors[i].setPosition(setpoint.positions[i])
                     # Velocity control is not used on the real robot and gives bad results in the simulation
                     # self.motors[i].setVelocity(math.fabs(setpoint.velocities[i]))
             else:  # Off the end
                 if self.goal_handle:
-                    last_point = self.traj.points[-1]
+                    last_point = self.trajectory.points[-1]
                     state = self.jointStatePublisher.last_joint_states
                     position_in_tol = within_tolerance(state.position, last_point.positions, [0.1] * 6)
                     velocity_in_tol = within_tolerance(state.velocity, last_point.velocities, [0.05] * 6)
                     if position_in_tol and velocity_in_tol:
                         # The arm reached the goal (and isn't moving) => Succeeded
-                        self.goal_handle.set_succeeded()
+                        #self.goal_handle.succeed()
                         self.goal_handle = None
+        return result

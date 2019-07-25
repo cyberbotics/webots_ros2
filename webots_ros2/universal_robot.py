@@ -48,7 +48,7 @@ class ActionServerNode(Node):
 
 
     def timer_callback(self):
-        self.get_logger().info('Time: "%lf" %lf' % (self.robot.getTime(), self.timestep))
+        #self.get_logger().info('Time: "%lf" %lf' % (self.robot.getTime(), self.timestep))
         # Publish clock
         msg = Clock()
         time = self.robot.getTime()
@@ -58,10 +58,7 @@ class ActionServerNode(Node):
         self.clockPublisher.publish(msg)
         # update joint state and trajectory follower
         self.jointStatePublisher.publish()
-        #self.trajectoryFollower.update()
         # Robot step
-        i = self.robot.step(self.timestep)
-        self.get_logger().info('%d' % i)
         if self.robot.step(self.timestep) < 0.0:
             del self.robot
             sys.exit(0)
@@ -75,7 +72,7 @@ def main(args=None):
     # Use a MultiThreadedExecutor to enable processing goals concurrently
     executor = MultiThreadedExecutor()
 
-    rclpy.spin(actionServer) #, executor=executor)
+    rclpy.spin(actionServer, executor=executor)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically

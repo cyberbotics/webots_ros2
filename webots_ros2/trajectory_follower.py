@@ -68,8 +68,10 @@ def within_tolerance(a_vec, b_vec, tol_vec):
 
 def interp_cubic(p0, p1, t_abs):
     """Perform a cubic interpolation between two trajectory points."""
-    T = (p1.time_from_start - p0.time_from_start).to_sec()
-    t = t_abs - (p0.time_from_start.sec + p0.time_from_start.nanosec * 1.0e-6)
+    t0 = p0.time_from_start.sec + p0.time_from_start.nanosec * 1.0e-6
+    t1 = p1.time_from_start.sec + p1.time_from_start.nanosec * 1.0e-6
+    T = t1 - t0
+    t = t_abs - t0
     q = [0] * 6
     qdot = [0] * 6
     qddot = [0] * 6
@@ -82,7 +84,7 @@ def interp_cubic(p0, p1, t_abs):
         q[i] = a + b * t + c * t**2 + d * t**3
         qdot[i] = b + 2 * c * t + 3 * d * t**2
         qddot[i] = 2 * c + 6 * d * t
-    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot, time_from_start=Duration(seconds=t_abs))
+    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot, time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) * 1.0e+6)))
 
 
 def sample_trajectory(trajectory, t):
@@ -154,7 +156,6 @@ class TrajectoryFollower(object):
 
     def on_goal(self, goal_handle):
         """Handle a new goal trajectory command."""
-        self.node.get_logger().info(goal_handle.__class__.__name__)
         # Checks if the joints are just incorrect
         if set(goal_handle.trajectory.joint_names) != set(self.prefixedJointNames):
             #goal_handle.set_rejected()
@@ -185,6 +186,7 @@ class TrajectoryFollower(object):
         # Replaces the goal
         self.goal_handle = goal_handle
         self.trajectory = goal_handle.trajectory
+        #self.last_point_sent = False
         #goal_handle.accepted()
         return GoalResponse.ACCEPT
 
@@ -196,18 +198,17 @@ class TrajectoryFollower(object):
                 self.motors[i].setPosition(self.sensors[i].getValue())
             #self.goal_handle.set_canceled()
             self.goal_handle = None
+            self.last_point_sent = True
         else:
             pass #goal_handle.set_canceled()
         return CancelResponse.ACCEPT
 
     def update(self, goal_handle):
-        self.node.get_logger().info('aaa')
         self.node.get_logger().info(goal_handle.__class__.__name__)
         result = FollowJointTrajectory.Result()
-        result.error_code = result.SUCCESSFUL
-        self.node.get_logger().info(result.__class__.__name__)
-        if self.robot and self.trajectory:
+        while self.robot and self.trajectory:
             now = self.robot.getTime()
+            #self.node.get_logger().info('bbb: %lf %lf %lf %lf' % (now, self.trajectory_t0, self.trajectory.points[-1].time_from_start.sec, self.trajectory.points[-1].time_from_start.nanosec))
             if (now - self.trajectory_t0) <= (self.trajectory.points[-1].time_from_start.sec + self.trajectory.points[-1].time_from_start.nanosec * 1.0e-6):  # Sending intermediate points
                 self.last_point_sent = False
                 setpoint = sample_trajectory(self.trajectory, now - self.trajectory_t0)
@@ -232,6 +233,9 @@ class TrajectoryFollower(object):
                     velocity_in_tol = within_tolerance(state.velocity, last_point.velocities, [0.05] * 6)
                     if position_in_tol and velocity_in_tol:
                         # The arm reached the goal (and isn't moving) => Succeeded
-                        #self.goal_handle.succeed()
+                        result.error_code = result.SUCCESSFUL
+                        goal_handle.succeed()
                         self.goal_handle = None
+                        return result
+        result.error_code = result.PATH_TOLERANCE_VIOLATED
         return result

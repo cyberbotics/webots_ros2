@@ -158,19 +158,16 @@ class TrajectoryFollower(object):
         """Handle a new goal trajectory command."""
         # Checks if the joints are just incorrect
         if set(goal_handle.trajectory.joint_names) != set(self.prefixedJointNames):
-            #goal_handle.set_rejected()
             self.node.get_logger().info("Received a goal with incorrect joint names: (%s)" % ', '.join(goal_handle.trajectory.joint_names))
             return GoalResponse.REJECT
 
         if not trajectory_is_finite(goal_handle.trajectory):
             self.node.get_logger().info("Received a goal with infinites or NaNs")
-            #goal_handle.set_rejected(text="Received a goal with infinites or NaNs")
             return GoalResponse.REJECT
 
         # Checks that the trajectory has velocities
         if not has_velocities(goal_handle.trajectory):
             self.node.get_logger().info("Received a goal without velocities")
-            #goal_handle.set_rejected(text="Received a goal without velocities")
             return GoalResponse.REJECT
 
         # Orders the joints of the trajectory according to joint_names
@@ -186,8 +183,7 @@ class TrajectoryFollower(object):
         # Replaces the goal
         self.goal_handle = goal_handle
         self.trajectory = goal_handle.trajectory
-        #self.last_point_sent = False
-        #goal_handle.accepted()
+        self.last_point_sent = False
         return GoalResponse.ACCEPT
 
     def on_cancel(self, goal_handle):
@@ -196,19 +192,14 @@ class TrajectoryFollower(object):
             # stop the motors
             for i in range(len(TrajectoryFollower.jointNames)):
                 self.motors[i].setPosition(self.sensors[i].getValue())
-            #self.goal_handle.set_canceled()
             self.goal_handle = None
             self.last_point_sent = True
-        else:
-            pass #goal_handle.set_canceled()
         return CancelResponse.ACCEPT
 
     def update(self, goal_handle):
-        self.node.get_logger().info(goal_handle.__class__.__name__)
         result = FollowJointTrajectory.Result()
         while self.robot and self.trajectory:
             now = self.robot.getTime()
-            #self.node.get_logger().info('bbb: %lf %lf %lf %lf' % (now, self.trajectory_t0, self.trajectory.points[-1].time_from_start.sec, self.trajectory.points[-1].time_from_start.nanosec))
             if (now - self.trajectory_t0) <= (self.trajectory.points[-1].time_from_start.sec + self.trajectory.points[-1].time_from_start.nanosec * 1.0e-6):  # Sending intermediate points
                 self.last_point_sent = False
                 setpoint = sample_trajectory(self.trajectory, now - self.trajectory_t0)
@@ -217,6 +208,7 @@ class TrajectoryFollower(object):
                     # Velocity control is not used on the real robot and gives bad results in the simulation
                     # self.motors[i].setVelocity(math.fabs(setpoint.velocities[i]))
             elif not self.last_point_sent:  # All intermediate points sent, sending last point to make sure we reach the goal.
+                self.last_point_sent = True
                 last_point = self.trajectory.points[-1]
                 state = self.jointStatePublisher.last_joint_states
                 position_in_tol = within_tolerance(state.position, last_point.positions, self.joint_goal_tolerances)

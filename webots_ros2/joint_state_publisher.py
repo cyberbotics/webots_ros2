@@ -15,44 +15,40 @@
 """Joint state publisher."""
 
 from sensor_msgs.msg import JointState
+from controller import Node
 
 
 class JointStatePublisher(object):
     """Publish as a ROS topic the joint state."""
 
-    jointNames = [
-        'shoulder_pan_joint',
-        'shoulder_lift_joint',
-        'elbow_joint',
-        'wrist_1_joint',
-        'wrist_2_joint',
-        'wrist_3_joint'
-    ]
-
     def __init__(self, robot, jointPrefix, node):
-        """Initialize the motors, position sensors and the topic."""
+        """Initialize the position sensors and the topic."""
         self.robot = robot
         self.jointPrefix = jointPrefix
-        self.motors = []
         self.sensors = []
         self.timestep = int(robot.getBasicTimeStep())
         self.last_joint_states = None
         self.previousTime = 0
         self.previousPosition = []
-        for name in JointStatePublisher.jointNames:
-            self.motors.append(robot.getMotor(name))
-            self.sensors.append(robot.getPositionSensor(name + '_sensor'))
-            self.sensors[-1].enable(self.timestep)
-            self.previousPosition.append(0)
+        self.jointNames = []
+        for i in range(robot.getNumberOfDevices()):
+            device = robot.getDeviceByIndex(i)
+            if device.getNodeType() == Node.POSITION_SENSOR:
+                name = device.getName()
+                if name.endswith('_sensor'):
+                    name = name[:-7]
+                self.jointNames.append(name)
+                self.sensors.append(device)
+                self.previousPosition.append(0)
+                device.enable(self.timestep)
         self.publisher = node.create_publisher(JointState, 'joint_states', 1)
-
 
     def publish(self):
         """Publish the 'joint_states' topic with up to date value."""
         msg = JointState()
         #msg.header.stamp = rospy.get_rostime()
         msg.header.frame_id = "From simulation state data"
-        msg.name = [s + self.jointPrefix for s in JointStatePublisher.jointNames]
+        msg.name = [s + self.jointPrefix for s in self.jointNames]
         msg.position = []
         timeDifference = self.robot.getTime() - self.previousTime
         for i in range(len(self.sensors)):

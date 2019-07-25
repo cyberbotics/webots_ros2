@@ -120,7 +120,7 @@ class TrajectoryFollower(object):
         self.node = node
         self.jointPrefix = jointPrefix
         self.prefixedJointNames = [s + self.jointPrefix for s in TrajectoryFollower.jointNames]
-        self.jointStatePublisher = jointStatePublisher
+        self.jointStatePublisher = jointStatePublisher  #TODO: they should be independent!
         self.timestep = int(robot.getBasicTimeStep())
         self.motors = []
         self.sensors = []

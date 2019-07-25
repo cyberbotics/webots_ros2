@@ -151,23 +151,22 @@ class TrajectoryFollower(object):
     def start(self):
         """Initialize and start the action server."""
         self.init_trajectory()
-        #self.server.start() TODO
-        print("The action server for this driver has been started")
+        self.node.get_logger().info("The action server is ready")
 
     def on_goal(self, goal_handle):
         """Handle a new goal trajectory command."""
         # Checks if the joints are just incorrect
         if set(goal_handle.trajectory.joint_names) != set(self.prefixedJointNames):
-            self.node.get_logger().info("Received a goal with incorrect joint names: (%s)" % ', '.join(goal_handle.trajectory.joint_names))
+            self.node.get_logger().warn("Received a goal with incorrect joint names: (%s)" % ', '.join(goal_handle.trajectory.joint_names))
             return GoalResponse.REJECT
 
         if not trajectory_is_finite(goal_handle.trajectory):
-            self.node.get_logger().info("Received a goal with infinites or NaNs")
+            self.node.get_logger().warn("Received a goal with infinites or NaNs")
             return GoalResponse.REJECT
 
         # Checks that the trajectory has velocities
         if not has_velocities(goal_handle.trajectory):
-            self.node.get_logger().info("Received a goal without velocities")
+            self.node.get_logger().warn("Received a goal without velocities")
             return GoalResponse.REJECT
 
         # Orders the joints of the trajectory according to joint_names

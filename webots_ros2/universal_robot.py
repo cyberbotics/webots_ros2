@@ -31,6 +31,7 @@ from rosgraph_msgs.msg import Clock
 
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
+from rclpy.parameter import Parameter
 
 
 class ActionServerNode(Node):
@@ -38,8 +39,9 @@ class ActionServerNode(Node):
     def __init__(self):
         super().__init__('ur_driver')
         self.robot = Robot()
-        self.jointStatePublisher = JointStatePublisher(self.robot, 'TODO', self)
-        self.trajectoryFollower = TrajectoryFollower(self.robot, self, self.jointStatePublisher, jointPrefix='TODO')
+        prefix = self.get_parameter_or('prefix', Parameter('prefix', Parameter.Type.STRING, '')).value
+        self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)
+        self.trajectoryFollower = TrajectoryFollower(self.robot, self, self.jointStatePublisher, jointPrefix=prefix)
         self.trajectoryFollower.start()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'topic', 10)

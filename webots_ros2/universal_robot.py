@@ -21,7 +21,7 @@ import sys
 
 if not 'WEBOTS_HOME' in os.environ:
     sys.exit('"WEBOTS_HOME" not defined.')
-sys.path.append(os.environ['WEBOTS_HOME'] + '/lib/python%d%d' % (sys.version_info[0], sys.version_info[1]))
+sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' % (sys.version_info[0], sys.version_info[1])))
 from controller import Robot
 
 from webots_ros2.joint_state_publisher import JointStatePublisher

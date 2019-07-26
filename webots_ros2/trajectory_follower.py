@@ -127,14 +127,19 @@ class TrajectoryFollower(object):
         self.position = [0.0] * 6
         self.velocity = [0.0] * 6
         for name in TrajectoryFollower.jointNames:
-            self.motors.append(robot.getMotor(name))
-            self.sensors.append(self.motors[-1].getPositionSensor())
-            self.sensors[-1].enable(self.timestep)
+            motor = robot.getMotor(name)
+            positionSensor = motor.getPositionSensor()
+            if positionSensor is None:
+                self.node.get_logger().info('Received a goal without velocities')
+            else:
+                self.motors.append(motor)
+                self.sensors.append(positionSensor)
+                positionSensor.enable(self.timestep)
         self.goal_handle = None
         self.last_point_sent = True
         self.trajectory = None
         self.joint_goal_tolerances = [0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
-        self.server = ActionServer(self.node, FollowJointTrajectory, "follow_joint_trajectory",
+        self.server = ActionServer(self.node, FollowJointTrajectory, 'follow_joint_trajectory',
                                    execute_callback=self.update,
                                    goal_callback=self.on_goal, cancel_callback=self.on_cancel)
 
@@ -152,22 +157,22 @@ class TrajectoryFollower(object):
     def start(self):
         """Initialize and start the action server."""
         self.init_trajectory()
-        self.node.get_logger().info("The action server is ready")
+        self.node.get_logger().info('The action server is ready')
 
     def on_goal(self, goal_handle):
         """Handle a new goal trajectory command."""
         # Checks if the joints are just incorrect
         if set(goal_handle.trajectory.joint_names) != set(self.prefixedJointNames):
-            self.node.get_logger().warn("Received a goal with incorrect joint names: (%s)" % ', '.join(goal_handle.trajectory.joint_names))
+            self.node.get_logger().warn('Received a goal with incorrect joint names: (%s)' % ', '.join(goal_handle.trajectory.joint_names))
             return GoalResponse.REJECT
 
         if not trajectory_is_finite(goal_handle.trajectory):
-            self.node.get_logger().warn("Received a goal with infinites or NaNs")
+            self.node.get_logger().warn('Received a goal with infinites or NaNs')
             return GoalResponse.REJECT
 
         # Checks that the trajectory has velocities
         if not has_velocities(goal_handle.trajectory):
-            self.node.get_logger().warn("Received a goal without velocities")
+            self.node.get_logger().warn('Received a goal without velocities')
             return GoalResponse.REJECT
 
         # Orders the joints of the trajectory according to joint_names

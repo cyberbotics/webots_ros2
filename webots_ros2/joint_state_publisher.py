@@ -54,7 +54,7 @@ class JointStatePublisher(object):
         nanoseconds = int((self.robot.getTime() - seconds) * 1.0e+6)
         msg = JointState()
         msg.header.stamp = Time(sec=seconds, nanosec=nanoseconds)
-        msg.header.frame_id = "From simulation state data"
+        msg.header.frame_id = 'From simulation state data'
         msg.name = [s + self.jointPrefix for s in self.jointNames]
         msg.position = []
         timeDifference = self.robot.getTime() - self.previousTime

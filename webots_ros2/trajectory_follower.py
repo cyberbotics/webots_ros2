@@ -130,7 +130,7 @@ class TrajectoryFollower(object):
             motor = robot.getMotor(name)
             positionSensor = motor.getPositionSensor()
             if positionSensor is None:
-                self.node.get_logger().info('Motor "%s" doesn\'t have any position sensor, impossible to include it in the "follow_joint_trajectory" action.')
+                self.node.get_logger().info('Motor "%s" doesn\'t have any position sensor, impossible to include it in the action server.')
             else:
                 self.motors.append(motor)
                 self.sensors.append(positionSensor)

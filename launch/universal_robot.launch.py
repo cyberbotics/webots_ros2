@@ -24,7 +24,7 @@ import os
 
 def generate_launch_description():
     webots = launch_ros.actions.Node(package='webots_ros2', node_executable='webots_launcher', arguments=['--mode=realtime', '--world=' + os.path.join(os.path.dirname(os.path.abspath(__file__)), 'worlds', 'universal_robot.wbt')], output='screen')
-    controller = launch_ros.actions.Node(package='webots_ros2', node_executable='universal_robot.launch', output='screen')
+    controller = launch_ros.actions.Node(package='webots_ros2', node_executable='universal_robot', output='screen')
     os.environ['LD_LIBRARY_PATH'] = os.environ['WEBOTS_HOME'] + os.sep + 'lib:' + os.environ.get('LD_LIBRARY_PATH')
     #os.environ['WEBOTS_PID'] = TODO
     return launch.LaunchDescription([

@@ -40,8 +40,7 @@ class ActionServerNode(Node):
 
     def __init__(self):
         super().__init__('ur_driver')
-        print('AAAAAAAA')
-        sleep(10)  # TODO: wait to make sure that Webots is started
+        sleep(15)  # TODO: wait to make sure that Webots is started
         self.robot = Robot()
         prefix = self.get_parameter_or('prefix', Parameter('prefix', Parameter.Type.STRING, '')).value
         self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)
@@ -54,7 +53,8 @@ class ActionServerNode(Node):
 
 
     def timer_callback(self):
-        #self.get_logger().info('Time: "%lf" %lf' % (self.robot.getTime(), self.timestep))
+        if self.robot is None:
+            return
         # Publish clock
         msg = Clock()
         time = self.robot.getTime()
@@ -67,6 +67,7 @@ class ActionServerNode(Node):
         # Robot step
         if self.robot.step(self.timestep) < 0.0:
             del self.robot
+            self.robot = None
             sys.exit(0)
 
 

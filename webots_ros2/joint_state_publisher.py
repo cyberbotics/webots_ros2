@@ -47,9 +47,6 @@ class JointStatePublisher(object):
 
     def publish(self):
         """Publish the 'joint_states' topic with up to date value."""
-        #now = self.node.get_clock().now().nanoseconds
-        #seconds = int(now * 1.0e-6)
-        #nanoseconds = now - seconds
         seconds = int(self.robot.getTime())
         nanoseconds = int((self.robot.getTime() - seconds) * 1.0e+6)
         msg = JointState()

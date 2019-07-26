@@ -1,0 +1,57 @@
+#VRML_SIM R2019b utf8
+WorldInfo {
+  info [
+    "Unviversal Robot UR3e, UR5e and UR10e grasping cans using Robotiq 3F grippers."
+  ]
+  title "Universal Robot"
+  basicTimeStep 16
+  physicsDisableAngularThreshold 0.1
+  contactProperties [
+    ContactProperties {
+      bounce 0.1
+    }
+    ContactProperties {
+      material1 "slope"
+      coulombFriction [
+        0.5
+      ]
+    }
+  ]
+}
+Viewpoint {
+  orientation 0.6044723401972364 0.7776510673599882 0.17283520292564175 5.264035915878116
+  position -1.2469704511881894 1.9915088667315288 1.4495706330638782
+  exposure 1.7
+}
+TexturedBackground {
+  texture "factory"
+}
+Floor {
+  size 17 5
+  appearance ThreadMetalPlate {
+  }
+}
+UR5e {
+  translation 0 0.6 0
+  rotation -0.5773502691896258 -0.5773502691896258 -0.5773502691896258 2.094395
+  controller "<extern>"
+  selfCollision FALSE
+  toolSlot [
+    Robotiq3fGripper {
+      translation 0 0.04 0
+    }
+    DistanceSensor {
+      translation 0 0.1 0
+      rotation 0 0 1 1.570796
+    }
+  ]
+}
+SolidBox {
+  translation 0 0.3 0
+  size 0.3 0.6 0.3
+  appearance GalvanizedMetal {
+    textureTransform TextureTransform {
+      scale 2 2
+    }
+  }
+}

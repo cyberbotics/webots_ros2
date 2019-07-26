@@ -128,7 +128,7 @@ class TrajectoryFollower(object):
         self.velocity = [0.0] * 6
         for name in TrajectoryFollower.jointNames:
             self.motors.append(robot.getMotor(name))
-            self.sensors.append(robot.getPositionSensor(name + '_sensor'))
+            self.sensors.append(self.motors[-1].getPositionSensor())
             self.sensors[-1].enable(self.timestep)
         self.goal_handle = None
         self.last_point_sent = True

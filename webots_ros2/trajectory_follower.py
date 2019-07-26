@@ -115,15 +115,17 @@ class TrajectoryFollower(object):
         'wrist_3_joint'
     ]
 
-    def __init__(self, robot, node, jointStatePublisher, jointPrefix, goal_time_tolerance=None):
+    def __init__(self, robot, node, jointPrefix, goal_time_tolerance=None):
         self.robot = robot
         self.node = node
+        self.previousTime = robot.getTime()
         self.jointPrefix = jointPrefix
         self.prefixedJointNames = [s + self.jointPrefix for s in TrajectoryFollower.jointNames]
-        self.jointStatePublisher = jointStatePublisher  #TODO: they should be independent!
         self.timestep = int(robot.getBasicTimeStep())
         self.motors = []
         self.sensors = []
+        self.position = [0.0] * 6
+        self.velocity = [0.0] * 6
         for name in TrajectoryFollower.jointNames:
             self.motors.append(robot.getMotor(name))
             self.sensors.append(robot.getPositionSensor(name + '_sensor'))
@@ -138,12 +140,11 @@ class TrajectoryFollower(object):
 
     def init_trajectory(self):
         """Initialize a new target trajectory."""
-        state = self.jointStatePublisher.last_joint_states
         self.trajectory_t0 = self.robot.getTime()
         self.trajectory = JointTrajectory()
         self.trajectory.joint_names = self.prefixedJointNames
         self.trajectory.points = [JointTrajectoryPoint(
-            positions=state.position if state else [0] * 6,
+            positions=[0] * 6,
             velocities=[0] * 6,
             accelerations=[0] * 6,
             time_from_start=Duration())]
@@ -199,6 +200,15 @@ class TrajectoryFollower(object):
         result = FollowJointTrajectory.Result()
         while self.robot and self.trajectory:
             now = self.robot.getTime()
+            position = []
+            velocity = []
+            timeDifference = now - self.previousTime
+            for i in range(6):
+                position.append(self.sensors[i].getValue())
+                if timeDifference > 0.0:
+                    velocity.append((position[i] - self.position[i]) / timeDifference)
+                else:
+                    velocity.append(self.velocity[i])
             if (now - self.trajectory_t0) <= (self.trajectory.points[-1].time_from_start.sec + self.trajectory.points[-1].time_from_start.nanosec * 1.0e-6):  # Sending intermediate points
                 self.last_point_sent = False
                 setpoint = sample_trajectory(self.trajectory, now - self.trajectory_t0)
@@ -209,8 +219,7 @@ class TrajectoryFollower(object):
             elif not self.last_point_sent:  # All intermediate points sent, sending last point to make sure we reach the goal.
                 self.last_point_sent = True
                 last_point = self.trajectory.points[-1]
-                state = self.jointStatePublisher.last_joint_states
-                position_in_tol = within_tolerance(state.position, last_point.positions, self.joint_goal_tolerances)
+                position_in_tol = within_tolerance(position, last_point.positions, self.joint_goal_tolerances)
                 setpoint = sample_trajectory(self.trajectory, self.trajectory.points[-1].time_from_start.sec + self.trajectory.points[-1].time_from_start.nanosec * 1.0e-6)
                 for i in range(len(setpoint.positions)):
                     self.motors[i].setPosition(setpoint.positions[i])
@@ -219,14 +228,17 @@ class TrajectoryFollower(object):
             else:  # Off the end
                 if self.goal_handle:
                     last_point = self.trajectory.points[-1]
-                    state = self.jointStatePublisher.last_joint_states
-                    position_in_tol = within_tolerance(state.position, last_point.positions, [0.1] * 6)
-                    velocity_in_tol = within_tolerance(state.velocity, last_point.velocities, [0.05] * 6)
+                    position_in_tol = within_tolerance(position, last_point.positions, [0.1] * 6)
+                    velocity_in_tol = within_tolerance(velocity, last_point.velocities, [0.05] * 6)
                     if position_in_tol and velocity_in_tol:
                         # The arm reached the goal (and isn't moving) => Succeeded
                         result.error_code = result.SUCCESSFUL
                         goal_handle.succeed()
                         self.goal_handle = None
                         return result
+            for i in range(6):
+                self.position[i] = position[i]
+                self.velocity[i] = velocity[i]
+            self.previousTime = now
         result.error_code = result.PATH_TOLERANCE_VIOLATED
         return result

@@ -41,7 +41,7 @@ class ActionServerNode(Node):
         self.robot = Robot()
         prefix = self.get_parameter_or('prefix', Parameter('prefix', Parameter.Type.STRING, '')).value
         self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)
-        self.trajectoryFollower = TrajectoryFollower(self.robot, self, self.jointStatePublisher, jointPrefix=prefix)
+        self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=prefix)
         self.trajectoryFollower.start()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'topic', 10)

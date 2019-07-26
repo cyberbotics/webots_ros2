@@ -18,6 +18,8 @@ import rclpy
 import os
 import sys
 
+from time import sleep
+
 
 if not 'WEBOTS_HOME' in os.environ:
     sys.exit('"WEBOTS_HOME" not defined.')
@@ -38,6 +40,8 @@ class ActionServerNode(Node):
 
     def __init__(self):
         super().__init__('ur_driver')
+        print('AAAAAAAA')
+        sleep(10)  # TODO: wait to make sure that Webots is started
         self.robot = Robot()
         prefix = self.get_parameter_or('prefix', Parameter('prefix', Parameter.Type.STRING, '')).value
         self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)

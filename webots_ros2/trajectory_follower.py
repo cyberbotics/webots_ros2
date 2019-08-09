@@ -87,7 +87,8 @@ def interp_cubic(p0, p1, t_abs):
         qdot[i] = b + 2 * c * t + 3 * d * t**2
         qddot[i] = 2 * c + 6 * d * t
     return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot,
-                                time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) * 1.0e+6)))
+                                time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) *
+                                                                                     1.0e+6)))
 
 
 def sample_trajectory(trajectory, t):

@@ -78,17 +78,21 @@ def interp_cubic(p0, p1, t_abs):
     for i in range(len(p0.positions)):
         a = p0.positions[i]
         b = p0.velocities[i]
-        c = (-3 * p0.positions[i] + 3 * p1.positions[i] - 2 * T * p0.velocities[i] - T * p1.velocities[i]) / T**2
-        d = (2 * p0.positions[i] - 2 * p1.positions[i] + T * p0.velocities[i] + T * p1.velocities[i]) / T**3
+        c = (-3 * p0.positions[i] + 3 * p1.positions[i] - 2 * T * p0.velocities[i] -
+             T * p1.velocities[i]) / T**2
+        d = (2 * p0.positions[i] - 2 * p1.positions[i] + T * p0.velocities[i] +
+             T * p1.velocities[i]) / T**3
 
         q[i] = a + b * t + c * t**2 + d * t**3
         qdot[i] = b + 2 * c * t + 3 * d * t**2
         qddot[i] = 2 * c + 6 * d * t
-    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot, time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) * 1.0e+6)))
+    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot,
+                                time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) * 1.0e+6)))
 
 
 def sample_trajectory(trajectory, t):
     """Sample a trajectory at time t.
+
     Return (q, qdot, qddot) for sampling the JointTrajectory at time t,
     the time t is the time since the trajectory was started.
     """
@@ -96,11 +100,13 @@ def sample_trajectory(trajectory, t):
     if t <= 0.0:
         return copy.deepcopy(trajectory.points[0])
     # Last point
-    if t >= (trajectory.points[-1].time_from_start.sec + trajectory.points[-1].time_from_start.nanosec * 1.0e-6):
+    if t >= (trajectory.points[-1].time_from_start.sec +
+             trajectory.points[-1].time_from_start.nanosec * 1.0e-6):
         return copy.deepcopy(trajectory.points[-1])
     # Finds the (middle) segment containing t
     i = 0
-    while (trajectory.points[i + 1].time_from_start.sec + trajectory.points[i + 1].time_from_start.nanosec * 1.0e-6) < t:
+    while (trajectory.points[i + 1].time_from_start.sec +
+           trajectory.points[i + 1].time_from_start.nanosec * 1.0e-6) < t:
         i += 1
     return interp_cubic(trajectory.points[i], trajectory.points[i + 1], t)
 
@@ -122,7 +128,8 @@ class TrajectoryFollower(object):
         self.node = node
         self.previousTime = robot.getTime()
         self.jointPrefix = jointPrefix
-        self.prefixedJointNames = [s + self.jointPrefix for s in TrajectoryFollower.jointNames]
+        self.prefixedJointNames = [s + self.jointPrefix
+                                   for s in TrajectoryFollower.jointNames]
         self.timestep = int(robot.getBasicTimeStep())
         self.motors = []
         self.sensors = []
@@ -132,7 +139,8 @@ class TrajectoryFollower(object):
             motor = robot.getMotor(name)
             positionSensor = motor.getPositionSensor()
             if positionSensor is None:
-                self.node.get_logger().info('Motor "%s" doesn\'t have any position sensor, impossible to include it in the action server.')
+                self.node.get_logger().info('Motor "%s" doesn\'t have any position \
+                    sensor, impossible to include it in the action server.')
             else:
                 self.motors.append(motor)
                 self.sensors.append(positionSensor)
@@ -141,9 +149,11 @@ class TrajectoryFollower(object):
         self.last_point_sent = True
         self.trajectory = None
         self.joint_goal_tolerances = [0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
-        self.server = ActionServer(self.node, FollowJointTrajectory, 'follow_joint_trajectory',
+        self.server = ActionServer(self.node, FollowJointTrajectory,
+                                   'follow_joint_trajectory',
                                    execute_callback=self.update,
-                                   goal_callback=self.on_goal, cancel_callback=self.on_cancel)
+                                   goal_callback=self.on_goal,
+                                   cancel_callback=self.on_cancel)
 
     def init_trajectory(self):
         """Initialize a new target trajectory."""
@@ -165,7 +175,8 @@ class TrajectoryFollower(object):
         """Handle a new goal trajectory command."""
         # Checks if the joints are just incorrect
         if set(goal_handle.trajectory.joint_names) != set(self.prefixedJointNames):
-            self.node.get_logger().warn('Received a goal with incorrect joint names: (%s)' % ', '.join(goal_handle.trajectory.joint_names))
+            self.node.get_logger().warn('Received a goal with incorrect joint names: (%s)' %
+                                        ', '.join(goal_handle.trajectory.joint_names))
             return GoalResponse.REJECT
 
         if not trajectory_is_finite(goal_handle.trajectory):
@@ -178,7 +189,8 @@ class TrajectoryFollower(object):
             return GoalResponse.REJECT
 
         # Orders the joints of the trajectory according to joint_names
-        reorder_trajectory_joints(goal_handle.trajectory, self.prefixedJointNames)
+        reorder_trajectory_joints(goal_handle.trajectory,
+                                  self.prefixedJointNames)
 
         # Inserts the current setpoint at the head of the trajectory
         now = self.robot.getTime()
@@ -216,27 +228,39 @@ class TrajectoryFollower(object):
                     velocity.append((position[i] - self.position[i]) / timeDifference)
                 else:
                     velocity.append(self.velocity[i])
-            if (now - self.trajectory_t0) <= (self.trajectory.points[-1].time_from_start.sec + self.trajectory.points[-1].time_from_start.nanosec * 1.0e-6):  # Sending intermediate points
+            if (now - self.trajectory_t0) <= (self.trajectory.points[-1].time_from_start.sec +
+                                              self.trajectory.points[-1].time_from_start.nanosec *
+                                              1.0e-6):
+                # Sending intermediate points
                 self.last_point_sent = False
                 setpoint = sample_trajectory(self.trajectory, now - self.trajectory_t0)
                 for i in range(len(setpoint.positions)):
                     self.motors[i].setPosition(setpoint.positions[i])
-                    # Velocity control is not used on the real robot and gives bad results in the simulation
+                    # Velocity control is not used on the real robot and gives
+                    # bad results in the simulation
                     # self.motors[i].setVelocity(math.fabs(setpoint.velocities[i]))
-            elif not self.last_point_sent:  # All intermediate points sent, sending last point to make sure we reach the goal.
+            elif not self.last_point_sent:
+                # All intermediate points sent, sending last point to make sure we reach the goal
                 self.last_point_sent = True
                 last_point = self.trajectory.points[-1]
-                position_in_tol = within_tolerance(position, last_point.positions, self.joint_goal_tolerances)
-                setpoint = sample_trajectory(self.trajectory, self.trajectory.points[-1].time_from_start.sec + self.trajectory.points[-1].time_from_start.nanosec * 1.0e-6)
+                position_in_tol = within_tolerance(position, last_point.positions,
+                                                   self.joint_goal_tolerances)
+                setpoint = sample_trajectory(self.trajectory,
+                                             self.trajectory.points[-1].time_from_start.sec +
+                                             self.trajectory.points[-1].time_from_start.nanosec *
+                                             1.0e-6)
                 for i in range(len(setpoint.positions)):
                     self.motors[i].setPosition(setpoint.positions[i])
-                    # Velocity control is not used on the real robot and gives bad results in the simulation
+                    # Velocity control is not used on the real robot and gives
+                    # bad results in the simulation
                     # self.motors[i].setVelocity(math.fabs(setpoint.velocities[i]))
             else:  # Off the end
                 if self.goal_handle:
                     last_point = self.trajectory.points[-1]
-                    position_in_tol = within_tolerance(position, last_point.positions, [0.1] * 6)
-                    velocity_in_tol = within_tolerance(velocity, last_point.velocities, [0.05] * 6)
+                    position_in_tol = within_tolerance(position, last_point.positions,
+                                                       [0.1] * 6)
+                    velocity_in_tol = within_tolerance(velocity, last_point.velocities,
+                                                       [0.05] * 6)
                     if position_in_tol and velocity_in_tol:
                         # The arm reached the goal (and isn't moving) => Succeeded
                         result.error_code = result.SUCCESSFUL

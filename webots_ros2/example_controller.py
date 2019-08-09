@@ -24,7 +24,7 @@ from std_msgs.msg import Float64
 from example_interfaces.srv import AddTwoInts
 from rosgraph_msgs.msg import Clock
 
-if not 'WEBOTS_HOME' in os.environ:
+if 'WEBOTS_HOME' not in os.environ:
     sys.exit('"WEBOTS_HOME" not defined.')
 sys.path.append(os.environ['WEBOTS_HOME'] + '/lib/python%d%d' % (sys.version_info[0], sys.version_info[1]))
 from controller import Robot
@@ -46,9 +46,11 @@ class ExampleController(Node):
         self.rightMotor.setPosition(float('inf'))
         self.leftMotor.setVelocity(0)
         self.rightMotor.setVelocity(0)
-        self.motorService = self.create_service(AddTwoInts, 'motor', self.motor_callback)
+        self.motorService = self.create_service(AddTwoInts, 'motor',
+                                                self.motor_callback)
         self.sensorPublisher = self.create_publisher(Float64, 'sensor', 10)
-        self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')  # front central proximity sensor
+        # front central proximity sensor
+        self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')
         self.frontSensor.enable(self.timestep)
 
     def timer_callback(self):
@@ -56,10 +58,10 @@ class ExampleController(Node):
         msg = Clock()
         time = self.robot.getTime()
         msg.clock.sec = int(time)
-        # round prevents precision issues that can cause problems with ROS timers
+        # round prevents precision issues causing problems with ROS timers
         msg.clock.nanosec = int(round(1000 * (time - msg.clock.sec)) * 1.0e+6)
         self.clockPublisher.publish(msg)
-        #self.get_logger().info('Time: "%lf"' % self.robot.getTime())
+        # self.get_logger().info('Time: "%lf"' % self.robot.getTime())
         # Publish distance sensor value
         msg = Float64()
         msg.data = self.frontSensor.getValue()

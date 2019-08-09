@@ -89,7 +89,6 @@ def interp_cubic(p0, p1, t_abs):
 
 def sample_trajectory(trajectory, t):
     """Sample a trajectory at time t.
-
     Return (q, qdot, qddot) for sampling the JointTrajectory at time t,
     the time t is the time since the trajectory was started.
     """

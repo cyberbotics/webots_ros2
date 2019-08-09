@@ -20,12 +20,6 @@ import sys
 
 from time import sleep
 
-
-if not 'WEBOTS_HOME' in os.environ:
-    sys.exit('"WEBOTS_HOME" not defined.')
-sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' % (sys.version_info[0], sys.version_info[1])))
-from controller import Robot
-
 from webots_ros2.joint_state_publisher import JointStatePublisher
 from webots_ros2.trajectory_follower import TrajectoryFollower
 
@@ -36,13 +30,21 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.parameter import Parameter
 
 
+if 'WEBOTS_HOME' not in os.environ:
+    sys.exit('"WEBOTS_HOME" not defined.')
+sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
+                (sys.version_info[0], sys.version_info[1])))
+from controller import Robot
+
+
 class ActionServerNode(Node):
 
     def __init__(self):
         super().__init__('ur_driver')
         sleep(15)  # TODO: wait to make sure that Webots is started
         self.robot = Robot()
-        prefix = self.get_parameter_or('prefix', Parameter('prefix', Parameter.Type.STRING, '')).value
+        prefix = self.get_parameter_or('prefix',
+                                       Parameter('prefix', Parameter.Type.STRING, '')).value
         self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)
         self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=prefix)
         self.trajectoryFollower.start()
@@ -50,7 +52,6 @@ class ActionServerNode(Node):
         self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
         timer_period = 0.001 * self.timestep  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
-
 
     def timer_callback(self):
         if self.robot is None:

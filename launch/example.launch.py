@@ -27,10 +27,17 @@ def generate_launch_description():
     if 'WEBOTS_HOME' not in os.environ:
         sys.exit('"WEBOTS_HOME" should be defined.')
 
-    webots = launch_ros.actions.Node(package='webots_ros2', node_executable='webots_launcher', arguments=['--mode=realtime', '--world=' + os.path.join(os.path.dirname(os.path.abspath(__file__)), 'worlds', 'ros_example.wbt')], output='screen')
-    controller = launch_ros.actions.Node(package='webots_ros2', node_executable='example_controller', output='screen')
-    os.environ['LD_LIBRARY_PATH'] = os.environ['WEBOTS_HOME'] + os.sep + 'lib:' + os.environ.get('LD_LIBRARY_PATH')
-    #os.environ['WEBOTS_PID'] = TODO
+    arguments = ['--mode=realtime', '--world=' +
+                 os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                              'worlds', 'ros_example.wbt')]
+    webots = launch_ros.actions.Node(package='webots_ros2', node_executable='webots_launcher',
+                                     arguments=arguments, output='screen')
+    controller = launch_ros.actions.Node(package='webots_ros2',
+                                         node_executable='example_controller',
+                                         output='screen')
+    os.environ['LD_LIBRARY_PATH'] = os.environ['WEBOTS_HOME'] + os.sep + 'lib:' +
+                                    os.environ.get('LD_LIBRARY_PATH')
+    # os.environ['WEBOTS_PID'] = TODO
     return launch.LaunchDescription([
         webots,
         controller,

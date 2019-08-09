@@ -1,10 +1,13 @@
+language: generic
 services:
   - docker
 
+env:
+  matrix:
+    - ROS_DISTRO="crystal"
+    - ROS_DISTRO="dashing"
+
+install:
+  - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci
 script:
-- docker run --name build-container -dit ros:dashing /bin/bash
-- docker exec build-container /bin/bash -c 'mkdir -p /ros2_ws/src'
-- docker exec build-container /bin/bash -c 'apt update && apt install -y python3-colcon-common-extensions && rosdep update'
-- docker cp $TRAVIS_BUILD_DIR build-container:/ros2_ws/src/
-- docker exec build-container /bin/bash -c 'source /opt/ros/dashing/setup.bash && cd /ros2_ws/ && rosdep install --from-paths src --ignore-src --rosdistro dashing -y'
-- docker exec build-container /bin/bash -c 'source /opt/ros/dashing/setup.bash && cd /ros2_ws/ && colcon build'
+  - .industrial_ci/travis.sh

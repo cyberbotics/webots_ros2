@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/omichel/webots_ros2.svg?branch=master)](https://travis-ci.com/omichel/webots_ros2) 
 # Launch Node and Simulation
 
 The following procedure should be used to compile the package and launch the simulation and node.

@@ -1,6 +1,6 @@
 from setuptools import setup
 
-import os
+#import os
 
 package_name = 'webots_ros2'
 data_files = []

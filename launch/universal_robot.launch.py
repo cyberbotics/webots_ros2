@@ -30,8 +30,8 @@ def generate_launch_description():
                                      arguments=arguments, output='screen')
     controller = launch_ros.actions.Node(package='webots_ros2', node_executable='universal_robot',
                                          output='screen')
-    os.environ['LD_LIBRARY_PATH'] = os.environ['WEBOTS_HOME'] + os.sep + 'lib:' +
-                                    os.environ.get('LD_LIBRARY_PATH')
+    os.environ['LD_LIBRARY_PATH'] = (os.environ['WEBOTS_HOME'] + os.sep + 'lib:' +
+                                     os.environ.get('LD_LIBRARY_PATH'))
     # os.environ['WEBOTS_PID'] = TODO
     return launch.LaunchDescription([
         webots,

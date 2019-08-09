@@ -59,7 +59,8 @@ class JointStatePublisher(object):
         for i in range(len(self.sensors)):
             value = self.sensors[i].getValue()
             msg.position.append(value)
-            msg.velocity.append((value - self.previousPosition[i]) / timeDifference if timeDifference > 0 else 0.0)
+            msg.velocity.append((value - self.previousPosition[i]) /
+                                timeDifference if timeDifference > 0 else 0.0)
             self.previousPosition[i] = value
         msg.effort = [0.0] * 6
         self.publisher.publish(msg)

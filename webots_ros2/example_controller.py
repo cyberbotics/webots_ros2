@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""ROS2 example controller."""
+
 import rclpy
 import os
 import sys
@@ -26,9 +28,14 @@ from rosgraph_msgs.msg import Clock
 
 if 'WEBOTS_HOME' not in os.environ:
     sys.exit('"WEBOTS_HOME" not defined.')
-sys.path.append(os.environ['WEBOTS_HOME'] + '/lib/python%d%d' %
-                (sys.version_info[0], sys.version_info[1]))
-from controller import Robot
+
+try:
+    sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
+                    (sys.version_info[0], sys.version_info[1])))
+    from controller import Robot
+except Exception as e:
+    sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
+    raise(e)
 
 
 class ExampleController(Node):

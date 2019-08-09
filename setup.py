@@ -1,3 +1,5 @@
+"""webots_ros2 package setup file."""
+
 from setuptools import setup
 
 # import os

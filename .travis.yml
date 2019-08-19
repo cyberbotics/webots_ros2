@@ -8,6 +8,6 @@ env:
 #    - ROS_DISTRO="dashing"
 
 install:
-  -  git clone --quiet --depth 1 https://github.com/ipa-mdl/industrial_ci.git .industrial_ci -b colcon-rebase  # Use a fork because original does not support ROS2 for now
+  - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 script:
   - .industrial_ci/travis.sh

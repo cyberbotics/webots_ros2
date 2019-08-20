@@ -20,8 +20,8 @@ import sys
 
 from time import sleep
 
-from webots_ros2.joint_state_publisher import JointStatePublisher
-from webots_ros2.trajectory_follower import TrajectoryFollower
+from webots_ros2_universal_robot.joint_state_publisher import JointStatePublisher
+from webots_ros2_universal_robot.trajectory_follower import TrajectoryFollower
 
 from rosgraph_msgs.msg import Clock
 

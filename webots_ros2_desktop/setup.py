@@ -5,7 +5,7 @@ import sys
 
 from setuptools import setup
 
-package_name = 'webots_ros2_core'
+package_name = 'webots_ros2_desktop'
 data_files = []
 # Add Webots in the package
 if 'WEBOTS_HOME' in os.environ:

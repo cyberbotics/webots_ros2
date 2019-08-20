@@ -15,7 +15,7 @@
   <exec_depend>rosgraph_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
-  <exec_depend>webots_ros2-base</exec_depend>
+  <exec_depend>webots_ros2-core</exec_depend>
   <!-- TODO: add universal_robot once available for ROS2 -->
 
   <!-- These test dependencies are optional

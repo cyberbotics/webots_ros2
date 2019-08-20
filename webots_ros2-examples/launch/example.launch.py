@@ -30,7 +30,7 @@ def generate_launch_description():
     arguments = ['--mode=realtime', '--world=' +
                  os.path.join(os.path.dirname(os.path.abspath(__file__)),
                               'worlds', 'ros_example.wbt')]
-    webots = launch_ros.actions.Node(package='webots_ros2-base', node_executable='webots_launcher',
+    webots = launch_ros.actions.Node(package='webots_ros2-core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
     controller = launch_ros.actions.Node(package='webots_ros2-examples',
                                          node_executable='example_controller',

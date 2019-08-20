@@ -28,10 +28,10 @@ try:
     from controller import Node
 except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
-    raise(e)
+    raise e
 
 
-class JointStatePublisher(object):
+class JointStatePublisher():
     """Publish as a ROS topic the joint state."""
 
     def __init__(self, robot, jointPrefix, node):

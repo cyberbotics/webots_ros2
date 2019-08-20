@@ -14,12 +14,12 @@
 
 """ROS2 example controller."""
 
-import rclpy
 import os
 import sys
 
 from time import sleep
 
+import rclpy
 from rclpy.node import Node
 
 from std_msgs.msg import Float64
@@ -34,7 +34,7 @@ try:
     from controller import Robot
 except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
-    raise(e)
+    raise e
 
 
 class ExampleController(Node):

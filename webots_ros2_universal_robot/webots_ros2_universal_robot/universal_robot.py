@@ -14,7 +14,6 @@
 
 """ROS2 Universal Robots controller."""
 
-import rclpy
 import os
 import sys
 
@@ -25,6 +24,7 @@ from webots_ros2_universal_robot.trajectory_follower import TrajectoryFollower
 
 from rosgraph_msgs.msg import Clock
 
+import rclpy
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.parameter import Parameter
@@ -37,7 +37,7 @@ try:
     from controller import Robot
 except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
-    raise(e)
+    raise e
 
 
 class ActionServerNode(Node):

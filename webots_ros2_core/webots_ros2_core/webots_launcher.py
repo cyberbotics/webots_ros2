@@ -16,19 +16,19 @@
 
 """This launcher simply start Webots."""
 
-import optparse
+import argparse
 import os
 import sys
 import subprocess
 
 
 def main(args=None):
-    optParser = optparse.OptionParser()
-    optParser.add_option("--world", dest="world", default="", help="Path to the world to load.")
-    optParser.add_option("--mode", dest="mode", default="realtime", help="Startup mode.")
-    optParser.add_option("--no-gui", dest="noGui", default="false",
+    parser = argparse.ArgumentParser()
+    parser.add_option("--world", dest="world", default="", help="Path to the world to load.")
+    parser.add_option("--mode", dest="mode", default="realtime", help="Startup mode.")
+    parser.add_option("--no-gui", dest="noGui", default="false",
                          help="Start Webots with minimal GUI.")
-    options, args = optParser.parse_args()
+    options, args = parser.parse_args()
 
     if 'WEBOTS_HOME' not in os.environ:
         sys.exit('WEBOTS_HOME environment variable not defined.')

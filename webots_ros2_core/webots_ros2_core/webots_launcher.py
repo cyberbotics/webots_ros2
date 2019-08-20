@@ -27,7 +27,7 @@ def main(args=None):
     parser.add_option("--world", dest="world", default="", help="Path to the world to load.")
     parser.add_option("--mode", dest="mode", default="realtime", help="Startup mode.")
     parser.add_option("--no-gui", dest="noGui", default="false",
-                         help="Start Webots with minimal GUI.")
+                      help="Start Webots with minimal GUI.")
     options, args = parser.parse_args()
 
     if 'WEBOTS_HOME' not in os.environ:

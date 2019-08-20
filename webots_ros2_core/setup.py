@@ -4,7 +4,7 @@ from setuptools import setup
 
 # import os
 
-package_name = 'webots_ros2-core'
+package_name = 'webots_ros2_core'
 data_files = []
 
 # Add Webots in the package

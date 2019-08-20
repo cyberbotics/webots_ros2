@@ -11,9 +11,9 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
-  <exec_depend>webots_ros2-core</exec_depend>
-  <exec_depend>webots_ros2-examples</exec_depend>
-  <exec_depend>webots_ros2-universal-robot</exec_depend>
+  <exec_depend>webots_ros2_core</exec_depend>
+  <exec_depend>webots_ros2_examples</exec_depend>
+  <exec_depend>webots_ros2_universal_robot</exec_depend>
 
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->

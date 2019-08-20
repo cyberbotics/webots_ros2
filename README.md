@@ -9,7 +9,7 @@ source /opt/ros/dashing/setup.bash
 colcon build
 source install/setup.bash
 source install/local_setup.bash
-ros2 launch webots_ros2-universal-robot universal_robot.launch.py  # ros2 run webots_ros2-examples example_controller
+ros2 launch webots_ros2_universal_robot universal_robot.launch.py  # ros2 run webots_ros2_examples example_controller
 ```
 
 ## Test Action Server

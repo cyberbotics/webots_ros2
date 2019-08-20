@@ -15,7 +15,8 @@ if 'WEBOTS_HOME' in os.environ:
             target = root.replace(os.environ['WEBOTS_HOME'], 'share/' + package_name + '/webots')
             data_files.append((target, [source]))
 else:
-    sys.stderr.write('WARNING: "WEBOTS_HOME" environment variable not set, this package might be incomplete.')
+    sys.stderr.write('WARNING: "WEBOTS_HOME" environment variable not set, ' +
+                     'this package might be incomplete.')
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['package.xml']))
 

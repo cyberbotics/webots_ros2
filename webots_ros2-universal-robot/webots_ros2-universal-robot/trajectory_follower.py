@@ -113,7 +113,7 @@ def sample_trajectory(trajectory, t):
     return interp_cubic(trajectory.points[i], trajectory.points[i + 1], t)
 
 
-class TrajectoryFollower(object):
+class TrajectoryFollower():
     """Create and handle the action 'follow_joint_trajectory' server."""
 
     jointNames = [

@@ -16,10 +16,10 @@
 
 """Launch Webots and the controller."""
 
+import os
+
 import launch
 import launch_ros.actions
-
-import os
 
 
 def generate_launch_description():

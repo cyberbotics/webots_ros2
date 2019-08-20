@@ -4,8 +4,6 @@ from setuptools import setup
 
 package_name = 'webots_ros2_universal_robot'
 data_files = []
-
-
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['launch/universal_robot.launch.py']))
 data_files.append(('share/' + package_name + '/worlds', ['worlds/universal_robot.wbt']))

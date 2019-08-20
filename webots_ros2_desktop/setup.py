@@ -1,12 +1,11 @@
 """webots_ros2 package setup file."""
 
-from setuptools import setup
-
 import os
+
+from setuptools import setup
 
 package_name = 'webots_ros2_core'
 data_files = []
-
 # Add Webots in the package
 for root, directories, files in os.walk(os.environ['WEBOTS_HOME']):
     for f in files:

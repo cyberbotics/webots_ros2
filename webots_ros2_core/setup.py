@@ -2,18 +2,8 @@
 
 from setuptools import setup
 
-# import os
-
 package_name = 'webots_ros2_core'
 data_files = []
-
-# Add Webots in the package
-# for root, directories, files in os.walk(os.environ['WEBOTS_HOME']):
-#     for f in files:
-#        source = os.path.relpath(os.path.join(root, f))
-#        target = root.replace(os.environ['WEBOTS_HOME'], 'share/' + package_name + '/webots')
-#        data_files.append((target, [source]))
-
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['package.xml']))
 

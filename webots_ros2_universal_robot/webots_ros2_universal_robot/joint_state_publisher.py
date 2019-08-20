@@ -23,7 +23,8 @@ from builtin_interfaces.msg import Time
 if 'WEBOTS_HOME' not in os.environ:
     sys.exit('"WEBOTS_HOME" not defined.')
 try:
-    sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' % (sys.version_info[0], sys.version_info[1])))
+    sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
+                    (sys.version_info[0], sys.version_info[1])))
     from controller import Node
 except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')

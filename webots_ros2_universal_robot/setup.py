@@ -23,7 +23,7 @@ setup(
     author_email='support@cyberbotics.com',
     maintainer='Cyberbotics',
     maintainer_email='support@cyberbotics.com',
-    keywords=['ROS'],
+    keywords=['ROS', 'Webots', 'Robot', 'Simulation', 'Universal Robots'],
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',

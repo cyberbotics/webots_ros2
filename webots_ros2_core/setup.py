@@ -40,7 +40,7 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [ 'webots_launcher = webots_ros2.webots_launcher:main' ],
-        'launch.frontend.launch_extension': [ 'launch_ros = launch_ros' ]
+        'console_scripts': ['webots_launcher = webots_ros2_core.webots_launcher:main'],
+        'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

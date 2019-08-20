@@ -28,13 +28,13 @@ def main(args=None):
     parser.add_argument("--mode", dest="mode", default="realtime", help="Startup mode.")
     parser.add_argument("--no-gui", dest="noGui", default="false",
                         help="Start Webots with minimal GUI.")
-    options, args = parser.parse_args()
+    args = parser.parse_args()
 
     if 'WEBOTS_HOME' not in os.environ:
         sys.exit('WEBOTS_HOME environment variable not defined.')
     command = [os.path.join(os.environ['WEBOTS_HOME'], 'webots'),
-               '--mode=' + options.mode, options.world]
-    if options.noGui == 'true':
+               '--mode=' + args.mode, args.world]
+    if args.noGui == 'true':
         command.append('--stdout')
         command.append('--stderr')
         command.append('--batch')

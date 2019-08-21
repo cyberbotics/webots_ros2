@@ -29,15 +29,18 @@ except ImportError:
 
 def get_webots_home():
     webotsHome = None
-    if 'WEBOTS_HOME' in os.environ:
-        webotsHome = os.environ['WEBOTS_HOME']
+    if 'ROS2_WEBOTS_HOME' in os.environ:
+        webotsHome = os.environ['ROS2_WEBOTS_HOME']
+        os.environ['WEBOTS_HOME'] = webotsHome
     elif ('webots_ros2_desktop' in sys.modules and
           webots_ros2_desktop.webots_path and
           webots_ros2_desktop.webots_path.get_webots_home()):
         webotsHome = webots_ros2_desktop.webots_path.get_webots_home()
         os.environ['WEBOTS_HOME'] = webotsHome
+    elif 'WEBOTS_HOME' in os.environ:
+        webotsHome = os.environ['WEBOTS_HOME']
     else:
-        sys.exit('Webots not found, you should either define "WEBOTS_HOME" ' +
+        sys.exit('Webots not found, you should either define "ROS2_WEBOTS_HOME", "WEBOTS_HOME" ' +
                  'or install the "webots_ros2_desktop" package.')
     return webotsHome
 

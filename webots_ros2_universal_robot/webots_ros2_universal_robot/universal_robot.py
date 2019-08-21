@@ -29,8 +29,6 @@ from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.parameter import Parameter
 
-if 'WEBOTS_HOME' not in os.environ:
-    sys.exit('"WEBOTS_HOME" not defined.')
 try:
     sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
                     (sys.version_info[0], sys.version_info[1])))

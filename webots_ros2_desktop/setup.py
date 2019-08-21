@@ -42,5 +42,7 @@ setup(
     description='Interface between Webots and ROS2 including the Webots package.',
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
-    entry_points={}
+    entry_points={
+        'console_scripts': ['webots_path = webots_ros2_desktop.webots_path:get_webots_home']
+    }
 )

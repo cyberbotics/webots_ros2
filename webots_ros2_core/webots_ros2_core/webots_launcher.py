@@ -21,6 +21,26 @@ import os
 import sys
 import subprocess
 
+try:
+    import webots_ros2_desktop.webots_path  # this module might not be installed
+except ImportError:
+    pass
+
+
+def get_webots_home():
+    webotsHome = None
+    if 'WEBOTS_HOME' in os.environ:
+        webotsHome = os.environ['WEBOTS_HOME']
+    elif ('webots_ros2_desktop' in sys.modules and
+          webots_ros2_desktop.webots_path and
+          webots_ros2_desktop.webots_path.get_webots_home()):
+        webotsHome = webots_ros2_desktop.webots_path.get_webots_home()
+        os.environ['WEBOTS_HOME'] = webotsHome
+    else:
+        sys.exit('Webots not found, you should either define "WEBOTS_HOME" ' +
+                 'or install the "webots_ros2_desktop" package.')
+    return webotsHome
+
 
 def main(args=None):
     parser = argparse.ArgumentParser()
@@ -30,10 +50,7 @@ def main(args=None):
                         help="Start Webots with minimal GUI.")
     args = parser.parse_args()
 
-    if 'WEBOTS_HOME' not in os.environ:
-        sys.exit('WEBOTS_HOME environment variable not defined.')
-    command = [os.path.join(os.environ['WEBOTS_HOME'], 'webots'),
-               '--mode=' + args.mode, args.world]
+    command = [os.path.join(get_webots_home(), 'webots'), '--mode=' + args.mode, args.world]
     if args.noGui == 'true':
         command.append('--stdout')
         command.append('--stderr')

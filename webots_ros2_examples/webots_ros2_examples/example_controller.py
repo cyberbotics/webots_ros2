@@ -14,12 +14,11 @@
 
 """ROS2 example controller."""
 
-import os
 import sys
 
 from time import sleep
 
-from webots_ros2_core.utils import get_webots_version
+from webots_ros2_core.utils import get_webots_version, append_webots_python_lib_to_path
 
 import rclpy
 from rclpy.node import Node
@@ -29,8 +28,7 @@ from example_interfaces.srv import AddTwoInts
 from rosgraph_msgs.msg import Clock
 
 try:
-    sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
-                    (sys.version_info[0], sys.version_info[1])))
+    append_webots_python_lib_to_path()
     from controller import Robot
 except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')

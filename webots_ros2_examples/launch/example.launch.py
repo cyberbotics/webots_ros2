@@ -21,7 +21,7 @@ import os
 import launch
 import launch_ros.actions
 
-from webots_ros2_core.utils import get_webots_home
+from webots_ros2_core.utils import append_webots_lib_to_path
 
 
 def generate_launch_description():
@@ -33,8 +33,7 @@ def generate_launch_description():
     controller = launch_ros.actions.Node(package='webots_ros2_examples',
                                          node_executable='example_controller',
                                          output='screen')
-    os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
-                                     os.environ.get('LD_LIBRARY_PATH'))
+    append_webots_lib_to_path()
     return launch.LaunchDescription([
         webots,
         controller,

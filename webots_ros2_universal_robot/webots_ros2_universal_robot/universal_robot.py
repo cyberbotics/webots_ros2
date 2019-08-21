@@ -14,10 +14,11 @@
 
 """ROS2 Universal Robots controller."""
 
-import os
 import sys
 
 from time import sleep
+
+from webots_ros2_core.utils import get_webots_version, append_webots_python_lib_to_path
 
 from webots_ros2_universal_robot.joint_state_publisher import JointStatePublisher
 from webots_ros2_universal_robot.trajectory_follower import TrajectoryFollower
@@ -30,8 +31,7 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.parameter import Parameter
 
 try:
-    sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
-                    (sys.version_info[0], sys.version_info[1])))
+    append_webots_python_lib_to_path()
     from controller import Robot
 except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
@@ -42,7 +42,8 @@ class ActionServerNode(Node):
 
     def __init__(self):
         super().__init__('ur_driver')
-        sleep(15)  # TODO: wait to make sure that Webots is started
+        if get_webots_version() == 'R2019b':
+            sleep(15)  # TODO: wait to make sure that Webots is started
         self.robot = Robot()
         prefix = self.get_parameter_or('prefix',
                                        Parameter('prefix', Parameter.Type.STRING, '')).value

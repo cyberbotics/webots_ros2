@@ -1,12 +1,23 @@
 """webots_ros2 package setup file."""
 
+import os
+import sys
+
 from setuptools import setup
 
-package_name = 'webots_ros2_universal_robot'
+package_name = 'webots_ros2_desktop'
 data_files = []
+# Add Webots in the package
+if 'WEBOTS_HOME' in os.environ:
+    for root, directories, files in os.walk(os.environ['WEBOTS_HOME']):
+        for f in files:
+            source = os.path.relpath(os.path.join(root, f))
+            target = root.replace(os.environ['WEBOTS_HOME'], 'share/' + package_name + '/webots')
+            data_files.append((target, [source]))
+else:
+    sys.stderr.write('WARNING: "WEBOTS_HOME" environment variable not set, ' +
+                     'this package might be incomplete.')
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
-data_files.append(('share/' + package_name, ['launch/universal_robot.launch.py']))
-data_files.append(('share/' + package_name + '/worlds', ['worlds/universal_robot.wbt']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 
@@ -21,18 +32,17 @@ setup(
     author_email='support@cyberbotics.com',
     maintainer='Cyberbotics',
     maintainer_email='support@cyberbotics.com',
-    keywords=['ROS', 'Webots', 'Robot', 'Simulation', 'Universal Robots'],
+    keywords=['ROS', 'Webots', 'Robot', 'Simulation'],
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='Universal Robot ROS2 interface for Webots.',
+    description='Interface between Webots and ROS2 including the Webots package.',
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['universal_robot = webots_ros2_universal_robot.universal_robot:main'],
-        'launch.frontend.launch_extension': ['launch_ros = launch_ros']
+        'console_scripts': ['webots_path = webots_ros2_desktop.webots_path:get_webots_home']
     }
 )

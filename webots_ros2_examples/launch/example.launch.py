@@ -17,16 +17,14 @@
 """Launch Webots and the controller."""
 
 import os
-import sys
 
 import launch
 import launch_ros.actions
 
+from webots_ros2_core.utils import get_webots_home
+
 
 def generate_launch_description():
-    if 'WEBOTS_HOME' not in os.environ:
-        sys.exit('"WEBOTS_HOME" should be defined.')
-
     arguments = ['--mode=realtime', '--world=' +
                  os.path.join(os.path.dirname(os.path.abspath(__file__)),
                               'worlds', 'ros_example.wbt')]
@@ -35,9 +33,8 @@ def generate_launch_description():
     controller = launch_ros.actions.Node(package='webots_ros2_examples',
                                          node_executable='example_controller',
                                          output='screen')
-    os.environ['LD_LIBRARY_PATH'] = (os.environ['WEBOTS_HOME'] + os.sep + 'lib:' +
+    os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
                                      os.environ.get('LD_LIBRARY_PATH'))
-    # os.environ['WEBOTS_PID'] = TODO
     return launch.LaunchDescription([
         webots,
         controller,

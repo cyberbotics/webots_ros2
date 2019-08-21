@@ -18,23 +18,21 @@
 
 import argparse
 import os
-import sys
 import subprocess
+
+from webots_ros2_core.utils import get_webots_home
 
 
 def main(args=None):
     parser = argparse.ArgumentParser()
-    parser.add_option("--world", dest="world", default="", help="Path to the world to load.")
-    parser.add_option("--mode", dest="mode", default="realtime", help="Startup mode.")
-    parser.add_option("--no-gui", dest="noGui", default="false",
-                         help="Start Webots with minimal GUI.")
-    options, args = parser.parse_args()
+    parser.add_argument("--world", dest="world", default="", help="Path to the world to load.")
+    parser.add_argument("--mode", dest="mode", default="realtime", help="Startup mode.")
+    parser.add_argument("--no-gui", dest="noGui", default="false",
+                        help="Start Webots with minimal GUI.")
+    args = parser.parse_args()
 
-    if 'WEBOTS_HOME' not in os.environ:
-        sys.exit('WEBOTS_HOME environment variable not defined.')
-    command = [os.path.join(os.environ['WEBOTS_HOME'], 'webots'),
-               '--mode=' + options.mode, options.world]
-    if options.noGui == 'true':
+    command = [os.path.join(get_webots_home(), 'webots'), '--mode=' + args.mode, args.world]
+    if args.noGui == 'true':
         command.append('--stdout')
         command.append('--stderr')
         command.append('--batch')

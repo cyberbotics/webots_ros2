@@ -19,6 +19,8 @@ import sys
 
 from time import sleep
 
+from webots_ros2_core.utils import get_webots_version
+
 from webots_ros2_universal_robot.joint_state_publisher import JointStatePublisher
 from webots_ros2_universal_robot.trajectory_follower import TrajectoryFollower
 
@@ -42,7 +44,8 @@ class ActionServerNode(Node):
 
     def __init__(self):
         super().__init__('ur_driver')
-        sleep(15)  # TODO: wait to make sure that Webots is started
+        if get_webots_version() == 'R2019b':
+            sleep(15)  # TODO: wait to make sure that Webots is started
         self.robot = Robot()
         prefix = self.get_parameter_or('prefix',
                                        Parameter('prefix', Parameter.Type.STRING, '')).value

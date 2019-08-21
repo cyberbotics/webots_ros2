@@ -26,6 +26,7 @@ except ImportError:
 
 
 def get_webots_home():
+    """Path to the Webots installation directory."""
     webotsHome = None
     if 'ROS2_WEBOTS_HOME' in os.environ:
         webotsHome = os.environ['ROS2_WEBOTS_HOME']
@@ -41,3 +42,11 @@ def get_webots_home():
         sys.exit('Webots not found, you should either define "ROS2_WEBOTS_HOME", "WEBOTS_HOME" ' +
                  'or install the "webots_ros2_desktop" package.')
     return webotsHome
+
+
+def get_webots_version():
+    """Webots version as a string."""
+    versionFile = os.path.join(get_webots_home(), 'resources', 'version.txt')
+    with open(versionFile, "r") as f:
+        return f.read().replace('\n', '').strip()
+    return None

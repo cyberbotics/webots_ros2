@@ -19,6 +19,8 @@ import sys
 
 from time import sleep
 
+from webots_ros2_core.utils import get_webots_version
+
 import rclpy
 from rclpy.node import Node
 
@@ -39,7 +41,8 @@ class ExampleController(Node):
 
     def __init__(self):
         super().__init__('example_controller')
-        sleep(10)  # TODO: wait to make sure that Webots is started
+        if get_webots_version() == 'R2019b':
+            sleep(10)  # TODO: wait to make sure that Webots is started
         self.robot = Robot()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'topic', 10)

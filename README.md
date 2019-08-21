@@ -28,3 +28,10 @@ ros2 action send_goal /follow_joint_trajectory control_msgs/action/FollowJointTr
   }
 }"
 ```
+
+## Other
+
+At runtime, ROS2 will look for Webots at the following locations (in this order):
+  - Folder pointed by the `ROS2_WEBOTS_HOME` environment variable.
+  - Inside the `webots_ros2_desktop` package.
+  - Folder pointed by the `WEBOTS_HOME` environment variable.

@@ -18,31 +18,9 @@
 
 import argparse
 import os
-import sys
 import subprocess
 
-try:
-    import webots_ros2_desktop.webots_path  # this module might not be installed
-except ImportError:
-    pass
-
-
-def get_webots_home():
-    webotsHome = None
-    if 'ROS2_WEBOTS_HOME' in os.environ:
-        webotsHome = os.environ['ROS2_WEBOTS_HOME']
-        os.environ['WEBOTS_HOME'] = webotsHome
-    elif ('webots_ros2_desktop' in sys.modules and
-          webots_ros2_desktop.webots_path and
-          webots_ros2_desktop.webots_path.get_webots_home()):
-        webotsHome = webots_ros2_desktop.webots_path.get_webots_home()
-        os.environ['WEBOTS_HOME'] = webotsHome
-    elif 'WEBOTS_HOME' in os.environ:
-        webotsHome = os.environ['WEBOTS_HOME']
-    else:
-        sys.exit('Webots not found, you should either define "ROS2_WEBOTS_HOME", "WEBOTS_HOME" ' +
-                 'or install the "webots_ros2_desktop" package.')
-    return webotsHome
+from webots_ros2_core.utils import get_webots_home
 
 
 def main(args=None):

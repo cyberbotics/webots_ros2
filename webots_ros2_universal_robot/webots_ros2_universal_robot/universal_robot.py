@@ -14,7 +14,6 @@
 
 """ROS2 Universal Robots controller."""
 
-import os
 import sys
 
 from time import sleep

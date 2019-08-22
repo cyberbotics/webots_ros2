@@ -21,7 +21,7 @@ import sys
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from control_msgs.action import FollowJointTrajectory
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from trajectory_msgs.msg import JointTrajectoryPoint
 from builtin_interfaces.msg import Duration
 
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
@@ -112,62 +112,41 @@ def sample_trajectory(trajectory, t):
 class TrajectoryFollower():
     """Create and handle the action 'follow_joint_trajectory' server."""
 
-    jointNames = [
-        'shoulder_pan_joint',
-        'shoulder_lift_joint',
-        'elbow_joint',
-        'wrist_1_joint',
-        'wrist_2_joint',
-        'wrist_3_joint'
-    ]
-
     def __init__(self, robot, node, jointPrefix, goal_time_tolerance=None):
         self.robot = robot
         self.node = node
         self.previousTime = robot.getTime()
         self.timestep = int(robot.getBasicTimeStep())
+        # Parse motor and position sensors
         self.motors = {}
         self.sensors = {}
         self.position = {}
         self.velocity = {}
-        for name in TrajectoryFollower.jointNames:
-            motor = robot.getMotor(name)
-            positionSensor = motor.getPositionSensor()
-            if positionSensor is None:
-                self.node.get_logger().info('Motor "%s" doesn\'t have any position \
-                    sensor, impossible to include it in the action server.')
-            else:
-                self.motors[jointPrefix + name] = motor
-                self.sensors[jointPrefix + name] = positionSensor
-                self.position[jointPrefix + name] = 0.0
-                self.velocity[jointPrefix + name] = [0.0]
-                positionSensor.enable(self.timestep)
+        for i in range(robot.getNumberOfDevices()):
+            device = robot.getDeviceByIndex(i)
+            if device.getNodeType() in [Node.LINEAR_MOTOR, Node.ROTATIONAL_MOTOR]:
+                name = device.getName()
+                positionSensor = device.getPositionSensor()
+                if positionSensor is None:
+                    self.node.get_logger().info('Motor "%s" doesn\'t have any position \
+                        sensor, impossible to include it in the action server.')
+                else:
+                    self.motors[jointPrefix + name] = device
+                    self.sensors[jointPrefix + name] = positionSensor
+                    self.position[jointPrefix + name] = 0.0
+                    self.velocity[jointPrefix + name] = 0.0
+                    positionSensor.enable(self.timestep)
         self.numberOfMotors = len(self.motors)
+        # Initialize tarjectories and action server
         self.goal_handle = None
         self.last_point_sent = True
-        self.trajectory = None
         self.joint_goal_tolerances = [0.05] * self.numberOfMotors
+        self.trajectory = None
         self.server = ActionServer(self.node, FollowJointTrajectory,
                                    'follow_joint_trajectory',
                                    execute_callback=self.update,
                                    goal_callback=self.on_goal,
                                    cancel_callback=self.on_cancel)
-
-    def init_trajectory(self):
-        """Initialize a new target trajectory."""
-        self.trajectory_t0 = self.robot.getTime()
-        self.trajectory = JointTrajectory()
-        self.trajectory.joint_names = self.motors.keys()
-        self.trajectory.points = [JointTrajectoryPoint(
-            positions=[0] * self.numberOfMotors,
-            velocities=[0] * self.numberOfMotors,
-            accelerations=[0] * self.numberOfMotors,
-            time_from_start=Duration())]
-
-    def start(self):
-        """Initialize and start the action server."""
-        self.init_trajectory()
-        self.node.get_logger().info('The action server is ready')
 
     def on_goal(self, goal_handle):
         """Handle a new goal trajectory command."""
@@ -188,8 +167,18 @@ class TrajectoryFollower():
 
         # Inserts the current setpoint at the head of the trajectory
         now = self.robot.getTime()
-        point0 = sample_trajectory(self.trajectory, now - self.trajectory_t0)
-        point0.time_from_start = Duration()
+        positions = []
+        velocities = []
+        accelerations = []
+        for name in goal_handle.trajectory.joint_names:
+            positions.append(self.position[name])
+            velocities.append(self.velocity[name])
+            accelerations.append(0.0)
+        point0 = JointTrajectoryPoint(
+            positions=positions,
+            velocities=velocities,
+            accelerations=accelerations,
+            time_from_start=Duration())
         goal_handle.trajectory.points.insert(0, point0)
         self.trajectory_t0 = now
 
@@ -197,31 +186,41 @@ class TrajectoryFollower():
         self.goal_handle = goal_handle
         self.trajectory = goal_handle.trajectory
         self.last_point_sent = False
+        self.node.get_logger().info('Goal Accepted')
         return GoalResponse.ACCEPT
 
     def on_cancel(self, goal_handle):
         """Handle a trajectory cancel command."""
-        if goal_handle == self.goal_handle:
-            # stop the motors
-            for name in TrajectoryFollower.jointNames:
-                self.motors[name].setPosition(self.sensors[name].getValue())
-            self.goal_handle = None
-            self.last_point_sent = True
+        # stop the motors
+        for name in TrajectoryFollower.jointNames:
+            self.motors[name].setPosition(self.sensors[name].getValue())
+        self.goal_handle = None
+        self.last_point_sent = True
+        self.node.get_logger().info('Goal Canceled')
         return CancelResponse.ACCEPT
 
     def update(self, goal_handle):
         result = FollowJointTrajectory.Result()
-        while self.robot and self.trajectory:
+        while self.robot:
+            # Update position and velocites
             now = self.robot.getTime()
             position = {}
             velocity = {}
             timeDifference = now - self.previousTime
-            for name in self.trajectory.joint_names:
+            for name in self.sensors.keys():
                 position[name] = self.sensors[name].getValue()
                 if timeDifference > 0.0:
                     velocity[name] = (position[name] - self.position[name]) / timeDifference
                 else:
                     velocity[name] = self.velocity[name]
+
+            if not self.trajectory:
+                self.position = position
+                self.velocity = velocity
+                self.previousTime = now
+                continue
+
+            # Apply trajectory
             if (now - self.trajectory_t0) <= (self.trajectory.points[-1].time_from_start.sec +
                                               self.trajectory.points[-1].time_from_start.nanosec *
                                               1.0e-6):
@@ -262,6 +261,7 @@ class TrajectoryFollower():
                         result.error_code = result.SUCCESSFUL
                         goal_handle.succeed()
                         self.goal_handle = None
+                        self.node.get_logger().info('Goal Succeeded')
                         return result
             self.position = position
             self.velocity = velocity

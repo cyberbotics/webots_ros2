@@ -49,7 +49,6 @@ class ActionServerNode(Node):
                                        Parameter('prefix', Parameter.Type.STRING, '')).value
         self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)
         self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=prefix)
-        self.trajectoryFollower.start()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
         timer_period = 0.001 * self.timestep  # seconds

@@ -16,12 +16,22 @@
 
 import copy
 import math
+import sys
+
+from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from builtin_interfaces.msg import Duration
 
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
+
+try:
+    append_webots_python_lib_to_path()
+    from controller import Node
+except Exception as e:
+    sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
+    raise e
 
 
 def trajectory_is_finite(trajectory):

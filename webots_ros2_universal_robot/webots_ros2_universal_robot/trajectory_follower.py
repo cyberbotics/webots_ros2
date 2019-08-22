@@ -72,9 +72,9 @@ def interp_cubic(p0, p1, t_abs):
     t1 = p1.time_from_start.sec + p1.time_from_start.nanosec * 1.0e-6
     T = t1 - t0
     t = t_abs - t0
-    q = [0] * 6
-    qdot = [0] * 6
-    qddot = [0] * 6
+    q = [0] * len(p0.positions)
+    qdot = [0] * len(p0.positions)
+    qddot = [0] * len(p0.positions)
     for i in range(len(p0.positions)):
         a = p0.positions[i]
         b = p0.velocities[i]
@@ -135,8 +135,8 @@ class TrajectoryFollower():
         self.timestep = int(robot.getBasicTimeStep())
         self.motors = []
         self.sensors = []
-        self.position = [0.0] * 6
-        self.velocity = [0.0] * 6
+        self.position = [0.0] * len(self.prefixedJointNames)
+        self.velocity = [0.0] * len(self.prefixedJointNames)
         for name in TrajectoryFollower.jointNames:
             motor = robot.getMotor(name)
             positionSensor = motor.getPositionSensor()
@@ -150,7 +150,7 @@ class TrajectoryFollower():
         self.goal_handle = None
         self.last_point_sent = True
         self.trajectory = None
-        self.joint_goal_tolerances = [0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+        self.joint_goal_tolerances = [0.05] * len(self.prefixedJointNames)
         self.server = ActionServer(self.node, FollowJointTrajectory,
                                    'follow_joint_trajectory',
                                    execute_callback=self.update,
@@ -163,9 +163,9 @@ class TrajectoryFollower():
         self.trajectory = JointTrajectory()
         self.trajectory.joint_names = self.prefixedJointNames
         self.trajectory.points = [JointTrajectoryPoint(
-            positions=[0] * 6,
-            velocities=[0] * 6,
-            accelerations=[0] * 6,
+            positions=[0] * len(self.prefixedJointNames),
+            velocities=[0] * len(self.prefixedJointNames),
+            accelerations=[0] * len(self.prefixedJointNames),
             time_from_start=Duration())]
 
     def start(self):
@@ -224,7 +224,7 @@ class TrajectoryFollower():
             position = []
             velocity = []
             timeDifference = now - self.previousTime
-            for i in range(6):
+            for i in range(len(self.prefixedJointNames)):
                 position.append(self.sensors[i].getValue())
                 if timeDifference > 0.0:
                     velocity.append((position[i] - self.position[i]) / timeDifference)
@@ -260,16 +260,16 @@ class TrajectoryFollower():
                 if self.goal_handle:
                     last_point = self.trajectory.points[-1]
                     position_in_tol = within_tolerance(position, last_point.positions,
-                                                       [0.1] * 6)
+                                                       [0.1] * len(self.prefixedJointNames))
                     velocity_in_tol = within_tolerance(velocity, last_point.velocities,
-                                                       [0.05] * 6)
+                                                       [0.05] * len(self.prefixedJointNames))
                     if position_in_tol and velocity_in_tol:
                         # The arm reached the goal (and isn't moving) => Succeeded
                         result.error_code = result.SUCCESSFUL
                         goal_handle.succeed()
                         self.goal_handle = None
                         return result
-            for i in range(6):
+            for i in range(len(self.position)):
                 self.position[i] = position[i]
                 self.velocity[i] = velocity[i]
             self.previousTime = now

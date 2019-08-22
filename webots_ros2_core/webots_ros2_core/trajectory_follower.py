@@ -109,6 +109,16 @@ def sample_trajectory(trajectory, t):
     return interp_cubic(trajectory.points[i], trajectory.points[i + 1], t)
 
 
+class Trajectory():
+    """Trajectory representation"""
+
+    def __init__(self, goalHandle, startTime):
+        self.jointTrajectory = goalHandle.trajectory
+        self.goalHandle = goalHandle
+        self.startTime = startTime
+        self.lastPointSent = False
+
+
 class TrajectoryFollower():
     """Create and handle the action 'follow_joint_trajectory' server."""
 
@@ -137,11 +147,9 @@ class TrajectoryFollower():
                     self.velocity[jointPrefix + name] = 0.0
                     positionSensor.enable(self.timestep)
         self.numberOfMotors = len(self.motors)
-        # Initialize tarjectories and action server
-        self.goal_handle = None
-        self.last_point_sent = True
+        # Initialize trajectory list and action server
         self.joint_goal_tolerances = [0.05] * self.numberOfMotors
-        self.trajectory = None
+        self.trajectories = []
         self.server = ActionServer(self.node, FollowJointTrajectory,
                                    'follow_joint_trajectory',
                                    execute_callback=self.update,
@@ -180,22 +188,21 @@ class TrajectoryFollower():
             accelerations=accelerations,
             time_from_start=Duration())
         goal_handle.trajectory.points.insert(0, point0)
-        self.trajectory_t0 = now
 
-        # Replaces the goal
-        self.goal_handle = goal_handle
-        self.trajectory = goal_handle.trajectory
-        self.last_point_sent = False
+        # Add this trajectory to the list
+        # TODO: check no conflicts
+        trajectory = Trajectory(goal_handle, now)
+        self.trajectories.append(trajectory)
         self.node.get_logger().info('Goal Accepted')
         return GoalResponse.ACCEPT
 
     def on_cancel(self, goal_handle):
         """Handle a trajectory cancel command."""
         # stop the motors
-        for name in TrajectoryFollower.jointNames:
+        trajectory = self.trajectories[0]  #TODO: we should remove the correct one
+        for name in trajectory.jointTrajectory.joint_names:
             self.motors[name].setPosition(self.sensors[name].getValue())
-        self.goal_handle = None
-        self.last_point_sent = True
+        self.trajectories.remove(trajectory)
         self.node.get_logger().info('Goal Canceled')
         return CancelResponse.ACCEPT
 
@@ -214,44 +221,44 @@ class TrajectoryFollower():
                 else:
                     velocity[name] = self.velocity[name]
 
-            if not self.trajectory:
+            if not self.trajectories:
                 self.position = position
                 self.velocity = velocity
                 self.previousTime = now
                 continue
 
             # Apply trajectory
-            if (now - self.trajectory_t0) <= (self.trajectory.points[-1].time_from_start.sec +
-                                              self.trajectory.points[-1].time_from_start.nanosec *
-                                              1.0e-6):
+            trajectory = self.trajectories[0]
+            lastPointStart = trajectory.jointTrajectory.points[-1].time_from_start
+            if (now - trajectory.startTime) <= (lastPointStart.sec +
+                                                lastPointStart.nanosec * 1.0e-6):
                 # Sending intermediate points
-                self.last_point_sent = False
-                setpoint = sample_trajectory(self.trajectory, now - self.trajectory_t0)
-                for name in self.trajectory.joint_names:
-                    index = self.trajectory.joint_names.index(name)
+                trajectory.lastPointSent = False
+                setpoint = sample_trajectory(trajectory.jointTrajectory,
+                                             now - trajectory.startTime)
+                for name in trajectory.jointTrajectory.joint_names:
+                    index = trajectory.jointTrajectory.joint_names.index(name)
                     self.motors[name].setPosition(setpoint.positions[index])
                     # Velocity control is not used on the real robot and gives
                     # bad results in the simulation
                     # self.motors[name].setVelocity(math.fabs(setpoint.velocities[index]))
-            elif not self.last_point_sent:
+            elif not trajectory.lastPointSent:
                 # All intermediate points sent, sending last point to make sure we reach the goal
-                self.last_point_sent = True
-                last_point = self.trajectory.points[-1]
+                trajectory.lastPointSent = True
+                last_point = trajectory.jointTrajectory.points[-1]
                 position_in_tol = within_tolerance(position, last_point.positions,
                                                    self.joint_goal_tolerances)
-                setpoint = sample_trajectory(self.trajectory,
-                                             self.trajectory.points[-1].time_from_start.sec +
-                                             self.trajectory.points[-1].time_from_start.nanosec *
-                                             1.0e-6)
-                for name in self.trajectory.joint_names:
-                    index = self.trajectory.joint_names.index(name)
+                setpoint = sample_trajectory(trajectory.jointTrajectory,
+                                             lastPointStart.sec + lastPointStart.nanosec * 1.0e-6)
+                for name in trajectory.jointTrajectory.joint_names:
+                    index = trajectory.jointTrajectory.joint_names.index(name)
                     self.motors[name].setPosition(setpoint.positions[index])
                     # Velocity control is not used on the real robot and gives
-                    # bad results in the simulation
+                    # bad results in the simulations
                     # self.motors[name].setVelocity(math.fabs(setpoint.velocities[index]))
             else:  # Off the end
-                if self.goal_handle:
-                    last_point = self.trajectory.points[-1]
+                if trajectory.goalHandle:  #TODO: useless ?
+                    last_point = trajectory.jointTrajectory.points[-1]
                     position_in_tol = within_tolerance(position, last_point.positions,
                                                        [0.1] * self.numberOfMotors)
                     velocity_in_tol = within_tolerance(velocity, last_point.velocities,
@@ -260,7 +267,8 @@ class TrajectoryFollower():
                         # The arm reached the goal (and isn't moving) => Succeeded
                         result.error_code = result.SUCCESSFUL
                         goal_handle.succeed()
-                        self.goal_handle = None
+                        trajectory.goalHandle = None  #TODO: useless ?
+                        self.trajectories.remove(trajectory)
                         self.node.get_logger().info('Goal Succeeded')
                         return result
             self.position = position

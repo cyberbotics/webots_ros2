@@ -14,17 +14,15 @@
 
 """Joint state publisher."""
 
-import os
 import sys
+
+from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from sensor_msgs.msg import JointState
 from builtin_interfaces.msg import Time
 
-if 'WEBOTS_HOME' not in os.environ:
-    sys.exit('"WEBOTS_HOME" not defined.')
 try:
-    sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
-                    (sys.version_info[0], sys.version_info[1])))
+    append_webots_python_lib_to_path()
     from controller import Node
 except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
@@ -55,8 +53,7 @@ class JointStatePublisher():
                 self.sensors.append(device)
                 self.previousPosition.append(0)
                 device.enable(self.timestep)
-        self.publisher = self.node.create_publisher(JointState, 'joint_states',
-                                                    1)
+        self.publisher = self.node.create_publisher(JointState, 'joint_states', 1)
 
     def publish(self):
         """Publish the 'joint_states' topic with up to date value."""

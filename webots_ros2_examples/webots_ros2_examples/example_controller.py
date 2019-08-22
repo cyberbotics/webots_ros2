@@ -14,69 +14,36 @@
 
 """ROS2 example controller."""
 
-import sys
-
-from time import sleep
-
-from webots_ros2_core.utils import get_webots_version, append_webots_python_lib_to_path
+from webots_ros2_core.webots_node import WebotsNode
 
 import rclpy
-from rclpy.node import Node
 
 from std_msgs.msg import Float64
 from example_interfaces.srv import AddTwoInts
-from rosgraph_msgs.msg import Clock
-
-try:
-    append_webots_python_lib_to_path()
-    from controller import Robot
-except Exception as e:
-    sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
-    raise e
 
 
-class ExampleController(Node):
+class ExampleController(WebotsNode):
 
     def __init__(self):
         super().__init__('example_controller')
-        if get_webots_version() == 'R2019b':
-            sleep(10)  # TODO: wait to make sure that Webots is started
-        self.robot = Robot()
-        self.timestep = int(self.robot.getBasicTimeStep())
-        self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
-        timer_period = 0.001 * self.timestep  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.sensorTimer = self.create_timer(0.001 * self.timestep, self.sensor_callback)
         self.leftMotor = self.robot.getMotor('motor.left')
         self.rightMotor = self.robot.getMotor('motor.right')
         self.leftMotor.setPosition(float('inf'))
         self.rightMotor.setPosition(float('inf'))
         self.leftMotor.setVelocity(0)
         self.rightMotor.setVelocity(0)
-        self.motorService = self.create_service(AddTwoInts, 'motor',
-                                                self.motor_callback)
+        self.motorService = self.create_service(AddTwoInts, 'motor', self.motor_callback)
         self.sensorPublisher = self.create_publisher(Float64, 'sensor', 10)
         # front central proximity sensor
         self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')
         self.frontSensor.enable(self.timestep)
 
-    def timer_callback(self):
-        # Publish clock
-        msg = Clock()
-        time = self.robot.getTime()
-        msg.clock.sec = int(time)
-        # round prevents precision issues causing problems with ROS timers
-        msg.clock.nanosec = int(round(1000 * (time - msg.clock.sec)) * 1.0e+6)
-        self.clockPublisher.publish(msg)
-        # self.get_logger().info('Time: "%lf"' % self.robot.getTime())
+    def sensor_callback(self):
         # Publish distance sensor value
         msg = Float64()
         msg.data = self.frontSensor.getValue()
         self.sensorPublisher.publish(msg)
-        # Robot step
-        if self.robot.step(self.timestep) < 0.0:
-            self.destroy_timer(self.timer)
-            self.destroy_node()
-            sys.exit(0)
 
     def motor_callback(self, request, response):
         self.leftMotor.setVelocity(request.a)

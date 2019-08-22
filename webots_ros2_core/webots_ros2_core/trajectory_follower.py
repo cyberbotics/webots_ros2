@@ -257,20 +257,18 @@ class TrajectoryFollower():
                     # bad results in the simulations
                     # self.motors[name].setVelocity(math.fabs(setpoint.velocities[index]))
             else:  # Off the end
-                if trajectory.goalHandle:  #TODO: useless ?
-                    last_point = trajectory.jointTrajectory.points[-1]
-                    position_in_tol = within_tolerance(position, last_point.positions,
-                                                       [0.1] * self.numberOfMotors)
-                    velocity_in_tol = within_tolerance(velocity, last_point.velocities,
-                                                       [0.05] * self.numberOfMotors)
-                    if position_in_tol and velocity_in_tol:
-                        # The arm reached the goal (and isn't moving) => Succeeded
-                        result.error_code = result.SUCCESSFUL
-                        goal_handle.succeed()
-                        trajectory.goalHandle = None  #TODO: useless ?
-                        self.trajectories.remove(trajectory)
-                        self.node.get_logger().info('Goal Succeeded')
-                        return result
+                last_point = trajectory.jointTrajectory.points[-1]
+                position_in_tol = within_tolerance(position, last_point.positions,
+                                                   [0.1] * self.numberOfMotors)
+                velocity_in_tol = within_tolerance(velocity, last_point.velocities,
+                                                   [0.05] * self.numberOfMotors)
+                if position_in_tol and velocity_in_tol:
+                    # The arm reached the goal (and isn't moving) => Succeeded
+                    result.error_code = result.SUCCESSFUL
+                    goal_handle.succeed()
+                    self.trajectories.remove(trajectory)
+                    self.node.get_logger().info('Goal Succeeded')
+                    return result
             self.position = position
             self.velocity = velocity
             self.previousTime = now

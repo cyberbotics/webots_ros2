@@ -53,8 +53,7 @@ class JointStatePublisher():
                 self.sensors.append(device)
                 self.previousPosition.append(0)
                 device.enable(self.timestep)
-        self.publisher = self.node.create_publisher(JointState, 'joint_states',
-                                                    1)
+        self.publisher = self.node.create_publisher(JointState, 'joint_states', 1)
 
     def publish(self):
         """Publish the 'joint_states' topic with up to date value."""

@@ -14,63 +14,28 @@
 
 """ROS2 Universal Robots controller."""
 
-import sys
-
-from time import sleep
-
-from webots_ros2_core.utils import get_webots_version, append_webots_python_lib_to_path
-
-from webots_ros2_universal_robot.joint_state_publisher import JointStatePublisher
-from webots_ros2_universal_robot.trajectory_follower import TrajectoryFollower
-
-from rosgraph_msgs.msg import Clock
+from webots_ros2_core.webots_node import WebotsNode
+from webots_ros2_core.joint_state_publisher import JointStatePublisher
+from webots_ros2_core.trajectory_follower import TrajectoryFollower
 
 import rclpy
-from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.parameter import Parameter
 
-try:
-    append_webots_python_lib_to_path()
-    from controller import Robot
-except Exception as e:
-    sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
-    raise e
 
-
-class ActionServerNode(Node):
+class ActionServerNode(WebotsNode):
 
     def __init__(self):
         super().__init__('ur_driver')
-        if get_webots_version() == 'R2019b':
-            sleep(15)  # TODO: wait to make sure that Webots is started
-        self.robot = Robot()
         prefix = self.get_parameter_or('prefix',
                                        Parameter('prefix', Parameter.Type.STRING, '')).value
         self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)
         self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=prefix)
-        self.timestep = int(self.robot.getBasicTimeStep())
-        self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
-        timer_period = 0.001 * self.timestep  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.jointStateTimer = self.create_timer(0.001 * self.timestep, self.joint_state_callback)
 
-    def timer_callback(self):
-        if self.robot is None:
-            return
-        # Publish clock
-        msg = Clock()
-        time = self.robot.getTime()
-        msg.clock.sec = int(time)
-        # round prevents precision issues that can cause problems with ROS timers
-        msg.clock.nanosec = int(round(1000 * (time - msg.clock.sec)) * 1.0e+6)
-        self.clockPublisher.publish(msg)
+    def joint_state_callback(self):
         # update joint state and trajectory follower
         self.jointStatePublisher.publish()
-        # Robot step
-        if self.robot.step(self.timestep) < 0.0:
-            del self.robot
-            self.robot = None
-            sys.exit(0)
 
 
 def main(args=None):

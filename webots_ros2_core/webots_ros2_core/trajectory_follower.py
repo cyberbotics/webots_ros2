@@ -110,7 +110,7 @@ def sample_trajectory(trajectory, t):
 
 
 class Trajectory():
-    """Trajectory representation"""
+    """Trajectory representation."""
 
     def __init__(self, goalHandle, startTime):
         self.jointTrajectory = goalHandle.trajectory
@@ -148,7 +148,7 @@ class TrajectoryFollower():
                     positionSensor.enable(self.timestep)
         self.numberOfMotors = len(self.motors)
         # Initialize trajectory list and action server
-        self.joint_goal_tolerances = [0.05] * self.numberOfMotors
+        self.joint_path_tolerances = [0.05] * self.numberOfMotors
         self.trajectories = []
         self.server = ActionServer(self.node, FollowJointTrajectory,
                                    'follow_joint_trajectory',
@@ -189,11 +189,16 @@ class TrajectoryFollower():
             time_from_start=Duration())
         goal_handle.trajectory.points.insert(0, point0)
 
-        # Add this trajectory to the list
-        # TODO: check no conflicts
+        # Add this trajectory to the list if not conflicting with a current trajectory
+        logger = self.node.get_logger()
+        for trajectory in self.trajectories:
+            if bool(set(trajectory.jointTrajectory.joint_names) &
+                    set(goal_handle.trajectory.joint_names)):
+                logger.info('Goal Refused: a goal sharing some joint is already running')
+                return GoalResponse.REJECT
         trajectory = Trajectory(goal_handle, now)
         self.trajectories.append(trajectory)
-        self.node.get_logger().info('Goal Accepted')
+        logger.info('Goal Accepted')
         return GoalResponse.ACCEPT
 
     def on_cancel(self, goal_handle):
@@ -247,7 +252,7 @@ class TrajectoryFollower():
                 trajectory.lastPointSent = True
                 last_point = trajectory.jointTrajectory.points[-1]
                 position_in_tol = within_tolerance(position, last_point.positions,
-                                                   self.joint_goal_tolerances)
+                                                   self.joint_path_tolerances)
                 setpoint = sample_trajectory(trajectory.jointTrajectory,
                                              lastPointStart.sec + lastPointStart.nanosec * 1.0e-6)
                 for name in trajectory.jointTrajectory.joint_names:

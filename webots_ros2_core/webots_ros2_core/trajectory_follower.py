@@ -117,6 +117,7 @@ class Trajectory():
         self.goalHandle = goalHandle
         self.startTime = startTime
         self.lastPointSent = False
+        self.id = None
 
 
 class TrajectoryFollower():
@@ -154,7 +155,14 @@ class TrajectoryFollower():
                                    'follow_joint_trajectory',
                                    execute_callback=self.update,
                                    goal_callback=self.on_goal,
-                                   cancel_callback=self.on_cancel)
+                                   cancel_callback=self.on_cancel,
+                                   handle_accepted_callback=self.on_goal_accepted)
+
+    def on_goal_accepted(self, goal_handle):
+        """Assign ID and execute the goal."""
+        assert self.trajectories[-1].id is None
+        self.trajectories[-1].id = goal_handle.goal_id
+        goal_handle.execute()
 
     def on_goal(self, goal_handle):
         """Handle a new goal trajectory command."""
@@ -204,12 +212,16 @@ class TrajectoryFollower():
     def on_cancel(self, goal_handle):
         """Handle a trajectory cancel command."""
         # stop the motors
-        trajectory = self.trajectories[0]  #TODO: we should remove the correct one
-        for name in trajectory.jointTrajectory.joint_names:
-            self.motors[name].setPosition(self.sensors[name].getValue())
-        self.trajectories.remove(trajectory)
-        self.node.get_logger().info('Goal Canceled')
-        return CancelResponse.ACCEPT
+        trajectory = None
+        for trajectory in self.trajectories:
+            if trajectory.id == goal_handle.goal_id:
+                for name in trajectory.jointTrajectory.joint_names:
+                    self.motors[name].setPosition(self.sensors[name].getValue())
+                self.trajectories.remove(trajectory)
+                self.node.get_logger().info('Goal Canceled')
+                goal_handle.destroy()
+                return CancelResponse.ACCEPT
+        return CancelResponse.REJECT
 
     def update(self, goal_handle):
         result = FollowJointTrajectory.Result()
@@ -230,10 +242,17 @@ class TrajectoryFollower():
                 self.position = position
                 self.velocity = velocity
                 self.previousTime = now
-                continue
+                break
 
+            # Look for the trajectory associated to this goal
+            trajectory = None
+            for traj in self.trajectories:
+                if traj.id == goal_handle.goal_id:
+                    trajectory = traj
+                    break
+            if not trajectory:
+                break
             # Apply trajectory
-            trajectory = self.trajectories[0]
             lastPointStart = trajectory.jointTrajectory.points[-1].time_from_start
             if (now - trajectory.startTime) <= (lastPointStart.sec +
                                                 lastPointStart.nanosec * 1.0e-6):
@@ -277,5 +296,6 @@ class TrajectoryFollower():
             self.position = position
             self.velocity = velocity
             self.previousTime = now
+        goal_handle.abort()
         result.error_code = result.PATH_TOLERANCE_VIOLATED
         return result

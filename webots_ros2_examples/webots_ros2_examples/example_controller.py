@@ -15,11 +15,11 @@
 """ROS2 example controller."""
 
 from webots_ros2_core.webots_node import WebotsNode
+from webots_ros2_msgs.srv import SetDifferentialWheelSpeed
 
 import rclpy
 
 from std_msgs.msg import Float64
-from example_interfaces.srv import AddTwoInts
 
 
 class ExampleController(WebotsNode):
@@ -33,7 +33,7 @@ class ExampleController(WebotsNode):
         self.rightMotor.setPosition(float('inf'))
         self.leftMotor.setVelocity(0)
         self.rightMotor.setVelocity(0)
-        self.motorService = self.create_service(AddTwoInts, 'motor', self.motor_callback)
+        self.motorService = self.create_service(SetDifferentialWheelSpeed, 'motor', self.motor_callback)
         self.sensorPublisher = self.create_publisher(Float64, 'sensor', 10)
         # front central proximity sensor
         self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')
@@ -46,8 +46,8 @@ class ExampleController(WebotsNode):
         self.sensorPublisher.publish(msg)
 
     def motor_callback(self, request, response):
-        self.leftMotor.setVelocity(request.a)
-        self.rightMotor.setVelocity(request.b)
+        self.leftMotor.setVelocity(request.leftSpeed)
+        self.rightMotor.setVelocity(request.rightSpeed)
         return response
 
 

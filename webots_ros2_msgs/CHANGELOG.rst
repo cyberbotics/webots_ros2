@@ -2,6 +2,6 @@
 Changelog for package webots_ros2_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.0.2 (2019-09-XX)
+0.0.2 (2019-09-23)
 ------------------
 * Initial version

@@ -29,6 +29,19 @@ ros2 action send_goal /follow_joint_trajectory control_msgs/action/FollowJointTr
 }"
 ```
 
+## Move Robot in the Example
+
+The `/motor` service can be tested directly using the ROS2 service CLI interface to move the robot:
+
+```
+ros2 service call /motor webots_ros2_msgs/SetDifferentialWheelSpeed "{ left_speed: 1.0, right_speed: 0.5 }"
+```
+
+And the output of the sensor (`/sensor` topic) can be displayed directly using the ROS2 topic CLI interface to move the robot:
+```
+ros2 topic echo /sensor"
+```
+
 ## Other
 
 At runtime, ROS2 will look for Webots at the following locations (in this order):

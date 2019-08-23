@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>webots_ros2_msgs</name>
+  <version>0.0.2</version>
+  <description>Services and Messages of the webots_ros2 packages.</description>
+
+  <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
+  <license>Apache License 2.0</license>
+  <url>http://wiki.ros.org/webots_ros2</url>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+
+  <build_depend>builtin_interfaces</build_depend>
+
+  <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

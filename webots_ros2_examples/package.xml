@@ -7,11 +7,13 @@
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
   <license>Apache License 2.0</license>
+  <url>http://wiki.ros.org/webots_ros2</url>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>webots_ros2_msgs</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>
 
   <!-- These test dependencies are optional

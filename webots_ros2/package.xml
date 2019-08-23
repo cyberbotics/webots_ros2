@@ -7,7 +7,9 @@
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
   <license>Apache License 2.0</license>
-  <url>http://wiki.ros.org/webots_ros2</url>
+  <url type="website">http://wiki.ros.org/webots_ros2</url>
+  <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
+  <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>

@@ -39,7 +39,7 @@ ros2 service call /motor webots_ros2_msgs/SetDifferentialWheelSpeed "{ left_spee
 
 And the output of the sensor (`/sensor` topic) can be displayed directly using the ROS2 topic CLI interface to move the robot:
 ```
-ros2 topic echo /sensor"
+ros2 topic echo /sensor
 ```
 
 ## Other

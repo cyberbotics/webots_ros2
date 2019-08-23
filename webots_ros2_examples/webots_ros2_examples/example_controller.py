@@ -33,7 +33,8 @@ class ExampleController(WebotsNode):
         self.rightMotor.setPosition(float('inf'))
         self.leftMotor.setVelocity(0)
         self.rightMotor.setVelocity(0)
-        self.motorService = self.create_service(SetDifferentialWheelSpeed, 'motor', self.motor_callback)
+        self.motorService = self.create_service(SetDifferentialWheelSpeed, 'motor',
+                                                self.motor_callback)
         self.sensorPublisher = self.create_publisher(Float64, 'sensor', 10)
         # front central proximity sensor
         self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')

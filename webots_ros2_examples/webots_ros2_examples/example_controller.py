@@ -46,8 +46,8 @@ class ExampleController(WebotsNode):
         self.sensorPublisher.publish(msg)
 
     def motor_callback(self, request, response):
-        self.leftMotor.setVelocity(request.leftSpeed)
-        self.rightMotor.setVelocity(request.rightSpeed)
+        self.leftMotor.setVelocity(request.left_speed)
+        self.rightMotor.setVelocity(request.right_speed)
         return response
 
 

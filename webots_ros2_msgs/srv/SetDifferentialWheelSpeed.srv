@@ -1,3 +1,3 @@
-float64 leftSpeed
-float64 rightSpeed
+float64 left_speed
+float64 right_speed
 ---

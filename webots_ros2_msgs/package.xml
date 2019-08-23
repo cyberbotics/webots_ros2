@@ -10,10 +10,12 @@
   <url>http://wiki.ros.org/webots_ros2</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
 
-  <build_depend>rclcpp</build_depend>
+  <build_depend>builtin_interfaces</build_depend>
 
-  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

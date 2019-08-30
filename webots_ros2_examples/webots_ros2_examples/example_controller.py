@@ -24,8 +24,8 @@ from std_msgs.msg import Float64
 
 class ExampleController(WebotsNode):
 
-    def __init__(self):
-        super().__init__('example_controller')
+    def __init__(self, args):
+        super().__init__('example_controller', args)
         self.sensorTimer = self.create_timer(0.001 * self.timestep, self.sensor_callback)
         self.leftMotor = self.robot.getMotor('motor.left')
         self.rightMotor = self.robot.getMotor('motor.right')
@@ -55,7 +55,7 @@ class ExampleController(WebotsNode):
 def main(args=None):
     rclpy.init(args=args)
 
-    exampleController = ExampleController()
+    exampleController = ExampleController(args=args)
 
     rclpy.spin(exampleController)
     rclpy.shutdown()

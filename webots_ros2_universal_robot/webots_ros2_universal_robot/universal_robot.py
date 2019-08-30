@@ -25,8 +25,8 @@ from rclpy.parameter import Parameter
 
 class ActionServerNode(WebotsNode):
 
-    def __init__(self):
-        super().__init__('ur_driver')
+    def __init__(self, args):
+        super().__init__('ur_driver', args=args)
         prefix = self.get_parameter_or('prefix',
                                        Parameter('prefix', Parameter.Type.STRING, '')).value
         self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)
@@ -41,7 +41,7 @@ class ActionServerNode(WebotsNode):
 def main(args=None):
     rclpy.init(args=args)
 
-    actionServer = ActionServerNode()
+    actionServer = ActionServerNode(args=args)
 
     # Use a MultiThreadedExecutor to enable processing goals concurrently
     executor = MultiThreadedExecutor()

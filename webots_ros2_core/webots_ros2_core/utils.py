@@ -53,8 +53,17 @@ def get_webots_home():
 
 def append_webots_lib_to_path():
     """Add the Webots 'lib' folder to the library path."""
-    os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
-                                     os.environ.get('LD_LIBRARY_PATH'))
+    if sys.platform == 'linux':
+        os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
+                                         os.environ.get('LD_LIBRARY_PATH'))
+    elif sys.platform == 'darwin':
+        os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
+                                           os.environ.get('DYLD_LIBRARY_PATH'))
+    elif sys.platform == 'win32':
+        os.environ['PATH'] = (os.path.join(get_webots_home(), 'msys64', 'mingw64', 'bin') + ';' +
+                              os.environ.get('PATH'))
+    else:
+        sys.exit('Unsupported Platform!')
 
 
 def append_webots_python_lib_to_path():

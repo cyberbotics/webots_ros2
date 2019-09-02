@@ -40,10 +40,10 @@ def get_webots_home():
         webotsHome = '/usr/local/webots'
     elif os.path.isdir('/snap/webots/current/usr/share/webots'):  # Linux snap install
         webotsHome = '/snap/webots/current/usr/share/webots'
-    elif os.path.isdir('C:\Program Files\Webots'):  # Windows default install
-        webotsHome = 'C:\Program Files\Webots'
-    elif os.path.isdir(os.getenv('LOCALAPPDATA') + '\Programs\Webots'):  # Windows user install
-        webotsHome = os.getenv('LOCALAPPDATA') + '\Programs\Webots'
+    elif os.path.isdir('C:\\Program Files\\Webots'):  # Windows default install
+        webotsHome = 'C:\\Program Files\\Webots'
+    elif os.path.isdir(os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'):  # Windows user install
+        webotsHome = os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'
     else:
         sys.exit('Webots not found, you should either define "ROS2_WEBOTS_HOME", "WEBOTS_HOME" ' +
                  'or install the "webots_ros2_desktop" package.')

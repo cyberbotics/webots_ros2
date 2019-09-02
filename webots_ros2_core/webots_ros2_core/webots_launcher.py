@@ -19,6 +19,7 @@
 import argparse
 import os
 import subprocess
+import sys
 
 from webots_ros2_core.utils import get_webots_home
 
@@ -30,8 +31,10 @@ def main(args=None):
     parser.add_argument("--no-gui", dest="noGui", default="false",
                         help="Start Webots with minimal GUI.")
     args = parser.parse_args()
-
-    command = [os.path.join(get_webots_home(), 'webots'), '--mode=' + args.mode, args.world]
+    webotsPath = get_webots_home()
+    if sys.platform == 'win32':
+        webotsPath = os.path.join(webotsPath, 'msys64', 'mingw64', 'bin')
+    command = [os.path.join(webotsPath, 'webots'), '--mode=' + args.mode, args.world]
     if args.noGui == 'true':
         command.append('--stdout')
         command.append('--stderr')

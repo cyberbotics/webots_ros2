@@ -5,9 +5,9 @@ The following procedure should be used to compile the package and launch the sim
 
 ```
 export WEBOTS_HOME=~/Downloads/webots
-source /opt/ros/dashing/setup.bash
+source /opt/ros/dashing/setup.bash  # on Windows: call C:\dev\ros2\local_setup.bat
 colcon build
-source install/setup.bash
+source install/setup.bash  # on Windows: call install\setup.bat
 source install/local_setup.bash
 ros2 launch webots_ros2_universal_robot universal_robot.launch.py  # ros2 run webots_ros2_examples example_controller
 ```

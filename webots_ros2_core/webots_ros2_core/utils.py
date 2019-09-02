@@ -36,10 +36,14 @@ def get_webots_home():
         webotsHome = webots_ros2_desktop.webots_path.get_webots_home()
     elif 'WEBOTS_HOME' in os.environ:
         webotsHome = os.environ['WEBOTS_HOME']
-    elif os.path.isdir('/usr/local/webots'):
+    elif os.path.isdir('/usr/local/webots'):  # Linux default install
         webotsHome = '/usr/local/webots'
-    elif os.path.isdir('/snap/webots/current/usr/share/webots'):
+    elif os.path.isdir('/snap/webots/current/usr/share/webots'):  # Linux snap install
         webotsHome = '/snap/webots/current/usr/share/webots'
+    elif os.path.isdir('C:\\Program Files\\Webots'):  # Windows default install
+        webotsHome = 'C:\\Program Files\\Webots'
+    elif os.path.isdir(os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'):  # Windows user install
+        webotsHome = os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'
     else:
         sys.exit('Webots not found, you should either define "ROS2_WEBOTS_HOME", "WEBOTS_HOME" ' +
                  'or install the "webots_ros2_desktop" package.')
@@ -49,8 +53,17 @@ def get_webots_home():
 
 def append_webots_lib_to_path():
     """Add the Webots 'lib' folder to the library path."""
-    os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
-                                     os.environ.get('LD_LIBRARY_PATH'))
+    if sys.platform == 'linux':
+        os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
+                                         os.environ.get('LD_LIBRARY_PATH'))
+    elif sys.platform == 'darwin':
+        os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
+                                           os.environ.get('DYLD_LIBRARY_PATH'))
+    elif sys.platform == 'win32':
+        os.environ['PATH'] = (os.path.join(get_webots_home(), 'msys64', 'mingw64', 'bin') + ';' +
+                              os.environ.get('PATH'))
+    else:
+        sys.exit('Unsupported Platform!')
 
 
 def append_webots_python_lib_to_path():

@@ -18,7 +18,8 @@ for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
         textures.append(filePath)
 launchers = [
     'launch/universal_robot.launch.py',
-    'launch/universal_robot_multiple.launch.py'
+    'launch/universal_robot_multiple.launch.py',
+    'launch/universal_robot_rviz.launch.py'
 ]
 
 data_files = []

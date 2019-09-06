@@ -18,6 +18,7 @@
   <exec_depend>rosgraph_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>rviz2</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>
   <exec_depend>webots_ros2_ur_e_description</exec_depend> <!-- TODO: replace by universal_robot once available for ROS2 -->
 

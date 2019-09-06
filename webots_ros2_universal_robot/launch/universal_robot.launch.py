@@ -30,23 +30,13 @@ def generate_launch_description():
                               'worlds', 'universal_robot.wbt')]
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
-    URe5Controller = launch_ros.actions.Node(package='webots_ros2_universal_robot',
-                                             node_executable='universal_robot',
-                                             # this argument should match the 'name' field
-                                             # of the robot in Webots
-                                             arguments=['--webots-robot-name=UR5e'],
-                                             output='screen')
-    tfController = launch_ros.actions.Node(package='webots_ros2_universal_robot',
-                                           node_executable='universal_robot',
-                                           # this argument should match the 'name' field
-                                           # of the robot in Webots
-                                           arguments=['--webots-robot-name=tf_supervisor'],
-                                           output='screen')
+    controller = launch_ros.actions.Node(package='webots_ros2_universal_robot',
+                                         node_executable='universal_robot',
+                                         output='screen')
     append_webots_lib_to_path()
     return launch.LaunchDescription([
         webots,
-        URe5Controller,
-        tfController,
+        controller,
         # Shutdown launch when webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

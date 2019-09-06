@@ -1,9 +1,9 @@
 """webots_ros2 package setup file."""
 
-from setuptools import setup
-
 import os
 import fnmatch
+
+from setuptools import setup
 
 package_name = 'webots_ros2_universal_robot'
 worlds = [

@@ -25,31 +25,18 @@ from geometry_msgs.msg import TransformStamped
 
 class TfPublisher(WebotsNode):
 
-    nodeNames = [  # TODO. argument
-        'base_link',
-        'shoulder_link',
-        'upper_arm_link',
-        'forearm_link',
-        'wrist_1_link',
-        'wrist_2_link',
-        'wrist_3_link',
-        'base',  # TODO: artificial from here
-        'ee_link',
-        'tool0',
-        'world'
-    ]
-
     def __init__(self, args):
         super().__init__('tf_publisher', args)
         self.publisherTimer = self.create_timer(0.001 * self.timestep, self.tf_publisher_callback)
         self.tfPublisher = self.create_publisher(TFMessage, 'tf', 10)
         self.nodes = {}
-        for name in TfPublisher.nodeNames:
+        # get the node from the DEF names defined in the customData field
+        for name in self.robot.getCustomData().split():
             node = self.robot.getFromDef(name)
             if node is not None:
                 self.nodes[name] = node
             else:
-                print(name)  # TODO:log warning
+                self.get_logger().warn('No node with the "%s" DEF name found.' % name)
 
     def tf_publisher_callback(self):
         # Publish TF
@@ -58,9 +45,8 @@ class TfPublisher(WebotsNode):
             position = self.nodes[name].getPosition()
             orientation = self.nodes[name].getOrientation()
             transformStamped = TransformStamped()
-            time = self.robot.getTime()  # TODO avoid duplication about time
-            transformStamped.header.stamp.sec = int(time)
-            transformStamped.header.stamp.nanosec = int(round(1000 * (time - int(time))) * 1.0e+6)
+            transformStamped.header.stamp.sec = self.sec
+            transformStamped.header.stamp.nanosec = self.nanosec
             transformStamped.header.frame_id = 'map'
             transformStamped.child_frame_id = name
             transformStamped.transform.translation.x = position[0]

@@ -62,7 +62,7 @@ class WebotsNode(Node):
         msg = Clock()
         time = self.robot.getTime()
         msg.clock.sec = int(time)
-        # round prevents precision issues that can cause problems with ROS timers
+        # rounding prevents precision issues that can cause problems with ROS timers
         msg.clock.nanosec = int(round(1000 * (time - msg.clock.sec)) * 1.0e+6)
         self.clockPublisher.publish(msg)
         # Robot step

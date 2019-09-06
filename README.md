@@ -2,7 +2,7 @@
 
 # webots_ros2 ROS2 packages
 
-These packages do provide an interface for controlling robots simulated in Webots using ROS2.
+These packages provide an interface for controlling robots simulated in Webots using ROS2.
 
 All the documentation and tutorials are available on the [ROS wiki](http://wiki.ros.org/webots_ros2).
 

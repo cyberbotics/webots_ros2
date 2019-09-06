@@ -39,14 +39,14 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Plane: XY
+      Plane: XZ
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
-      Description File: /home/cyberbotics/ros2_workspace/install/ur_e_description/share/urdf/ur5e_robot.urdf
+      Description File: /home/cyberbotics/ros2_workspace/install/webots_ros2_ur_e_description/share/webots_ros2_ur_e_description/urdf/ur5e_robot.urdf
       Description Source: File
       Description Topic: ""
       Enabled: true

@@ -8,7 +8,8 @@ import fnmatch
 package_name = 'webots_ros2_universal_robot'
 worlds = [
     'worlds/universal_robot.wbt',
-    'worlds/universal_robot_multiple.wbt'
+    'worlds/universal_robot_multiple.wbt',
+    'worlds/universal_robot_rviz.wbt'
 ]
 textures = []
 for rootPath, dirNames, fileNames in os.walk('worlds/textures'):

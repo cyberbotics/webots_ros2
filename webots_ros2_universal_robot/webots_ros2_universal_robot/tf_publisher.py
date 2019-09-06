@@ -49,7 +49,7 @@ class TfPublisher(WebotsNode):
             if node is not None:
                 self.nodes[name] = node
             else:
-                print('name')  # TODO:log warning
+                print(name)  # TODO:log warning
 
     def tf_publisher_callback(self):
         # Publish TF

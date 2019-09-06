@@ -41,7 +41,10 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['universal_robot = webots_ros2_universal_robot.universal_robot:main'],
+        'console_scripts': [
+            'universal_robot = webots_ros2_universal_robot.universal_robot:main',
+            'tf_publisher = webots_ros2_universal_robot.tf_publisher:main'
+        ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

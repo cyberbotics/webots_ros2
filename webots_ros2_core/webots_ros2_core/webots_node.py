@@ -30,7 +30,7 @@ from rclpy.node import Node
 
 try:
     append_webots_python_lib_to_path()
-    from controller import Robot
+    from controller import Supervisor
 except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
     raise e
@@ -49,7 +49,7 @@ class WebotsNode(Node):
             os.environ['WEBOTS_ROBOT_NAME'] = arguments.webotsRobotName
         if get_webots_version() == 'R2019b':
             sleep(10)  # TODO: wait to make sure that Webots is started
-        self.robot = Robot()
+        self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
         timer_period = 0.001 * self.timestep  # seconds

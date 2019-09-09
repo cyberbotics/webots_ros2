@@ -27,6 +27,8 @@ class ActionServerNode(WebotsNode):
     def __init__(self, args):
         super().__init__('ur_driver', args=args)
         prefix = self.get_parameter('prefix').value
+        if prefix is None:
+            prefix = ''
         self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)
         self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=prefix)
         self.jointStateTimer = self.create_timer(0.001 * self.timestep, self.joint_state_callback)

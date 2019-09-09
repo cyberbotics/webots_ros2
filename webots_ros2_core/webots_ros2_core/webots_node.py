@@ -16,6 +16,8 @@
 
 """Base node class."""
 
+import argparse
+import os
 import sys
 
 from time import sleep
@@ -36,8 +38,15 @@ except Exception as e:
 
 class WebotsNode(Node):
 
-    def __init__(self, name):
+    def __init__(self, name, args=None):
         super().__init__(name)
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
+                            help='Specifies the "name" field of the robot in Webots.')
+        # use 'parse_known_args' because ROS2 adds a lot of internal arguments
+        arguments, unknown = parser.parse_known_args()
+        if arguments.webotsRobotName:
+            os.environ['WEBOTS_ROBOT_NAME'] = arguments.webotsRobotName
         if get_webots_version() == 'R2019b':
             sleep(10)  # TODO: wait to make sure that Webots is started
         self.robot = Robot()
@@ -53,7 +62,7 @@ class WebotsNode(Node):
         msg = Clock()
         time = self.robot.getTime()
         msg.clock.sec = int(time)
-        # round prevents precision issues that can cause problems with ROS timers
+        # rounding prevents precision issues that can cause problems with ROS timers
         msg.clock.nanosec = int(round(1000 * (time - msg.clock.sec)) * 1.0e+6)
         self.clockPublisher.publish(msg)
         # Robot step

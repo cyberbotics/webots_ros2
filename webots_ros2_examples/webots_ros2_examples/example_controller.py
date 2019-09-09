@@ -35,7 +35,7 @@ class ExampleController(WebotsNode):
         self.rightMotor.setVelocity(0)
         self.motorService = self.create_service(SetDifferentialWheelSpeed, 'motor',
                                                 self.motor_callback)
-        self.sensorPublisher = self.create_publisher(Float64, 'sensor', 10)
+        self.sensorPublisher = self.create_publisher(Float64, 'sensor')
         # front central proximity sensor
         self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')
         self.frontSensor.enable(self.timestep)

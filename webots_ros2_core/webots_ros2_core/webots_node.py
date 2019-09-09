@@ -51,7 +51,7 @@ class WebotsNode(Node):
             sleep(10)  # TODO: wait to make sure that Webots is started
         self.robot = Robot()
         self.timestep = int(self.robot.getBasicTimeStep())
-        self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
+        self.clockPublisher = self.create_publisher(Clock, 'topic')
         timer_period = 0.001 * self.timestep  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
 

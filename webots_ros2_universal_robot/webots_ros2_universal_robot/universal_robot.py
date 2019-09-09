@@ -20,7 +20,6 @@ from webots_ros2_core.trajectory_follower import TrajectoryFollower
 
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
-from rclpy.parameter import Parameter
 
 
 class ActionServerNode(WebotsNode):

@@ -10,7 +10,7 @@ from setuptools import setup
 package_name = 'webots_ros2_desktop'
 data_files = []
 # If 'WEBOTS_HOME' not set try to download latest package (only on linux)
-if 'WEBOTS_HOME' not in os.environ: # TODO: only on linux
+if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platform == 'linux:
     #TODO: remove previous artifact
     urllib.request.urlretrieve('https://github.com/omichel/webots/releases/download/R2019b/webots-R2019b-x86-64.tar.bz2',
                                os.path.join(os.path.dirname(__file__), 'webots-R2019b-x86-64.tar.bz2'))

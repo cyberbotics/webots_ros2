@@ -30,7 +30,9 @@ if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platfo
     tar = tarfile.open(archiveName, 'r:bz2')
     tar.extractall()
     tar.close()
-    os.environ['WEBOTS_HOME'] = os.path.join(os.path.dirname(__file__), 'webots')
+    os.environ['WEBOTS_HOME'] = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                'webots',
+                                                'change_logs'))
     print('Webots installed...')
 # Add Webots in the package
 if 'WEBOTS_HOME' in os.environ:

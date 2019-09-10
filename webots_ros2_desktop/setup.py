@@ -12,18 +12,21 @@ package_name = 'webots_ros2_desktop'
 data_files = []
 # If 'WEBOTS_HOME' not set try to download latest package (only on linux)
 if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platform == 'linux':
+    # Get Webots version
+    webotsVersion = None
+    with open('webots_version.txt') as f:
+        webotsVersion = f.read().strip()
     # Remove previous archive
-    archiveName = 'webots-R2019b-x86-64.tar.bz2'
+    archiveName = 'webots-%s-x86-64.tar.bz2' % webotsVersion
     if os.path.exists(archiveName):
         os.remove(archiveName)
     # Remove previous webots folder
     if os.path.exists('webots') and os.path.isdir('webots'):
         shutil.rmtree('webots')
     # Get Webots archive
-    url = 'https://github.com/omichel/webots/releases/download/R2019b/'
+    url = 'https://github.com/omichel/webots/releases/download/%s/' % webotsVersion
     urllib.request.urlretrieve(url + archiveName,
-                               os.path.join(os.path.dirname(__file__),
-                                            'webots-R2019b-x86-64.tar.bz2'))
+                               os.path.join(os.path.dirname(__file__), archiveName))
     # Extract Webots archive
     tar = tarfile.open(archiveName, 'r:bz2')
     tar.extractall()

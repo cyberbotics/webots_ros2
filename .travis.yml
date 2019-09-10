@@ -13,4 +13,5 @@ install:
   - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 script:
   - echo $TRAVIS
+  - python ./test.py
   - .industrial_ci/travis.sh

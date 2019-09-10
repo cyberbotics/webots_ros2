@@ -19,6 +19,13 @@
 import os
 import sys
 
+from typing import List
+from typing import Optional
+
+from launch.action import Action
+from launch_ros.actions import Node
+from launch.launch_context import LaunchContext
+
 try:
     import webots_ros2_desktop.webots_path  # this module might not be installed
 except ImportError:
@@ -78,3 +85,10 @@ def get_webots_version():
     with open(versionFile, "r") as f:
         return f.read().replace('\n', '').strip()
     return None
+
+
+class ControllerLauncher(Node):
+    """Utility class to launch a controller from a launch file."""
+    def execute(self, context: LaunchContext) -> Optional[List[Action]]:
+        append_webots_lib_to_path()
+        return super().execute(context)

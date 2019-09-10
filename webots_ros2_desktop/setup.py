@@ -20,20 +20,17 @@ if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platfo
     if os.path.exists('webots') and os.path.isdir('webots'):
         shutil.rmtree('webots')
     # Get Webots archive
-    print('Downloading Webots...')
     url = 'https://github.com/omichel/webots/releases/download/R2019b/'
     urllib.request.urlretrieve(url + archiveName,
                                os.path.join(os.path.dirname(__file__),
                                             'webots-R2019b-x86-64.tar.bz2'))
-    print('Exctracting Webots...')
     # Extract Webots archive
     tar = tarfile.open(archiveName, 'r:bz2')
     tar.extractall()
     tar.close()
     os.environ['WEBOTS_HOME'] = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                                'webots',
-                                                'change_logs'))
-    print('Webots installed...')
+                                                             'webots',
+                                                             'change_logs'))
 # Add Webots in the package
 if 'WEBOTS_HOME' in os.environ:
     for root, directories, files in os.walk(os.environ['WEBOTS_HOME']):

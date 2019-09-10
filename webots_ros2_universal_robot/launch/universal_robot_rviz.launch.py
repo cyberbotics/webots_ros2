@@ -21,7 +21,7 @@ import os
 import launch
 import launch_ros.actions
 
-from webots_ros2_core.utils import append_webots_lib_to_path
+from webots_ros2_core.utils import ControllerLauncher
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -32,25 +32,24 @@ def generate_launch_description():
                               'worlds', 'universal_robot_rviz.wbt')]
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
-    URe5Controller = launch_ros.actions.Node(package='webots_ros2_universal_robot',
-                                             node_executable='universal_robot',
-                                             # this argument should match the 'name' field
-                                             # of the robot in Webots
-                                             arguments=['--webots-robot-name=UR5e'],
-                                             output='screen')
-    tfController = launch_ros.actions.Node(package='webots_ros2_universal_robot',
-                                           node_executable='universal_robot',
-                                           # this argument should match the 'name' field
-                                           # of the robot in Webots
-                                           arguments=['--webots-robot-name=tf_supervisor'],
-                                           output='screen')
+    URe5Controller = ControllerLauncher(package='webots_ros2_universal_robot',
+                                        node_executable='universal_robot',
+                                        # this argument should match the 'name' field
+                                        # of the robot in Webots
+                                        arguments=['--webots-robot-name=UR5e'],
+                                        output='screen')
+    tfController = ControllerLauncher(package='webots_ros2_universal_robot',
+                                      node_executable='universal_robot',
+                                      # this argument should match the 'name' field
+                                      # of the robot in Webots
+                                      arguments=['--webots-robot-name=tf_supervisor'],
+                                      output='screen')
     rvizFile = os.path.join(get_package_share_directory('webots_ros2_ur_e_description'),
                             'rviz', 'view_robot') + '.rviz'
     rviz = launch_ros.actions.Node(package='rviz2',
                                    node_executable='rviz2',
                                    arguments=['-d', rvizFile],
                                    output='screen')
-    append_webots_lib_to_path()
     return launch.LaunchDescription([
         webots,
         URe5Controller,

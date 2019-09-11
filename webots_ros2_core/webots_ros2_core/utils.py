@@ -89,6 +89,7 @@ def get_webots_version():
 
 class ControllerLauncher(Node):
     """Utility class to launch a controller from a launch file."""
+
     def execute(self, context: LaunchContext) -> Optional[List[Action]]:
         append_webots_lib_to_path()
         return super().execute(context)

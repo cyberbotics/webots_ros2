@@ -51,10 +51,10 @@ def generate_launch_description():
                                    arguments=['-d', rvizFile],
                                    output='screen')
     return launch.LaunchDescription([
+        rviz,
         webots,
         URe5Controller,
         tfController,
-        rviz,
         # Shutdown launch when webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

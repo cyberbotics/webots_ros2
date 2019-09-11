@@ -38,8 +38,8 @@ def generate_launch_description():
                                         # of the robot in Webots
                                         arguments=['--webots-robot-name=UR5e'],
                                         output='screen')
-    tfController = ControllerLauncher(package='webots_ros2_universal_robot',
-                                      node_executable='universal_robot',
+    tfController = ControllerLauncher(package='webots_ros2_core',
+                                      node_executable='tf_publisher',
                                       # this argument should match the 'name' field
                                       # of the robot in Webots
                                       arguments=['--webots-robot-name=tf_supervisor'],

@@ -1,21 +1,32 @@
 """webots_ros2 package setup file."""
 
+import os
+import fnmatch
+
 from setuptools import setup
 
 package_name = 'webots_ros2_universal_robot'
 worlds = [
     'worlds/universal_robot.wbt',
-    'worlds/universal_robot_multiple.wbt'
+    'worlds/universal_robot_multiple.wbt',
+    'worlds/universal_robot_rviz.wbt'
 ]
+textures = []
+for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
+    for fileName in fnmatch.filter(fileNames, '*.jpg'):
+        filePath = os.path.relpath(os.path.join(rootPath, fileName))
+        textures.append(filePath)
 launchers = [
     'launch/universal_robot.launch.py',
-    'launch/universal_robot_multiple.launch.py'
+    'launch/universal_robot_multiple.launch.py',
+    'launch/universal_robot_rviz.launch.py'
 ]
 
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, launchers))
 data_files.append(('share/' + package_name + '/worlds', worlds))
+data_files.append(('share/' + package_name + '/worlds/textures', textures))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 

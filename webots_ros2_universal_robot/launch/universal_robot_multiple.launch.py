@@ -21,7 +21,7 @@ import os
 import launch
 import launch_ros.actions
 
-from webots_ros2_core.utils import append_webots_lib_to_path
+from webots_ros2_core.utils import ControllerLauncher
 
 
 def generate_launch_description():
@@ -30,21 +30,20 @@ def generate_launch_description():
                               'worlds', 'universal_robot_multiple.wbt')]
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
-    Ure3controller = launch_ros.actions.Node(package='webots_ros2_universal_robot',
-                                             node_executable='universal_robot',
-                                             # this argument should match the 'name' field
-                                             # of the robot in Webots
-                                             arguments=['--webots-robot-name=UR3e'],
-                                             node_namespace='UR3e',
-                                             output='screen')
-    Ure5controller = launch_ros.actions.Node(package='webots_ros2_universal_robot',
-                                             node_executable='universal_robot',
-                                             # this argument should match the 'name' field
-                                             # of the robot in Webots
-                                             arguments=['--webots-robot-name=UR5e'],
-                                             node_namespace='UR5e',
-                                             output='screen')
-    append_webots_lib_to_path()
+    Ure3controller = ControllerLauncher(package='webots_ros2_universal_robot',
+                                        node_executable='universal_robot',
+                                        # this argument should match the 'name' field
+                                        # of the robot in Webots
+                                        arguments=['--webots-robot-name=UR3e'],
+                                        node_namespace='UR3e',
+                                        output='screen')
+    Ure5controller = ControllerLauncher(package='webots_ros2_universal_robot',
+                                        node_executable='universal_robot',
+                                        # this argument should match the 'name' field
+                                        # of the robot in Webots
+                                        arguments=['--webots-robot-name=UR5e'],
+                                        node_namespace='UR5e',
+                                        output='screen')
     return launch.LaunchDescription([
         webots, Ure3controller, Ure5controller,
         # Shutdown launch when webots exits.

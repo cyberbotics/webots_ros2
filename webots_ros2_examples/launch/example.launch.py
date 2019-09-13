@@ -21,7 +21,7 @@ import os
 import launch
 import launch_ros.actions
 
-from webots_ros2_core.utils import append_webots_lib_to_path
+from webots_ros2_core.utils import ControllerLauncher
 
 
 def generate_launch_description():
@@ -30,10 +30,9 @@ def generate_launch_description():
                               'worlds', 'ros_example.wbt')]
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
-    controller = launch_ros.actions.Node(package='webots_ros2_examples',
-                                         node_executable='example_controller',
-                                         output='screen')
-    append_webots_lib_to_path()
+    controller = ControllerLauncher(package='webots_ros2_examples',
+                                    node_executable='example_controller',
+                                    output='screen')
     return launch.LaunchDescription([
         webots,
         controller,

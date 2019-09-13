@@ -30,7 +30,7 @@ from rclpy.node import Node
 
 try:
     append_webots_python_lib_to_path()
-    from controller import Robot
+    from controller import Supervisor
 except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
     raise e
@@ -49,21 +49,26 @@ class WebotsNode(Node):
             os.environ['WEBOTS_ROBOT_NAME'] = arguments.webotsRobotName
         if get_webots_version() == 'R2019b':
             sleep(10)  # TODO: wait to make sure that Webots is started
-        self.robot = Robot()
+        self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
         timer_period = 0.001 * self.timestep  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.sec = 0
+        self.nanosec = 0
 
     def timer_callback(self):
         if self.robot is None:
             return
+        # Update time
+        time = self.robot.getTime()
+        self.sec = int(time)
+        # rounding prevents precision issues that can cause problems with ROS timers
+        self.nanosec = int(round(1000 * (time - self.sec)) * 1.0e+6)
         # Publish clock
         msg = Clock()
-        time = self.robot.getTime()
-        msg.clock.sec = int(time)
-        # rounding prevents precision issues that can cause problems with ROS timers
-        msg.clock.nanosec = int(round(1000 * (time - msg.clock.sec)) * 1.0e+6)
+        msg.clock.sec = self.sec
+        msg.clock.nanosec = self.nanosec
         self.clockPublisher.publish(msg)
         # Robot step
         if self.robot.step(self.timestep) < 0.0:

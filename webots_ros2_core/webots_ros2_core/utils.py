@@ -17,6 +17,7 @@
 """This launcher simply start Webots."""
 
 import os
+import re
 import sys
 
 from typing import List
@@ -61,22 +62,51 @@ def get_webots_home():
 def append_webots_lib_to_path():
     """Add the Webots 'lib' folder to the library path."""
     if sys.platform == 'linux':
-        os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
-                                         os.environ.get('LD_LIBRARY_PATH'))
+        if get_webots_version_major_number() <= 2019:
+            os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':'
+                                             + os.environ.get('LD_LIBRARY_PATH'))
+        else:
+            os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller') +
+                                             ':' + os.environ.get('LD_LIBRARY_PATH'))
     elif sys.platform == 'darwin':
-        os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
-                                           os.environ.get('DYLD_LIBRARY_PATH'))
+        if get_webots_version_major_number() <= 2019:
+            os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
+                                               os.environ.get('DYLD_LIBRARY_PATH'))
+        else:
+            os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller')
+                                               + ':' + os.environ.get('DYLD_LIBRARY_PATH'))
     elif sys.platform == 'win32':
-        os.environ['PATH'] = (os.path.join(get_webots_home(), 'msys64', 'mingw64', 'bin') + ';' +
-                              os.environ.get('PATH'))
+        if get_webots_version_major_number() <= 2019:
+            os.environ['PATH'] = (os.path.join(get_webots_home(), 'msys64', 'mingw64', 'bin')
+                                  + ';' + os.environ.get('PATH'))
+        else:
+            os.environ['PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller') + ';' +
+                                  os.environ.get('PATH'))
     else:
         sys.exit('Unsupported Platform!')
 
 
 def append_webots_python_lib_to_path():
     """Add the Webots 'lib/pythonXY' folder to sys.path."""
-    sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
-                    (sys.version_info[0], sys.version_info[1])))
+    if get_webots_version_major_number() <= 2019:
+        sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
+                        (sys.version_info[0], sys.version_info[1])))
+    else:
+        sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],
+                                     'lib',
+                                     'controller',
+                                     'python%d%d' % (sys.version_info[0], sys.version_info[1])))
+
+
+def get_webots_version_major_number():
+    """Webots major version as an integer."""
+    versionString = 'R2019b'
+    if versionString is None:
+        return 0
+    match = re.match(r'R(\d*).*', versionString)
+    if match:
+        return int(match.groups[0])
+    return 0
 
 
 def get_webots_version():

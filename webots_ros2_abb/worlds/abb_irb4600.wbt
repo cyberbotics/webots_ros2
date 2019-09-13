@@ -1,0 +1,56 @@
+#VRML_SIM R2020a utf8
+WorldInfo {
+  info [
+    "ABB IRB4600 Robot simulation."
+  ]
+  title "ABB IRB4600"
+  basicTimeStep 16
+  physicsDisableAngularThreshold 0.1
+  contactProperties [
+    ContactProperties {
+      bounce 0.1
+    }
+    ContactProperties {
+      material1 "slope"
+      coulombFriction [
+        0.5
+      ]
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.15301847636315577 -0.9484500848229196 -0.27753879456914654 2.2302816902422284
+  position -5.513704514501687 4.857497440450351 -2.6363540043225266
+  exposure 1.7
+}
+TexturedBackground {
+  texture "factory"
+}
+Floor {
+  size 200 200
+  appearance ThreadMetalPlate {
+  }
+}
+DEF ROBOT Robot {
+  translation 0 0.6 0
+  rotation -0.5773502691896258 -0.5773502691896258 -0.5773502691896258 2.094395
+  children [
+    Irb4600-40 {
+    }
+  ]
+  controller "<extern>"
+}
+TeslaModel3Simple {
+  translation 1.02402 0.4 2.50911
+  rotation 0 1 0 -1.8325953071795862
+}
+SolidBox {
+  translation 0 0.3 0
+  rotation 0 0 1 4.692820414042842e-06
+  size 0.9 0.6 0.9
+  appearance GalvanizedMetal {
+    textureTransform TextureTransform {
+      scale 2 2
+    }
+  }
+}

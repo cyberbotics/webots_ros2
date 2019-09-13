@@ -100,19 +100,19 @@ def append_webots_python_lib_to_path():
 
 def get_webots_version_major_number():
     """Webots major version as an integer."""
-    versionString = 'R2019b'
+    versionString = get_webots_version()
     if versionString is None:
         return 0
     match = re.match(r'R(\d*).*', versionString)
     if match:
-        return int(match.groups[0])
+        return int(match.groups()[0])
     return 0
 
 
 def get_webots_version():
     """Webots version as a string."""
     versionFile = os.path.join(get_webots_home(), 'resources', 'version.txt')
-    with open(versionFile, "r") as f:
+    with open(versionFile, 'r') as f:
         return f.read().replace('\n', '').strip()
     return None
 

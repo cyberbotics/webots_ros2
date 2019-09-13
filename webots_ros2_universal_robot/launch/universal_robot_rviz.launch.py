@@ -18,6 +18,8 @@
 
 import os
 
+from pathlib import Path
+
 import launch
 import launch_ros.actions
 
@@ -44,11 +46,22 @@ def generate_launch_description():
                                       # of the robot in Webots
                                       arguments=['--webots-robot-name=tf_supervisor'],
                                       output='screen')
-    rvizFile = os.path.join(get_package_share_directory('webots_ros2_ur_e_description'),
-                            'rviz', 'view_robot') + '.rviz'
+    # copy .rviz config file and update path ro URDF file.
+    templateRvizFile = os.path.join(get_package_share_directory('webots_ros2_ur_e_description'),
+                                    'rviz', 'view_robot') + '.rviz'
+    home = Path.home()
+    customRvizFile = os.path.join(home, 'webots_ros2_ur_e_description.rviz')
+    if not os.path.exists(os.path.join(home, 'webots_ros2_ur_e_description.rviz')):
+        with open(templateRvizFile, 'r') as f:
+            content = f.read()
+            content = content.replace('package://webots_ros2_ur_e_description',
+                                      get_package_share_directory('webots_ros2_ur_e_description'))
+            with open(customRvizFile, 'w') as f2:
+                f2.write(content)
+    # rviz node
     rviz = launch_ros.actions.Node(package='rviz2',
                                    node_executable='rviz2',
-                                   arguments=['-d', rvizFile],
+                                   arguments=['-d', customRvizFile],
                                    output='screen')
     return launch.LaunchDescription([
         rviz,

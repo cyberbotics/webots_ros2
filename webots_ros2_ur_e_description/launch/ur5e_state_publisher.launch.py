@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""TODO."""
+"""Call the 'robot_state_publisher' with the URDF file of the UR5e."""
 
 import os
 

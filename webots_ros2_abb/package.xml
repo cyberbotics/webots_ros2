@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
-  <name>webots_ros2</name>
+  <name>webots_ros2_abb</name>
   <version>0.0.2</version>
-  <description>Interface between Webots and ROS2</description>
+  <description>ABB robots ROS2 interface for Webots.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
   <license>Apache License 2.0</license>
@@ -14,10 +14,11 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>rosgraph_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>
-  <exec_depend>webots_ros2_examples</exec_depend>
-  <exec_depend>webots_ros2_abb</exec_depend>
-  <exec_depend>webots_ros2_universal_robot</exec_depend>
 
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->

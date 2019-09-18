@@ -32,7 +32,7 @@ Floor {
 DEF ROOF Floor {
   translation 0 5 0
   rotation 1 0 0 3.141592653589793
-  name "floor(1)"
+  name "roof"
   size 68 10
   appearance Roughcast {
     textureTransform TextureTransform {
@@ -43,6 +43,7 @@ DEF ROOF Floor {
 Wall {
   translation 0.02503 0 5.03882
   size 68 5 0.2
+  name "wall0"
   appearance Roughcast {
     textureTransform TextureTransform {
       scale 30 2.4
@@ -51,7 +52,7 @@ Wall {
 }
 Wall {
   translation 0.02503 0 -4.94118
-  name "wall(2)"
+  name "wall1"
   size 68 5 0.2
   appearance Roughcast {
     textureTransform TextureTransform {
@@ -62,7 +63,7 @@ Wall {
 Wall {
   translation 34.095 0 -0.041179
   rotation 0 1 0 -1.5707953071795862
-  name "wall(1)"
+  name "wall2"
   size 10 5 0.2
   appearance Roughcast {
     textureTransform TextureTransform {
@@ -73,7 +74,7 @@ Wall {
 Wall {
   translation -34.055 0 0.0388906
   rotation 0 1 0 -1.5707953071795862
-  name "wall(3)"
+  name "wall3"
   size 10 5 0.2
   appearance Roughcast {
     textureTransform TextureTransform {
@@ -93,6 +94,7 @@ DEF ROBOT Robot {
 ConveyorBelt {
   translation 8.7256 0 1.99898
   rotation 0 1 0 3.14159
+  name "car conveyor belt"
   size 40 1.2 1
   appearance CorrugatedMetal {
     textureTransform TextureTransform {
@@ -106,7 +108,7 @@ ConveyorBelt {
 ConveyorBelt {
   translation 3.35777 0 -1.34959
   rotation 0 1 0 -5.307179586466759e-06
-  name "conveyor belt(1)"
+  name "wheel conveyor belt"
   size 40 0.6 0.8
   appearance CorrugatedMetal {
     textureTransform TextureTransform {
@@ -137,7 +139,7 @@ DEF CAR Solid {
       ]
     }
   ]
-  name "tesla"
+  name "tesla0"
   model "Tesla model 3"
   boundingObject DEF TESLA_BO Group {
     children [
@@ -185,7 +187,7 @@ DEF CAR Solid {
       ]
     }
   ]
-  name "tesla(1)"
+  name "tesla1"
   model "Tesla model 3"
   boundingObject USE TESLA_BO
   physics USE TESLA_PHYSICS
@@ -209,7 +211,7 @@ DEF CAR Solid {
       ]
     }
   ]
-  name "tesla(2)"
+  name "tesla2"
   model "Tesla model 3"
   boundingObject USE TESLA_BO
   physics USE TESLA_PHYSICS
@@ -237,6 +239,7 @@ DEF WHEEL Solid {
       }
     }
   ]
+  name "wheel0"
   boundingObject DEF WHEEL_BO Transform {
     translation 0 0 -0.04
     rotation 1 0 0 1.5707996938995747
@@ -263,7 +266,7 @@ DEF WHEEL Solid {
       }
     }
   ]
-  name "solid(1)"
+  name "wheel1"
   boundingObject USE WHEEL_BO
   physics Physics {
   }
@@ -281,7 +284,7 @@ DEF WHEEL Solid {
       }
     }
   ]
-  name "solid(2)"
+  name "wheel2"
   boundingObject USE WHEEL_BO
   physics Physics {
   }
@@ -299,7 +302,7 @@ DEF WHEEL Solid {
       }
     }
   ]
-  name "solid(3)"
+  name "wheel3"
   boundingObject USE WHEEL_BO
   physics Physics {
   }
@@ -317,7 +320,7 @@ DEF WHEEL Solid {
       }
     }
   ]
-  name "solid(4)"
+  name "wheel4"
   boundingObject USE WHEEL_BO
   physics Physics {
   }
@@ -335,7 +338,7 @@ DEF WHEEL Solid {
       }
     }
   ]
-  name "solid(6)"
+  name "wheel5"
   boundingObject USE WHEEL_BO
   physics Physics {
   }

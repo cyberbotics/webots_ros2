@@ -29,6 +29,17 @@ Floor {
   appearance ThreadMetalPlate {
   }
 }
+DEF ROOF Floor {
+  translation 0 5 0
+  rotation 1 0 0 3.141592653589793
+  name "floor(1)"
+  size 68 10
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 30 10
+    }
+  }
+}
 Wall {
   translation 0.02503 0 5.03882
   size 68 5 0.2
@@ -55,7 +66,7 @@ Wall {
   size 10 5 0.2
   appearance Roughcast {
     textureTransform TextureTransform {
-      scale 30 2.4
+      scale 10 2.4
     }
   }
 }
@@ -66,13 +77,13 @@ Wall {
   size 10 5 0.2
   appearance Roughcast {
     textureTransform TextureTransform {
-      scale 30 2.4
+      scale 10 2.4
     }
   }
 }
 DEF ROBOT Robot {
   translation 0 0.6 0
-  rotation -0.5773502691896258 -0.5773502691896258 -0.5773502691896258 2.094395
+  rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
   children [
     Irb4600-40 {
     }
@@ -82,7 +93,7 @@ DEF ROBOT Robot {
 ConveyorBelt {
   translation 8.7256 0 1.99898
   rotation 0 1 0 3.14159
-  size 40 0.6 1
+  size 40 1.2 1
   appearance CorrugatedMetal {
     textureTransform TextureTransform {
       scale 23 7
@@ -108,7 +119,7 @@ ConveyorBelt {
   textureAnimation 0.009
 }
 DEF CAR Solid {
-  translation 4.1232 0.77 2.01218
+  translation 4.1232 1.37 2.01218
   rotation 0 -1 0 1.5708
   children [
     Transform {
@@ -155,7 +166,7 @@ DEF CAR Solid {
   }
 }
 DEF CAR Solid {
-  translation 10.3932 0.77 2.01218
+  translation 10.3932 1.37 2.01218
   rotation 0 -1 0 1.5708
   children [
     Transform {
@@ -180,7 +191,7 @@ DEF CAR Solid {
   physics USE TESLA_PHYSICS
 }
 DEF CAR Solid {
-  translation 17.8332 0.77 2.01218
+  translation 17.8332 1.37 2.01218
   rotation 0 -1 0 1.5708
   children [
     Transform {

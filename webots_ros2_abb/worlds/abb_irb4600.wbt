@@ -4,31 +4,70 @@ WorldInfo {
     "ABB IRB4600 Robot simulation."
   ]
   title "ABB IRB4600"
-  basicTimeStep 16
-  physicsDisableAngularThreshold 0.1
+  CFM 1e-07
+  ERP 0.8
+  basicTimeStep 10
   contactProperties [
     ContactProperties {
-      bounce 0.1
-    }
-    ContactProperties {
-      material1 "slope"
       coulombFriction [
-        0.5
+        8
       ]
+      softCFM 1e-05
     }
   ]
 }
 Viewpoint {
-  orientation -0.15301847636315577 -0.9484500848229196 -0.27753879456914654 2.2302816902422284
-  position -5.513704514501687 4.857497440450351 -2.6363540043225266
+  orientation 0.10599214277400969 0.9845351317106285 0.13948562684989974 4.143611755960376
+  position -9.091926910248022 3.578482489557736 -4.205335851644433
   exposure 1.7
 }
 TexturedBackground {
   texture "factory"
 }
 Floor {
-  size 200 200
+  size 68 10
   appearance ThreadMetalPlate {
+  }
+}
+Wall {
+  translation 0.02503 0 5.03882
+  size 68 5 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 30 2.4
+    }
+  }
+}
+Wall {
+  translation 0.02503 0 -4.94118
+  name "wall(2)"
+  size 68 5 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 30 2.4
+    }
+  }
+}
+Wall {
+  translation 34.095 0 -0.041179
+  rotation 0 1 0 -1.5707953071795862
+  name "wall(1)"
+  size 10 5 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 30 2.4
+    }
+  }
+}
+Wall {
+  translation -34.055 0 0.0388906
+  rotation 0 1 0 -1.5707953071795862
+  name "wall(3)"
+  size 10 5 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 30 2.4
+    }
   }
 }
 DEF ROBOT Robot {
@@ -40,17 +79,299 @@ DEF ROBOT Robot {
   ]
   controller "<extern>"
 }
-TeslaModel3Simple {
-  translation 1.02402 0.4 2.50911
-  rotation 0 1 0 -1.8325953071795862
+ConveyorBelt {
+  translation 8.7256 0 1.99898
+  rotation 0 1 0 3.14159
+  size 40 0.6 1
+  appearance CorrugatedMetal {
+    textureTransform TextureTransform {
+      scale 23 7
+    }
+  }
+  borderHeight -0.08
+  timer 30
+  textureAnimation 0.01
+}
+ConveyorBelt {
+  translation 3.35777 0 -1.34959
+  rotation 0 1 0 -5.307179586466759e-06
+  name "conveyor belt(1)"
+  size 40 0.6 0.8
+  appearance CorrugatedMetal {
+    textureTransform TextureTransform {
+      scale 23 7
+    }
+  }
+  borderHeight -0.03
+  speed 0.1
+  timer 30
+  textureAnimation 0.009
+}
+DEF CAR Solid {
+  translation 4.1232 0.77 2.01218
+  rotation 0 -1 0 1.5708
+  children [
+    Transform {
+      translation 0 -0.36 1.39
+      rotation 0 1 0 1.5707896938995747
+      children [
+        TeslaModel3Coachwork {
+        }
+        TeslaModel3Windows {
+        }
+        TeslaModel3FrontLights {
+        }
+        TeslaModel3Details {
+        }
+      ]
+    }
+  ]
+  name "tesla"
+  model "Tesla model 3"
+  boundingObject Group {
+    children [
+      Transform {
+        translation 0 0.2019 1.37
+        rotation 0 -1 0 1.5707963411795867
+        children [
+          Box {
+            size 4.5 0.7 1.8
+          }
+        ]
+      }
+      Transform {
+        translation 0 0.76 0.68
+        rotation 0 -1 0 1.5707963411795867
+        children [
+          Box {
+            size 2.9 0.7 1.5
+          }
+        ]
+      }
+    ]
+  }
+  physics Physics {
+    density 100
+  }
+}
+DEF CAR Solid {
+  translation 10.3932 0.77 2.01218
+  rotation 0 -1 0 1.5708
+  children [
+    Transform {
+      translation 0 -0.36 1.39
+      rotation 0 1 0 1.5707896938995747
+      children [
+        TeslaModel3Coachwork {
+          color 0.729412 0.741176 0.713725
+        }
+        TeslaModel3Windows {
+        }
+        TeslaModel3FrontLights {
+        }
+        TeslaModel3Details {
+        }
+      ]
+    }
+  ]
+  name "tesla(1)"
+  model "Tesla model 3"
+  boundingObject Group {
+    children [
+      Transform {
+        translation 0 0.2019 1.37
+        rotation 0 -1 0 1.5707963411795867
+        children [
+          Box {
+            size 4.5 0.7 1.8
+          }
+        ]
+      }
+      Transform {
+        translation 0 0.76 0.68
+        rotation 0 -1 0 1.5707963411795867
+        children [
+          Box {
+            size 2.9 0.7 1.5
+          }
+        ]
+      }
+    ]
+  }
+  physics Physics {
+    density 100
+  }
+}
+DEF CAR Solid {
+  translation 17.8332 0.77 2.01218
+  rotation 0 -1 0 1.5708
+  children [
+    Transform {
+      translation 0 -0.36 1.39
+      rotation 0 1 0 1.5707896938995747
+      children [
+        TeslaModel3Coachwork {
+        }
+        TeslaModel3Windows {
+        }
+        TeslaModel3FrontLights {
+        }
+        TeslaModel3Details {
+        }
+      ]
+    }
+  ]
+  name "tesla(2)"
+  model "Tesla model 3"
+  boundingObject Group {
+    children [
+      Transform {
+        translation 0 0.2019 1.37
+        rotation 0 -1 0 1.5707963411795867
+        children [
+          Box {
+            size 4.5 0.7 1.8
+          }
+        ]
+      }
+      Transform {
+        translation 0 0.76 0.68
+        rotation 0 -1 0 1.5707963411795867
+        children [
+          Box {
+            size 2.9 0.7 1.5
+          }
+        ]
+      }
+    ]
+  }
+  physics Physics {
+    density 100
+  }
 }
 SolidBox {
   translation 0 0.3 0
-  rotation 0 0 1 4.692820414042842e-06
+  rotation 0 0 1 0
   size 0.9 0.6 0.9
   appearance GalvanizedMetal {
     textureTransform TextureTransform {
       scale 2 2
     }
+  }
+}
+DEF WHEEL Solid {
+  translation -1.9 0.77 -1.35
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    DEF WHEEL_SHAPE Slot {
+      type "vehicle wheel"
+      endPoint TeslaModel3Wheel {
+        physics Physics {
+          density 10
+        }
+      }
+    }
+  ]
+  boundingObject DEF WHEEL_BO Transform {
+    translation 0 0 -0.04
+    rotation 1 0 0 1.5707996938995747
+    children [
+      Cylinder {
+        height 0.24
+        radius 0.36
+      }
+    ]
+  }
+  physics Physics {
+  }
+}
+DEF WHEEL Solid {
+  translation 0.61 0.77 -1.35
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    DEF WHEEL_SHAPE Slot {
+      type "vehicle wheel"
+      endPoint TeslaModel3Wheel {
+        physics Physics {
+          density 10
+        }
+      }
+    }
+  ]
+  name "solid(1)"
+  boundingObject USE WHEEL_BO
+  physics Physics {
+  }
+}
+DEF WHEEL Solid {
+  translation -4.9 0.77 -1.35
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    DEF WHEEL_SHAPE Slot {
+      type "vehicle wheel"
+      endPoint TeslaModel3Wheel {
+        physics Physics {
+          density 10
+        }
+      }
+    }
+  ]
+  name "solid(2)"
+  boundingObject USE WHEEL_BO
+  physics Physics {
+  }
+}
+DEF WHEEL Solid {
+  translation 3.21 0.77 -1.35
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    DEF WHEEL_SHAPE Slot {
+      type "vehicle wheel"
+      endPoint TeslaModel3Wheel {
+        physics Physics {
+          density 10
+        }
+      }
+    }
+  ]
+  name "solid(3)"
+  boundingObject USE WHEEL_BO
+  physics Physics {
+  }
+}
+DEF WHEEL Solid {
+  translation -7.9 0.77 -1.35
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    DEF WHEEL_SHAPE Slot {
+      type "vehicle wheel"
+      endPoint TeslaModel3Wheel {
+        physics Physics {
+          density 10
+        }
+      }
+    }
+  ]
+  name "solid(4)"
+  boundingObject USE WHEEL_BO
+  physics Physics {
+  }
+}
+DEF WHEEL Solid {
+  translation -10.9 0.77 -1.35
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    DEF WHEEL_SHAPE Slot {
+      type "vehicle wheel"
+      endPoint TeslaModel3Wheel {
+        physics Physics {
+          density 10
+        }
+      }
+    }
+  ]
+  name "solid(6)"
+  boundingObject USE WHEEL_BO
+  physics Physics {
   }
 }

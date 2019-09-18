@@ -128,7 +128,7 @@ DEF CAR Solid {
   ]
   name "tesla"
   model "Tesla model 3"
-  boundingObject Group {
+  boundingObject DEF TESLA_BO Group {
     children [
       Transform {
         translation 0 0.2019 1.37
@@ -150,7 +150,7 @@ DEF CAR Solid {
       }
     ]
   }
-  physics Physics {
+  physics DEF TESLA_PHYSICS Physics {
     density 100
   }
 }
@@ -176,31 +176,8 @@ DEF CAR Solid {
   ]
   name "tesla(1)"
   model "Tesla model 3"
-  boundingObject Group {
-    children [
-      Transform {
-        translation 0 0.2019 1.37
-        rotation 0 -1 0 1.5707963411795867
-        children [
-          Box {
-            size 4.5 0.7 1.8
-          }
-        ]
-      }
-      Transform {
-        translation 0 0.76 0.68
-        rotation 0 -1 0 1.5707963411795867
-        children [
-          Box {
-            size 2.9 0.7 1.5
-          }
-        ]
-      }
-    ]
-  }
-  physics Physics {
-    density 100
-  }
+  boundingObject USE TESLA_BO
+  physics USE TESLA_PHYSICS
 }
 DEF CAR Solid {
   translation 17.8332 0.77 2.01218
@@ -223,31 +200,8 @@ DEF CAR Solid {
   ]
   name "tesla(2)"
   model "Tesla model 3"
-  boundingObject Group {
-    children [
-      Transform {
-        translation 0 0.2019 1.37
-        rotation 0 -1 0 1.5707963411795867
-        children [
-          Box {
-            size 4.5 0.7 1.8
-          }
-        ]
-      }
-      Transform {
-        translation 0 0.76 0.68
-        rotation 0 -1 0 1.5707963411795867
-        children [
-          Box {
-            size 2.9 0.7 1.5
-          }
-        ]
-      }
-    ]
-  }
-  physics Physics {
-    density 100
-  }
+  boundingObject USE TESLA_BO
+  physics USE TESLA_PHYSICS
 }
 SolidBox {
   translation 0 0.3 0

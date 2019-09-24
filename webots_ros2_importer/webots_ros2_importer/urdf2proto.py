@@ -20,7 +20,7 @@ import re
 import sys
 import tempfile
 
-import time
+import urdf2webots
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -57,7 +57,7 @@ def main(args=None):
         generatedFile = True
         with open(urdfFile, 'w') as f:
             f.write(content)
-    #TODO: call importer
+    urdf2webots.main(inFile=urdfFile)
     # remove temporary file
     if generatedFile:
         os.remove(urdfFile)

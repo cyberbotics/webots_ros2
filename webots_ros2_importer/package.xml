@@ -11,7 +11,7 @@
   <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
-  <exec_depend>builtin_interfaces</exec_depend> <!-- TODO: useful ? -->
+  <exec_depend>builtin_interfaces</exec_depend>
 
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->

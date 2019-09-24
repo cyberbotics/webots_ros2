@@ -20,7 +20,7 @@ import re
 import sys
 import tempfile
 
-import urdf2webots
+from webots_ros2_importer.urdf2webots.urdf2webots import convert2urdf
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -57,7 +57,7 @@ def main(args=None):
         generatedFile = True
         with open(urdfFile, 'w') as f:
             f.write(content)
-    urdf2webots.main(inFile=urdfFile)
+    convert2urdf(inFile=urdfFile)
     # remove temporary file
     if generatedFile:
         os.remove(urdfFile)

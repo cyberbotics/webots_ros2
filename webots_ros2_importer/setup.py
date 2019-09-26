@@ -13,7 +13,7 @@ setup(
     version='0.0.2',
     packages=[package_name],
     data_files=data_files,
-    install_requires=['setuptools'],
+    install_requires=['setuptools', 'urdf2webots'],
     zip_safe=True,
     author='Cyberbotics',
     author_email='support@cyberbotics.com',
@@ -29,7 +29,6 @@ setup(
     description='This package allows to convert URDF and XACCRO files into Webots PROTO files.',
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
-    dependency_links=['https://github.com/cyberbotics/urdf2webots/tarball/master#egg=package-1.0'],
     entry_points={
         'console_scripts': [
             'urdf2proto = webots_ros2_importer.urdf2proto:main',

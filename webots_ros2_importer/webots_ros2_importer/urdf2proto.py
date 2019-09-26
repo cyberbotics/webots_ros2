@@ -20,7 +20,7 @@ import re
 import sys
 import tempfile
 
-from webots_ros2_importer.urdf2webots.urdf2webots import convert2urdf
+from urdf2webots.importer import convert2urdf
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -29,6 +29,16 @@ def main(args=None):
     parser = argparse.ArgumentParser(usage='usage: %prog --input=my_robot.urdf [options]')
     parser.add_argument('--input', dest='inFile', default='',
                         help='Specifies the urdf file to convert.')
+    parser.add_argument('--output', dest='outFile', default='',
+                        help='Specifies the name of the resulting PROTO file.')
+    parser.add_argument('--normal', dest='normal', action='store_true', default=False,
+                        help='If set, the normals are exported if defined.')
+    parser.add_argument('--box-collision', dest='boxCollision',
+                        action='store_true', default=False,
+                        help='If set, the bounding objects are approximated using boxes.')
+    parser.add_argument('--disable-mesh-optimization', dest='disableMeshOptimization',
+                        action='store_true', default=False,
+                        help='If set, the duplicated vertices are not removed from the meshes.')
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
     arguments, unknown = parser.parse_known_args()
     file = os.path.abspath(arguments.inFile)
@@ -57,7 +67,11 @@ def main(args=None):
         generatedFile = True
         with open(urdfFile, 'w') as f:
             f.write(content)
-    convert2urdf(inFile=urdfFile)
+    convert2urdf(inFile=urdfFile,
+                 outFile=arguments.outFile,
+                 normal=arguments.normal,
+                 boxCollision=arguments.boxCollision,
+                 disableMeshOptimization=arguments.disableMeshOptimization)
     # remove temporary file
     if generatedFile:
         os.remove(urdfFile)
@@ -65,3 +79,6 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
+
+
+convert2urdf(options.inFile, )

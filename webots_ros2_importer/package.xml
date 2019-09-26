@@ -13,6 +13,7 @@
 
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>python-urdf2webots</exec_depend>
+  <exec_depend>pycollada</exec_depend>
 
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->

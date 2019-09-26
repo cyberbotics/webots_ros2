@@ -13,7 +13,11 @@ setup(
     version='0.0.2',
     packages=[package_name],
     data_files=data_files,
-    install_requires=['setuptools', 'urdf2webots'],
+    install_requires=[
+        'setuptools',
+        'urdf2webots',
+        'pycollada'
+    ],
     zip_safe=True,
     author='Cyberbotics',
     author_email='support@cyberbotics.com',

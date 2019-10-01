@@ -1,12 +1,38 @@
 """webots_ros2 package setup file."""
 
 import os
+import shutil
 import sys
+import tarfile
+import urllib.request
 
 from setuptools import setup
 
 package_name = 'webots_ros2_desktop'
 data_files = []
+# If 'WEBOTS_HOME' not set try to download latest package (only on linux)
+if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platform == 'linux':
+    # Get Webots version
+    webotsVersion = None
+    with open('webots_version.txt') as f:
+        webotsVersion = f.read().decode('utf8').strip()
+    # Remove previous archive
+    archiveName = 'webots-%s-x86-64.tar.bz2' % webotsVersion
+    if os.path.exists(archiveName):
+        os.remove(archiveName)
+    # Remove previous webots folder
+    if os.path.exists('webots') and os.path.isdir('webots'):
+        shutil.rmtree('webots')
+    # Get Webots archive
+    url = 'https://github.com/omichel/webots/releases/download/%s/' % webotsVersion
+    urllib.request.urlretrieve(url + archiveName,
+                               os.path.join(os.path.dirname(__file__), archiveName))
+    # Extract Webots archive
+    tar = tarfile.open(archiveName, 'r:bz2')
+    tar.extractall()
+    tar.close()
+    os.environ['WEBOTS_HOME'] = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                             'webots'))
 # Add Webots in the package
 if 'WEBOTS_HOME' in os.environ:
     for root, directories, files in os.walk(os.environ['WEBOTS_HOME']):

@@ -21,19 +21,20 @@ import os
 import launch
 import launch_ros.actions
 
-from webots_ros2_core.utils import append_webots_lib_to_path
+from webots_ros2_core.utils import ControllerLauncher
+
+from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
     arguments = ['--mode=realtime', '--world=' +
-                 os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                 os.path.join(get_package_share_directory('webots_ros2_examples'),
                               'worlds', 'ros_example.wbt')]
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
-    controller = launch_ros.actions.Node(package='webots_ros2_examples',
-                                         node_executable='example_controller',
-                                         output='screen')
-    append_webots_lib_to_path()
+    controller = ControllerLauncher(package='webots_ros2_examples',
+                                    node_executable='example_controller',
+                                    output='screen')
     return launch.LaunchDescription([
         webots,
         controller,

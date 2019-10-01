@@ -15,7 +15,7 @@ if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platfo
     # Get Webots version
     webotsVersion = None
     with open('webots_version.txt') as f:
-        webotsVersion = f.read().strip()
+        webotsVersion = f.read().decode('utf8').strip()
     # Remove previous archive
     archiveName = 'webots-%s-x86-64.tar.bz2' % webotsVersion
     if os.path.exists(archiveName):

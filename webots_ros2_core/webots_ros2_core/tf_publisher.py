@@ -28,7 +28,7 @@ class TfPublisher(WebotsNode):
     def __init__(self, args):
         super().__init__('tf_publisher', args)
         self.publisherTimer = self.create_timer(0.001 * self.timestep, self.tf_publisher_callback)
-        self.tfPublisher = self.create_publisher(TFMessage, 'tf', 10)
+        self.tfPublisher = self.create_publisher(TFMessage, 'tf')
         self.nodes = {}
         # get the node from the DEF names defined in the customData field
         for name in self.robot.getCustomData().split():

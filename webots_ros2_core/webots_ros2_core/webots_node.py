@@ -24,6 +24,8 @@ from time import sleep
 
 from webots_ros2_core.utils import get_webots_version, append_webots_python_lib_to_path
 
+from webots_ros2_msgs.srv import SetInt
+
 from rosgraph_msgs.msg import Clock
 
 from rclpy.node import Node
@@ -43,6 +45,8 @@ class WebotsNode(Node):
         parser = argparse.ArgumentParser()
         parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
                             help='Specifies the "name" field of the robot in Webots.')
+        parser.add_argument('--synchronize', dest='synchronize', default='',
+                            help='Specifies of the node should be syncronized with Webots (in that case the "step" service should be called).')
         # use 'parse_known_args' because ROS2 adds a lot of internal arguments
         arguments, unknown = parser.parse_known_args()
         if arguments.webotsRobotName:
@@ -53,7 +57,10 @@ class WebotsNode(Node):
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
         timer_period = 0.001 * self.timestep  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        if arguments.synchronize:
+            self.stepService = self.create_service(SetInt, 'step', self.step_callback)
+        else:
+            self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
      

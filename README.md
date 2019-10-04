@@ -7,3 +7,4 @@ These packages provide an interface for controlling robots simulated in Webots u
 All the documentation and tutorials are available on the [ROS wiki](http://wiki.ros.org/webots_ros2).
 
 ![webots_ros2 screenshot](http://wiki.ros.org/webots_ros2/Tutorials/webots_ros2_universal_robot?action=AttachFile&do=get&target=universal_robot_multiple.png)
+![abb.png](webots_ros2_abb/abb.png)

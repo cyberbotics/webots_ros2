@@ -84,7 +84,6 @@ class WebotsNode(Node):
         msg.clock.nanosec = self.nanosec
         self.clockPublisher.publish(msg)
 
-
     def timer_callback(self):
         self.step(self.timestep)
             

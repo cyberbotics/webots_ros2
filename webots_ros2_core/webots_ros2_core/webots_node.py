@@ -56,10 +56,15 @@ class WebotsNode(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
-
-    def timer_callback(self):
+     
+    def step(self, ms):
         if self.robot is None:
             return
+        # Robot step
+        if self.robot.step(ms) < 0.0:
+            del self.robot
+            self.robot = None
+            sys.exit(0)
         # Update time
         time = self.robot.getTime()
         self.sec = int(time)
@@ -70,8 +75,11 @@ class WebotsNode(Node):
         msg.clock.sec = self.sec
         msg.clock.nanosec = self.nanosec
         self.clockPublisher.publish(msg)
-        # Robot step
-        if self.robot.step(self.timestep) < 0.0:
-            del self.robot
-            self.robot = None
-            sys.exit(0)
+
+
+    def timer_callback(self):
+        self.step(self.timestep)
+            
+    def step_callback(self, request, response):
+        self.step(request.value)
+        return response

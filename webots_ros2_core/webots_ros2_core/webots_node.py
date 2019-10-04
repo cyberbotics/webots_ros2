@@ -64,7 +64,7 @@ class WebotsNode(Node):
             self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
-     
+
     def step(self, ms):
         if self.robot is None:
             return

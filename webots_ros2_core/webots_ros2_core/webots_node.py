@@ -86,7 +86,7 @@ class WebotsNode(Node):
 
     def timer_callback(self):
         self.step(self.timestep)
-            
+
     def step_callback(self, request, response):
         self.step(request.value)
         return response

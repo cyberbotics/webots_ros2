@@ -45,7 +45,7 @@ class WebotsNode(Node):
         parser = argparse.ArgumentParser()
         parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
                             help='Specifies the "name" field of the robot in Webots.')
-        parser.add_argument('--synchronize', dest='synchronize', default="false",
+        parser.add_argument('--synchronize', dest='synchronize', action='store_true',
                             help='Specifies of the node should be syncronized with Webots '
                                  '(in that case the "step" service should be called).')
         # use 'parse_known_args' because ROS2 adds a lot of internal arguments
@@ -56,9 +56,9 @@ class WebotsNode(Node):
             sleep(10)  # TODO: wait to make sure that Webots is started
         self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())
-        self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
+        self.clockPublisher = self.create_publisher(Clock, 'clock', 10)
         timer_period = 0.001 * self.timestep  # seconds
-        if arguments.synchronize == 'true':
+        if arguments.synchronize:
             self.stepService = self.create_service(SetInt, 'step', self.step_callback)
         else:
             self.timer = self.create_timer(timer_period, self.timer_callback)
@@ -89,4 +89,5 @@ class WebotsNode(Node):
 
     def step_callback(self, request, response):
         self.step(request.value)
+        response.success = True
         return response

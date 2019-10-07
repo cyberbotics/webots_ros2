@@ -29,6 +29,7 @@ from webots_ros2_msgs.srv import SetInt
 from rosgraph_msgs.msg import Clock
 
 from rclpy.node import Node
+from rclpy.parameter import Parameter
 
 try:
     append_webots_python_lib_to_path()
@@ -42,12 +43,10 @@ class WebotsNode(Node):
 
     def __init__(self, name, args=None):
         super().__init__(name)
+        self.declare_parameter('synchronize', Parameter('synchronize', Parameter.Type.BOOL, False))
         parser = argparse.ArgumentParser()
         parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
                             help='Specifies the "name" field of the robot in Webots.')
-        parser.add_argument('--synchronize', dest='synchronize', action='store_true',
-                            help='Specifies of the node should be syncronized with Webots '
-                                 '(in that case the "step" service should be called).')
         # use 'parse_known_args' because ROS2 adds a lot of internal arguments
         arguments, unknown = parser.parse_known_args()
         if arguments.webotsRobotName:
@@ -58,15 +57,13 @@ class WebotsNode(Node):
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'clock', 10)
         timer_period = 0.001 * self.timestep  # seconds
-        if arguments.synchronize:
-            self.stepService = self.create_service(SetInt, 'step', self.step_callback)
-        else:
-            self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.stepService = self.create_service(SetInt, 'step', self.step_callback)
+        self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
 
     def step(self, ms):
-        if self.robot is None:
+        if self.robot is None or self.get_parameter('synchronize').value:
             return
         # Robot step
         if self.robot.step(ms) < 0.0:

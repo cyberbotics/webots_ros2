@@ -47,8 +47,6 @@ class WebotsNode(Node):
         arguments, unknown = parser.parse_known_args()
         if arguments.webotsRobotName:
             os.environ['WEBOTS_ROBOT_NAME'] = arguments.webotsRobotName
-        if get_webots_version() == 'R2019b':
-            sleep(10)  # TODO: wait to make sure that Webots is started
         self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'topic', 10)

@@ -114,6 +114,7 @@ class Trajectory():
 
     def __init__(self, goalHandle, startTime):
         self.jointTrajectory = goalHandle.trajectory
+        self.goalTolerance = goalHandle.goal_tolerance
         self.goalHandle = goalHandle
         self.startTime = startTime
         self.lastPointSent = False
@@ -280,10 +281,16 @@ class TrajectoryFollower():
             else:  # Off the end
                 last_point = trajectory.jointTrajectory.points[-1]
                 referencePositions = []
+                tolerances = [0.1] * len(last_point.positions)
                 for name in trajectory.jointTrajectory.joint_names:
                     referencePositions.append(position[name])
-                position_in_tol = within_tolerance(referencePositions, last_point.positions,
-                                                   [0.1] * self.numberOfMotors)
+                    for tolerance in trajectory.goalTolerance:
+                        if tolerance.name == name:
+                            tolerances[len(referencePositions) - 1] = tolerance.position
+                            break
+                position_in_tol = within_tolerance(referencePositions,
+                                                   last_point.positions,
+                                                   tolerances)
                 if position_in_tol:
                     # The arm reached the goal => Succeeded
                     result.error_code = result.SUCCESSFUL

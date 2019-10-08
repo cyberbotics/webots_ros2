@@ -21,6 +21,7 @@ find_package(rosidl_default_generators REQUIRED)
 
 set(srv_files
   "srv/SetDifferentialWheelSpeed.srv"
+  "srv/SetInt.srv"
 )
 
 if(BUILD_TESTING)

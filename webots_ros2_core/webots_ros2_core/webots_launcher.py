@@ -26,16 +26,16 @@ from webots_ros2_core.utils import get_webots_home
 
 def main(args=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--world", dest="world", default="", help="Path to the world to load.")
-    parser.add_argument("--mode", dest="mode", default="realtime", help="Startup mode.")
-    parser.add_argument("--no-gui", dest="noGui", default="false",
-                        help="Start Webots with minimal GUI.")
+    parser.add_argument('--world', dest='world', default='', help='Path to the world to load.')
+    parser.add_argument('--mode', dest='mode', default='realtime', help='Startup mode.')
+    parser.add_argument('--no-gui', dest='noGui', action='store_true',
+                        help='Start Webots with minimal GUI.')
     args = parser.parse_args()
     webotsPath = get_webots_home()
     if sys.platform == 'win32':
         webotsPath = os.path.join(webotsPath, 'msys64', 'mingw64', 'bin')
     command = [os.path.join(webotsPath, 'webots'), '--mode=' + args.mode, args.world]
-    if args.noGui == 'true':
+    if args.noGui:
         command.append('--stdout')
         command.append('--stderr')
         command.append('--batch')

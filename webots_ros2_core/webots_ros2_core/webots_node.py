@@ -24,9 +24,12 @@ from time import sleep
 
 from webots_ros2_core.utils import get_webots_version, append_webots_python_lib_to_path
 
+from webots_ros2_msgs.srv import SetInt
+
 from rosgraph_msgs.msg import Clock
 
 from rclpy.node import Node
+from rclpy.parameter import Parameter
 
 try:
     append_webots_python_lib_to_path()
@@ -40,6 +43,8 @@ class WebotsNode(Node):
 
     def __init__(self, name, args=None):
         super().__init__(name)
+        self.declare_parameter('synchronization',
+                               Parameter('synchronization', Parameter.Type.BOOL, False))
         parser = argparse.ArgumentParser()
         parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
                             help='Specifies the "name" field of the robot in Webots.')
@@ -51,15 +56,21 @@ class WebotsNode(Node):
             sleep(10)  # TODO: wait to make sure that Webots is started
         self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())
-        self.clockPublisher = self.create_publisher(Clock, 'topic', 10)
+        self.clockPublisher = self.create_publisher(Clock, 'clock', 10)
         timer_period = 0.001 * self.timestep  # seconds
+        self.stepService = self.create_service(SetInt, 'step', self.step_callback)
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
 
-    def timer_callback(self):
-        if self.robot is None:
+    def step(self, ms):
+        if self.robot is None or self.get_parameter('synchronization').value:
             return
+        # Robot step
+        if self.robot.step(ms) < 0.0:
+            del self.robot
+            self.robot = None
+            sys.exit(0)
         # Update time
         time = self.robot.getTime()
         self.sec = int(time)
@@ -70,8 +81,11 @@ class WebotsNode(Node):
         msg.clock.sec = self.sec
         msg.clock.nanosec = self.nanosec
         self.clockPublisher.publish(msg)
-        # Robot step
-        if self.robot.step(self.timestep) < 0.0:
-            del self.robot
-            self.robot = None
-            sys.exit(0)
+
+    def timer_callback(self):
+        self.step(self.timestep)
+
+    def step_callback(self, request, response):
+        self.step(request.value)
+        response.success = True
+        return response

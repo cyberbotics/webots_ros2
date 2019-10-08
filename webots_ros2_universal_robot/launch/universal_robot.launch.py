@@ -27,13 +27,17 @@ from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
+    # Webots
     arguments = ['--mode=realtime', '--world=' +
                  os.path.join(get_package_share_directory('webots_ros2_universal_robot'),
                               'worlds', 'universal_robot.wbt')]
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
+    # Controller node
+    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
     controller = ControllerLauncher(package='webots_ros2_universal_robot',
                                     node_executable='universal_robot',
+                                    parameters=[{'synchronization': synchronization}],
                                     output='screen')
     return launch.LaunchDescription([
         webots,

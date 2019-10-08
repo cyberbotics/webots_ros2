@@ -43,7 +43,8 @@ class WebotsNode(Node):
 
     def __init__(self, name, args=None):
         super().__init__(name)
-        self.declare_parameter('synchronize', Parameter('synchronize', Parameter.Type.BOOL, False))
+        self.declare_parameter('synchronization',
+                               Parameter('synchronization', Parameter.Type.BOOL, False))
         parser = argparse.ArgumentParser()
         parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
                             help='Specifies the "name" field of the robot in Webots.')
@@ -63,7 +64,7 @@ class WebotsNode(Node):
         self.nanosec = 0
 
     def step(self, ms):
-        if self.robot is None or self.get_parameter('synchronize').value:
+        if self.robot is None or self.get_parameter('synchronization').value:
             return
         # Robot step
         if self.robot.step(ms) < 0.0:

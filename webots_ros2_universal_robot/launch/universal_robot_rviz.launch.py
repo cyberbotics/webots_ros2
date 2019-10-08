@@ -36,20 +36,20 @@ def generate_launch_description():
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
     # Controller nodes
-    synchronize = launch.substitutions.LaunchConfiguration('synchronize', default=False)
+    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
     URe5Controller = ControllerLauncher(package='webots_ros2_universal_robot',
                                         node_executable='universal_robot',
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
                                         arguments=['--webots-robot-name=UR5e'],
-                                        parameters=[{'synchronize': synchronize}],
+                                        parameters=[{'synchronization': synchronization}],
                                         output='screen')
     tfController = ControllerLauncher(package='webots_ros2_core',
                                       node_executable='tf_publisher',
                                       # this argument should match the 'name' field
                                       # of the robot in Webots
                                       arguments=['--webots-robot-name=tf_supervisor'],
-                                      parameters=[{'synchronize': synchronize}],
+                                      parameters=[{'synchronization': synchronization}],
                                       output='screen')
     # Copy .rviz config file and update path ro URDF file.
     templateRvizFile = os.path.join(get_package_share_directory('webots_ros2_ur_e_description'),

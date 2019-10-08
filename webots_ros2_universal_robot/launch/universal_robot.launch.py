@@ -34,10 +34,10 @@ def generate_launch_description():
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
     # Controller node
-    synchronize = launch.substitutions.LaunchConfiguration('synchronize', default=False)
+    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
     controller = ControllerLauncher(package='webots_ros2_universal_robot',
                                     node_executable='universal_robot',
-                                    parameters=[{'synchronize': synchronize}],
+                                    parameters=[{'synchronization': synchronization}],
                                     output='screen')
     return launch.LaunchDescription([
         webots,

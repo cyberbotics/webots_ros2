@@ -269,9 +269,6 @@ class TrajectoryFollower():
             elif not trajectory.lastPointSent:
                 # All intermediate points sent, sending last point to make sure we reach the goal
                 trajectory.lastPointSent = True
-                last_point = trajectory.jointTrajectory.points[-1]
-                position_in_tol = within_tolerance(position, last_point.positions,
-                                                   self.joint_path_tolerances)
                 setpoint = sample_trajectory(trajectory.jointTrajectory,
                                              lastPointStart.sec + lastPointStart.nanosec * 1.0e-6)
                 for name in trajectory.jointTrajectory.joint_names:
@@ -282,12 +279,13 @@ class TrajectoryFollower():
                     # self.motors[name].setVelocity(math.fabs(setpoint.velocities[index]))
             else:  # Off the end
                 last_point = trajectory.jointTrajectory.points[-1]
-                position_in_tol = within_tolerance(position, last_point.positions,
+                referencePositions = []
+                for name in trajectory.jointTrajectory.joint_names:
+                    referencePositions.append(position[name])
+                position_in_tol = within_tolerance(referencePositions, last_point.positions,
                                                    [0.1] * self.numberOfMotors)
-                velocity_in_tol = within_tolerance(velocity, last_point.velocities,
-                                                   [0.05] * self.numberOfMotors)
-                if position_in_tol and velocity_in_tol:
-                    # The arm reached the goal (and isn't moving) => Succeeded
+                if position_in_tol:
+                    # The arm reached the goal => Succeeded
                     result.error_code = result.SUCCESSFUL
                     goal_handle.succeed()
                     self.trajectories.remove(trajectory)

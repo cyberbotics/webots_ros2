@@ -20,7 +20,7 @@ import argparse
 import os
 import sys
 
-from webots_ros2_core.utils import get_webots_version, append_webots_python_lib_to_path
+from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from rosgraph_msgs.msg import Clock
 

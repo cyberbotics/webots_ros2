@@ -20,9 +20,7 @@ import argparse
 import os
 import sys
 
-from time import sleep
-
-from webots_ros2_core.utils import get_webots_version, append_webots_python_lib_to_path
+from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from webots_ros2_msgs.srv import SetInt
 
@@ -52,8 +50,6 @@ class WebotsNode(Node):
         arguments, unknown = parser.parse_known_args()
         if arguments.webotsRobotName:
             os.environ['WEBOTS_ROBOT_NAME'] = arguments.webotsRobotName
-        if get_webots_version() == 'R2019b':
-            sleep(10)  # TODO: wait to make sure that Webots is started
         self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'clock', 10)

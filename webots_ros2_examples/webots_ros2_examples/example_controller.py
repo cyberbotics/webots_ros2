@@ -56,9 +56,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     exampleController = ExampleController(args=args)
-
     rclpy.spin(exampleController)
-    rclpy.shutdown()
 
 
 if __name__ == '__main__':

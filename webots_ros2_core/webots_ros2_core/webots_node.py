@@ -26,6 +26,7 @@ from webots_ros2_msgs.srv import SetInt
 
 from rosgraph_msgs.msg import Clock
 
+import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter
 
@@ -59,14 +60,17 @@ class WebotsNode(Node):
         self.sec = 0
         self.nanosec = 0
 
+    def destroy(self):
+        super().destroy_node()
+
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:
             return
         # Robot step
         if self.robot.step(ms) < 0.0:
-            del self.robot
-            self.robot = None
-            sys.exit(0)
+            self.destroy()
+            rclpy.utilities.shutdown()
+            return
         # Update time
         time = self.robot.getTime()
         self.sec = int(time)

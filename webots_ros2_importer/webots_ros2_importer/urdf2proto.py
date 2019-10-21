@@ -25,7 +25,7 @@ from urdf2webots.importer import convert2urdf
 from ament_index_python.packages import get_package_share_directory
 
 
-def main(args=None):
+def main(args=None, input=None):
     parser = argparse.ArgumentParser(usage='usage: %prog --input=my_robot.urdf [options]')
     parser.add_argument('--input', dest='inFile', default='',
                         help='Specifies the urdf file to convert.')
@@ -41,7 +41,7 @@ def main(args=None):
                         help='If set, the duplicated vertices are not removed from the meshes.')
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
     arguments, unknown = parser.parse_known_args()
-    file = os.path.abspath(arguments.inFile)
+    file = input if input is not None else os.path.abspath(arguments.inFile)
     if not os.path.isfile(file):
         sys.exit('"%s" file does not exist.' % arguments.inFile)
     elif not file.endswith('.urdf'):

@@ -14,11 +14,36 @@
 
 """Convert an XACCRO File into a PROTO."""
 
+import copy
+import os
 import sys
+import xacro
+
+from tempfile import mkstemp
+from webots_ros2_importer import urdf2proto
 
 
 def main(args=None):
-    sys.exit('ROS2 does not yet support xaccro.')
+    # remvove arguments specific to the urdf2proto converter
+    saved_argv = copy.copy(sys.argv)
+    argsToRemove = ['--normal', '--box-collision', '--disable-mesh-optimization']
+    for arg in argsToRemove:
+        if arg in sys.argv:
+            sys.argv.remove(arg)
+    # redirect stdout to temporary urdf file
+    orig_stdout = sys.stdout
+    file, path = mkstemp(suffix='.urdf')
+    # use a context manager to open the file at that path and close it again
+    with open(path, 'w') as f:
+        sys.stdout = f
+        # run xacro to urdf conversio
+        sys.argv.append('--inorder')
+        xacro.main()
+    # restore stdout and arguments and then run urdf to proto conversion
+    sys.stdout = orig_stdout
+    sys.argv = saved_argv
+    urdf2proto.main(input=path)
+    os.remove(path)
 
 
 if __name__ == '__main__':

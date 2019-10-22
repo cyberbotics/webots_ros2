@@ -8,7 +8,10 @@ env:
     - ROS_DISTRO="crystal" ROS_REPO=main DOCKER_RUN_OPTS='-e TRAVIS'
     - ROS_DISTRO="dashing" ROS_REPO=testing DOCKER_RUN_OPTS='-e TRAVIS'
     - ROS_DISTRO="dashing" ROS_REPO=main DOCKER_RUN_OPTS='-e TRAVIS'
-
+addons:
+  apt:
+    packages:
+      - python-pip
 install:
   - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 script:

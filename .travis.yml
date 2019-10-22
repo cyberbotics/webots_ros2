@@ -1,18 +1,11 @@
 language: generic
 services:
   - docker
-
 env:
   matrix:
-    - ROS_DISTRO="crystal" ROS_REPO=testing
-    - ROS_DISTRO="crystal" ROS_REPO=main
-    - ROS_DISTRO="dashing" ROS_REPO=testing
-    - ROS_DISTRO="dashing" ROS_REPO=main
-    - ROS_DISTRO="eloquent"
-addons:
-  apt:
-    packages:
-      - python-pip
+    - ROS_DISTRO="crystal" DOCKER_RUN_OPTS='-e TRAVIS'
+    - ROS_DISTRO="dashing" DOCKER_RUN_OPTS='-e TRAVIS'
+#    - ROS_DISTRO="eloquent" DOCKER_RUN_OPTS='-e TRAVIS'
 install:
   - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 script:

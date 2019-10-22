@@ -25,8 +25,13 @@ from webots_ros2_importer import urdf2proto
 
 def main(args=None):
     # remvove arguments specific to the urdf2proto converter
-    saved_argv = copy.copy(sys.argv)
-    argsToRemove = ['--normal', '--box-collision', '--disable-mesh-optimization']
+    savedArgv = copy.copy(sys.argv)
+    argsToRemove = ['--normal', '--box-collision', '--disable-mesh-optimization', '--output']
+    for arg in savedArgv:
+        for argToRemove in argsToRemove:
+            if arg.startswith(argToRemove):
+                sys.argv.remove(arg)
+                break
     for arg in argsToRemove:
         if arg in sys.argv:
             sys.argv.remove(arg)
@@ -41,7 +46,7 @@ def main(args=None):
         xacro.main()
     # restore stdout and arguments and then run urdf to proto conversion
     sys.stdout = orig_stdout
-    sys.argv = saved_argv
+    sys.argv = savedArgv
     urdf2proto.main(input=path)
     os.remove(path)
 

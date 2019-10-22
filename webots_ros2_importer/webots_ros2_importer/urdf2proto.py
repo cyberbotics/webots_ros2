@@ -41,7 +41,9 @@ def main(args=None, input=None):
                         help='If set, the duplicated vertices are not removed from the meshes.')
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
     arguments, unknown = parser.parse_known_args()
-    file = input if input is not None else os.path.abspath(arguments.inFile)
+    file = os.path.abspath(input) if input is not None else os.path.abspath(arguments.inFile)
+    if not file:
+        sys.exit('Input file not specified (should be specified with the "--input" argument).')
     if not os.path.isfile(file):
         sys.exit('"%s" file does not exist.' % arguments.inFile)
     elif not file.endswith('.urdf'):

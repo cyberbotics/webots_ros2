@@ -8,6 +8,7 @@ env:
     - ROS_DISTRO="crystal" ROS_REPO=main
     - ROS_DISTRO="dashing" ROS_REPO=testing
     - ROS_DISTRO="dashing" ROS_REPO=main
+    - ROS_DISTRO="eloquent"
 addons:
   apt:
     packages:

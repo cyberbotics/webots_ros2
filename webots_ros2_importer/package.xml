@@ -3,7 +3,7 @@
 <package format="2">
   <name>webots_ros2_importer</name>
   <version>1.0.0</version>
-  <description>This package allows to convert URDF and XACCRO files into Webots PROTO files.</description>
+  <description>This package allows to convert URDF and XACRO files into Webots PROTO files.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
   <license>Apache License 2.0</license>

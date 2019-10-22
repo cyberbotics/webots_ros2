@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Convert an XACCRO File into a PROTO."""
+"""Convert an XACRO File into a PROTO."""
 
 import copy
 import os

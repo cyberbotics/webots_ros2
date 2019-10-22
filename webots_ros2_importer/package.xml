@@ -14,6 +14,7 @@
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>urdf2webots-pip</exec_depend>
   <exec_depend>python3-collada-pip</exec_depend>
+  <exec_depend>xacro</exec_depend>
 
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->

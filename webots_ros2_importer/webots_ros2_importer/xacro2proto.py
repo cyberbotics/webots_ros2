@@ -38,7 +38,6 @@ def main(args=None):
     # redirect stdout to temporary urdf file
     orig_stdout = sys.stdout
     file, path = mkstemp(suffix='.urdf')
-    # use a context manager to open the file at that path and close it again
     with open(path, 'w') as f:
         sys.stdout = f
         # run xacro to urdf conversio

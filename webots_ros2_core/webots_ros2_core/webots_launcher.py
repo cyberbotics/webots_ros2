@@ -35,6 +35,8 @@ def main(args=None):
     if sys.platform == 'win32':
         webotsPath = os.path.join(webotsPath, 'msys64', 'mingw64', 'bin')
     command = [os.path.join(webotsPath, 'webots'), '--mode=' + args.mode, args.world]
+    if 'WEBOTS_ARGUMENTS' in os.environ:
+        command.append(os.environ['WEBOTS_ARGUMENTS'])
     if args.noGui:
         command.append('--stdout')
         command.append('--stderr')

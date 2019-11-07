@@ -87,6 +87,25 @@ def interp_cubic(p0, p1, t_abs):
                                                                                      1.0e+6)))
 
 
+def interp_linear(p0, p1, t_abs):
+    """Perform a linear interpolation between two trajectory points."""
+    t0 = p0.time_from_start.sec + p0.time_from_start.nanosec * 1.0e-6
+    t1 = p1.time_from_start.sec + p1.time_from_start.nanosec * 1.0e-6
+    T = t1 - t0
+    t = t_abs - t0
+    ratio = max(min((t / T), 1), 0)
+    q = [0] * len(p0.positions)
+    qdot = [0] * len(p0.positions)
+    qddot = [0] * len(p0.positions)
+    for i in range(len(p0.positions)):
+        q[i] = (1.0 - ratio) * p0.positions[i] + ratio * p1.positions[i]
+        qdot[i] = (1.0 - ratio) * p0.velocities[i] + ratio * p1.velocities[i]
+        qddot[i] = (1.0 - ratio) * p0.accelerations[i] + ratio * p1.accelerations[i]
+    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot,
+                                time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) *
+                                                                                     1.0e+6)))
+
+
 def sample_trajectory(trajectory, t):
     """
     Sample a trajectory at time t.
@@ -106,7 +125,7 @@ def sample_trajectory(trajectory, t):
     while (trajectory.points[i + 1].time_from_start.sec +
            trajectory.points[i + 1].time_from_start.nanosec * 1.0e-6) < t:
         i += 1
-    return interp_cubic(trajectory.points[i], trajectory.points[i + 1], t)
+    return interp_linear(trajectory.points[i], trajectory.points[i + 1], t)
 
 
 class Trajectory():

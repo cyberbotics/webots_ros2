@@ -1,26 +1,11 @@
 #VRML_SIM R2019b utf8
 WorldInfo {
-  info [
-    "Unviversal Robot UR3e, UR5e and UR10e grasping cans using Robotiq 3F grippers."
-  ]
-  title "Universal Robot"
+  title "ROS2-Webots Armed Robots Demo"
   basicTimeStep 16
-  physicsDisableAngularThreshold 0.1
-  contactProperties [
-    ContactProperties {
-      bounce 0.1
-    }
-    ContactProperties {
-      material1 "slope"
-      coulombFriction [
-        0.5
-      ]
-    }
-  ]
 }
 Viewpoint {
-  orientation 0.5848252075132117 0.7842546758745869 0.20718127334770317 5.256433015947187
-  position -2.37351 3.10222 2.30435
+  orientation 0.43559128252941465 0.8683058996949893 0.23728695526567628 5.0603650019972175
+  position -3.474576407301011 3.6105531930572154 1.7803317268353394
   exposure 1.7
 }
 TexturedBackground {
@@ -40,10 +25,6 @@ UR5e {
     Robotiq3fGripper {
       translation 0 0.04 0
     }
-    DistanceSensor {
-      translation 0 0.1 0
-      rotation 0 0 1 1.570796
-    }
   ]
 }
 SolidBox {
@@ -53,5 +34,41 @@ SolidBox {
     textureTransform TextureTransform {
       scale 2 2
     }
+  }
+}
+Robot {
+  children [
+    Irb4600-40 {
+      translation 1.48 -0.0200046 -0.58
+      rotation -3.3905013482585576e-09 0.7071062811861719 0.7071072811865696 3.14159
+      handSlot [
+        Robotiq3fGripper {
+          translation 0 3.6732e-08 -0.0100001
+          rotation 1 0 0 1.5708
+        }
+      ]
+    }
+  ]
+  name "abbirb4600"
+  controller "<extern>"
+}
+ConveyorBelt {
+  translation 0.3 0 0.82
+  size 7 0.6 0.4
+  speed -0.05
+}
+Can {
+  translation 0.42 0.67 0.81
+}
+Table {
+  translation 0 0 -0.58
+  size 0.6 0.58 0.6
+  feetSize 0.06 0.06
+  trayAppearance BrushedSteel {
+    textureTransform TextureTransform {
+      scale 2 2
+    }
+  }
+  legAppearance OldSteel {
   }
 }

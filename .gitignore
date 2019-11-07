@@ -1,5 +1,6 @@
 /build
 /install
 /log
-test/
 .eggs/
+
+*.pyc

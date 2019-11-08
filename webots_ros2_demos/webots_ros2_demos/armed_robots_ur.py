@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""ROS2 Universal Robots controller."""
+"""Trajectory follower client for the UR5 robot."""
 
 from webots_ros2_demos.follow_joint_trajectory_client import followJointTrajectoryClient
 
@@ -21,7 +21,7 @@ import rclpy
 
 def main(args=None):
     rclpy.init(args=args)
-    armedRobotUR = followJointTrajectoryClient('/ur/follow_joint_trajectory')
+    armedRobotUR = followJointTrajectoryClient('armed_robots_ur', '/ur/follow_joint_trajectory')
     armedRobotUR.send_goal({
         'joint_names': ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint',
                         'wrist_1_joint', 'finger_1_joint_1', 'finger_2_joint_1',
@@ -29,36 +29,42 @@ def main(args=None):
         'points': [
             {
                 'positions': [0.0, 0.0, 0.0, 0.0, 0.85, 0.85, 0.6],
-                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'velocities': [5] * 7,
+                'accelerations': [5] * 7,
                 'time_from_start': {'sec': 4, 'nanosec': 0}
             },
             {
                 'positions': [0.63, -2.26, -1.88, -2.14, 0.85, 0.85, 0.6],
-                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                'time_from_start': {'sec': 12, 'nanosec': 0}
+                'velocities': [5] * 7,
+                'accelerations': [5] * 7,
+                'time_from_start': {'sec': 5, 'nanosec': 0}
             },
             {
                 'positions': [0.63, -2.26, -1.88, -2.14, 0.0, 0.0, 0.0],
-                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                'time_from_start': {'sec': 16, 'nanosec': 0}
+                'velocities': [5] * 7,
+                'accelerations': [5] * 7,
+                'time_from_start': {'sec': 6, 'nanosec': 0}
             },
             {
                 'positions': [0.63, -2.0, -1.88, -2.14, 0.0, 0.0, 0.0],
-                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                'time_from_start': {'sec': 18, 'nanosec': 0}
+                'velocities': [5] * 7,
+                'accelerations': [5] * 7,
+                'time_from_start': {'sec': 7, 'nanosec': 0}
             },
             {
                 'positions': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-                'time_from_start': {'sec': 26, 'nanosec': 0}
+                'velocities': [5] * 7,
+                'accelerations': [5] * 7,
+                'time_from_start': {'sec': 8, 'nanosec': 0}
+            },
+            {
+                'positions': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                'velocities': [5] * 7,
+                'accelerations': [5] * 7,
+                'time_from_start': {'sec': 9, 'nanosec': 0}
             }
         ]
-    })
+    }, 10)
     rclpy.spin(armedRobotUR)
 
 

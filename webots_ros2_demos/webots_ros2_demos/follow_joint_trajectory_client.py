@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Generic client for the FollowJointTrajectory action"""
+"""Generic client for the FollowJointTrajectory action."""
 
 from action_msgs.msg import GoalStatus
 from control_msgs.action import FollowJointTrajectory
@@ -26,9 +26,11 @@ from rclpy.node import Node
 
 class followJointTrajectoryClient(Node):
 
-    def __init__(self, actionName):
-        super().__init__('armed_robots_ur')
+    def __init__(self, name, actionName):
+        super().__init__(name)
         self.client = ActionClient(self, FollowJointTrajectory, actionName)
+        self.remainingIteration = 0
+        self.currentTrajectory = None
 
     def goal_response_callback(self, future):
         goal_handle = future.result()
@@ -51,12 +53,18 @@ class followJointTrajectoryClient(Node):
         else:
             self.get_logger().info('Goal failed with status: {0}'.format(status))
 
-        # Shutdown after receiving a result
-        rclpy.shutdown()
+        if self.remainingIteration > 0:
+            self.send_goal(self.currentTrajectory, self.remainingIteration - 1)
+        else:
+            # Shutdown after receiving a result
+            rclpy.shutdown()
 
-    def send_goal(self, trajectory):
+    def send_goal(self, trajectory, iteration=1):
         self.get_logger().info('Waiting for action server...')
         self.client.wait_for_server()
+
+        self.currentTrajectory = trajectory
+        self.remainingIteration = iteration - 1
 
         goal_msg = FollowJointTrajectory.Goal()
         goal_msg.trajectory.joint_names = trajectory['joint_names']

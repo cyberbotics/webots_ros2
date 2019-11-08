@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch Webots and the controller."""
+"""Launch Webots and the controllers."""
 
 import os
 

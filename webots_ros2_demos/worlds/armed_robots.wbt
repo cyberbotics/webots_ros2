@@ -4,8 +4,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation 0.43559128252941465 0.8683058996949893 0.23728695526567628 5.0603650019972175
-  position -3.474576407301011 3.6105531930572154 1.7803317268353394
+  orientation 0.435591445788176 0.8683058211583241 0.2372869429588048 5.0603657046129005
+  position -3.4745764073010106 3.6105531930572154 1.7803317268353394
   exposure 1.7
 }
 TexturedBackground {
@@ -27,15 +27,6 @@ UR5e {
     }
   ]
 }
-SolidBox {
-  translation 0 0.3 0
-  size 0.3 0.6 0.3
-  appearance GalvanizedMetal {
-    textureTransform TextureTransform {
-      scale 2 2
-    }
-  }
-}
 Robot {
   children [
     Irb4600-40 {
@@ -55,20 +46,32 @@ Robot {
 ConveyorBelt {
   translation 0.3 0 0.82
   size 7 0.6 0.4
-  speed -0.05
+  speed -0.3
+  textureAnimation 0.016
+}
+Can {
+  translation -0.002660813923593048 0.6410656652293695 -0.6124808572294808
+  rotation 8.276992514955869e-10 0.9999999999999999 -3.340638253097029e-10 0.6402769022461543
+  name "can(1)"
 }
 Can {
   translation 0.42 0.67 0.81
 }
 Table {
-  translation -0.14 0 -0.58
-  size 0.6 0.58 0.6
+  translation -0.14 0 -0.16
+  size 0.6 0.58 1.5
   feetSize 0.06 0.06
   trayAppearance BrushedSteel {
     textureTransform TextureTransform {
-      scale 2 2
+      scale 2 3
     }
   }
   legAppearance OldSteel {
+  }
+}
+SolidBox {
+  translation 0 0.59 0
+  size 0.2 0.03 0.2
+  appearance BrushedAluminium {
   }
 }

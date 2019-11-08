@@ -39,7 +39,10 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['armed_robots_ur = webots_ros2_demos.armed_robots_ur:main'],
+        'console_scripts': [
+            'armed_robots_ur = webots_ros2_demos.armed_robots_ur:main',
+            'armed_robots_abb = webots_ros2_demos.armed_robots_abb:main'
+        ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

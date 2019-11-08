@@ -4,9 +4,8 @@ WorldInfo {
   basicTimeStep 16
 }
 Viewpoint {
-  orientation 0.435591445788176 0.8683058211583241 0.2372869429588048 5.0603657046129005
-  position -3.4745764073010106 3.6105531930572154 1.7803317268353394
-  exposure 1.7
+  orientation 0.3246998309115922 0.9393566562672572 0.11035892411754313 5.207990059826078
+  position -4.713842449302728 3.4102905399966192 2.940251032038544
 }
 TexturedBackground {
   texture "factory"
@@ -44,18 +43,17 @@ Robot {
   controller "<extern>"
 }
 ConveyorBelt {
-  translation 0.3 0 0.82
+  translation 1.14 0 0.82
   size 7 0.6 0.4
   speed -0.3
   textureAnimation 0.016
 }
 Can {
   translation -0.002660813923593048 0.6410656652293695 -0.6124808572294808
-  rotation 8.276992514955869e-10 0.9999999999999999 -3.340638253097029e-10 0.6402769022461543
   name "can(1)"
 }
 Can {
-  translation 0.42 0.67 0.81
+  translation 1.3 0.67 0.81
 }
 Table {
   translation -0.14 0 -0.16
@@ -74,4 +72,44 @@ SolidBox {
   size 0.2 0.03 0.2
   appearance BrushedAluminium {
   }
+}
+Wall {
+  translation 0 0 -1.4
+  size 11.06 3 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 11.1 3
+    }
+  }
+}
+Wall {
+  translation 5.43 0 0.7
+  rotation 0 1 0 -1.5707953071795862
+  name "wall(1)"
+  size 4 3 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 4 3
+    }
+  }
+}
+ConstructionLamp {
+  translation 0.14 2.22 -1.26268
+  rotation 8.086859127158437e-07 0.3826849586955414 -0.9238789002826819 3.14159
+  spotLightIntensity 4
+  spotLightCastShadows TRUE
+}
+ConstructionLamp {
+  translation 2 2.22 -1.26268
+  rotation 8.086859127158437e-07 0.3826849586955414 -0.9238789002826819 3.14159
+  name "construction lamp(1)"
+  spotLightIntensity 4
+  spotLightCastShadows TRUE
+}
+ConstructionLamp {
+  translation -1.28 2.22 -1.26268
+  rotation 8.086859127158437e-07 0.3826849586955414 -0.9238789002826819 3.14159
+  name "construction lamp(2)"
+  spotLightIntensity 4
+  spotLightCastShadows TRUE
 }

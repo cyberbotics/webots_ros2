@@ -28,6 +28,12 @@ def main(args=None):
                         'finger_middle_joint_1'],
         'points': [
             {
+                'positions': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                'velocities': [5] * 7,
+                'accelerations': [5] * 7,
+                'time_from_start': {'sec': 3, 'nanosec': 0}
+            },
+            {
                 'positions': [0.0, 0.0, 0.0, 0.0, 0.85, 0.85, 0.6],
                 'velocities': [5] * 7,
                 'accelerations': [5] * 7,

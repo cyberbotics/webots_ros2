@@ -61,7 +61,7 @@ Can {
   translation 0.42 0.67 0.81
 }
 Table {
-  translation 0 0 -0.58
+  translation -0.14 0 -0.58
   size 0.6 0.58 0.6
   feetSize 0.06 0.06
   trayAppearance BrushedSteel {

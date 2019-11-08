@@ -14,45 +14,52 @@
 
 """ROS2 Universal Robots controller."""
 
-from webots_ros2_core.webots_node import WebotsNode
-from webots_ros2_core.joint_state_publisher import JointStatePublisher
-from webots_ros2_core.trajectory_follower import TrajectoryFollower
+from webots_ros2_demos.follow_joint_trajectory_client import followJointTrajectoryClient
 
 import rclpy
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.parameter import Parameter
-
-
-class ActionServerNode(WebotsNode):
-
-    def __init__(self, args):
-        super().__init__('ur_driver', args=args)
-        prefix = self.get_parameter_or('prefix',
-                                       Parameter('prefix', Parameter.Type.STRING, '')).value
-        self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)
-        self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=prefix)
-        self.jointStateTimer = self.create_timer(0.001 * self.timestep, self.joint_state_callback)
-
-    def joint_state_callback(self):
-        # update joint state and trajectory follower
-        self.jointStatePublisher.publish()
 
 
 def main(args=None):
     rclpy.init(args=args)
-
-    actionServer = ActionServerNode(args=args)
-
-    # Use a MultiThreadedExecutor to enable processing goals concurrently
-    executor = MultiThreadedExecutor()
-
-    rclpy.spin(actionServer, executor=executor)
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
-    actionServer.destroy()
-    rclpy.shutdown()
+    armedRobotUR = followJointTrajectoryClient('/ur/follow_joint_trajectory')
+    armedRobotUR.send_goal({
+        'joint_names': ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint',
+                        'wrist_1_joint', 'finger_1_joint_1', 'finger_2_joint_1',
+                        'finger_middle_joint_1'],
+        'points': [
+            {
+                'positions': [0.0, 0.0, 0.0, 0.0, 0.85, 0.85, 0.6],
+                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'time_from_start': {'sec': 4, 'nanosec': 0}
+            },
+            {
+                'positions': [0.63, -2.26, -1.88, -2.14, 0.85, 0.85, 0.6],
+                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'time_from_start': {'sec': 12, 'nanosec': 0}
+            },
+            {
+                'positions': [0.63, -2.26, -1.88, -2.14, 0.0, 0.0, 0.0],
+                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'time_from_start': {'sec': 16, 'nanosec': 0}
+            },
+            {
+                'positions': [0.63, -2.0, -1.88, -2.14, 0.0, 0.0, 0.0],
+                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'time_from_start': {'sec': 18, 'nanosec': 0}
+            },
+            {
+                'positions': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                'velocities': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'accelerations': [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                'time_from_start': {'sec': 26, 'nanosec': 0}
+            }
+        ]
+    })
+    rclpy.spin(armedRobotUR)
 
 
 if __name__ == '__main__':

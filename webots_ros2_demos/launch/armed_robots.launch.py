@@ -43,16 +43,20 @@ def generate_launch_description():
                                        node_namespace='abb',
                                        parameters=[{'synchronization': synchronization}],
                                        output='screen')
-    Ure10controller = ControllerLauncher(package='webots_ros2_universal_robot',
-                                         node_executable='universal_robot',
-                                         # this argument should match the 'name' field
-                                         # of the robot in Webots
-                                         arguments=['--webots-robot-name=UR5e'],
-                                         node_namespace='ur',
-                                         parameters=[{'synchronization': synchronization}],
-                                         output='screen')
+    Ure5controller = ControllerLauncher(package='webots_ros2_universal_robot',
+                                        node_executable='universal_robot',
+                                        # this argument should match the 'name' field
+                                        # of the robot in Webots
+                                        arguments=['--webots-robot-name=UR5e'],
+                                        node_namespace='ur',
+                                        parameters=[{'synchronization': synchronization}],
+                                        output='screen')
+    # Controlle nodes
+    armedRobotsUr = ControllerLauncher(package='webots_ros2_demos',
+                                       node_executable='armed_robots_ur',
+                                       output='screen')
     return launch.LaunchDescription([
-        webots, AbbController, Ure10controller,
+        webots, AbbController, Ure5controller, armedRobotsUr,
         # Shutdown launch when webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

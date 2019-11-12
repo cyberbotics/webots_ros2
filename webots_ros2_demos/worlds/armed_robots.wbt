@@ -43,8 +43,10 @@ Robot {
   controller "<extern>"
 }
 ConveyorBelt {
-  translation 1.14 0 0.82
-  size 7 0.6 0.4
+  translation 1.37 0 0.82
+  size 2 0.6 0.4
+  borderThickness 0.04
+  borderHeight -0.005
   speed -0.17
   textureAnimation 0.016
 }
@@ -112,4 +114,8 @@ ConstructionLamp {
   name "construction lamp(2)"
   spotLightIntensity 4
   spotLightCastShadows TRUE
+}
+PlasticCrate {
+  translation 0.0761897 -2.66454e-15 0.810725
+  size 0.5 0.4 0.4
 }

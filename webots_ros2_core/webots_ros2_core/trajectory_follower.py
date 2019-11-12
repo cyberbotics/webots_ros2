@@ -128,6 +128,12 @@ def sample_trajectory(trajectory, t):
     return interp_linear(trajectory.points[i], trajectory.points[i + 1], t)
 
 
+def set_position_in_limit(motor, position):
+    """Set the motor position respecting its limits."""
+    position = max(min(position, motor.getMaxPosition()), motor.getMinPosition())
+    motor.setPosition(position)
+
+
 class Trajectory():
     """Trajectory representation."""
 
@@ -236,10 +242,7 @@ class TrajectoryFollower():
         for trajectory in self.trajectories:
             if trajectory.id == goal_handle.goal_id:
                 for name in trajectory.jointTrajectory.joint_names:
-                    motor = self.motors[name]
-                    position = self.sensors[name].getValue()
-                    position = max(min(position, motor.getMaxPosition()), motor.getMinPosition())
-                    motor.setPosition(position)
+                    set_position_in_limit(self.motors[name], self.sensors[name].getValue())
                 self.trajectories.remove(trajectory)
                 self.node.get_logger().info('Goal Canceled')
                 goal_handle.destroy()
@@ -285,10 +288,7 @@ class TrajectoryFollower():
                                              now - trajectory.startTime)
                 for name in trajectory.jointTrajectory.joint_names:
                     index = trajectory.jointTrajectory.joint_names.index(name)
-                    motor = self.motors[name]
-                    position = setpoint.positions[index]
-                    position = max(min(position, motor.getMaxPosition()), motor.getMinPosition())
-                    motor.setPosition(position)
+                    set_position_in_limit(self.motors[name], setpoint.positions[index])
                     # Velocity control is not used on the real robot and gives
                     # bad results in the simulation
                     # self.motors[name].setVelocity(math.fabs(setpoint.velocities[index]))
@@ -299,10 +299,7 @@ class TrajectoryFollower():
                                              lastPointStart.sec + lastPointStart.nanosec * 1.0e-6)
                 for name in trajectory.jointTrajectory.joint_names:
                     index = trajectory.jointTrajectory.joint_names.index(name)
-                    motor = self.motors[name]
-                    position = setpoint.positions[index]
-                    position = max(min(position, motor.getMaxPosition()), motor.getMinPosition())
-                    motor.setPosition(position)
+                    set_position_in_limit(self.motors[name], setpoint.positions[index])
                     # Velocity control is not used on the real robot and gives
                     # bad results in the simulations
                     # self.motors[name].setVelocity(math.fabs(setpoint.velocities[index]))

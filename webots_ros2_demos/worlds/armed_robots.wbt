@@ -45,7 +45,7 @@ Robot {
 ConveyorBelt {
   translation 1.14 0 0.82
   size 7 0.6 0.4
-  speed -0.3
+  speed -0.17
   textureAnimation 0.016
 }
 Can {
@@ -53,7 +53,7 @@ Can {
   name "can(1)"
 }
 Can {
-  translation 1.3 0.67 0.81
+  translation 1 0.67 0.81
 }
 Table {
   translation -0.14 0 -0.16

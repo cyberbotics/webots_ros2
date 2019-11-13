@@ -33,37 +33,37 @@ def main(args=None):
                 'time_from_start': {'sec': 0, 'nanosec': 0}
             },
             {
-                'positions': [0.0, 0.0, 0.82, -0.86, 0.0, 0.0, 0.0],
+                'positions': [-0.025, 0.0, 0.82, -0.86, 0.0, 0.0, 0.0],
                 'velocities': [5] * 7,
                 'accelerations': [5] * 7,
                 'time_from_start': {'sec': 1, 'nanosec': 0}
             },
             {
-                'positions': [0.0, 0.1, 0.82, -0.86, 0.0, 0.0, 0.0],
+                'positions': [-0.025, 0.1, 0.82, -0.86, 0.0, 0.0, 0.0],
                 'velocities': [5] * 7,
                 'accelerations': [5] * 7,
                 'time_from_start': {'sec': 2, 'nanosec': 0}
             },
             {
-                'positions': [0.0, 0.1, 0.82, -0.86, 0.85, 0.85, 0.6],
+                'positions': [-0.025, 0.1, 0.82, -0.86, 0.85, 0.85, 0.6],
                 'velocities': [5] * 7,
                 'accelerations': [5] * 7,
                 'time_from_start': {'sec': 3, 'nanosec': 0}
             },
             {
-                'positions': [0.0, -0.44, 0.82, -0.86, 0.85, 0.85, 0.6],
+                'positions': [-0.025, -0.44, 0.82, -0.86, 0.85, 0.85, 0.6],
                 'velocities': [5] * 7,
                 'accelerations': [5] * 7,
                 'time_from_start': {'sec': 4, 'nanosec': 0}
             },
             {
-                'positions': [1.57, -0.1, 0.86, -0.81, 0.85, 0.85, 0.6],
+                'positions': [1.57, -0.1, 0.95, -0.71, 0.85, 0.85, 0.6],
                 'velocities': [5] * 7,
                 'accelerations': [5] * 7,
                 'time_from_start': {'sec': 5, 'nanosec': 0}
             },
             {
-                'positions': [1.57, -0.1, 0.86, -0.81, 0.0, 0.0, 0.0],
+                'positions': [1.57, -0.1, 0.8, -0.81, 0.0, 0.0, 0.0],
                 'velocities': [5] * 7,
                 'accelerations': [5] * 7,
                 'time_from_start': {'sec': 6, 'nanosec': 0}

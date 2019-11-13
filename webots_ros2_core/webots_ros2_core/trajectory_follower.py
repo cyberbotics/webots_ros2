@@ -71,7 +71,7 @@ def interp_cubic(p0, p1, t_abs):
     q = [0] * len(p0.positions)
     qdot = [0] * len(p0.positions)
     qddot = [0] * len(p0.positions)
-    for i in range(len(p0.positions)):
+    for i in list(range(len(p0.positions))):
         a = p0.positions[i]
         b = p0.velocities[i]
         c = (-3 * p0.positions[i] + 3 * p1.positions[i] - 2 * T * p0.velocities[i] -
@@ -97,7 +97,7 @@ def interp_linear(p0, p1, t_abs):
     q = [0] * len(p0.positions)
     qdot = [0] * len(p0.positions)
     qddot = [0] * len(p0.positions)
-    for i in range(len(p0.positions)):
+    for i in list(range(len(p0.positions))):
         q[i] = (1.0 - ratio) * p0.positions[i] + ratio * p1.positions[i]
         qdot[i] = (1.0 - ratio) * p0.velocities[i] + ratio * p1.velocities[i]
         qddot[i] = (1.0 - ratio) * p0.accelerations[i] + ratio * p1.accelerations[i]
@@ -159,7 +159,7 @@ class TrajectoryFollower():
         self.sensors = {}
         self.position = {}
         self.velocity = {}
-        for i in range(robot.getNumberOfDevices()):
+        for i in list(range(robot.getNumberOfDevices())):
             device = robot.getDeviceByIndex(i)
             if device.getNodeType() in [Node.LINEAR_MOTOR, Node.ROTATIONAL_MOTOR]:
                 name = device.getName()

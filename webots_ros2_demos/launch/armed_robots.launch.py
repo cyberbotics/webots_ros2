@@ -51,7 +51,7 @@ def generate_launch_description():
                                         node_namespace='ur',
                                         parameters=[{'synchronization': synchronization}],
                                         output='screen')
-    # Controlle nodes
+    # Control nodes
     armedRobotsUr = ControllerLauncher(package='webots_ros2_demos',
                                        node_executable='armed_robots_ur',
                                        output='screen')
@@ -60,7 +60,7 @@ def generate_launch_description():
                                         output='screen')
     return launch.LaunchDescription([
         webots, AbbController, Ure5controller, armedRobotsUr, armedRobotsAbb,
-        # Shutdown launch when webots exits.
+        # Shutdown launch when Webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,

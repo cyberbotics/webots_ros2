@@ -73,7 +73,7 @@ def generate_launch_description():
         webots,
         URe5Controller,
         tfController,
-        # Shutdown launch when webots exits.
+        # Shutdown launch when Webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,

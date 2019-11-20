@@ -56,6 +56,7 @@ PlatformCart {
 OfficeTelephone {
   translation 4.7983 0.87294 -0.26
   rotation 0.1294279597735375 -0.9831056944488314 0.1294279597735375 1.58783
+  enablePhysics FALSE
 }
 Monitor {
   translation 4.63225 0.71 0.299468

@@ -7,7 +7,8 @@ from setuptools import setup
 
 package_name = 'webots_ros2_demos'
 worlds = [
-    'worlds/armed_robots.wbt'
+    'worlds/armed_robots.wbt',
+    'worlds/.armed_robots.wbproj'
 ]
 textures = []
 for rootPath, dirNames, fileNames in os.walk('worlds/textures'):

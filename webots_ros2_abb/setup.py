@@ -7,7 +7,8 @@ package_name = 'webots_ros2_abb'
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['launch/abb_irb4600.launch.py']))
-data_files.append(('share/' + package_name + '/worlds', ['worlds/abb_irb4600.wbt']))
+data_files.append(('share/' + package_name + '/worlds',
+                   ['worlds/abb_irb4600.wbt', 'worlds/.abb_irb4600.wbproj']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 

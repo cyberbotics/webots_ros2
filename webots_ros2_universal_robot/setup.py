@@ -7,9 +7,12 @@ from setuptools import setup
 
 package_name = 'webots_ros2_universal_robot'
 worlds = [
-    'worlds/universal_robot.wbt',
     'worlds/universal_robot_multiple.wbt',
-    'worlds/universal_robot_rviz.wbt'
+    'worlds/universal_robot_rviz.wbt',
+    'worlds/universal_robot.wbt',
+    'worlds/.universal_robot_multiple.wbproj',
+    'worlds/.universal_robot_rviz.wbproj',
+    'worlds/.universal_robot.wbproj'
 ]
 textures = []
 for rootPath, dirNames, fileNames in os.walk('worlds/textures'):

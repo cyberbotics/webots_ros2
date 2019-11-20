@@ -9,24 +9,53 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.3045551725668168 0.9416574598882725 0.14327377673378572 5.202915371449819
-  position -4.7572757223472175 3.283161696445319 3.003725420829037
+  orientation 0.1547540419368131 0.9828377744627473 0.10040465922123666 5.158586602567034
+  position -5.5359280222944935 2.389637712873963 2.5050262303749147
 }
 TexturedBackground {
   texture "factory"
 }
 Floor {
-  size 20 20
+  translation 0.79 0 -0.69
+  size 8.2 5.8
   appearance BakelitePlastic {
   }
 }
 Radiator {
-  translation 4.73328 0.32 -1.4399
+  translation 4.73328 0.32 1.4201
   rotation 0 1 0 3.14159
 }
 Desk {
   translation 4.42337 -8.34887e-14 0.582508
   rotation 0 1 0 1.5708
+}
+Cabinet {
+  translation 4.87225 0 -1.00053
+  rotation 0 1 0 -1.5707953071795862
+  name "cabinet(1)"
+  rowsHeights [
+    0.24, 0.4, 0.2, 0.4, 0.4
+  ]
+  columnsWidths [
+    0.6, 0.17, 0.17
+  ]
+  layout [
+    "RightSidedDoor (1, 1, 1, 5, 1.5)"
+    "LeftSidedDoor (2, 1, 2, 5, 1.5)"
+  ]
+  primaryAppearance GlossyPaint {
+    baseColor 0.729 0.741 0.713
+  }
+  secondaryAppearance GlossyPaint {
+    baseColor 0.729 0.741 0.713
+  }
+}
+PlatformCart {
+  translation 2.68945 8.88178e-16 -2.60593
+}
+OfficeTelephone {
+  translation 4.7983 0.87294 -0.26
+  rotation 0.1294279597735375 -0.9831056944488314 0.1294279597735375 1.58783
 }
 Monitor {
   translation 4.63225 0.71 0.299468
@@ -171,46 +200,111 @@ SolidBox {
   appearance BrushedAluminium {
   }
 }
-Wall {
-  translation -0.2 0 -3.7
-  size 10.14 3 0.2
-  appearance PBRAppearance {
-    baseColorMap ImageTexture {
-      url [
-        "textures/formed_concrete_base_color.jpg"
-      ]
+DEF WALL Transform {
+  translation 0.79 1.5 -3.59
+  rotation -1 0 0 -1.5707953071795862
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "textures/formed_concrete_base_color.jpg"
+          ]
+        }
+        roughnessMap ImageTexture {
+          url [
+            "textures/formed_concrete_roughness.jpg"
+          ]
+        }
+        metalness 0
+        normalMap ImageTexture {
+          url [
+            "textures/formed_concrete_normal.jpg"
+          ]
+        }
+        occlusionMap ImageTexture {
+          url [
+            "textures/formed_concrete_occlusion.jpg"
+          ]
+        }
+        textureTransform TextureTransform {
+          scale 4.7 1
+        }
+      }
+      geometry Plane {
+        size 8.2 3
+      }
     }
-    roughnessMap ImageTexture {
-      url [
-        "textures/formed_concrete_roughness.jpg"
-      ]
-    }
-    metalness 0
-    normalMap ImageTexture {
-      url [
-        "textures/formed_concrete_normal.jpg"
-      ]
-    }
-    occlusionMap ImageTexture {
-      url [
-        "textures/formed_concrete_occlusion.jpg"
-      ]
-    }
-    textureTransform TextureTransform {
-      scale 4.7 1
-    }
-  }
+  ]
 }
-Wall {
-  translation 4.97 0 0.700001
-  rotation 0 1 0 -1.5707953071795862
-  name "wall(1)"
-  size 9 3 0.2
-  appearance Roughcast {
-    textureTransform TextureTransform {
-      scale 4 3
+DEF WALL Transform {
+  translation 0.79 1.5 2.21
+  rotation 3.3905013482585576e-09 -0.7071062811861719 0.7071072811865696 3.14159
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "textures/formed_concrete_base_color.jpg"
+          ]
+        }
+        roughnessMap ImageTexture {
+          url [
+            "textures/formed_concrete_roughness.jpg"
+          ]
+        }
+        metalness 0
+        normalMap ImageTexture {
+          url [
+            "textures/formed_concrete_normal.jpg"
+          ]
+        }
+        occlusionMap ImageTexture {
+          url [
+            "textures/formed_concrete_occlusion.jpg"
+          ]
+        }
+        textureTransform TextureTransform {
+          scale 4.7 1
+        }
+      }
+      geometry Plane {
+        size 8.2 3
+      }
     }
-  }
+  ]
+}
+DEF WALL Transform {
+  translation 4.89 1.5 -0.690011
+  rotation 0.577349935856137 -0.577349935856137 0.5773509358560258 2.09439
+  children [
+    Shape {
+      appearance Roughcast {
+        textureTransform TextureTransform {
+          scale 4 3
+        }
+      }
+      geometry Plane {
+        size 5.8 3
+      }
+    }
+  ]
+}
+DEF WALL Transform {
+  translation -3.31 1.5 -0.69
+  rotation 0.5773489358533613 0.5773489358533613 -0.5773529358529169 2.0944
+  children [
+    Shape {
+      appearance Roughcast {
+        textureTransform TextureTransform {
+          scale 4 3
+        }
+      }
+      geometry Plane {
+        size 5.8 3
+      }
+    }
+  ]
 }
 DEF ROOF Transform {
   translation 0 3 0
@@ -291,7 +385,7 @@ DEF POLE Solid {
 }
 DEF POLE Solid {
   translation 4.73 2.9 -3.59
-  rotation 1 0 0 1.5708
+  rotation 3.3905113482557537e-09 0.70710528118436 0.707108281185553 3.14159
   children [
     DEF ROOF_POLE_SHAPE Shape {
       appearance CorrodedMetal {
@@ -317,7 +411,7 @@ DEF POLE Solid {
         ]
         spine [
           0 0 0
-          0 5 0
+          0 5.8 0
         ]
         ccw FALSE
         splineSubdivision 0
@@ -430,7 +524,6 @@ ConstructionLamp {
   rotation 1 0 0 1.5708
   name "construction lamp(8)"
   spotLightIntensity 5
-  spotLightCastShadows TRUE
 }
 ConstructionLamp {
   translation -1.53758 3 -1.11396

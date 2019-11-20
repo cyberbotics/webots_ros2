@@ -5,14 +5,10 @@ import fnmatch
 
 from setuptools import setup
 
-package_name = 'webots_ros2_universal_robot'
+package_name = 'webots_ros2_demos'
 worlds = [
-    'worlds/universal_robot_multiple.wbt',
-    'worlds/universal_robot_rviz.wbt',
-    'worlds/universal_robot.wbt',
-    'worlds/.universal_robot_multiple.wbproj',
-    'worlds/.universal_robot_rviz.wbproj',
-    'worlds/.universal_robot.wbproj'
+    'worlds/armed_robots.wbt',
+    'worlds/.armed_robots.wbproj'
 ]
 textures = []
 for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
@@ -20,9 +16,7 @@ for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
         filePath = os.path.relpath(os.path.join(rootPath, fileName))
         textures.append(filePath)
 launchers = [
-    'launch/universal_robot.launch.py',
-    'launch/universal_robot_multiple.launch.py',
-    'launch/universal_robot_rviz.launch.py'
+    'launch/armed_robots.launch.py'
 ]
 
 data_files = []
@@ -44,18 +38,21 @@ setup(
     author_email='support@cyberbotics.com',
     maintainer='Cyberbotics',
     maintainer_email='support@cyberbotics.com',
-    keywords=['ROS', 'Webots', 'Robot', 'Simulation', 'Universal Robots'],
+    keywords=['ROS', 'Webots', 'Robot', 'Simulation', 'Demos'],
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='Universal Robot ROS2 interface for Webots.',
+    description='Various demos of the Webots-ROS2 interface.',
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['universal_robot = webots_ros2_universal_robot.universal_robot:main'],
+        'console_scripts': [
+            'armed_robots_ur = webots_ros2_demos.armed_robots_ur:main',
+            'armed_robots_abb = webots_ros2_demos.armed_robots_abb:main'
+        ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

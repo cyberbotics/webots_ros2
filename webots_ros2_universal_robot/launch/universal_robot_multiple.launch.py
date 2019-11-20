@@ -53,7 +53,7 @@ def generate_launch_description():
                                         output='screen')
     return launch.LaunchDescription([
         webots, Ure3controller, Ure5controller,
-        # Shutdown launch when webots exits.
+        # Shutdown launch when Webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,

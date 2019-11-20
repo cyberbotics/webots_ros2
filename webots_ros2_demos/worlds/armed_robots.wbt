@@ -21,37 +21,41 @@ Floor {
   }
 }
 Radiator {
-  translation 3.28186 0.32 0.240009
+  translation 4.73328 0.32 -1.4399
   rotation 0 1 0 3.14159
 }
 Desk {
-  translation 3.0509 -8.52651e-14 1.5749
+  translation 4.42337 -8.34887e-14 0.582508
   rotation 0 1 0 1.5708
 }
 Monitor {
-  translation 3.23015 0.71 1.31867
+  translation 4.63225 0.71 0.299468
   rotation 0 1 0 1.5708
 }
 Keyboard {
-  translation 3.05557 0.71 1.32406
+  translation 4.39098 0.71 0.251797
   rotation 7.35847e-09 -1 -9.58979e-09 -1.8325953071795862
 }
 DesktopComputer {
-  translation 3.00863 0 1.21888
+  translation 4.32631 -8.17124e-14 0.294636
   rotation 0 1 0 1.5708
 }
 CardboardBox {
-  translation 3.00414 0.3 1.72881
+  translation 4.42049 0.3 0.768876
 }
 FireExtinguisher {
-  translation 0.987065 1.77636e-15 -1.17322
+  translation 3.41236 3.55272e-15 -3.34174
+  rotation 0 1 0 3.14159
+}
+ElectricalCabinet {
+  translation 0.284835 8.88182e-16 -3.31581
   rotation 0 1 0 3.14159
 }
 SquareManhole {
-  translation 1.59519 -0.04 1.75267
+  translation 3.24031 -0.04 -1.59301
 }
 PipeSection {
-  translation 3.3 0.610012 0.05
+  translation 4.79 0.610012 -1.93
   rotation 0 0 1 0
   height 1.3
   radius 0.05
@@ -62,10 +66,10 @@ PipeSection {
   }
 }
 PipeSection {
-  translation 3.3 1.425 -0.594
+  translation 4.79 1.425 -2.674
   rotation 1 0 0 1.5708
   name "pipe section(1)"
-  height 0.95
+  height 1.16
   radius 0.05
   appearance HammeredCopper {
     textureTransform TextureTransform {
@@ -74,7 +78,7 @@ PipeSection {
   }
 }
 PipeSection {
-  translation -0.62 1.425 -1.239
+  translation 0.87 1.425 -3.419
   rotation 0.5773509358554485 -0.5773509358554485 0.5773489358556708 2.0944
   name "pipe section(2)"
   height 7.5
@@ -86,14 +90,14 @@ PipeSection {
   }
 }
 LJoint {
-  translation 3.3 1.36001 -0.015
+  translation 4.79 1.36001 -1.995
   rotation -0.7071067811841624 2.5973491962442515e-06 -0.7071067811841624 3.14159
   scale 1.5 1.5 1.5
   appearance HammeredCopper {
   }
 }
 LJoint {
-  translation 3.234 1.426 -1.175
+  translation 4.724 1.426 -3.355
   rotation -0.5773482691863839 0.5773502691873165 0.5773522691882489 2.09439
   name "L joint pipe(1)"
   scale 1.5 1.5 1.5
@@ -101,9 +105,10 @@ LJoint {
   }
 }
 Radiator {
-  translation -0.650001 0.32 -1.18
+  translation 1.53956 0.32 -3.46023
   rotation 0 1 0 -1.5707953071795862
   name "radiator(1)"
+  numberOfFins 19
 }
 UR5e {
   translation 0 0.6 0
@@ -167,8 +172,8 @@ SolidBox {
   }
 }
 Wall {
-  translation -0.47 0 -1.4
-  size 8.18 3 0.2
+  translation -0.2 0 -3.7
+  size 10.14 3 0.2
   appearance PBRAppearance {
     baseColorMap ImageTexture {
       url [
@@ -192,43 +197,270 @@ Wall {
       ]
     }
     textureTransform TextureTransform {
-      scale 2.8 1
+      scale 4.7 1
     }
   }
 }
 Wall {
-  translation 3.52 0 0.700001
+  translation 4.97 0 0.700001
   rotation 0 1 0 -1.5707953071795862
   name "wall(1)"
-  size 4 3 0.2
+  size 9 3 0.2
   appearance Roughcast {
     textureTransform TextureTransform {
       scale 4 3
     }
   }
 }
+DEF ROOF Transform {
+  translation 0 3 0
+  rotation 1 0 0 3.14159
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "textures/corrugated_plates_base_color.jpg"
+          ]
+        }
+        roughnessMap ImageTexture {
+          url [
+            "textures/corrugated_plates_roughness.jpg"
+          ]
+        }
+        metalnessMap ImageTexture {
+          url [
+            "textures/corrugated_plates_metalness.jpg"
+          ]
+        }
+        normalMap ImageTexture {
+          url [
+            "textures/corrugated_plates_normal.jpg"
+          ]
+        }
+        occlusionMap ImageTexture {
+          url [
+            "textures/corrugated_plates_occlusion.jpg"
+          ]
+        }
+        textureTransform TextureTransform {
+          scale 4 3
+        }
+      }
+      geometry Plane {
+        size 10.1 7.6
+      }
+    }
+  ]
+}
+DEF POLE Solid {
+  translation 4.73 0 -3.59
+  children [
+    DEF POLE_SHAPE Shape {
+      appearance CorrodedMetal {
+        textureTransform TextureTransform {
+          scale 3 1
+        }
+      }
+      geometry Extrusion {
+        crossSection [
+          0.1 -0.1
+          0.1 -0.05
+          0.049751243781095 -0.05
+          0.049875311720698 0.05
+          0.1 0.05
+          0.1 0.1
+          -0.1 0.1
+          -0.1 0.05
+          -0.049751243781095 0.05
+          -0.049875311720698 -0.05
+          -0.1 -0.05
+          -0.1 -0.1
+          0.1 -0.1
+        ]
+        spine [
+          0 0 0
+          0 3 0
+        ]
+        ccw FALSE
+        splineSubdivision 0
+      }
+    }
+  ]
+  name "solid(2)"
+}
+DEF POLE Solid {
+  translation 4.73 2.9 -3.59
+  rotation 1 0 0 1.5708
+  children [
+    DEF ROOF_POLE_SHAPE Shape {
+      appearance CorrodedMetal {
+        textureTransform TextureTransform {
+          scale 3 1
+        }
+      }
+      geometry Extrusion {
+        crossSection [
+          0.1 -0.1
+          0.1 -0.05
+          0.049751243781095 -0.05
+          0.049875311720698 0.05
+          0.1 0.05
+          0.1 0.1
+          -0.1 0.1
+          -0.1 0.05
+          -0.049751243781095 0.05
+          -0.049875311720698 -0.05
+          -0.1 -0.05
+          -0.1 -0.1
+          0.1 -0.1
+        ]
+        spine [
+          0 0 0
+          0 5 0
+        ]
+        ccw FALSE
+        splineSubdivision 0
+      }
+    }
+  ]
+  name "solid(10)"
+}
+DEF POLE Solid {
+  translation 2.93 0 -3.59
+  children [
+    USE POLE_SHAPE
+  ]
+  name "solid(1)"
+}
+DEF POLE Solid {
+  translation 2.93 2.9 -3.59
+  rotation 1 0 0 1.5708
+  children [
+    USE ROOF_POLE_SHAPE
+  ]
+  name "solid(6)"
+}
+DEF POLE Solid {
+  translation 1.13 0 -3.59
+  children [
+    USE POLE_SHAPE
+  ]
+  name "solid(3)"
+}
+DEF POLE Solid {
+  translation 1.13 2.9 -3.59
+  rotation 1 0 0 1.5708
+  children [
+    USE ROOF_POLE_SHAPE
+  ]
+  name "solid(7)"
+}
+DEF POLE Solid {
+  translation -0.67 0 -3.59
+  children [
+    USE POLE_SHAPE
+  ]
+  name "solid(4)"
+}
+DEF POLE Solid {
+  translation -0.67 2.9 -3.59
+  rotation 1 0 0 1.5708
+  children [
+    USE ROOF_POLE_SHAPE
+  ]
+  name "solid(8)"
+}
+DEF POLE Solid {
+  translation -2.47 0 -3.59
+  children [
+    USE POLE_SHAPE
+  ]
+  name "solid(5)"
+}
+DEF POLE Solid {
+  translation -2.47 2.9 -3.59
+  rotation 1 0 0 1.5708
+  children [
+    USE ROOF_POLE_SHAPE
+  ]
+  name "solid(9)"
+}
 WoodenPalletStack {
-  translation 2.8753 0 -0.6438
+  translation 4.27993 -1.29674e-13 -2.83696
 }
 ConstructionLamp {
-  translation 0.14 2.12 -1.26268
-  rotation 8.086859127158437e-07 0.3826849586955414 -0.9238789002826819 3.14159
-  spotLightIntensity 4
-  spotLightCastShadows TRUE
-}
-ConstructionLamp {
-  translation 2.06 3.28 0
+  translation 3.86242 3 -2.61396
   rotation 1 0 0 1.5708
   name "construction lamp(1)"
-  spotLightIntensity 4
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 2.06242 3 -2.61396
+  rotation 1 0 0 1.5708
+  name "construction lamp(4)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 0.26242 3 -2.61396
+  rotation 1 0 0 1.5708
+  name "construction lamp(5)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation -1.54758 3 -2.61396
+  rotation 1 0 0 1.5708
+  name "construction lamp(6)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 3.86242 3 -1.11396
+  rotation 1 0 0 1.5708
+  name "construction lamp(2)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 2.06242 3 -1.11396
+  rotation 1 0 0 1.5708
+  name "construction lamp(7)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 0.26242 3 -1.11396
+  rotation 1 0 0 1.5708
+  name "construction lamp(8)"
+  spotLightIntensity 5
   spotLightCastShadows TRUE
 }
 ConstructionLamp {
-  translation -1.28 2.12 -1.26268
-  rotation 8.086859127158437e-07 0.3826849586955414 -0.9238789002826819 3.14159
-  name "construction lamp(2)"
-  spotLightIntensity 4
-  spotLightCastShadows TRUE
+  translation -1.53758 3 -1.11396
+  rotation 1 0 0 1.5708
+  name "construction lamp(9)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 3.86242 3 0.38604
+  rotation 1 0 0 1.5708
+  name "construction lamp(3)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 2.06242 3 0.38604
+  rotation 1 0 0 1.5708
+  name "construction lamp(10)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 0.26242 3 0.38604
+  rotation 1 0 0 1.5708
+  name "construction lamp(11)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation -1.53758 3 0.38604
+  rotation 1 0 0 1.5708
+  name "construction lamp(12)"
+  spotLightIntensity 5
 }
 PlasticCrate {
   translation 0.0761897 -2.66454e-15 0.810725

@@ -1,8 +1,5 @@
 """webots_ros2 package setup file."""
 
-import os
-import fnmatch
-
 from setuptools import setup
 
 package_name = 'webots_ros2_demos'

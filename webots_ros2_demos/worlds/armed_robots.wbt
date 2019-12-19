@@ -151,17 +151,33 @@ UR5e {
     }
   ]
 }
-Irb4600-40 {
-  translation 1.48 -0.0200046 -0.58
-  rotation 0 0.7071062811861719 0.7071072811865696 3.14159
-  name "abbirb4600"
-  controller "<extern>"
-  handSlot [
-    Robotiq3fGripper {
-      translation 0 0 -0.0100001
-      rotation 0 0.70710528118436 0.707108281185553 3.14159
+Robot {
+  translation 1.48 0.005 -0.58
+  children [
+    Shape {
+      appearance RustyMetal {
+      }
+      geometry DEF BOX Box {
+        size 0.6 0.01 0.6
+      }
+    }
+    Irb4600-40 {
+      translation 0 -0.0250046 0
+      rotation 0 0.7071062811861719 0.7071072811865696 3.14159
+      name "abbirb4600"
+      controller "<extern>"
+      handSlot [
+        Robotiq3fGripper {
+          translation 0 0 -0.0100001
+          rotation 0 0.70710528118436 0.707108281185553 3.14159
+        }
+      ]
     }
   ]
+  name "box(1)"
+  model "box"
+  boundingObject USE BOX
+  controller ""
 }
 ConveyorBelt {
   translation 1.37 0 0.82

@@ -1,4 +1,4 @@
-#VRML_SIM R2019b utf8
+#VRML_SIM R2020a utf8
 WorldInfo {
   info [
     "ABB IRB4600 Robot simulation."
@@ -42,8 +42,8 @@ DEF ROOF Floor {
 }
 Wall {
   translation 0.02503 0 5.03882
-  size 68 5 0.2
   name "wall0"
+  size 68 5 0.2
   appearance Roughcast {
     textureTransform TextureTransform {
       scale 30 2.4
@@ -82,13 +82,9 @@ Wall {
     }
   }
 }
-DEF ROBOT Robot {
+Irb4600-40 {
   translation 0 0.6 0
   rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-  children [
-    Irb4600-40 {
-    }
-  ]
   controller "<extern>"
 }
 ConveyorBelt {

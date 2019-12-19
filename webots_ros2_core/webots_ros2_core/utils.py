@@ -66,14 +66,18 @@ def append_webots_lib_to_path():
             os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':'
                                              + os.environ.get('LD_LIBRARY_PATH'))
         else:
-            os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller') +
-                                             ':' + os.environ.get('LD_LIBRARY_PATH'))
+            os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller')
+                                             + ':' +
+                                             os.path.join(get_webots_home(), 'lib', 'webots')
+                                             + ':' + os.environ.get('LD_LIBRARY_PATH'))
     elif sys.platform == 'darwin':
         if get_webots_version_major_number() <= 2019:
             os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
                                                os.environ.get('DYLD_LIBRARY_PATH'))
         else:
             os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller')
+                                               + ':' +
+                                               os.path.join(get_webots_home(), 'lib', 'webots')
                                                + ':' + os.environ.get('DYLD_LIBRARY_PATH'))
     elif sys.platform == 'win32':
         if get_webots_version_major_number() <= 2019:
@@ -81,6 +85,7 @@ def append_webots_lib_to_path():
                                   + ';' + os.environ.get('PATH'))
         else:
             os.environ['PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller') + ';' +
+                                  os.path.join(get_webots_home(), 'lib', 'webots') + ';' +
                                   os.environ.get('PATH'))
     else:
         sys.exit('Unsupported Platform!')
@@ -89,7 +94,7 @@ def append_webots_lib_to_path():
 def append_webots_python_lib_to_path():
     """Add the Webots 'lib/pythonXY' folder to sys.path."""
     if get_webots_version_major_number() <= 2019:
-        sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
+        sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'controller', 'python%d%d' %
                         (sys.version_info[0], sys.version_info[1])))
     else:
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],

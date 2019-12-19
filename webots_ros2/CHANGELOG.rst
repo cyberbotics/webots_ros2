@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.0 (2019-XX-YY)
+------------------
+* Updated to Webots R2020a
+
 0.0.2 (2019-09-23)
 ------------------
 * Moved sources to cyberbotics/webots_ros2 (https://github.com/cyberbotics/webots_ros2)

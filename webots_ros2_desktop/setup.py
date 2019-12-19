@@ -33,6 +33,10 @@ if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platfo
     tar.close()
     os.environ['WEBOTS_HOME'] = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                              'webots'))
+    # remove dead symlink in R2020a
+    os.remove(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'controller', 'libssl.so'))
+    os.remove(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'controller', 'libcrypto.so'))
+
 # Add Webots in the package
 if 'WEBOTS_HOME' in os.environ:
     for root, directories, files in os.walk(os.environ['WEBOTS_HOME']):

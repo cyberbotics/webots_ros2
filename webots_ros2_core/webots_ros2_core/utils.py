@@ -89,7 +89,7 @@ def append_webots_lib_to_path():
 def append_webots_python_lib_to_path():
     """Add the Webots 'lib/pythonXY' folder to sys.path."""
     if get_webots_version_major_number() <= 2019:
-        sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'controller', 'python%d%d' %
+        sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
                         (sys.version_info[0], sys.version_info[1])))
     else:
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],

@@ -1,4 +1,4 @@
-#VRML_SIM R2019b utf8
+#VRML_SIM R2020a utf8
 WorldInfo {
   title "ROS2-Webots Armed Robots Demo"
   basicTimeStep 16
@@ -152,10 +152,20 @@ UR5e {
   ]
 }
 Robot {
+  translation 1.48 0.005 -0.58
   children [
+    Shape {
+      appearance RustyMetal {
+      }
+      geometry DEF BOX Box {
+        size 0.6 0.01 0.6
+      }
+    }
     Irb4600-40 {
-      translation 1.48 -0.0200046 -0.58
+      translation 0 -0.0250046 0
       rotation 0 0.7071062811861719 0.7071072811865696 3.14159
+      name "abbirb4600"
+      controller "<extern>"
       handSlot [
         Robotiq3fGripper {
           translation 0 0 -0.0100001
@@ -164,8 +174,10 @@ Robot {
       ]
     }
   ]
-  name "abbirb4600"
-  controller "<extern>"
+  name "box(1)"
+  model "box"
+  boundingObject USE BOX
+  controller ""
 }
 ConveyorBelt {
   translation 1.37 0 0.82
@@ -206,28 +218,7 @@ DEF WALL Transform {
   rotation -1 0 0 -1.5707953071795862
   children [
     Shape {
-      appearance PBRAppearance {
-        baseColorMap ImageTexture {
-          url [
-            "textures/formed_concrete_base_color.jpg"
-          ]
-        }
-        roughnessMap ImageTexture {
-          url [
-            "textures/formed_concrete_roughness.jpg"
-          ]
-        }
-        metalness 0
-        normalMap ImageTexture {
-          url [
-            "textures/formed_concrete_normal.jpg"
-          ]
-        }
-        occlusionMap ImageTexture {
-          url [
-            "textures/formed_concrete_occlusion.jpg"
-          ]
-        }
+      appearance FormedConcrete {
         textureTransform TextureTransform {
           scale 4.7 1
         }
@@ -243,28 +234,7 @@ DEF WALL Transform {
   rotation 0 -0.7071062811861719 0.7071072811865696 3.14159
   children [
     Shape {
-      appearance PBRAppearance {
-        baseColorMap ImageTexture {
-          url [
-            "textures/formed_concrete_base_color.jpg"
-          ]
-        }
-        roughnessMap ImageTexture {
-          url [
-            "textures/formed_concrete_roughness.jpg"
-          ]
-        }
-        metalness 0
-        normalMap ImageTexture {
-          url [
-            "textures/formed_concrete_normal.jpg"
-          ]
-        }
-        occlusionMap ImageTexture {
-          url [
-            "textures/formed_concrete_occlusion.jpg"
-          ]
-        }
+      appearance FormedConcrete {
         textureTransform TextureTransform {
           scale 4.7 1
         }
@@ -312,32 +282,7 @@ DEF ROOF Transform {
   rotation 1 0 0 3.14159
   children [
     Shape {
-      appearance PBRAppearance {
-        baseColorMap ImageTexture {
-          url [
-            "textures/corrugated_plates_base_color.jpg"
-          ]
-        }
-        roughnessMap ImageTexture {
-          url [
-            "textures/corrugated_plates_roughness.jpg"
-          ]
-        }
-        metalnessMap ImageTexture {
-          url [
-            "textures/corrugated_plates_metalness.jpg"
-          ]
-        }
-        normalMap ImageTexture {
-          url [
-            "textures/corrugated_plates_normal.jpg"
-          ]
-        }
-        occlusionMap ImageTexture {
-          url [
-            "textures/corrugated_plates_occlusion.jpg"
-          ]
-        }
+      appearance CorrugatedPlates {
         textureTransform TextureTransform {
           scale 4 3
         }

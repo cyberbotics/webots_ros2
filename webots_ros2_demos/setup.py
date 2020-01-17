@@ -8,7 +8,9 @@ worlds = [
     'worlds/.armed_robots.wbproj'
 ]
 launchers = [
-    'launch/armed_robots.launch.py'
+    'launch/armed_robots.launch.py',
+    'launch/aws_robot_application.launch.py',
+    'launch/aws_simulation_application.launch.py'
 ]
 
 data_files = []

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>webots_ros2_aws</name>
+  <version>1.0.0</version>
+  <description>Integration of Webots-ROS2 into AWS RoboMaker.</description>
+
+  <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
+  <license>Apache License 2.0</license>
+  <url type="website">http://wiki.ros.org/webots_ros2</url>
+  <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
+  <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>webots_ros2_demo</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+  <exec_depend>gazebo</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

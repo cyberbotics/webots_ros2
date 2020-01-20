@@ -14,7 +14,7 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
-  <exec_depend>webots_ros2_demo</exec_depend>
+  <exec_depend>webots_ros2_demos</exec_depend>
   <exec_depend>gazebo_ros</exec_depend>
   <exec_depend>gazebo_plugins</exec_depend>
   <exec_depend>gazebo</exec_depend>

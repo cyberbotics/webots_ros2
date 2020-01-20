@@ -49,6 +49,10 @@ def generate_launch_description():
           'world',
           default_value=[os.path.join(hello_world, 'worlds', 'empty.world'), ''],
           description='SDF world file'),
+        launch.actions.DeclareLaunchArgument(
+            name='gui',
+            default_value='false'
+        ),
         webots, gazebo_server, gazebo_client,
         # Shutdown launch when Webots exits.
         launch.actions.RegisterEventHandler(

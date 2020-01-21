@@ -1,0 +1,894 @@
+{
+  "Conditions": {
+    "CreateSimulationJobRole": {
+      "Fn::Equals": [
+        {
+          "Ref": "SimulationJobRoleArn"
+        },
+        ""
+      ]
+    },
+    "CreateLambdaExecutionRole": {
+      "Fn::Equals": [
+        {
+          "Ref": "LambdaExecutionRoleArn"
+        },
+        ""
+      ]
+    },
+    "UsingROS2": {
+      "Fn::Equals": [
+        {
+          "Ref": "RobotSoftwareSuiteVersion"
+        },
+        "Dashing"
+      ]
+    },
+    "SetRobotAppLaunchFile": {
+      "Fn::Equals": [
+        {
+          "Ref": "RobotApplicationLaunchFile"
+        },
+        ""
+      ]
+    }
+  },
+  "Description": "Stack created to run AWS RoboMaker Webots-ROS2 sample application",
+  "Parameters": {
+    "SourceBucket": {
+      "Type": "String",
+      "Default": "webots-ros-2",
+      "Description": "Robot and Simulation application bundle source bucket"
+    },
+    "RobotSoftwareSuiteVersion": {
+      "Type": "String",
+      "Default": "Dashing",
+      "Description": "ROS distribution"
+    },
+    "RoboMakerEndpoint": {
+      "Type": "String",
+      "Default": "",
+      "Description": "Robomaker API endpoint (leave blank if using prod APIs)"
+    },
+    "AWSServiceName": {
+      "Type": "CommaDelimitedList",
+      "Default": "robomaker.amazonaws.com",
+      "Description": "Robomaker AWS Service name (leave blank if using prod APIs)"
+    },
+    "RoboMakerActionPermission": {
+      "Type": "String",
+      "Default": "robomaker",
+      "Description": "Robomaker AWS Robomaker action permission (leave blank if using prod APIs)"
+    },
+    "RobotAppSourceKey": {
+      "Type": "String",
+      "Default": "webots_ros2.tar",
+      "Description": "Robot application bundle object key"
+    },
+    "RobotAppDestinationKey": {
+      "Type": "String",
+      "Default": "webots_ros2_dest.tar",
+      "Description": "Destination robot application s3key"
+    },
+    "RobotApplicationLaunchFile": {
+      "Type": "String",
+      "Default": "armed_robots.launch.py",
+      "Description": "Robot application launch file"
+    },
+    "RobotApplicationPackageName": {
+      "Type": "String",
+      "Default": "webots_ros2_demos",
+      "Description": "Robot application package name"
+    },
+    "LambdaFunctionS3Bucket": {
+      "Type": "String",
+      "Default": "aws-robomaker-samples-eu-west-1-80efc2d0660f",
+      "Description": "Resource generation Lambda function bucket"
+    },
+    "LambdaFunctionS3Key": {
+      "Type": "String",
+      "Default": "hello-world/dashing/gazebo9/2.0.0.676/0.5.0/hello-world-lambda.zip",
+      "Description": "Resource generation Lambda function object key"
+    },
+    "LambdaExecutionRoleArn": {
+      "Type": "String",
+      "Default": "",
+      "Description": "Role to assign to the Lambda function. If empty this role will be auto-created."
+    },
+    "ClientToken": {
+      "Type": "String",
+      "Default": "1",
+      "Description": "Random number allows to run Update on the template"
+    }
+  },
+  "Resources": {
+    "BundlesBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Retain"
+    },
+    "RobotApplicationBundle": {
+      "DependsOn": [
+        "LambdaFunction"
+      ],
+      "Properties": {
+        "ClientToken": {
+          "Ref": "ClientToken"
+        },
+        "DestinationBucket": {
+          "Ref": "BundlesBucket"
+        },
+        "DestinationKey": {
+          "Ref": "RobotAppDestinationKey"
+        },
+        "ServiceToken": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:lambda:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":function:",
+              {
+                "Ref": "LambdaFunction"
+              }
+            ]
+          ]
+        },
+        "SourceBucket": {
+          "Ref": "SourceBucket"
+        },
+        "SourceKey": {
+          "Ref": "RobotAppSourceKey"
+        },
+        "TaskName": "Bundle"
+      },
+      "Type": "Custom::RobotApplicationBundle"
+    },
+    "RoboMakerRobotApplication": {
+      "DependsOn": [
+        "RobotApplicationBundle"
+      ],
+      "Properties": {
+        "EndPoint": {
+          "Ref": "RoboMakerEndpoint"
+        },
+        "Region": {
+          "Ref": "AWS::Region"
+        },
+        "RosDistro": {
+          "Ref": "RobotSoftwareSuiteVersion"
+        },
+        "SampleApplicationName": "Webots-ROS2",
+        "ServiceToken": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:lambda:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":function:",
+              {
+                "Ref": "LambdaFunction"
+              }
+            ]
+          ]
+        },
+        "Stage": {
+          "Ref": "RoboMakerActionPermission"
+        },
+        "TaskName": "RoboMakerRobotApplication",
+        "X86Bucket": {
+          "Ref": "BundlesBucket"
+        },
+        "X86Key": {
+          "Ref": "RobotAppDestinationKey"
+        }
+      },
+      "Type": "Custom::RoboMakerRobotApplication"
+    },
+    "SimulationApplicationBundle": {
+      "DependsOn": [
+        "LambdaFunction"
+      ],
+      "Properties": {
+        "ClientToken": {
+          "Ref": "ClientToken"
+        },
+        "DestinationBucket": {
+          "Ref": "BundlesBucket"
+        },
+        "DestinationKey": {
+          "Ref": "SimAppDestinationKey"
+        },
+        "ServiceToken": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:lambda:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":function:",
+              {
+                "Ref": "LambdaFunction"
+              }
+            ]
+          ]
+        },
+        "SourceBucket": {
+          "Ref": "SourceBucket"
+        },
+        "SourceKey": {
+          "Ref": "SimAppSourceKey"
+        },
+        "TaskName": "Bundle"
+      },
+      "Type": "Custom::SimulationApplicationBundle"
+    },
+    "RoboMakerSimulationApplication": {
+      "DependsOn": [
+        "SimulationApplicationBundle"
+      ],
+      "Properties": {
+        "EndPoint": {
+          "Ref": "RoboMakerEndpoint"
+        },
+        "GazeboVersion": {
+          "Ref": "SimulationSoftwareSuiteVersion"
+        },
+        "Region": {
+          "Ref": "AWS::Region"
+        },
+        "RosDistro": {
+          "Ref": "RobotSoftwareSuiteVersion"
+        },
+        "SampleApplicationName": "Webots-ROS2",
+        "ServiceToken": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:lambda:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":function:",
+              {
+                "Ref": "LambdaFunction"
+              }
+            ]
+          ]
+        },
+        "Stage": {
+          "Ref": "RoboMakerActionPermission"
+        },
+        "TaskName": "RoboMakerSimulationApplication",
+        "X86Bucket": {
+          "Ref": "BundlesBucket"
+        },
+        "X86Key": {
+          "Ref": "SimAppDestinationKey"
+        }
+      },
+      "Type": "Custom::RoboMakerSimulationApplication"
+    },
+    "SimulationJob": {
+      "DependsOn": [
+        "SimulationApplicationBundle"
+      ],
+      "Properties": {
+        "ClientToken": {
+          "Ref": "ClientToken"
+        },
+        "EndPoint": {
+          "Ref": "RoboMakerEndpoint"
+        },
+        "IAMRole": {
+          "Fn::If": [
+            "CreateSimulationJobRole",
+            {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:aws:iam::",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":role/",
+                  {
+                    "Ref": "SimulationJobRole"
+                  }
+                ]
+              ]
+            },
+            {
+              "Ref": "SimulationJobRoleArn"
+            }
+          ]
+        },
+        "OutputBucket": {
+          "Ref": "BundlesBucket"
+        },
+        "Region": {
+          "Ref": "AWS::Region"
+        },
+        "RobotApplication": {
+          "Ref": "RoboMakerRobotApplication"
+        },
+        "RobotApplicationLaunchFile": {
+          "Fn::If": [
+            "SetRobotAppLaunchFile",
+            {
+              "Fn::If": [
+                "UsingROS2",
+                "rotate.launch.py",
+                "rotate.launch"
+              ]
+            },
+            {
+              "Ref": "RobotApplicationLaunchFile"
+            }
+          ]
+        },
+        "RobotApplicationPackageName": {
+          "Ref": "RobotApplicationPackageName"
+        },
+        "SampleApplicationName": "Webots-ROS2",
+        "ServiceToken": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:lambda:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":function:",
+              {
+                "Ref": "LambdaFunction"
+              }
+            ]
+          ]
+        },
+        "SimulationApplication": {
+          "Fn::GetAtt": [
+            "RoboMakerSimulationApplication",
+            "Data"
+          ]
+        },
+        "SimulationApplicationLaunchFile": {
+          "Fn::If": [
+            "SetSimulationAppLaunchFile",
+            {
+              "Fn::If": [
+                "UsingROS2",
+                "empty_world.launch.py",
+                "empty_world.launch"
+              ]
+            },
+            {
+              "Ref": "SimulationApplicationLaunchFile"
+            }
+          ]
+        },
+        "SimulationApplicationPackageName": {
+          "Ref": "SimulationApplicationPackageName"
+        },
+        "Stage": {
+          "Ref": "RoboMakerActionPermission"
+        },
+        "TaskName": "RoboMakerSimulationJob"
+      },
+      "Type": "Custom::SimulationJob"
+    },
+    "LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "LambdaFunctionS3Bucket"
+          },
+          "S3Key": {
+            "Ref": "LambdaFunctionS3Key"
+          }
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::If": [
+            "CreateLambdaExecutionRole",
+            {
+              "Fn::GetAtt": [
+                "LambdaExecutionRole",
+                "Arn"
+              ]
+            },
+            {
+              "Ref": "LambdaExecutionRoleArn"
+            }
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 60
+      }
+    },
+    "LambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "s3:ListBucket",
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "BundlesBucket"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": [
+                    "iam:PassRole"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "SimulationJobRole",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "SourceBucket"
+                          },
+                          "/",
+                          {
+                            "Ref": "SimAppSourceKey"
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "SourceBucket"
+                          },
+                          "/",
+                          {
+                            "Ref": "LambdaFunctionS3Key"
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "BundlesBucket",
+                              "Arn"
+                            ]
+                          },
+                          "/",
+                          {
+                            "Ref": "SimAppDestinationKey"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": [
+                    "s3:PutObject"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "BundlesBucket",
+                              "Arn"
+                            ]
+                          },
+                          "/",
+                          {
+                            "Ref": "SimAppDestinationKey"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "RoboMakerActionPermission"
+                          },
+                          ":*"
+                        ]
+                      ]
+                    }
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                },
+                {
+                  "Action": [
+                    "ec2:AssociateRouteTable",
+                    "ec2:AttachInternetGateway",
+                    "ec2:CreateInternetGateway",
+                    "ec2:CreateSubnet",
+                    "ec2:CreateVpc",
+                    "ec2:CreateTags",
+                    "ec2:CreateRoute",
+                    "ec2:CreateRouteTable",
+                    "ec2:CreateSecurityGroup",
+                    "ec2:DeleteSubnet",
+                    "ec2:DescribeSecurityGroups",
+                    "ec2:DescribeSubnets",
+                    "ec2:DescribeVpcs"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                },
+                {
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        ":",
+                        [
+                          "arn:aws:logs",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          "log-group",
+                          "/aws/lambda/*",
+                          "*"
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": "iam:CreateServiceLinkedRole",
+                  "Condition": {
+                    "StringEquals": {
+                      "iam:AWSServiceName": {
+                        "Ref": "AWSServiceName"
+                      }
+                    }
+                  },
+                  "Effect": "Allow",
+                  "Resource": "*"
+                },
+                {
+                  "Action": [
+                    "cloudformation:DescribeStacks"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Ref": "AWS::StackId"
+                  }
+                },
+                {
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "SourceBucket"
+                          },
+                          "/",
+                          {
+                            "Ref": "RobotAppSourceKey"
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "BundlesBucket",
+                              "Arn"
+                            ]
+                          },
+                          "/",
+                          {
+                            "Ref": "RobotAppDestinationKey"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": [
+                    "s3:PutObject"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "BundlesBucket",
+                              "Arn"
+                            ]
+                          },
+                          "/",
+                          {
+                            "Ref": "RobotAppDestinationKey"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "PolicyName": {
+              "Fn::Join": [
+                "",
+                [
+                  "CustomResourceLambdaPolicy",
+                  {
+                    "Ref": "AWS::StackName"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "Condition": "CreateLambdaExecutionRole"
+    },
+    "SimulationJobRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": {
+                  "Ref": "SimulationJobRoleServiceName"
+                }
+              }
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "s3:ListBucket",
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "BundlesBucket"
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": [
+                    "s3:Get*",
+                    "s3:List*"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "BundlesBucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": "s3:Put*",
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "BundlesBucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                    "logs:DescribeLogStreams"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        ":",
+                        [
+                          "arn:aws:logs",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          "log-group:/aws/robomaker/SimulationJobs*"
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": [
+                    "ec2:CreateNetworkInterfacePermission"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        ":",
+                        [
+                          "arn:aws:ec2",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          "*"
+                        ]
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Action": [
+                    "ec2:AssociateRouteTable",
+                    "ec2:CreateSubnet",
+                    "ec2:DeleteNetworkInterface",
+                    "ec2:DeleteSubnet",
+                    "ec2:DescribeNetworkInterfaces",
+                    "ec2:DescribeSecurityGroups",
+                    "ec2:DescribeSubnets",
+                    "ec2:DescribeVpcs"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                }
+              ]
+            },
+            "PolicyName": {
+              "Fn::Join": [
+                "",
+                [
+                  "SimulationJobRole",
+                  {
+                    "Ref": "AWS::StackName"
+                  }
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "Condition": "CreateSimulationJobRole"
+    }
+  }
+}

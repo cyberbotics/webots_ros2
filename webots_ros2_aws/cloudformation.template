@@ -142,6 +142,11 @@
       "Type": "String",
       "Default": "1",
       "Description": "Random number allows to run Update on the template"
+    },
+    "WebotsArguments": {
+      "Type": "String",
+      "Default": "--batch",
+      "Description": "The arguments with which Webots is started"
     }
   },
   "Resources": {
@@ -418,6 +423,11 @@
             "RoboMakerSimulationApplication",
             "Data"
           ]
+        },
+        "SimulationApplicationEnvironmentVariables": {
+          "WEBOTS_ARGUMENTS": {
+            "Ref": "WebotsArguments"
+          }
         },
         "SimulationApplicationLaunchFile": {
           "Fn::If": [

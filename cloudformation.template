@@ -31,6 +31,14 @@
         },
         ""
       ]
+    },
+    "SetSimulationAppLaunchFile": {
+      "Fn::Equals": [
+        {
+          "Ref": "SimulationApplicationLaunchFile"
+        },
+        ""
+      ]
     }
   },
   "Description": "Stack created to run AWS RoboMaker Webots-ROS2 sample application",
@@ -39,6 +47,11 @@
       "Type": "String",
       "Default": "webots-ros-2",
       "Description": "Robot and Simulation application bundle source bucket"
+    },
+    "SimulationSoftwareSuiteVersion": {
+      "Type": "String",
+      "Default": "9",
+      "Description": "The simulation software version for launching simulation application"
     },
     "RobotSoftwareSuiteVersion": {
       "Type": "String",
@@ -55,6 +68,16 @@
       "Default": "robomaker.amazonaws.com",
       "Description": "Robomaker AWS Service name (leave blank if using prod APIs)"
     },
+    "SimulationJobRoleArn": {
+      "Type": "String",
+      "Default": "",
+      "Description": "Role to assign to the Simulation Job. If empty this role will be auto-created."
+    },
+    "SimulationJobRoleServiceName": {
+      "Type": "CommaDelimitedList",
+      "Default": "robomaker.amazonaws.com",
+      "Description": "Robomaker AWS simulation assume role (leave blank if using prod APIs)"
+    },
     "RoboMakerActionPermission": {
       "Type": "String",
       "Default": "robomaker",
@@ -62,23 +85,43 @@
     },
     "RobotAppSourceKey": {
       "Type": "String",
-      "Default": "webots_ros2.tar",
+      "Default": "webots_ros2_applications.tar",
       "Description": "Robot application bundle object key"
+    },
+    "SimAppSourceKey": {
+      "Type": "String",
+      "Default": "webots_ros2_applications.tar",
+      "Description": "Simulation application bundle object key"
     },
     "RobotAppDestinationKey": {
       "Type": "String",
       "Default": "webots_ros2_dest.tar",
       "Description": "Destination robot application s3key"
     },
+    "SimAppDestinationKey": {
+      "Type": "String",
+      "Default": "webots_ros2_dest.tar",
+      "Description": "Destination simulation application s3key"
+    },
     "RobotApplicationLaunchFile": {
       "Type": "String",
-      "Default": "armed_robots.launch.py",
+      "Default": "aws_robot_application.launch.py",
       "Description": "Robot application launch file"
     },
     "RobotApplicationPackageName": {
       "Type": "String",
-      "Default": "webots_ros2_demos",
+      "Default": "webots_ros2_aws",
       "Description": "Robot application package name"
+    },
+    "SimulationApplicationLaunchFile": {
+      "Type": "String",
+      "Default": "aws_simulation_application.launch.py",
+      "Description": "Simulation application launch file"
+    },
+    "SimulationApplicationPackageName": {
+      "Type": "String",
+      "Default": "webots_ros2_aws",
+      "Description": "Simulation application package name"
     },
     "LambdaFunctionS3Bucket": {
       "Type": "String",

@@ -52,7 +52,7 @@ def generate_launch_description():
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
     # Gazebo
-    hello_world = get_package_share_directory('hello_world_simulation')
+    webots_ros2_aws = get_package_share_directory('webots_ros2_aws')
     gazebo_ros = get_package_share_directory('gazebo_ros')
 
     gazebo_client = launch.actions.IncludeLaunchDescription(
@@ -67,7 +67,7 @@ def generate_launch_description():
     return launch.LaunchDescription([
         launch.actions.DeclareLaunchArgument(
           'world',
-          default_value=[os.path.join(hello_world, 'worlds', 'empty.world'), ''],
+          default_value=[os.path.join(webots_ros2_aws, 'worlds', 'empty.world'), ''],
           description='SDF world file'),
         launch.actions.DeclareLaunchArgument(
             name='gui',

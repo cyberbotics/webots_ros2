@@ -17,42 +17,23 @@
 """Launch Webots and the controllers."""
 
 import launch
-
-from webots_ros2_core.utils import ControllerLauncher
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    # Controller nodes
-    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
-    AbbController = ControllerLauncher(package='webots_ros2_abb',
-                                       node_executable='abb_driver',
-                                       # this argument should match the 'name' field
-                                       # of the robot in Webots
-                                       arguments=['--webots-robot-name=abbirb4600'],
-                                       node_namespace='abb',
-                                       parameters=[{'synchronization': synchronization}],
-                                       output='screen')
-    Ure5controller = ControllerLauncher(package='webots_ros2_universal_robot',
-                                        node_executable='universal_robot',
-                                        # this argument should match the 'name' field
-                                        # of the robot in Webots
-                                        arguments=['--webots-robot-name=UR5e'],
-                                        node_namespace='ur',
-                                        parameters=[{'synchronization': synchronization}],
-                                        output='screen')
     # Control nodes
-    armedRobotsUr = ControllerLauncher(package='webots_ros2_demos',
-                                       node_executable='armed_robots_ur',
-                                       output='screen')
-    armedRobotsAbb = ControllerLauncher(package='webots_ros2_demos',
-                                        node_executable='armed_robots_abb',
-                                        output='screen')
+    armedRobotsUr = Node(package='webots_ros2_demos',
+                         node_executable='armed_robots_ur',
+                         output='screen')
+    armedRobotsAbb = Node(package='webots_ros2_demos',
+                          node_executable='armed_robots_abb',
+                          output='screen')
     return launch.LaunchDescription([
-        AbbController, Ure5controller, armedRobotsUr, armedRobotsAbb,
+        armedRobotsUr, armedRobotsAbb,
         # Shutdown launch when Webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
-                target_action=AbbController,
+                target_action=armedRobotsUr,
                 on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
             )
         ),

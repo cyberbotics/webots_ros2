@@ -23,8 +23,28 @@ import launch_ros.actions
 
 from ament_index_python.packages import get_package_share_directory
 
+from webots_ros2_core.utils import ControllerLauncher
+
 
 def generate_launch_description():
+    # Controller nodes
+    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
+    AbbController = ControllerLauncher(package='webots_ros2_abb',
+                                       node_executable='abb_driver',
+                                       # this argument should match the 'name' field
+                                       # of the robot in Webots
+                                       arguments=['--webots-robot-name=abbirb4600'],
+                                       node_namespace='abb',
+                                       parameters=[{'synchronization': synchronization}],
+                                       output='screen')
+    Ure5controller = ControllerLauncher(package='webots_ros2_universal_robot',
+                                        node_executable='universal_robot',
+                                        # this argument should match the 'name' field
+                                        # of the robot in Webots
+                                        arguments=['--webots-robot-name=UR5e'],
+                                        node_namespace='ur',
+                                        parameters=[{'synchronization': synchronization}],
+                                        output='screen')
     # Webots
     arguments = ['--mode=realtime', '--world=' +
                  os.path.join(get_package_share_directory('webots_ros2_demos'),
@@ -53,7 +73,7 @@ def generate_launch_description():
             name='gui',
             default_value='false'
         ),
-        webots, gazebo_server, gazebo_client,
+        AbbController, Ure5controller, webots, gazebo_server, gazebo_client,
         # Shutdown launch when Webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

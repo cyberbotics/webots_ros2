@@ -33,9 +33,10 @@ class LaserPublisher():
     """Publish as ROS topics the lidar laser scan."""
 
     def __init__(self, robot, node, prefix=''):
-        """Initialize the position sensors and the topic."""
+        """Initialize the lidars and the topic."""
         self.robot = robot
         self.node = node
+        self.prefix = prefix
         self.lidars = []
         self.publishers = {}
         self.lastUpdate = {}
@@ -45,7 +46,13 @@ class LaserPublisher():
             if device.getNodeType() == Node.LIDAR:
                 self.lidars.append(device)
                 device.enable(self.timestep)  # TODO: variable time step
-                self.publishers[device] = self.node.create_publisher(LaserScan, prefix + device.getName(), 1)  # TODO: variable names
+                if device.getNumberOfLayers() > 1:
+                    for i in range(device.getNumberOfLayers()):
+                        self.publishers[device] = {}
+                        name = prefix + device.getName() + '_' + str(i)
+                        self.publishers[device][name] = self.node.create_publisher(LaserScan, name, 1)
+                else:
+                    self.publishers[device] = self.node.create_publisher(LaserScan, prefix + device.getName(), 1)  # TODO: variable names
                 self.lastUpdate[device] = -100
         self.jointStateTimer = self.create_timer(0.001 * self.timestep, self.callback)
 
@@ -55,22 +62,29 @@ class LaserPublisher():
                 self.publish(lidar)
 
     def publish(self, lidar):
-        """Publish the 'joint_states' topic with up to date value."""
+        """Publish the laser scan topics with up to date value."""
         seconds = int(self.robot.getTime())
         nanoseconds = int((self.robot.getTime() - seconds) * 1.0e+6)
-        msg = LaserScan()
-        msg.header.stamp = Time(sec=seconds, nanosec=nanoseconds)
-        msg.header.frame_id = 'From simulation state data'
-        msg.angle_min = 0.0
-        msg.angle_max = lidar.getFov()
-        msg.angle_increment = lidar.getFov() / (lidar.getHorizontalResolution() - 1)
-        msg.scan_time = lidar.getSamplingPeriod() / 1000.0
-        msg.range_min = lidar.getMinRange()
-        msg.range_max = lidar.getMaxRange()
-        msg.ranges.resize(lidar.getHorizontalResolution())  # TODO: check if Python valid
-        # msg.intensities.resize(lidar->getHorizontalResolution());
+        for i in range(lidar.getNumberOfLayers()):
+            msg = LaserScan()
+            msg.header.stamp = Time(sec=seconds, nanosec=nanoseconds)
+            if lidar.getNumberOfLayers() > 1:
+                msg.header.frame_id = self.prefix + lidar.getName() + '_' + str(i)
+            else:
+                msg.header.frame_id = self.prefix + lidar.getName()
+            msg.angle_min = 0.0
+            msg.angle_max = lidar.getFov()
+            msg.angle_increment = lidar.getFov() / (lidar.getHorizontalResolution() - 1)
+            msg.scan_time = lidar.getSamplingPeriod() / 1000.0
+            msg.range_min = lidar.getMinRange()
+            msg.range_max = lidar.getMaxRange()
+            msg.ranges.resize(lidar.getHorizontalResolution())  # TODO: check if Python valid
+            # msg.intensities.resize(lidar->getHorizontalResolution());
 
-        lidarValues = lidar.getLayerRangeImage(0)  # TODO: multiple layers
-        for i in range(lidar.getHorizontalResolution()):
-            msg.ranges[i] = lidarValues[i]
-        self.publishers[lidar].publish(msg)
+            lidarValues = lidar.getLayerRangeImage(0)  # TODO: multiple layers
+            for i in range(lidar.getHorizontalResolution()):
+                msg.ranges[i] = lidarValues[i]
+            if lidar.getNumberOfLayers() > 1:
+                self.publishers[lidar][msg.header.frame_id].publish(msg)
+            else:
+                self.publishers[lidar].publish(msg)

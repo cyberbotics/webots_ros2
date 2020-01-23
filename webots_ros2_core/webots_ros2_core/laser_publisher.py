@@ -89,8 +89,8 @@ class LaserPublisher():
                 msg.header.frame_id = self.prefix + lidar.getName() + '_' + str(i)
             else:
                 msg.header.frame_id = self.prefix + lidar.getName()
-            msg.angle_min = 0.0
-            msg.angle_max = lidar.getFov()
+            msg.angle_min = -0.5 * lidar.getFov()
+            msg.angle_max = 0.5 * lidar.getFov()
             msg.angle_increment = lidar.getFov() / (lidar.getHorizontalResolution() - 1)
             msg.scan_time = lidar.getSamplingPeriod() / 1000.0
             msg.range_min = lidar.getMinRange()

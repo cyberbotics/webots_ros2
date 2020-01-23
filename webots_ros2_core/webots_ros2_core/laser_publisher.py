@@ -33,7 +33,15 @@ class LaserPublisher():
     """Publish as ROS topics the lidar laser scan."""
 
     def __init__(self, robot, node, prefix='', parameters):
-        """Initialize the lidars and the topic."""
+        """Initialize the lidars and the topic.
+
+        Arguments:
+        prefix: prefix for the topic names
+        parameters: customization parameters dictionnary the key are the device names
+                    the value are dictionaries with the following key:
+                        'timestep' and 'topic name'
+
+        """
         self.robot = robot
         self.node = node
         self.prefix = prefix
@@ -46,20 +54,25 @@ class LaserPublisher():
             if device.getNodeType() == Node.LIDAR:
                 self.lidars.append(device)
                 if device.getName() in parameters and 'timestep' in parameters[device.getName()]:
-                    device.enable(parameters[device.getName()][timestep])
+                    device.enable(parameters[device.getName()]['timestep'])
                 else:
                     device.enable(self.timestep)
+                topicName = device.getName()
+                if device.getName() in parameters and 'topic name' in parameters[topicName]:
+                    topicName = parameters[topicName]['topic name']
                 if device.getNumberOfLayers() > 1:
                     for i in range(device.getNumberOfLayers()):
                         self.publishers[device] = {}
                         name = prefix + device.getName() + '_' + str(i)
-                        self.publishers[device][name] = self.node.create_publisher(LaserScan, name, 1)
+                        topicName = prefix + topicName + '_' + str(i)
+                        self.publishers[device][name] = self.node.create_publisher(LaserScan, topicName, 1)
                 else:
-                    self.publishers[device] = self.node.create_publisher(LaserScan, prefix + device.getName(), 1)  # TODO: variable names
+                    self.publishers[device] = self.node.create_publisher(LaserScan, prefix + topicName, 1)
                 self.lastUpdate[device] = -100
         self.jointStateTimer = self.create_timer(0.001 * self.timestep, self.callback)
 
     def callback(self):
+        """This callback is called every 1ms to check if a laser scan should be pulibshed."""
         for lidar in self.lidars:
             if self.robot.getTime() - self.lastUpdate[lidar] >= lidar.getSamplingPeriod():
                 self.publish(lidar)

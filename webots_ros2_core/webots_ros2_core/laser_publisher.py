@@ -33,14 +33,14 @@ class LaserPublisher():
     """Publish as ROS topics the lidar laser scan."""
 
     def __init__(self, robot, node, prefix='', parameters={}):
-        """Initialize the lidars and the topic.
+        """
+        Initialize the lidars and the topic.
 
         Arguments:
         prefix: prefix for the topic names
         parameters: customization parameters dictionnary the key are the device names
                     the value are dictionaries with the following key:
                         'timestep' and 'topic name'
-
         """
         self.robot = robot
         self.node = node
@@ -74,7 +74,7 @@ class LaserPublisher():
         self.jointStateTimer = self.create_timer(0.001 * self.timestep, self.callback)
 
     def callback(self):
-        """This callback is called every 1ms to check if a laser scan should be pulibshed."""
+        """Callback called every 1ms to check if a laser scan should be pulibshed."""
         for lidar in self.lidars:
             if self.robot.getTime() - self.lastUpdate[lidar] >= lidar.getSamplingPeriod():
                 self.publish(lidar)

@@ -71,10 +71,9 @@ class LaserPublisher():
                     self.publishers[device] = self.node.create_publisher(LaserScan,
                                                                          prefix + topicName, 1)
                 self.lastUpdate[device] = -100
-        self.jointStateTimer = self.create_timer(0.001 * self.timestep, self.callback)
+        self.jointStateTimer = self.node.create_timer(0.001 * self.timestep, self.callback)
 
     def callback(self):
-        """Callback called every 1ms to check if a laser scan should be pulibshed."""
         for lidar in self.lidars:
             if self.robot.getTime() - self.lastUpdate[lidar] >= lidar.getSamplingPeriod():
                 self.publish(lidar)
@@ -96,12 +95,10 @@ class LaserPublisher():
             msg.scan_time = lidar.getSamplingPeriod() / 1000.0
             msg.range_min = lidar.getMinRange()
             msg.range_max = lidar.getMaxRange()
-            msg.ranges.resize(lidar.getHorizontalResolution())  # TODO: check if Python valid
-            # msg.intensities.resize(lidar->getHorizontalResolution());
 
             lidarValues = lidar.getLayerRangeImage(i)
             for i in range(lidar.getHorizontalResolution()):
-                msg.ranges[i] = lidarValues[i]
+                msg.ranges.append(lidarValues[i])
             if lidar.getNumberOfLayers() > 1:
                 self.publishers[lidar][msg.header.frame_id].publish(msg)
             else:

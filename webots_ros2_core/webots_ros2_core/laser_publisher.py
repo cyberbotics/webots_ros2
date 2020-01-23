@@ -99,7 +99,7 @@ class LaserPublisher():
             msg.ranges.resize(lidar.getHorizontalResolution())  # TODO: check if Python valid
             # msg.intensities.resize(lidar->getHorizontalResolution());
 
-            lidarValues = lidar.getLayerRangeImage(0)  # TODO: multiple layers
+            lidarValues = lidar.getLayerRangeImage(i)
             for i in range(lidar.getHorizontalResolution()):
                 msg.ranges[i] = lidarValues[i]
             if lidar.getNumberOfLayers() > 1:

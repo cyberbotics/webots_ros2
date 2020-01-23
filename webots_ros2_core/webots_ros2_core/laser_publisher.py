@@ -65,9 +65,11 @@ class LaserPublisher():
                         self.publishers[device] = {}
                         name = prefix + device.getName() + '_' + str(i)
                         topicName = prefix + topicName + '_' + str(i)
-                        self.publishers[device][name] = self.node.create_publisher(LaserScan, topicName, 1)
+                        self.publishers[device][name] = self.node.create_publisher(LaserScan,
+                                                                                   topicName, 1)
                 else:
-                    self.publishers[device] = self.node.create_publisher(LaserScan, prefix + topicName, 1)
+                    self.publishers[device] = self.node.create_publisher(LaserScan,
+                                                                         prefix + topicName, 1)
                 self.lastUpdate[device] = -100
         self.jointStateTimer = self.create_timer(0.001 * self.timestep, self.callback)
 

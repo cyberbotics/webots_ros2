@@ -32,7 +32,7 @@ except Exception as e:
 class LaserPublisher():
     """Publish as ROS topics the lidar laser scan."""
 
-    def __init__(self, robot, node, prefix=''):
+    def __init__(self, robot, node, prefix='', parameters):
         """Initialize the lidars and the topic."""
         self.robot = robot
         self.node = node
@@ -45,7 +45,10 @@ class LaserPublisher():
             device = robot.getDeviceByIndex(i)
             if device.getNodeType() == Node.LIDAR:
                 self.lidars.append(device)
-                device.enable(self.timestep)  # TODO: variable time step
+                if device.getName() in parameters and 'timestep' in parameters[device.getName()]:
+                    device.enable(parameters[device.getName()][timestep])
+                else:
+                    device.enable(self.timestep)
                 if device.getNumberOfLayers() > 1:
                     for i in range(device.getNumberOfLayers()):
                         self.publishers[device] = {}

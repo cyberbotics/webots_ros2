@@ -32,7 +32,7 @@ except Exception as e:
 class LaserPublisher():
     """Publish as ROS topics the lidar laser scan."""
 
-    def __init__(self, robot, node, prefix='', parameters):
+    def __init__(self, robot, node, prefix='', parameters={}):
         """Initialize the lidars and the topic.
 
         Arguments:

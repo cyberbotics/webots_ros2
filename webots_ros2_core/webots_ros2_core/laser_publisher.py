@@ -24,7 +24,7 @@ from builtin_interfaces.msg import Time
 from geometry_msgs.msg import TransformStamped
 
 
-import transforms3d  #TODO: add in dependencies
+import transforms3d  # TODO: add in dependencies
 
 try:
     append_webots_python_lib_to_path()
@@ -68,11 +68,11 @@ class LaserPublisher():
                     topicName = parameters[topicName]['topic name']
                 if device.getNumberOfLayers() > 1:
                     self.publishers[device] = {}
-                    for i in range(device.getNumberOfLayers()):
-                        name = prefix + device.getName() + '_' + str(i)
-                        indexedTopicName = prefix + topicName + '_' + str(i)
-                        self.publishers[device][name] = self.node.create_publisher(LaserScan,
-                                                                                   indexedTopicName, 1)
+                    for j in range(device.getNumberOfLayers()):
+                        name = prefix + device.getName() + '_' + str(j)
+                        indexedTopicName = prefix + topicName + '_' + str(j)
+                        publisher = self.node.create_publisher(LaserScan, indexedTopicName, 1)
+                        self.publishers[device][name] = publisher
                 else:
                     self.publishers[device] = self.node.create_publisher(LaserScan,
                                                                          prefix + topicName, 1)

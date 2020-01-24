@@ -39,7 +39,7 @@ class LaserPublisher():
 
     def __init__(self, robot, node, prefix='', parameters={}):
         """
-        Initialize the lidars and the topic.
+        Initialize the lidars and the topics.
 
         Arguments:
         prefix: prefix for the topic names

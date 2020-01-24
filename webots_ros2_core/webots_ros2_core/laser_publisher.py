@@ -84,7 +84,7 @@ class LaserPublisher():
         for lidar in self.lidars:
             if self.robot.getTime() - self.lastUpdate[lidar] >= lidar.getSamplingPeriod():
                 self.publish(lidar, tFMessage.transforms)
-        if len(tFMessage.transforms) > 0:
+        if tFMessage.transforms:
             self.tfPublisher.publish(tFMessage)
 
     def publish(self, lidar, transforms):

@@ -35,7 +35,7 @@ except Exception as e:
 
 
 class LaserPublisher():
-    """Publish as ROS topics the lidar laser scan."""
+    """Publish as ROS topics the laser scans of the lidars."""
 
     def __init__(self, robot, node, prefix='', parameters={}):
         """

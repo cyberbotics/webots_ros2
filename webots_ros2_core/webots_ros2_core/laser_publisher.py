@@ -102,7 +102,6 @@ class LaserPublisher():
             transformStamped.header.stamp = Time(sec=nextSec, nanosec=nextNanosec)
             transformStamped.header.frame_id = self.prefix + lidar.getName()
             transformStamped.child_frame_id = name
-            # transformStamped.transform.translation.x = 0.5
             q1 = transforms3d.quaternions.axangle2quat([0, 1, 0], -1.5708)
             q2 = transforms3d.quaternions.axangle2quat([1, 0, 0], 1.5708)
             result = transforms3d.quaternions.qmult(q1, q2)

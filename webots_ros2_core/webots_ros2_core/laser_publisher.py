@@ -18,8 +18,13 @@ import sys
 
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 
+from tf2_msgs.msg import TFMessage
 from sensor_msgs.msg import LaserScan
 from builtin_interfaces.msg import Time
+from geometry_msgs.msg import TransformStamped
+
+
+import transforms3d  #TODO: add in dependencies
 
 try:
     append_webots_python_lib_to_path()
@@ -49,6 +54,7 @@ class LaserPublisher():
         self.publishers = {}
         self.lastUpdate = {}
         self.timestep = int(robot.getBasicTimeStep())
+        self.tfPublisher = self.node.create_publisher(TFMessage, 'tf', 10)
         for i in range(robot.getNumberOfDevices()):
             device = robot.getDeviceByIndex(i)
             if device.getNodeType() == Node.LIDAR:
@@ -74,28 +80,47 @@ class LaserPublisher():
         self.jointStateTimer = self.node.create_timer(0.001 * self.timestep, self.callback)
 
     def callback(self):
+        tFMessage = TFMessage()
         for lidar in self.lidars:
             if self.robot.getTime() - self.lastUpdate[lidar] >= lidar.getSamplingPeriod():
-                self.publish(lidar)
+                self.publish(lidar, tFMessage.transforms)
+        if len(tFMessage.transforms) > 0:
+            self.tfPublisher.publish(tFMessage)
 
-    def publish(self, lidar):
+    def publish(self, lidar, transforms):
         """Publish the laser scan topics with up to date value."""
-        seconds = int(self.robot.getTime())
-        nanoseconds = int((self.robot.getTime() - seconds) * 1.0e+6)
+        nextTime = self.robot.getTime() + 0.001 * self.timestep
+        nextSec = int(nextTime)
+        # rounding prevents precision issues that can cause problems with ROS timers
+        nextNanosec = int(round(1000 * (nextTime - nextSec)) * 1.0e+6)
         for i in range(lidar.getNumberOfLayers()):
-            msg = LaserScan()
-            msg.header.stamp = Time(sec=seconds, nanosec=nanoseconds)
+            name = self.prefix + lidar.getName() + '_scan'
             if lidar.getNumberOfLayers() > 1:
-                msg.header.frame_id = self.prefix + lidar.getName() + '_' + str(i)
-            else:
-                msg.header.frame_id = self.prefix + lidar.getName()
+                name += '_' + str(i)
+            # publish the lidar to scan transform
+            transformStamped = TransformStamped()
+            transformStamped.header.stamp = Time(sec=nextSec, nanosec=nextNanosec)
+            transformStamped.header.frame_id = self.prefix + lidar.getName()
+            transformStamped.child_frame_id = name
+            # transformStamped.transform.translation.x = 0.5
+            q1 = transforms3d.quaternions.axangle2quat([0, 1, 0], -1.5708)
+            q2 = transforms3d.quaternions.axangle2quat([1, 0, 0], 1.5708)
+            result = transforms3d.quaternions.qmult(q1, q2)
+            transformStamped.transform.rotation.x = result[0]
+            transformStamped.transform.rotation.y = result[1]
+            transformStamped.transform.rotation.z = result[2]
+            transformStamped.transform.rotation.w = result[3]
+            transforms.append(transformStamped)
+            # publish the actual laser scan
+            msg = LaserScan()
+            msg.header.stamp = Time(sec=self.node.sec, nanosec=self.node.nanosec)
+            msg.header.frame_id = name
             msg.angle_min = -0.5 * lidar.getFov()
             msg.angle_max = 0.5 * lidar.getFov()
             msg.angle_increment = lidar.getFov() / (lidar.getHorizontalResolution() - 1)
             msg.scan_time = lidar.getSamplingPeriod() / 1000.0
             msg.range_min = lidar.getMinRange()
             msg.range_max = lidar.getMaxRange()
-
             lidarValues = lidar.getLayerRangeImage(i)
             for i in range(lidar.getHorizontalResolution()):
                 msg.ranges.append(lidarValues[i])

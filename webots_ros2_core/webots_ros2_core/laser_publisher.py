@@ -24,7 +24,7 @@ from builtin_interfaces.msg import Time
 from geometry_msgs.msg import TransformStamped
 
 
-import transforms3d  # TODO: add in dependencies
+import transforms3d
 
 try:
     append_webots_python_lib_to_path()

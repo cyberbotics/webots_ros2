@@ -67,12 +67,12 @@ class LaserPublisher():
                 if device.getName() in parameters and 'topic name' in parameters[topicName]:
                     topicName = parameters[topicName]['topic name']
                 if device.getNumberOfLayers() > 1:
+                    self.publishers[device] = {}
                     for i in range(device.getNumberOfLayers()):
-                        self.publishers[device] = {}
                         name = prefix + device.getName() + '_' + str(i)
-                        topicName = prefix + topicName + '_' + str(i)
+                        indexedTopicName = prefix + topicName + '_' + str(i)
                         self.publishers[device][name] = self.node.create_publisher(LaserScan,
-                                                                                   topicName, 1)
+                                                                                   indexedTopicName, 1)
                 else:
                     self.publishers[device] = self.node.create_publisher(LaserScan,
                                                                          prefix + topicName, 1)
@@ -106,6 +106,11 @@ class LaserPublisher():
             q1 = transforms3d.quaternions.axangle2quat([0, 1, 0], -1.5708)
             q2 = transforms3d.quaternions.axangle2quat([1, 0, 0], 1.5708)
             result = transforms3d.quaternions.qmult(q1, q2)
+            if lidar.getNumberOfLayers() > 1:
+                angleStep = lidar.getVerticalFov() / (lidar.getNumberOfLayers() - 1)
+                angle = -0.5 * lidar.getVerticalFov() + i * angleStep
+                q3 = transforms3d.quaternions.axangle2quat([0, 0, 1], angle)
+                result = transforms3d.quaternions.qmult(result, q3)
             transformStamped.transform.rotation.x = result[0]
             transformStamped.transform.rotation.y = result[1]
             transformStamped.transform.rotation.z = result[2]
@@ -122,9 +127,10 @@ class LaserPublisher():
             msg.range_min = lidar.getMinRange()
             msg.range_max = lidar.getMaxRange()
             lidarValues = lidar.getLayerRangeImage(i)
-            for i in range(lidar.getHorizontalResolution()):
-                msg.ranges.append(lidarValues[i])
+            for j in range(lidar.getHorizontalResolution()):
+                msg.ranges.append(lidarValues[j])
             if lidar.getNumberOfLayers() > 1:
-                self.publishers[lidar][msg.header.frame_id].publish(msg)
+                key = self.prefix + lidar.getName() + '_' + str(i)
+                self.publishers[lidar][key].publish(msg)
             else:
                 self.publishers[lidar].publish(msg)

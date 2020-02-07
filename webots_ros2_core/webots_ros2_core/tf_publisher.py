@@ -31,13 +31,25 @@ class TfPublisher(WebotsNode):
         self.publisherTimer = self.create_timer(0.001 * self.timestep, self.tf_publisher_callback)
         self.tfPublisher = self.create_publisher(TFMessage, 'tf', 10)
         self.nodes = {}
-        # get the node from the DEF names defined in the customData field
-        for name in self.robot.getCustomData().split():
-            node = self.robot.getFromDef(name)
-            if node is not None:
-                self.nodes[name] = node
-            else:
-                self.get_logger().warn('No node with the "%s" DEF name found.' % name)
+        # parse the robot structure to detect interesting nodes to publish transforms
+        #self.parseNode(self.robot.getSelf())
+        self.parseNode(self.robot.getFromDef('base_link'))
+
+    def parseNode(self, node):
+        """Recusrive function to parse a node."""
+        nameField = node.getProtoField('name')
+        endPointField = node.getProtoField('endPoint')
+        childrenField = node.getProtoField('children')
+        if nameField and nameField.getSFString():  # TODO we can eventually filter by basetype
+            # if several nodes with same name exists only one will be published
+            self.nodes[nameField.getSFString()] = node
+        if endPointField and endPointField.getSFNode():
+            print('endPoint')
+            print(endPointField.getSFNode())
+            self.parseNode(endPointField.getSFNode())
+        if childrenField:
+            for i in range(childrenField.getCount()):
+                self.parseNode(childrenField.getMFNode(i))
 
     def tf_publisher_callback(self):
         # Publish TF for the next step

@@ -41,7 +41,7 @@ def generate_launch_description():
                                         node_executable='universal_robot',
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
-                                        arguments=['--webots-robot-name=UR5e'],
+                                        arguments=['--webots-robot-name=base_link'],
                                         parameters=[{'synchronization': synchronization}],
                                         output='screen')
     tfController = ControllerLauncher(package='webots_ros2_core',

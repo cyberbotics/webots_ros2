@@ -40,7 +40,7 @@ except Exception as e:
 
 class WebotsNode(Node):
 
-    def __init__(self, name, args=None):
+    def __init__(self, name, args=None, enableTfPublisher=True):
         super().__init__(name)
         self.declare_parameter('synchronization',
                                Parameter('synchronization', Parameter.Type.BOOL, False))
@@ -59,7 +59,8 @@ class WebotsNode(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
-        self.tfPublisher = TfPublisher(self.robot, self)
+        if enableTfPublisher:
+            self.tfPublisher = TfPublisher(self.robot, self)
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:

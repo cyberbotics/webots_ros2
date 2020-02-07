@@ -15,25 +15,22 @@
 """ROS2 TF publisher."""
 
 import math
-import rclpy
-
-from webots_ros2_core.webots_node import WebotsNode
 
 from tf2_msgs.msg import TFMessage
 from geometry_msgs.msg import TransformStamped
 from builtin_interfaces.msg import Time
 
 
-class TfPublisher(WebotsNode):
+class TfPublisher(object):
 
-    def __init__(self, args):
-        super().__init__('tf_publisher', args)
-        self.publisherTimer = self.create_timer(0.001 * self.timestep, self.tf_publisher_callback)
-        self.tfPublisher = self.create_publisher(TFMessage, 'tf', 10)
+    def __init__(self, robot, node):
+        self.robot = robot
+        self.timestep = int(self.robot.getBasicTimeStep())
+        self.publisherTimer = node.create_timer(0.001 * self.timestep, self.tf_publisher_callback)
+        self.tfPublisher = node.create_publisher(TFMessage, 'tf', 10)
         self.nodes = {}
         # parse the robot structure to detect interesting nodes to publish transforms
-        #self.parseNode(self.robot.getSelf())
-        self.parseNode(self.robot.getFromDef('base_link'))
+        self.parseNode(self.robot.getSelf())
 
     def parseNode(self, node):
         """Recusrive function to parse a node."""
@@ -79,16 +76,3 @@ class TfPublisher(WebotsNode):
             transformStamped.transform.rotation.w = qw
             tFMessage.transforms.append(transformStamped)
         self.tfPublisher.publish(tFMessage)
-
-
-def main(args=None):
-    rclpy.init(args=args)
-
-    tfPublisher = TfPublisher(args=args)
-
-    rclpy.spin(tfPublisher)
-    rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()

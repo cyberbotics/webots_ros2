@@ -21,6 +21,7 @@ import os
 import sys
 
 from webots_ros2_core.utils import append_webots_python_lib_to_path
+from webots_ros2_core.tf_publisher import TfPublisher
 
 from webots_ros2_msgs.srv import SetInt
 
@@ -58,6 +59,7 @@ class WebotsNode(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
+        self.tfPublisher = TfPublisher(self.robot, self)
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:

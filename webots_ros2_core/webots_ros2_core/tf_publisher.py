@@ -22,8 +22,10 @@ from builtin_interfaces.msg import Time
 
 
 class TfPublisher(object):
+    """This class publishes the transforms of all the Solid nodes of the robots."""
 
     def __init__(self, robot, node):
+        """Initialize the publisher and parse the robot."""
         self.robot = robot
         self.timestep = int(self.robot.getBasicTimeStep())
         self.publisherTimer = node.create_timer(0.001 * self.timestep, self.tf_publisher_callback)
@@ -52,6 +54,7 @@ class TfPublisher(object):
                 self.parseNode(childrenField.getMFNode(i), rosNode)
 
     def tf_publisher_callback(self):
+        """Publish the current transforms."""
         # Publish TF for the next step
         # we use one step in advance to make sure no sensor data are published before
         tFMessage = TFMessage()

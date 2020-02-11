@@ -60,7 +60,11 @@ class WebotsNode(Node):
         self.sec = 0
         self.nanosec = 0
         if enableTfPublisher:
-            self.tfPublisher = TfPublisher(self.robot, self)
+            if self.robot.getSupervisor():
+                self.tfPublisher = TfPublisher(self.robot, self)
+            else:
+                self.get_logger().warn('Impossible to publish transforms because the "supervisor"'
+                                       ' field is false.')
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:

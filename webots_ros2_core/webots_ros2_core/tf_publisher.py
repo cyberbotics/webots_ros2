@@ -21,7 +21,7 @@ from geometry_msgs.msg import TransformStamped
 from builtin_interfaces.msg import Time
 
 
-class TfPublisher(object):
+class TfPublisher():
     """This class publishes the transforms of all the Solid nodes of the robots."""
 
     def __init__(self, robot, node):

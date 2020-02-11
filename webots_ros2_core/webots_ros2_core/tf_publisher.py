@@ -29,7 +29,7 @@ class TfPublisher():
     def __init__(self, robot, node):
         """Initialize the publisher and parse the robot."""
         self.robot = robot
-        self.prefix = self.get_parameter_or('prefix',
+        self.prefix = node.get_parameter_or('prefix',
                                             Parameter('prefix', Parameter.Type.STRING, '')).value
         self.timestep = int(self.robot.getBasicTimeStep())
         self.publisherTimer = node.create_timer(0.001 * self.timestep, self.tf_publisher_callback)

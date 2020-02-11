@@ -20,6 +20,8 @@ from tf2_msgs.msg import TFMessage
 from geometry_msgs.msg import TransformStamped
 from builtin_interfaces.msg import Time
 
+from rclpy.parameter import Parameter
+
 
 class TfPublisher():
     """This class publishes the transforms of all the Solid nodes of the robots."""
@@ -27,6 +29,8 @@ class TfPublisher():
     def __init__(self, robot, node):
         """Initialize the publisher and parse the robot."""
         self.robot = robot
+        self.prefix = self.get_parameter_or('prefix',
+                                            Parameter('prefix', Parameter.Type.STRING, '')).value
         self.timestep = int(self.robot.getBasicTimeStep())
         self.publisherTimer = node.create_timer(0.001 * self.timestep, self.tf_publisher_callback)
         self.tfPublisher = node.create_publisher(TFMessage, 'tf', 10)
@@ -66,7 +70,7 @@ class TfPublisher():
             transformStamped = TransformStamped()
             transformStamped.header.stamp = Time(sec=nextSec, nanosec=nextNanosec)
             transformStamped.header.frame_id = 'map'
-            transformStamped.child_frame_id = name
+            transformStamped.child_frame_id = self.prefix + name
             transformStamped.transform.translation.x = position[0]
             transformStamped.transform.translation.y = position[1]
             transformStamped.transform.translation.z = position[2]

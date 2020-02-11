@@ -42,12 +42,10 @@ class TfPublisher():
         if nameField and nameField.getSFString():
             name = nameField.getSFString()
             if name in self.nodes:
-                rosNode.get_logger().info('Two Solids have the same "%s" name.' % name)
+                rosNode.get_logger().warn('Two Solids have the same "%s" name.' % name)
             else:
                 self.nodes[name] = node
         if endPointField and endPointField.getSFNode():
-            print('endPoint')
-            print(endPointField.getSFNode())
             self.parseNode(endPointField.getSFNode(), rosNode)
         if childrenField:
             for i in range(childrenField.getCount()):

@@ -30,23 +30,26 @@ class TfPublisher(object):
         self.tfPublisher = node.create_publisher(TFMessage, 'tf', 10)
         self.nodes = {}
         # parse the robot structure to detect interesting nodes to publish transforms
-        self.parseNode(self.robot.getSelf())
+        self.parseNode(self.robot.getSelf(), node)
 
-    def parseNode(self, node):
+    def parseNode(self, node, rosNode):
         """Recusrive function to parse a node."""
         nameField = node.getProtoField('name')
         endPointField = node.getProtoField('endPoint')
         childrenField = node.getProtoField('children')
-        if nameField and nameField.getSFString():  # TODO we can eventually filter by basetype
-            # if several nodes with same name exists only one will be published
-            self.nodes[nameField.getSFString()] = node
+        if nameField and nameField.getSFString():
+            name = nameField.getSFString()
+            if name in self.nodes:
+                rosNode.get_logger().info('Two Solids have the same "%s" name.' % name)
+            else:
+                self.nodes[name] = node
         if endPointField and endPointField.getSFNode():
             print('endPoint')
             print(endPointField.getSFNode())
-            self.parseNode(endPointField.getSFNode())
+            self.parseNode(endPointField.getSFNode(), rosNode)
         if childrenField:
             for i in range(childrenField.getCount()):
-                self.parseNode(childrenField.getMFNode(i))
+                self.parseNode(childrenField.getMFNode(i), rosNode)
 
     def tf_publisher_callback(self):
         # Publish TF for the next step

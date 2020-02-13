@@ -6,6 +6,7 @@ import sys
 import tarfile
 import urllib.request
 
+from shutil import copyfile
 from setuptools import setup
 
 package_name = 'webots_ros2_desktop'
@@ -33,6 +34,7 @@ if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platfo
     tar.close()
     os.environ['WEBOTS_HOME'] = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                              'webots'))
+
 # Add Webots in the package
 if 'WEBOTS_HOME' in os.environ:
     for root, directories, files in os.walk(os.environ['WEBOTS_HOME']):

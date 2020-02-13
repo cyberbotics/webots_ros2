@@ -71,7 +71,7 @@ def interp_cubic(p0, p1, t_abs):
     q = [0] * len(p0.positions)
     qdot = [0] * len(p0.positions)
     qddot = [0] * len(p0.positions)
-    for i in range(len(p0.positions)):
+    for i in list(range(len(p0.positions))):
         a = p0.positions[i]
         b = p0.velocities[i]
         c = (-3 * p0.positions[i] + 3 * p1.positions[i] - 2 * T * p0.velocities[i] -
@@ -82,6 +82,25 @@ def interp_cubic(p0, p1, t_abs):
         q[i] = a + b * t + c * t**2 + d * t**3
         qdot[i] = b + 2 * c * t + 3 * d * t**2
         qddot[i] = 2 * c + 6 * d * t
+    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot,
+                                time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) *
+                                                                                     1.0e+6)))
+
+
+def interp_linear(p0, p1, t_abs):
+    """Perform a linear interpolation between two trajectory points."""
+    t0 = p0.time_from_start.sec + p0.time_from_start.nanosec * 1.0e-6
+    t1 = p1.time_from_start.sec + p1.time_from_start.nanosec * 1.0e-6
+    T = t1 - t0
+    t = t_abs - t0
+    ratio = max(min((t / T), 1), 0)
+    q = [0] * len(p0.positions)
+    qdot = [0] * len(p0.positions)
+    qddot = [0] * len(p0.positions)
+    for i in list(range(len(p0.positions))):
+        q[i] = (1.0 - ratio) * p0.positions[i] + ratio * p1.positions[i]
+        qdot[i] = (1.0 - ratio) * p0.velocities[i] + ratio * p1.velocities[i]
+        qddot[i] = (1.0 - ratio) * p0.accelerations[i] + ratio * p1.accelerations[i]
     return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot,
                                 time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) *
                                                                                      1.0e+6)))
@@ -106,7 +125,13 @@ def sample_trajectory(trajectory, t):
     while (trajectory.points[i + 1].time_from_start.sec +
            trajectory.points[i + 1].time_from_start.nanosec * 1.0e-6) < t:
         i += 1
-    return interp_cubic(trajectory.points[i], trajectory.points[i + 1], t)
+    return interp_linear(trajectory.points[i], trajectory.points[i + 1], t)
+
+
+def set_position_in_limit(motor, position):
+    """Set the motor position respecting its limits."""
+    position = max(min(position, motor.getMaxPosition()), motor.getMinPosition())
+    motor.setPosition(position)
 
 
 class Trajectory():
@@ -114,6 +139,7 @@ class Trajectory():
 
     def __init__(self, goalHandle, startTime):
         self.jointTrajectory = goalHandle.trajectory
+        self.goalTolerance = goalHandle.goal_tolerance
         self.goalHandle = goalHandle
         self.startTime = startTime
         self.lastPointSent = False
@@ -133,7 +159,7 @@ class TrajectoryFollower():
         self.sensors = {}
         self.position = {}
         self.velocity = {}
-        for i in range(robot.getNumberOfDevices()):
+        for i in list(range(robot.getNumberOfDevices())):
             device = robot.getDeviceByIndex(i)
             if device.getNodeType() in [Node.LINEAR_MOTOR, Node.ROTATIONAL_MOTOR]:
                 name = device.getName()
@@ -216,7 +242,7 @@ class TrajectoryFollower():
         for trajectory in self.trajectories:
             if trajectory.id == goal_handle.goal_id:
                 for name in trajectory.jointTrajectory.joint_names:
-                    self.motors[name].setPosition(self.sensors[name].getValue())
+                    set_position_in_limit(self.motors[name], self.sensors[name].getValue())
                 self.trajectories.remove(trajectory)
                 self.node.get_logger().info('Goal Canceled')
                 goal_handle.destroy()
@@ -262,32 +288,36 @@ class TrajectoryFollower():
                                              now - trajectory.startTime)
                 for name in trajectory.jointTrajectory.joint_names:
                     index = trajectory.jointTrajectory.joint_names.index(name)
-                    self.motors[name].setPosition(setpoint.positions[index])
+                    set_position_in_limit(self.motors[name], setpoint.positions[index])
                     # Velocity control is not used on the real robot and gives
                     # bad results in the simulation
                     # self.motors[name].setVelocity(math.fabs(setpoint.velocities[index]))
             elif not trajectory.lastPointSent:
                 # All intermediate points sent, sending last point to make sure we reach the goal
                 trajectory.lastPointSent = True
-                last_point = trajectory.jointTrajectory.points[-1]
-                position_in_tol = within_tolerance(position, last_point.positions,
-                                                   self.joint_path_tolerances)
                 setpoint = sample_trajectory(trajectory.jointTrajectory,
                                              lastPointStart.sec + lastPointStart.nanosec * 1.0e-6)
                 for name in trajectory.jointTrajectory.joint_names:
                     index = trajectory.jointTrajectory.joint_names.index(name)
-                    self.motors[name].setPosition(setpoint.positions[index])
+                    set_position_in_limit(self.motors[name], setpoint.positions[index])
                     # Velocity control is not used on the real robot and gives
                     # bad results in the simulations
                     # self.motors[name].setVelocity(math.fabs(setpoint.velocities[index]))
             else:  # Off the end
                 last_point = trajectory.jointTrajectory.points[-1]
-                position_in_tol = within_tolerance(position, last_point.positions,
-                                                   [0.1] * self.numberOfMotors)
-                velocity_in_tol = within_tolerance(velocity, last_point.velocities,
-                                                   [0.05] * self.numberOfMotors)
-                if position_in_tol and velocity_in_tol:
-                    # The arm reached the goal (and isn't moving) => Succeeded
+                referencePositions = []
+                tolerances = [0.1] * len(last_point.positions)
+                for name in trajectory.jointTrajectory.joint_names:
+                    referencePositions.append(position[name])
+                    for tolerance in trajectory.goalTolerance:
+                        if tolerance.name == name:
+                            tolerances[len(referencePositions) - 1] = tolerance.position
+                            break
+                position_in_tol = within_tolerance(referencePositions,
+                                                   last_point.positions,
+                                                   tolerances)
+                if position_in_tol:
+                    # The arm reached the goal => Succeeded
                     result.error_code = result.SUCCESSFUL
                     goal_handle.succeed()
                     self.trajectories.remove(trajectory)

@@ -66,8 +66,8 @@ def append_webots_lib_to_path():
             os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':'
                                              + os.environ.get('LD_LIBRARY_PATH'))
         else:
-            os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller') +
-                                             ':' + os.environ.get('LD_LIBRARY_PATH'))
+            os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller')
+                                             + ':' + os.environ.get('LD_LIBRARY_PATH'))
     elif sys.platform == 'darwin':
         if get_webots_version_major_number() <= 2019:
             os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +

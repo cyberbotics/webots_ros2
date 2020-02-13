@@ -42,8 +42,8 @@ DEF ROOF Floor {
 }
 Wall {
   translation 0.02503 0 5.03882
-  size 68 5 0.2
   name "wall0"
+  size 68 5 0.2
   appearance Roughcast {
     textureTransform TextureTransform {
       scale 30 2.4
@@ -81,15 +81,6 @@ Wall {
       scale 10 2.4
     }
   }
-}
-DEF ROBOT Robot {
-  translation 0 0.6 0
-  rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-  children [
-    Irb4600-40 {
-    }
-  ]
-  controller "<extern>"
 }
 ConveyorBelt {
   translation 8.7256 0 1.99898
@@ -216,15 +207,30 @@ DEF CAR Solid {
   boundingObject USE TESLA_BO
   physics USE TESLA_PHYSICS
 }
-SolidBox {
-  translation 0 0.3 0
+Robot {
+  translation 0.1 0.3 0.1
   rotation 0 0 1 0
-  size 0.9 0.6 0.9
-  appearance GalvanizedMetal {
-    textureTransform TextureTransform {
-      scale 2 2
+  children [
+    Irb4600-40 {
+      translation 0 0.3 0
+      rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
+      controller "<extern>"
     }
-  }
+    Shape {
+      appearance GalvanizedMetal {
+        textureTransform TextureTransform {
+          scale 2 2
+        }
+      }
+      geometry DEF BOX Box {
+        size 0.9 0.6 0.9
+      }
+    }
+  ]
+  name "box"
+  model "box"
+  boundingObject USE BOX
+  controller ""
 }
 DEF WHEEL Solid {
   translation -1.9 0.77 -1.35

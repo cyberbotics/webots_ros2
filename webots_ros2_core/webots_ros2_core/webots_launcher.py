@@ -30,7 +30,7 @@ def main(args=None):
     parser.add_argument('--mode', dest='mode', default='realtime', help='Startup mode.')
     parser.add_argument('--no-gui', dest='noGui', action='store_true',
                         help='Start Webots with minimal GUI.')
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
     webotsPath = get_webots_home()
     if sys.platform == 'win32':
         webotsPath = os.path.join(webotsPath, 'msys64', 'mingw64', 'bin')

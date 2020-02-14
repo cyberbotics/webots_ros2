@@ -36,30 +36,12 @@ class ExampleController(WebotsNode):
         self.leftMotor.setVelocity(0)
         self.rightMotor.setVelocity(0)
         self.motorMaxSpeed = self.leftMotor.getMaxVelocity()
-        self.get_logger().info('max_vel: %f' % self.motorMaxSpeed)
         self.motorService = self.create_service(SetDifferentialWheelSpeed, 'motor', self.motor_callback)
         self.sensorPublisher = self.create_publisher(Float64, 'sensor', 10)
         # front central proximity sensor
         self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')
         self.frontSensor.enable(self.timestep)
-
         self.cmdVelSubscriber = self.create_subscription(Twist , 'motor', self.cmdVel_callback, 10)
-
-    def cmdVel_callback(self, msg):
-        wheel_gap = 0.1    # in meter
-        wheel_radius = 0.021 # in meter
-        self.get_logger().info('lin_vel: %f' % msg.linear.x)
-        self.get_logger().info('ang_vel: %f' % msg.angular.z)
-        leftSpeed  = (2.0 * msg.linear.x - msg.angular.z * wheel_gap) / (2.0 * wheel_radius)
-        rightSpeed = (2.0 * msg.linear.x + msg.angular.z * wheel_gap) / (2.0 * wheel_radius)
-        self.get_logger().info('leftSpeed : %f' % leftSpeed)
-        self.get_logger().info('rightSpeed: %f' % rightSpeed)
-        if leftSpeed >  self.motorMaxSpeed: leftSpeed =  self.motorMaxSpeed
-        if leftSpeed < -self.motorMaxSpeed: leftSpeed = -self.motorMaxSpeed
-        if rightSpeed >  self.motorMaxSpeed: rightSpeed =  self.motorMaxSpeed
-        if rightSpeed < -self.motorMaxSpeed: rightSpeed = -self.motorMaxSpeed
-        self.leftMotor.setVelocity(leftSpeed)
-        self.rightMotor.setVelocity(rightSpeed)
 
     def sensor_callback(self):
         # Publish distance sensor value
@@ -72,28 +54,25 @@ class ExampleController(WebotsNode):
         self.rightMotor.setVelocity(request.right_speed)
         return response
 
-
-#class CommandVelocitySubscriber(Node):
-#    def __init__(self):
-#        super().__init__('command_velocity_subscriber')
-#        self.subscription = self.create_subscription(Twist, 'motor', self.cmdVel_callback, 10)
-#        self.subscription  # prevent unused variable warning
-#
-#    def cmdVel_callback(self, msg):
-#        self.get_logger().info('lin_vel: %f' % msg.linear.x*100)
-#        self.get_logger().info('ang_vel: %f' % msg.angular.z*100)
+    def cmdVel_callback(self, msg):
+        wheel_gap = 0.1 # in meter
+        wheel_radius = 0.021 # in meter
+        leftSpeed  = (2.0 * msg.linear.x - msg.angular.z * wheel_gap) / (2.0 * wheel_radius)
+        rightSpeed = (2.0 * msg.linear.x + msg.angular.z * wheel_gap) / (2.0 * wheel_radius)
+        if leftSpeed >  self.motorMaxSpeed: leftSpeed =  self.motorMaxSpeed
+        if leftSpeed < -self.motorMaxSpeed: leftSpeed = -self.motorMaxSpeed
+        if rightSpeed >  self.motorMaxSpeed: rightSpeed =  self.motorMaxSpeed
+        if rightSpeed < -self.motorMaxSpeed: rightSpeed = -self.motorMaxSpeed
+        self.leftMotor.setVelocity(leftSpeed)
+        self.rightMotor.setVelocity(rightSpeed)
 
 
 def main(args=None):
     rclpy.init(args=args)
 
     exampleController = ExampleController(args=args)
-    #command_velocity_subscriber = CommandVelocitySubscriber()
 
     rclpy.spin(exampleController)
-    #rclpy.spin(command_velocity_subscriber)
-
-    #command_velocity_subscriber.destroy_node()
     rclpy.shutdown()
 
 

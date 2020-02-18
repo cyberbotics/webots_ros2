@@ -4,7 +4,6 @@
 [![license - apache 2.0](https://img.shields.io/:license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Version](https://img.shields.io/github/v/tag/cyberbotics/webots_ros2?label=version)](http://wiki.ros.org/webots_ros2)
 
-
 These packages provide an interface for controlling robots simulated in Webots using ROS2.
 
 All the documentation and tutorials are available on the [ROS wiki](http://wiki.ros.org/webots_ros2).

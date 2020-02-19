@@ -18,6 +18,7 @@ from webots_ros2_core.webots_node import WebotsNode
 import rclpy
 from sensor_msgs.msg import Range, Image, CameraInfo
 from geometry_msgs.msg import Twist
+from nav_msgs.msg import Odometry
 from webots_ros2_msgs.srv import SetInt
 from functools import partial
 
@@ -25,6 +26,7 @@ from functools import partial
 WHEEL_DISTANCE = 0.052
 WHEEL_RADIUS = 0.0205
 CAMERA_PERIOD_MS = 500
+ENCODER_PERIOD_MS = 100
 
 
 class EPuck2Controller(WebotsNode):
@@ -40,6 +42,14 @@ class EPuck2Controller(WebotsNode):
         self.right_motor.setVelocity(0)
         self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 10)
 
+        # Initialize odometry
+        self.left_wheel_sensor = self.robot.getPositionSensor('left wheel sensor')
+        self.right_wheel_sensor = self.robot.getPositionSensor('right wheel sensor')
+        self.left_wheel_sensor.enable(ENCODER_PERIOD_MS)
+        self.right_wheel_sensor.enable(ENCODER_PERIOD_MS)
+        self.odometry_publisher = self.create_publisher(Odometry, '/odom', 10)
+        self.create_timer(0.01 * self.timestep, self.odometry_callback)
+
         # Intialize distance sensors
         self.sensor_publishers = []
         self.sensors = []
@@ -50,6 +60,13 @@ class EPuck2Controller(WebotsNode):
                 Range, '/distance/ps{}'.format(i), 10)
             self.sensors.append(sensor)
             self.sensor_publishers.append(sensor_publisher)
+
+        sensor = self.robot.getDistanceSensor('tof')
+        sensor.enable(self.timestep)
+        sensor_publisher = self.create_publisher(Range, '/distance/tof', 10)
+        self.sensors.append(sensor)
+        self.sensor_publishers.append(sensor_publisher)
+        
         self.create_timer(0.01 * self.timestep, self.distance_callback)
 
         # Initialize camera
@@ -70,6 +87,11 @@ class EPuck2Controller(WebotsNode):
                 SetInt, '/set_led{}'.format(i), partial(self.led_callback, index=i))
             self.leds.append(led)
             self.led_services.append(led_service)
+
+    def odometry_callback(self):
+        msg = Odometry()
+        msg.pose.pose.position.x = 1.0
+        pass
 
     def led_callback(self, req, res, index):
         self.leds[0].set(req.value)
@@ -114,7 +136,7 @@ class EPuck2Controller(WebotsNode):
         self.right_motor.setVelocity(right_velocity)
 
     def distance_callback(self):
-        for i in range(8):
+        for i in range(9):
             msg = Range()
             msg.field_of_view = self.sensors[i].getAperture()
             msg.min_range = self.sensors[i].getMinValue()

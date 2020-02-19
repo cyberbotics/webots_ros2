@@ -28,6 +28,7 @@ WoodenBox {
   size 0.1 0.1 0.1
 }
 E-puck {
+  version "2"
   controller "<extern>"
   controllerArgs ""
 }

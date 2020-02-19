@@ -2,6 +2,11 @@
 ```
 ros2 launch webots_ros2_epuck2 example.launch.py
 ```
+and you can use `teleop_twist_keyboard` in another window to control the robot:
+```
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+but make sure you have `ros-eloquent-teleop-twist-keyboard` installed.
 
 ### Topics Overview
 ```

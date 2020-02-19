@@ -21,7 +21,7 @@ angular:
 ```
 
 ### Stream Camera Images
-Run `rqt`, navigate to `Plugins > Visualization > Image View` and for topic choose `/rgb/image`. Note that the image encoding is BGRA.
+Run `rqt`, navigate to `Plugins > Visualization > Image View` and for topic choose `/camera/image_raw`. Note that the image encoding is BGRA.
 
 > Make sure your QT5 Plugins are properly configured:  
 > https://askubuntu.com/questions/308128/failed-to-load-platform-plugin-xcb-while-launching-qt5-app-on-linux-without

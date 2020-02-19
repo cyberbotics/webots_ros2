@@ -3,6 +3,22 @@
 ros2 launch webots_ros2_epuck2 example.launch.py
 ```
 
+### Topics Overview
+```
+$ ros2 topic list -t
+/camera/camera_info [sensor_msgs/msg/CameraInfo]
+/camera/image_raw [sensor_msgs/msg/Image]
+/cmd_vel [geometry_msgs/msg/Twist]
+/distance/ps0 [sensor_msgs/msg/Range]
+/distance/ps1 [sensor_msgs/msg/Range]
+/distance/ps2 [sensor_msgs/msg/Range]
+/distance/ps3 [sensor_msgs/msg/Range]
+/distance/ps4 [sensor_msgs/msg/Range]
+/distance/ps5 [sensor_msgs/msg/Range]
+/distance/ps6 [sensor_msgs/msg/Range]
+/distance/ps7 [sensor_msgs/msg/Range]
+```
+
 ### Read IR Sensors
 ```
 ros2 topic echo /distance/ps6

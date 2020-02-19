@@ -53,9 +53,11 @@ class EPuck2Controller(WebotsNode):
         # Initialize camera
         self.camera = self.robot.getCamera('camera')
         self.camera.enable(CAMERA_PERIOD_MS)
-        self.camera_publisher = self.create_publisher(Image, '/camera/image_raw', 10)
+        self.camera_publisher = self.create_publisher(
+            Image, '/camera/image_raw', 10)
         self.create_timer(0.01 * self.timestep, self.camera_callback)
-        self.camera_info_publisher = self.create_publisher(CameraInfo, '/camera/camera_info', 10)
+        self.camera_info_publisher = self.create_publisher(
+            CameraInfo, '/camera/camera_info', 10)
 
     def camera_callback(self):
         # Image data
@@ -73,8 +75,8 @@ class EPuck2Controller(WebotsNode):
         msg.height = self.camera.getHeight()
         msg.width = self.camera.getWidth()
         msg.distortion_model = 'plumb_bob'
-        msg.d = [ 0.0, 0.0, 0.0, 0.0, 0.0 ]
-        msg.k = [ 
+        msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
+        msg.k = [
             self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2,
             0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2,
             0.0, 0.0, 1.0
@@ -85,7 +87,6 @@ class EPuck2Controller(WebotsNode):
             0.0, 0.0, 1.0, 0.0
         ]
         self.camera_info_publisher.publish(msg)
-
 
     def cmd_vel_callback(self, twist):
         left_velocity = (2.0 * twist.linear.x - twist.angular.z *

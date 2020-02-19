@@ -44,3 +44,8 @@ Run `rqt`, navigate to `Plugins > Visualization > Image View` and for topic choo
 > ```
 > sudo ln -sf /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/ /usr/bin/
 > ```
+
+### Control LEDs
+```
+ros2 service call /set_led0 webots_ros2_msgs/srv/SetInt "{ value: 1 }"
+```

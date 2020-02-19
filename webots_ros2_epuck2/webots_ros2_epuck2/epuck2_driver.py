@@ -18,6 +18,8 @@ from webots_ros2_core.webots_node import WebotsNode
 import rclpy
 from sensor_msgs.msg import Range, Image, CameraInfo
 from geometry_msgs.msg import Twist
+from webots_ros2_msgs.srv import SetInt
+from functools import partial
 
 
 WHEEL_DISTANCE = 0.052
@@ -58,6 +60,21 @@ class EPuck2Controller(WebotsNode):
         self.create_timer(0.01 * self.timestep, self.camera_callback)
         self.camera_info_publisher = self.create_publisher(
             CameraInfo, '/camera/camera_info', 10)
+
+        # Initialize LEDs
+        self.leds = []
+        self.led_services = []
+        for i in range(8):
+            led = self.robot.getLED('led{}'.format(i))
+            led_service = self.create_service(
+                SetInt, '/set_led{}'.format(i), partial(self.led_callback, index=i))
+            self.leds.append(led)
+            self.led_services.append(led_service)
+
+    def led_callback(self, req, res, index):
+        self.leds[0].set(req.value)
+        res.success = True
+        return res
 
     def camera_callback(self):
         # Image data

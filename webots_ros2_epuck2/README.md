@@ -41,6 +41,12 @@ angular:
   z: 0.0"
 ```
 
+### Read Odometry
+```
+ros2 topic echo /odom
+```
+> Note that ROS uses [REP](https://www.ros.org/reps/rep-0103.html) convention (x-forward, y-left and z-up), while Webots inherited one from [VRML](https://en.wikipedia.org/wiki/VRML) (x-right, y-up, z-backward). Therefore, you will translations in Webots as follows $ x_{Webots} = -y_{ROS} $, $ y_{Webots} = z_{ROS} $ and $ z_{Webots} = -x_{ROS} $.
+
 ### Stream Camera Images
 Run `rqt`, navigate to `Plugins > Visualization > Image View` and for topic choose `/camera/image_raw`. Note that the image encoding is BGRA.
 

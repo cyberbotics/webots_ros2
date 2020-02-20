@@ -27,7 +27,7 @@ from math import pi, cos, sin
 # `WHEEL_DISTANCE` is calculated based on the simulation, however according 
 # to the documentation it should be 53mm
 # http://www.e-puck.org/index.php?option=com_content&view=article&id=7&Itemid=9
-WHEEL_DISTANCE = 0.058  
+WHEEL_DISTANCE = 0.05685
 WHEEL_RADIUS = 0.02
 CAMERA_PERIOD_MS = 500
 ENCODER_PERIOD_MS = 100
@@ -135,17 +135,17 @@ class EPuck2Controller(WebotsNode):
         # Calculate position & angle
         # Fourth order Runge - Kutta
         # Reference: https://www.cs.cmu.edu/~16311/s07/labs/NXTLabs/Lab%203.html
-        k00 = v * cos(omega)
-        k01 = v * sin(omega)
+        k00 = v * cos(self.prev_angle)
+        k01 = v * sin(self.prev_angle)
         k02 = omega
-        k10 = v * cos(omega + ENCODER_PERIOD_S * k02 / 2)
-        k11 = v * sin(omega + ENCODER_PERIOD_S * k02 / 2)
+        k10 = v * cos(self.prev_angle + ENCODER_PERIOD_S * k02 / 2)
+        k11 = v * sin(self.prev_angle + ENCODER_PERIOD_S * k02 / 2)
         k12 = omega
-        k20 = v * cos(omega + ENCODER_PERIOD_S * k12 / 2)
-        k21 = v * sin(omega + ENCODER_PERIOD_S * k12 / 2)
+        k20 = v * cos(self.prev_angle + ENCODER_PERIOD_S * k12 / 2)
+        k21 = v * sin(self.prev_angle + ENCODER_PERIOD_S * k12 / 2)
         k22 = omega
-        k30 = v * cos(omega + ENCODER_PERIOD_S * k22 / 2)
-        k31 = v * sin(omega + ENCODER_PERIOD_S * k22 / 2)
+        k30 = v * cos(self.prev_angle + ENCODER_PERIOD_S * k22 / 2)
+        k31 = v * sin(self.prev_angle + ENCODER_PERIOD_S * k22 / 2)
         k32 = omega
         position = [
             self.prev_position[0] + (ENCODER_PERIOD_S / 6) *

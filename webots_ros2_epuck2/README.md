@@ -24,12 +24,12 @@ $ ros2 topic list -t
 /distance/ps7 [sensor_msgs/msg/Range]
 ```
 
-### Read IR Sensors
+### IR Sensors
 ```
 ros2 topic echo /distance/ps6
 ```
 
-### Set Velocity
+### Velocity
 ```
 ros2 topic pub /cmd_vel geometry_msgs/Twist "linear:
   x: 0.1
@@ -41,13 +41,13 @@ angular:
   z: 0.0"
 ```
 
-### Read Odometry
+### Odometry
 ```
 ros2 topic echo /odom
 ```
 > Note that ROS uses [REP](https://www.ros.org/reps/rep-0103.html) convention (x-forward, y-left and z-up) while Webots inherited convention from [VRML](https://en.wikipedia.org/wiki/VRML) (x-right, y-up, z-backward). Therefore, you will see translations in Webots as following <img src ="https://render.githubusercontent.com/render/math?math=x_{Webots} = -y_{ROS}" />, <img src ="https://render.githubusercontent.com/render/math?math=y_{Webots} = z_{ROS}" /> and <img src ="https://render.githubusercontent.com/render/math?math=z_{Webots} = -x_{ROS}" />.
 
-### Stream Camera Images
+### Camera
 Run `rqt`, navigate to `Plugins > Visualization > Image View` and for topic choose `/camera/image_raw`. Note that the image encoding is BGRA.
 
 > Make sure your QT5 Plugins are properly configured:  
@@ -56,7 +56,7 @@ Run `rqt`, navigate to `Plugins > Visualization > Image View` and for topic choo
 > sudo ln -sf /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/ /usr/bin/
 > ```
 
-### Control LEDs
+### LEDs
 ```
 ros2 service call /set_led0 webots_ros2_msgs/srv/SetInt "{ value: 1 }"
 ```

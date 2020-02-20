@@ -17,14 +17,14 @@
 from webots_ros2_core.webots_node import WebotsNode
 import rclpy
 from std_msgs.msg import String
-from sensor_msgs.msg import Range, Image, CameraInfo
+from sensor_msgs.msg import Range, Image, CameraInfo, Imu
 from geometry_msgs.msg import Twist, Quaternion
 from nav_msgs.msg import Odometry
 from webots_ros2_msgs.srv import SetInt
 from functools import partial
 from math import pi, cos, sin
 
-# `WHEEL_DISTANCE` is calculated based on the simulation, however according 
+# `WHEEL_DISTANCE` is calculated based on the simulation, however according
 # to the documentation it should be 53mm
 # http://www.e-puck.org/index.php?option=com_content&view=article&id=7&Itemid=9
 WHEEL_DISTANCE = 0.05685
@@ -32,6 +32,7 @@ WHEEL_RADIUS = 0.02
 CAMERA_PERIOD_MS = 500
 ENCODER_PERIOD_MS = 100
 DISTANCE_PERIOD_MS = 100
+IMU_PERIOD_MS = 100
 ENCODER_RESOLUTION = (2 * pi) / 1000
 
 ENCODER_PERIOD_S = ENCODER_PERIOD_MS / 1000
@@ -57,9 +58,6 @@ class EPuck2Controller(WebotsNode):
     def __init__(self, args):
         super().__init__('epuck2_controller', args)
 
-        # Initialize debugger
-        self.debug_publisher = self.create_publisher(String, '/debug', 10)
-
         # Initialize motors
         self.left_motor = self.robot.getMotor('left wheel motor')
         self.right_motor = self.robot.getMotor('right wheel motor')
@@ -82,6 +80,16 @@ class EPuck2Controller(WebotsNode):
         self.right_wheel_sensor.enable(self.timestep)
         self.odometry_publisher = self.create_publisher(Odometry, '/odom', 10)
         self.create_timer(ENCODER_PERIOD_MS / 1000, self.odometry_callback)
+
+        # Initialize IMU
+        self.imu = self.robot.getInertialUnit('inertial unit')
+        self.imu.enable(self.timestep)
+        self.gyro = self.robot.getGyro('gyro')
+        self.gyro.enable(self.timestep)
+        self.accelerometer = self.robot.getAccelerometer('accelerometer')
+        self.accelerometer.enable(self.timestep)
+        self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
+        self.create_timer(IMU_PERIOD_MS / 1000, self.imu_callback)
 
         # Intialize distance sensors
         self.sensor_publishers = []
@@ -121,17 +129,35 @@ class EPuck2Controller(WebotsNode):
             self.leds.append(led)
             self.led_services.append(led_service)
 
+    def imu_callback(self):
+        imu_data = self.imu.getRollPitchYaw()
+        gyro_data = self.gyro.getValues()
+        accelerometer_data = self.accelerometer.getValues()
+
+        msg = Imu()
+        msg.orientation = euler_to_quaternion(
+            imu_data[0], imu_data[1], imu_data[2])
+        msg.angular_velocity.x = gyro_data[0]
+        msg.angular_velocity.y = gyro_data[1]
+        msg.angular_velocity.z = gyro_data[2]
+        msg.linear_acceleration.x = accelerometer_data[0]
+        msg.linear_acceleration.y = accelerometer_data[1]
+        msg.linear_acceleration.z = accelerometer_data[2]
+        self.imu_publisher.publish(msg)
+
     def odometry_callback(self):
         # Calculate velocities
         left_wheel_ticks = self.left_wheel_sensor.getValue()
         right_wheel_ticks = self.right_wheel_sensor.getValue()
-        v_left_rad = (left_wheel_ticks - self.prev_left_wheel_ticks) / ENCODER_PERIOD_S
-        v_right_rad = (right_wheel_ticks - self.prev_right_wheel_ticks) / ENCODER_PERIOD_S
+        v_left_rad = (left_wheel_ticks -
+                      self.prev_left_wheel_ticks) / ENCODER_PERIOD_S
+        v_right_rad = (right_wheel_ticks -
+                       self.prev_right_wheel_ticks) / ENCODER_PERIOD_S
         v_left = v_left_rad * WHEEL_RADIUS
         v_right = v_right_rad * WHEEL_RADIUS
         v = (v_left + v_right) / 2
         omega = (v_right - v_left) / WHEEL_DISTANCE
-    
+
         # Calculate position & angle
         # Fourth order Runge - Kutta
         # Reference: https://www.cs.cmu.edu/~16311/s07/labs/NXTLabs/Lab%203.html
@@ -153,8 +179,9 @@ class EPuck2Controller(WebotsNode):
             self.prev_position[1] + (ENCODER_PERIOD_S / 6) *
             (k01 + 2 * (k11 + k21) + k31)
         ]
-        angle = self.prev_angle + (ENCODER_PERIOD_S / 6) * (k02 + 2 * (k12 + k22) + k32)
-    
+        angle = self.prev_angle + \
+            (ENCODER_PERIOD_S / 6) * (k02 + 2 * (k12 + k22) + k32)
+
         # Update variables
         self.prev_position = position.copy()
         self.prev_angle = angle

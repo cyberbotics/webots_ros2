@@ -22,6 +22,9 @@ $ ros2 topic list -t
 /distance/ps5 [sensor_msgs/msg/Range]
 /distance/ps6 [sensor_msgs/msg/Range]
 /distance/ps7 [sensor_msgs/msg/Range]
+/distance/tof [sensor_msgs/msg/Range]
+/imu [sensor_msgs/msg/Imu]
+/odom [nav_msgs/msg/Odometry]
 ```
 
 ### IR Sensors

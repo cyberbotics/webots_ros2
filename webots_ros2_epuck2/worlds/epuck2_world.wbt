@@ -16,19 +16,24 @@ RectangleArena {
 WoodenBox {
   translation 0.243691 0.05 0.227558
   size 0.1 0.1 0.1
+  name "wooden box 1"
 }
 WoodenBox {
   translation -0.222935 0.05 0.0440814
-  name "wooden box(1)"
+  name "wooden box 2"
   size 0.1 0.1 0.1
 }
 WoodenBox {
   translation -0.0237151 0.05 -0.244088
-  name "wooden box(2)"
+  name "wooden box 3"
   size 0.1 0.1 0.1
 }
 E-puck {
   version "2"
   controller "<extern>"
   controllerArgs ""
+  turretSlot [
+    Pi-puck {
+    }
+  ]
 }

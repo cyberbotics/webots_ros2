@@ -14,15 +14,16 @@
 
 """ROS2 EPuck2 controller."""
 
-from webots_ros2_core.webots_node import WebotsNode
-import rclpy
-from std_msgs.msg import String
-from sensor_msgs.msg import Range, Image, CameraInfo, Imu
-from geometry_msgs.msg import Twist, Quaternion
-from nav_msgs.msg import Odometry
-from webots_ros2_msgs.srv import SetInt
 from functools import partial
 from math import pi, cos, sin
+import rclpy
+from tf2_ros import TransformBroadcaster
+from webots_ros2_core.webots_node import WebotsNode
+from sensor_msgs.msg import Range, Image, CameraInfo, Imu
+from geometry_msgs.msg import Twist, Quaternion, TransformStamped
+from nav_msgs.msg import Odometry
+from webots_ros2_msgs.srv import SetInt
+
 
 # `WHEEL_DISTANCE` is calculated based on the simulation, however according
 # to the documentation it should be 53mm
@@ -117,7 +118,7 @@ class EPuck2Controller(WebotsNode):
             Image, '/camera/image_raw', 10)
         self.create_timer(CAMERA_PERIOD_MS / 1000, self.camera_callback)
         self.camera_info_publisher = self.create_publisher(
-            CameraInfo, '/camera/camera_info', 10)
+            CameraInfo, '/camera/image_raw/camera_info', 10)
 
         # Initialize LEDs
         self.leds = []
@@ -188,8 +189,10 @@ class EPuck2Controller(WebotsNode):
         self.prev_left_wheel_ticks = left_wheel_ticks
         self.prev_right_wheel_ticks = right_wheel_ticks
 
-        # Pack & publish everything
+        # Pack & publish odometry
         msg = Odometry()
+        msg.header.frame_id = 'odom'
+        msg.child_frame_id = 'base_link'
         msg.twist.twist.linear.x = v
         msg.twist.twist.linear.z = omega
         msg.pose.pose.position.x = position[0]
@@ -197,8 +200,19 @@ class EPuck2Controller(WebotsNode):
         msg.pose.pose.orientation = euler_to_quaternion(0, 0, angle)
         self.odometry_publisher.publish(msg)
 
+        # Pack & publish transforms
+        tf_broadcaster = TransformBroadcaster(self)
+        tf = TransformStamped()
+        tf.header.frame_id = 'odom'
+        tf.child_frame_id = 'base_link'
+        tf.transform.translation.x = position[0]
+        tf.transform.translation.y = position[1]
+        tf.transform.translation.z = 0.0
+        tf.transform.rotation = euler_to_quaternion(0, 0, angle)
+        tf_broadcaster.sendTransform(tf)
+
     def led_callback(self, req, res, index):
-        self.leds[0].set(req.value)
+        self.leds[index].set(req.value)
         res.success = True
         return res
 
@@ -215,6 +229,7 @@ class EPuck2Controller(WebotsNode):
 
         # CameraInfo data
         msg = CameraInfo()
+        msg.header.frame_id = 'base_link'
         msg.height = self.camera.getHeight()
         msg.width = self.camera.getWidth()
         msg.distortion_model = 'plumb_bob'

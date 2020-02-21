@@ -17,12 +17,12 @@
 """Launch Webots and the controller."""
 
 import os
-
 import launch
-import launch_ros.actions
-
+from launch import LaunchDescription
+from launch.actions import RegisterEventHandler, EmitEvent
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 from webots_ros2_core.utils import ControllerLauncher
-
 from ament_index_python.packages import get_package_share_directory
 
 
@@ -31,22 +31,36 @@ def generate_launch_description():
     arguments = ['--mode=realtime', '--world=' +
                  os.path.join(get_package_share_directory('webots_ros2_epuck2'),
                               'worlds', 'epuck2_world.wbt')]
-    webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
-                                     arguments=arguments, output='screen')
+    webots = Node(package='webots_ros2_core', node_executable='webots_launcher',
+                  arguments=arguments, output='screen')
+
     # Controller node
-    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
+    synchronization = LaunchConfiguration('synchronization', default=False)
     controller = ControllerLauncher(package='webots_ros2_epuck2',
                                     node_executable='epuck2_driver',
-                                    parameters=[{'synchronization': synchronization}],
+                                    parameters=[
+                                        {'synchronization': synchronization}],
                                     output='screen')
-    return launch.LaunchDescription([
-        webots,
-        controller,
-        # Shutdown launch when Webots exits.
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
-            )
-        ),
-    ])
+
+    # Rviz node
+    use_rviz = LaunchConfiguration('rviz', default=False)
+    rviz_config = os.path.join(get_package_share_directory(
+        'webots_ros2_epuck2'), 'resource', 'all.rviz')
+    rviz = Node(package='rviz2', node_executable='rviz2', output='screen',
+                arguments=['--display-config=' + rviz_config],
+                condition=launch.conditions.IfCondition(use_rviz))
+
+    # Launch descriptor
+    launch_entities = [webots,
+                       controller,
+                       rviz,
+                       # Shutdown launch when Webots exits.
+                       RegisterEventHandler(
+                           event_handler=launch.event_handlers.OnProcessExit(
+                               target_action=webots,
+                               on_exit=[
+                                   EmitEvent(event=launch.events.Shutdown())],
+                           )
+                       )]
+
+    return LaunchDescription(launch_entities)

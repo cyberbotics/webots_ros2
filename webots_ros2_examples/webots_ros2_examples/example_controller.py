@@ -58,20 +58,16 @@ class ExampleController(WebotsNode):
         return response
 
     def cmdVel_callback(self, msg):
-        wheel_gap = 0.1  # in meter
-        wheel_radius = 0.021  # in meter
-        leftSpeed = ((2.0 * msg.linear.x - msg.angular.z * wheel_gap) /
-                     (2.0 * wheel_radius))
-        rightSpeed = ((2.0 * msg.linear.x + msg.angular.z * wheel_gap) /
-                      (2.0 * wheel_radius))
-        if leftSpeed > self.motorMaxSpeed:
-            leftSpeed = self.motorMaxSpeed
-        if leftSpeed < -self.motorMaxSpeed:
-            leftSpeed = -self.motorMaxSpeed
-        if rightSpeed > self.motorMaxSpeed:
-            rightSpeed = self.motorMaxSpeed
-        if rightSpeed < -self.motorMaxSpeed:
-            rightSpeed = -self.motorMaxSpeed
+        wheelGap = 0.1  # in meter
+        wheelRadius = 0.021  # in meter
+        leftSpeed = ((2.0 * msg.linear.x - msg.angular.z * wheelGap) /
+                     (2.0 * wheelRadius))
+        rightSpeed = ((2.0 * msg.linear.x + msg.angular.z * wheelGap) /
+                      (2.0 * wheelRadius))
+        leftSpeed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed,
+                                                leftSpeed))
+        rightSpeed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed,
+                                                 rightSpeed))
         self.leftMotor.setVelocity(leftSpeed)
         self.rightMotor.setVelocity(rightSpeed)
 

@@ -29,7 +29,7 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='Minimal example showing how to control a robot with ROS2 in Webots.',
+    description='TIAGo robots ROS2 interface for Webots.',
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={

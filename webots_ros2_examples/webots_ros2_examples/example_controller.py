@@ -42,7 +42,7 @@ class ExampleController(WebotsNode):
         # front central proximity sensor
         self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')
         self.frontSensor.enable(self.timestep)
-        self.cmdVelSubscriber = self.create_subscription(Twist, 'motor',
+        self.cmdVelSubscriber = self.create_subscription(Twist, 'cmd_vel',
                                                          self.cmdVel_callback,
                                                          10)
 

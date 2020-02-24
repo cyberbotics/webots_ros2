@@ -20,7 +20,6 @@ from webots_ros2_msgs.srv import SetDifferentialWheelSpeed
 import rclpy
 
 from std_msgs.msg import Float64
-from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Twist
 
 
@@ -28,7 +27,8 @@ class ExampleController(WebotsNode):
 
     def __init__(self, args):
         super().__init__('example_controller', args)
-        self.sensorTimer = self.create_timer(0.001 * self.timestep, self.sensor_callback)
+        self.sensorTimer = self.create_timer(0.001 * self.timestep,
+                                             self.sensor_callback)
         self.leftMotor = self.robot.getMotor('motor.left')
         self.rightMotor = self.robot.getMotor('motor.right')
         self.leftMotor.setPosition(float('inf'))
@@ -36,12 +36,15 @@ class ExampleController(WebotsNode):
         self.leftMotor.setVelocity(0)
         self.rightMotor.setVelocity(0)
         self.motorMaxSpeed = self.leftMotor.getMaxVelocity()
-        self.motorService = self.create_service(SetDifferentialWheelSpeed, 'motor', self.motor_callback)
+        self.motorService = self.create_service(SetDifferentialWheelSpeed,
+                                                'motor', self.motor_callback)
         self.sensorPublisher = self.create_publisher(Float64, 'sensor', 10)
         # front central proximity sensor
         self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')
         self.frontSensor.enable(self.timestep)
-        self.cmdVelSubscriber = self.create_subscription(Twist , 'motor', self.cmdVel_callback, 10)
+        self.cmdVelSubscriber = self.create_subscription(Twist, 'motor',
+                                                         self.cmdVel_callback,
+                                                         10)
 
     def sensor_callback(self):
         # Publish distance sensor value
@@ -55,14 +58,20 @@ class ExampleController(WebotsNode):
         return response
 
     def cmdVel_callback(self, msg):
-        wheel_gap = 0.1 # in meter
-        wheel_radius = 0.021 # in meter
-        leftSpeed  = (2.0 * msg.linear.x - msg.angular.z * wheel_gap) / (2.0 * wheel_radius)
-        rightSpeed = (2.0 * msg.linear.x + msg.angular.z * wheel_gap) / (2.0 * wheel_radius)
-        if leftSpeed >  self.motorMaxSpeed: leftSpeed =  self.motorMaxSpeed
-        if leftSpeed < -self.motorMaxSpeed: leftSpeed = -self.motorMaxSpeed
-        if rightSpeed >  self.motorMaxSpeed: rightSpeed =  self.motorMaxSpeed
-        if rightSpeed < -self.motorMaxSpeed: rightSpeed = -self.motorMaxSpeed
+        wheel_gap = 0.1  # in meter
+        wheel_radius = 0.021  # in meter
+        leftSpeed = (2.0 * msg.linear.x - msg.angular.z * wheel_gap) / (
+                     2.0 * wheel_radius)
+        rightSpeed = (2.0 * msg.linear.x + msg.angular.z * wheel_gap) / (
+                      2.0 * wheel_radius)
+        if leftSpeed > self.motorMaxSpeed:
+            leftSpeed = self.motorMaxSpeed
+        if leftSpeed < -self.motorMaxSpeed:
+            leftSpeed = -self.motorMaxSpeed
+        if rightSpeed > self.motorMaxSpeed:
+            rightSpeed = self.motorMaxSpeed
+        if rightSpeed < -self.motorMaxSpeed:
+            rightSpeed = -self.motorMaxSpeed
         self.leftMotor.setVelocity(leftSpeed)
         self.rightMotor.setVelocity(rightSpeed)
 

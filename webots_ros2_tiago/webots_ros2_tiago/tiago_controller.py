@@ -33,7 +33,7 @@ class TiagoController(WebotsNode):
         self.rightMotor.setVelocity(0)
         self.motorMaxSpeed = self.leftMotor.getMaxVelocity()
         self.cmdVelSubscriber = self.create_subscription(Twist, 'cmd_vel',
-                                                         self.cmdVel_callback,
+                                                         self.cmd_vel_callback,
                                                          10)
 
     def cmdVel_callback(self, msg):

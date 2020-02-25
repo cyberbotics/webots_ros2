@@ -15,11 +15,9 @@
 """ROS2 TIAGo controller."""
 
 from webots_ros2_core.webots_node import WebotsNode
-from webots_ros2_msgs.srv import SetDifferentialWheelSpeed
 
 import rclpy
 
-from std_msgs.msg import Float64
 from geometry_msgs.msg import Twist
 
 
@@ -27,8 +25,6 @@ class TiagoController(WebotsNode):
 
     def __init__(self, args):
         super().__init__('tiago_controller', args)
-        self.sensorTimer = self.create_timer(0.001 * self.timestep,
-                                             self.sensor_callback)
         self.leftMotor = self.robot.getMotor('wheel_left_joint')
         self.rightMotor = self.robot.getMotor('wheel_right_joint')
         self.leftMotor.setPosition(float('inf'))
@@ -36,26 +32,9 @@ class TiagoController(WebotsNode):
         self.leftMotor.setVelocity(0)
         self.rightMotor.setVelocity(0)
         self.motorMaxSpeed = self.leftMotor.getMaxVelocity()
-        self.motorService = self.create_service(SetDifferentialWheelSpeed,
-                                                'motor', self.motor_callback)
-        self.sensorPublisher = self.create_publisher(Float64, 'sensor', 10)
-        # front central proximity sensor
-        self.frontSensor = self.robot.getDistanceSensor('prox.horizontal.2')
-        self.frontSensor.enable(self.timestep)
         self.cmdVelSubscriber = self.create_subscription(Twist, 'cmd_vel',
                                                          self.cmdVel_callback,
                                                          10)
-
-    def sensor_callback(self):
-        # Publish distance sensor value
-        msg = Float64()
-        msg.data = self.frontSensor.getValue()
-        self.sensorPublisher.publish(msg)
-
-    def motor_callback(self, request, response):
-        self.leftMotor.setVelocity(request.left_speed)
-        self.rightMotor.setVelocity(request.right_speed)
-        return response
 
     def cmdVel_callback(self, msg):
         wheelGap = 0.404  # in meter

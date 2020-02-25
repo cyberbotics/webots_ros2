@@ -46,7 +46,7 @@ class TiagoController(WebotsNode):
                                                          self.cmdVel_callback,
                                                          10)
 
-     def sensor_callback(self):
+    def sensor_callback(self):
         # Publish distance sensor value
         msg = Float64()
         msg.data = self.frontSensor.getValue()

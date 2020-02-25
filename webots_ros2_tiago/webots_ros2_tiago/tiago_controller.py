@@ -36,7 +36,7 @@ class TiagoController(WebotsNode):
                                                          self.cmd_vel_callback,
                                                          10)
 
-    def cmdVel_callback(self, msg):
+    def cmd_vel_callback(self, msg):
         wheelGap = 0.404  # in meter
         wheelRadius = 0.1955  # in meter
         leftSpeed = ((2.0 * msg.linear.x - msg.angular.z * wheelGap) /

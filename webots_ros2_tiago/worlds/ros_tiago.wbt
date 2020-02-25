@@ -3,7 +3,7 @@ WorldInfo {
   info [
     "Simple TIAGo Base simulation controlled by a ROS node written in Python."
   ]
-  title "ROS Python"
+  title "ROS2 simulation of the Tiago robot"
 }
 Viewpoint {
   orientation 0.7259861099678916 -0.6590060161538492 -0.19660935584737757 5.362622153709845

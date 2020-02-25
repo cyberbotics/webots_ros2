@@ -1,7 +1,7 @@
 #VRML_SIM R2020a utf8
 WorldInfo {
   info [
-    "Simple TIAGo Iron simulation controlled by a ROS node written in Python."
+    "Simple TIAGo Base simulation controlled by a ROS node written in Python."
   ]
   title "ROS Python"
 }

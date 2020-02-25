@@ -3,8 +3,12 @@
 * Build the package: `colcon build --packages-select webots_ros2_tiago`
 * Source the package: `. install/setup.bash`
 * Launch the demo: `ros2 launch webots_ros2_tiago tiago.launch.py`
-* In another terminal, you can publish some velocity commands to control the robot:
-`ros2 topic pub --once /cmd_vel  geometry_msgs/msg/Twist '{linear: {x: 0.5, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}'`
+* In another terminal,
+  * you can publish some velocity commands to control the robot:
+    `ros2 topic pub --once /cmd_vel  geometry_msgs/msg/Twist '{linear: {x: 0.5, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}'`
+  * you can use `teleop_twist_keyboard` to use the keyboard to control the robot:
+  `ros2 run teleop_twist_keyboard teleop_twist_keyboard`
+  but make sure you have `ros-eloquent-teleop-twist-keyboard` installed.
 
 ### Topics Overview
 ```

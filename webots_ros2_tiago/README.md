@@ -8,7 +8,7 @@
     `ros2 topic pub --once /cmd_vel  geometry_msgs/msg/Twist '{linear: {x: 0.5, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}'`
   * you can use `teleop_twist_keyboard` to use the keyboard to control the robot:
   `ros2 run teleop_twist_keyboard teleop_twist_keyboard`
-  but make sure you have `ros-eloquent-teleop-twist-keyboard` installed.
+  but make sure you have the `teleop-twist-keyboard` package installed.
 
 ### Topics Overview
 ```

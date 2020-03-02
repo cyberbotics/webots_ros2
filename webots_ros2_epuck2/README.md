@@ -11,7 +11,7 @@ but make sure you have `ros-eloquent-teleop-twist-keyboard` installed.
 ### Topics Overview
 ```
 $ ros2 topic list -t
-/camera/camera_info [sensor_msgs/msg/CameraInfo]
+/camera/image_raw/camera_info [sensor_msgs/msg/CameraInfo]
 /camera/image_raw [sensor_msgs/msg/Image]
 /cmd_vel [geometry_msgs/msg/Twist]
 /distance/ps0 [sensor_msgs/msg/Range]

@@ -18,12 +18,13 @@ from functools import partial
 from math import pi, cos, sin
 import rclpy
 from tf2_ros import TransformBroadcaster
-from webots_ros2_core.webots_node import WebotsNode
-from sensor_msgs.msg import Range, Image, CameraInfo, Imu
+from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan
 from geometry_msgs.msg import Twist, Quaternion, TransformStamped
 from nav_msgs.msg import Odometry
+from std_srvs.srv import SetBool
+import cv2
 from webots_ros2_msgs.srv import SetInt
-
+from webots_ros2_core.webots_node import WebotsNode
 
 # `WHEEL_DISTANCE` is calculated based on the simulation, however according
 # to the documentation it should be 53mm
@@ -55,7 +56,38 @@ def euler_to_quaternion(roll, pitch, yaw):
     return q
 
 
+def intensity_to_distance(p_x):
+    table = [
+        [0, 4095],
+        [0.005, 2133.33],
+        [0.01, 1465.73],
+        [0.015, 601.46],
+        [0.02, 383.84],
+        [0.03, 234.93],
+        [0.04, 158.03],
+        [0.05, 120],
+        [0.06, 104.09],
+        [0.07, 67.19],
+        [0.1, 0.0]
+    ]
+    for i in range(len(table) - 1):
+        if table[i][1] >= p_x and table[i+1][1] < p_x:
+            b_x = table[i][1]
+            b_y = table[i][0]
+            a_x = table[i+1][1]
+            a_y = table[i+1][0]
+            p_y = ((b_y - a_y) / (b_x - a_x)) * (p_x - a_x) + a_y
+            return p_y
+    print('Errr', p_x)
+
+
 class EPuck2Controller(WebotsNode):
+    def test_callback(self, req, res):
+        self.leds[0].set(1 if req.data else 0)
+        res.success = True
+        res.message = 'Good'
+        return res
+
     def __init__(self, args):
         super().__init__('epuck2_controller', args)
 
@@ -93,21 +125,22 @@ class EPuck2Controller(WebotsNode):
         self.create_timer(IMU_PERIOD_MS / 1000, self.imu_callback)
 
         # Intialize distance sensors
-        self.sensor_publishers = []
-        self.sensors = []
+        self.sensor_publishers = {}
+        self.sensors = {}
         for i in range(8):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.timestep)
             sensor_publisher = self.create_publisher(
                 Range, '/distance/ps{}'.format(i), 10)
-            self.sensors.append(sensor)
-            self.sensor_publishers.append(sensor_publisher)
+            self.sensors['ps{}'.format(i)] = sensor
+            self.sensor_publishers['ps{}'.format(i)] = sensor_publisher
 
         sensor = self.robot.getDistanceSensor('tof')
         sensor.enable(self.timestep)
         sensor_publisher = self.create_publisher(Range, '/distance/tof', 10)
-        self.sensors.append(sensor)
-        self.sensor_publishers.append(sensor_publisher)
+        self.sensors['tof'] = sensor
+        self.sensor_publishers['tof'] = sensor_publisher
+        self.laser_publisher = self.create_publisher(LaserScan, '/laser', 10)
 
         self.create_timer(DISTANCE_PERIOD_MS / 1000, self.distance_callback)
 
@@ -211,6 +244,17 @@ class EPuck2Controller(WebotsNode):
         tf.transform.rotation = euler_to_quaternion(0, 0, angle)
         tf_broadcaster.sendTransform(tf)
 
+        # Pack & publish transforms
+        tf_broadcaster = TransformBroadcaster(self)
+        tf = TransformStamped()
+        tf.header.frame_id = 'base_link'
+        tf.child_frame_id = 'laser_scanner'
+        tf.transform.translation.x = 0.0
+        tf.transform.translation.y = 0.0
+        tf.transform.translation.z = 0.0
+        tf.transform.rotation = euler_to_quaternion(0, 0, 0)
+        tf_broadcaster.sendTransform(tf)
+
     def led_callback(self, req, res, index):
         self.leds[index].set(req.value)
         res.success = True
@@ -255,14 +299,54 @@ class EPuck2Controller(WebotsNode):
         self.right_motor.setVelocity(right_velocity)
 
     def distance_callback(self):
-        for i in range(9):
+        for key in self.sensors:
             msg = Range()
-            msg.field_of_view = self.sensors[i].getAperture()
-            msg.min_range = self.sensors[i].getMinValue()
-            msg.max_range = self.sensors[i].getMaxValue()
-            msg.range = self.sensors[i].getValue()
+            msg.field_of_view = self.sensors[key].getAperture()
+            msg.min_range = intensity_to_distance(
+                self.sensors[key].getMaxValue() - 8.2)
+            msg.max_range = intensity_to_distance(
+                self.sensors[key].getMinValue() + 3.3)
+            msg.range = intensity_to_distance(self.sensors[key].getValue())
             msg.radiation_type = Range.INFRARED
-            self.sensor_publishers[i].publish(msg)
+            self.sensor_publishers[key].publish(msg)
+
+        msg = LaserScan()
+        msg.header.frame_id = 'laser_scanner'
+        msg.angle_min = 0.0
+        msg.angle_max = 2 * pi
+        msg.angle_increment = 15 * pi / 180.0
+        msg.scan_time = DISTANCE_PERIOD_MS / 1000
+        msg.range_min = intensity_to_distance(
+            self.sensors['ps0'].getMaxValue() - 20)
+        msg.range_max = intensity_to_distance(
+            self.sensors['ps0'].getMinValue() + 10)
+        msg.ranges = [
+            intensity_to_distance(self.sensors['tof'].getValue()),  # 0
+            intensity_to_distance(self.sensors['ps7'].getValue()),  # 15
+            0.0,                            # 30
+            intensity_to_distance(self.sensors['ps6'].getValue()),  # 45
+            0.0,                            # 60
+            0.0,                            # 75
+            intensity_to_distance(self.sensors['ps5'].getValue()),  # 90
+            0.0,                            # 105
+            0.0,                            # 120
+            0.0,                            # 135
+            intensity_to_distance(self.sensors['ps4'].getValue()),  # 150
+            0.0,                            # 165
+            0.0,                            # 180
+            0.0,                            # 195
+            intensity_to_distance(self.sensors['ps3'].getValue()),  # 210
+            0.0,                            # 225
+            0.0,                            # 240
+            0.0,                            # 255
+            intensity_to_distance(self.sensors['ps2'].getValue()),  # 270
+            0.0,                            # 285
+            0.0,                            # 300
+            intensity_to_distance(self.sensors['ps1'].getValue()),  # 315
+            0.0,                            # 330
+            intensity_to_distance(self.sensors['ps0'].getValue()),  # 345
+        ]
+        self.laser_publisher.publish(msg)
 
 
 def main(args=None):

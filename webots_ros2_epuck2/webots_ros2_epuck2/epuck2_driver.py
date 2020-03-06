@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+#
 
 """ROS2 EPuck2 controller."""
 
@@ -25,19 +27,8 @@ from std_srvs.srv import SetBool
 import cv2
 from webots_ros2_msgs.srv import SetInt
 from webots_ros2_core.webots_node import WebotsNode
-
-# `WHEEL_DISTANCE` is calculated based on the simulation, however according
-# to the documentation it should be 53mm
-# http://www.e-puck.org/index.php?option=com_content&view=article&id=7&Itemid=9
-WHEEL_DISTANCE = 0.05685
-WHEEL_RADIUS = 0.02
-CAMERA_PERIOD_MS = 500
-ENCODER_PERIOD_MS = 100
-DISTANCE_PERIOD_MS = 100
-IMU_PERIOD_MS = 100
-ENCODER_RESOLUTION = (2 * pi) / 1000
-
-ENCODER_PERIOD_S = ENCODER_PERIOD_MS / 1000
+import time
+from builtin_interfaces.msg import Time
 
 
 def euler_to_quaternion(roll, pitch, yaw):
@@ -79,17 +70,46 @@ def intensity_to_distance(p_x):
             p_y = ((b_y - a_y) / (b_x - a_x)) * (p_x - a_x) + a_y
             return p_y
     print('Errr', p_x)
+    return 0.0
+
+
+def tof_intensity_to_distance(p_x):
+    table = [
+        [0.00,    19.8],
+        [0.05,    58.5],
+        [0.10,   111.0],
+        [0.20,   218.9],
+        [0.50,   531.9],
+        [1.00,  1052.0],
+        [1.70,  1780.5],
+        [2.00,  2000.0]
+    ]
+    for i in range(len(table) - 1):
+        if table[i][1] >= p_x and table[i+1][1] < p_x:
+            b_x = table[i][1]
+            b_y = table[i][0]
+            a_x = table[i+1][1]
+            a_y = table[i+1][0]
+            p_y = ((b_y - a_y) / (b_x - a_x)) * (p_x - a_x) + a_y
+            return p_y
+    print('Errr', p_x)
+    return 2.1
 
 
 class EPuck2Controller(WebotsNode):
-    def test_callback(self, req, res):
-        self.leds[0].set(1 if req.data else 0)
-        res.success = True
-        res.message = 'Good'
-        return res
-
     def __init__(self, args):
         super().__init__('epuck2_controller', args)
+
+        # Parameters
+        wheel_distance_param = self.declare_parameter("wheel_distance", 0.0552)
+        wheel_radius_param = self.declare_parameter("wheel_radius", 0.021)
+        camera_period_param = self.declare_parameter(
+            "camera_period", self.timestep)
+        self.period = self.declare_parameter("period", self.timestep)
+        self.camera_period = camera_period_param.value
+        self.wheel_radius = wheel_radius_param.value
+        self.wheel_distance = wheel_distance_param.value
+        self.set_parameters_callback(self.on_param_changed)
 
         # Initialize motors
         self.left_motor = self.robot.getMotor('left wheel motor')
@@ -98,58 +118,52 @@ class EPuck2Controller(WebotsNode):
         self.right_motor.setPosition(float('inf'))
         self.left_motor.setVelocity(0)
         self.right_motor.setVelocity(0)
-        self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 10)
+        self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 1)
+        self.get_logger().info('EPuck Initialized')
 
         # Initialize odometry
-        self.prev_left_wheel_ticks = 0
-        self.prev_right_wheel_ticks = 0
-        self.prev_position = (0, 0)
-        self.prev_angle = 0
+        self.reset_odometry()
         self.left_wheel_sensor = self.robot.getPositionSensor(
             'left wheel sensor')
         self.right_wheel_sensor = self.robot.getPositionSensor(
             'right wheel sensor')
-        self.left_wheel_sensor.enable(self.timestep)
-        self.right_wheel_sensor.enable(self.timestep)
-        self.odometry_publisher = self.create_publisher(Odometry, '/odom', 10)
-        self.create_timer(ENCODER_PERIOD_MS / 1000, self.odometry_callback)
+        self.left_wheel_sensor.enable(self.period.value)
+        self.right_wheel_sensor.enable(self.period.value)
+        self.odometry_publisher = self.create_publisher(Odometry, '/odom', 1)
 
         # Initialize IMU
         self.imu = self.robot.getInertialUnit('inertial unit')
-        self.imu.enable(self.timestep)
+        self.imu.enable(self.period.value)
         self.gyro = self.robot.getGyro('gyro')
-        self.gyro.enable(self.timestep)
+        self.gyro.enable(self.period.value)
         self.accelerometer = self.robot.getAccelerometer('accelerometer')
-        self.accelerometer.enable(self.timestep)
+        self.accelerometer.enable(self.period.value)
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
-        self.create_timer(IMU_PERIOD_MS / 1000, self.imu_callback)
 
         # Intialize distance sensors
         self.sensor_publishers = {}
         self.sensors = {}
         for i in range(8):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
-            sensor.enable(self.timestep)
+            sensor.enable(self.period.value)
             sensor_publisher = self.create_publisher(
                 Range, '/distance/ps{}'.format(i), 10)
             self.sensors['ps{}'.format(i)] = sensor
             self.sensor_publishers['ps{}'.format(i)] = sensor_publisher
 
         sensor = self.robot.getDistanceSensor('tof')
-        sensor.enable(self.timestep)
-        sensor_publisher = self.create_publisher(Range, '/distance/tof', 10)
+        sensor.enable(self.period.value)
+        sensor_publisher = self.create_publisher(Range, '/distance/tof', 1)
         self.sensors['tof'] = sensor
         self.sensor_publishers['tof'] = sensor_publisher
-        self.laser_publisher = self.create_publisher(LaserScan, '/laser', 10)
-
-        self.create_timer(DISTANCE_PERIOD_MS / 1000, self.distance_callback)
+        self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
         # Initialize camera
         self.camera = self.robot.getCamera('camera')
-        self.camera.enable(CAMERA_PERIOD_MS)
+        self.camera.enable(self.camera_period)
         self.camera_publisher = self.create_publisher(
             Image, '/camera/image_raw', 10)
-        self.create_timer(CAMERA_PERIOD_MS / 1000, self.camera_callback)
+        self.create_timer(self.camera_period / 1000, self.camera_callback)
         self.camera_info_publisher = self.create_publisher(
             CameraInfo, '/camera/image_raw/camera_info', 10)
 
@@ -162,6 +176,206 @@ class EPuck2Controller(WebotsNode):
                 SetInt, '/set_led{}'.format(i), partial(self.led_callback, index=i))
             self.leds.append(led)
             self.led_services.append(led_service)
+
+        # Main loop
+        self.create_timer(self.period.value / 1000, self.step_callback)
+
+        # Transforms
+        self.tf_broadcaster = TransformBroadcaster(self)
+        self.tf_laser_scanner = TransformStamped()
+        self.tf_laser_scanner.header.frame_id = 'base_footprint'
+        self.tf_laser_scanner.child_frame_id = 'laser_scanner'
+        self.tf_laser_scanner.transform.translation.x = 0.0
+        self.tf_laser_scanner.transform.translation.y = 0.0
+        self.tf_laser_scanner.transform.translation.z = 0.0
+        self.tf_laser_scanner.transform.rotation = euler_to_quaternion(0, 0, 0)
+
+    def reset_odometry(self):
+        self.prev_left_wheel_ticks = 0
+        self.prev_right_wheel_ticks = 0
+        self.prev_position = (0.0, 0.0)
+        self.prev_angle = 0.0
+
+    def on_param_changed(self, params):
+        result = SetParametersResult()
+        result.successful = True
+
+        for param in params:
+            if param.name == "wheel_radius":
+                self.reset_odometry()
+                self.wheel_radius = param.value
+            elif param.name == "wheel_distance":
+                self.reset_odometry()
+                self.wheel_distance = param.value
+
+        return result
+
+    def step_callback(self):
+        self.robot.step(self.period.value)
+
+        epoch = time.time()
+        stamp = Time()
+        stamp.sec = int(epoch)
+        stamp.nanosec = int((epoch - int(epoch)) * 1E9)
+
+        self.odometry_callback(stamp)
+        self.distance_callback(stamp)
+        self.publish_static_transforms(stamp)
+
+    def publish_static_transforms(self, stamp):
+        # Pack & publish transforms
+        self.tf_laser_scanner.header.stamp = stamp
+        self.tf_broadcaster.sendTransform(self.tf_laser_scanner)
+
+    def cmd_vel_callback(self, twist):
+        self.get_logger().info('Message received')
+        left_velocity = (2.0 * twist.linear.x - twist.angular.z *
+                         self.wheel_distance) / (2.0 * self.wheel_radius)
+        right_velocity = (2.0 * twist.linear.x + twist.angular.z *
+                          self.wheel_distance) / (2.0 * self.wheel_radius)
+        self.left_motor.setVelocity(left_velocity)
+        self.right_motor.setVelocity(right_velocity)
+
+    def odometry_callback(self, stamp):
+        encoder_period_s = self.period.value / 1000.0
+        left_wheel_ticks = self.left_wheel_sensor.getValue()
+        right_wheel_ticks = self.right_wheel_sensor.getValue()
+
+        # Calculate velocities
+        v_left_rad = (left_wheel_ticks -
+                      self.prev_left_wheel_ticks) / encoder_period_s
+        v_right_rad = (right_wheel_ticks -
+                       self.prev_right_wheel_ticks) / encoder_period_s
+        v_left = v_left_rad * self.wheel_radius
+        v_right = v_right_rad * self.wheel_radius
+        v = (v_left + v_right) / 2
+        omega = (v_right - v_left) / self.wheel_distance
+
+        # Calculate position & angle
+        # Fourth order Runge - Kutta
+        # Reference: https://www.cs.cmu.edu/~16311/s07/labs/NXTLabs/Lab%203.html
+        k00 = v * cos(self.prev_angle)
+        k01 = v * sin(self.prev_angle)
+        k02 = omega
+        k10 = v * cos(self.prev_angle + encoder_period_s * k02 / 2)
+        k11 = v * sin(self.prev_angle + encoder_period_s * k02 / 2)
+        k12 = omega
+        k20 = v * cos(self.prev_angle + encoder_period_s * k12 / 2)
+        k21 = v * sin(self.prev_angle + encoder_period_s * k12 / 2)
+        k22 = omega
+        k30 = v * cos(self.prev_angle + encoder_period_s * k22 / 2)
+        k31 = v * sin(self.prev_angle + encoder_period_s * k22 / 2)
+        k32 = omega
+        position = [
+            self.prev_position[0] + (encoder_period_s / 6) *
+            (k00 + 2 * (k10 + k20) + k30),
+            self.prev_position[1] + (encoder_period_s / 6) *
+            (k01 + 2 * (k11 + k21) + k31)
+        ]
+        angle = self.prev_angle + \
+            (encoder_period_s / 6) * (k02 + 2 * (k12 + k22) + k32)
+
+        if (position[0]-self.prev_position[0])**2 + (position[1]-self.prev_position[1])**2 > 0.1**2:
+            print('Odometry error! Jump!')
+            print('Previous position: {}; New position {}'.format(
+                self.prev_position, position))
+            print('Previous angle: {}; New angle {}'.format(
+                self.prev_angle, angle))
+            print('v_left: {}; v_right: {}'.format(v_left, v_right))
+            print('prev_left_wheel_ticks: {}; left_wheel_ticks: {}'.format(
+                self.prev_left_wheel_ticks, left_wheel_ticks))
+            print('prev_right_wheel_ticks: {}; right_wheel_ticks: {}'.format(
+                self.prev_right_wheel_ticks, right_wheel_ticks))
+            print('Quaternion: {}'.format(euler_to_quaternion(0, 0, angle)))
+
+        # Update variables
+        self.prev_position = position.copy()
+        self.prev_angle = angle
+        self.prev_left_wheel_ticks = left_wheel_ticks
+        self.prev_right_wheel_ticks = right_wheel_ticks
+
+        # Pack & publish odometry
+        msg = Odometry()
+        msg.header.stamp = stamp
+        msg.header.frame_id = 'odom'
+        msg.child_frame_id = 'base_footprint'
+        msg.twist.twist.linear.x = v
+        msg.twist.twist.linear.z = omega
+        msg.pose.pose.position.x = position[0]
+        msg.pose.pose.position.y = position[1]
+        msg.pose.pose.orientation = euler_to_quaternion(0, 0, angle)
+        self.odometry_publisher.publish(msg)
+
+        # Pack & publish transforms
+        tf = TransformStamped()
+        tf.header.stamp = stamp
+        tf.header.frame_id = 'odom'
+        tf.child_frame_id = 'base_footprint'
+        tf.transform.translation.x = position[0]
+        tf.transform.translation.y = position[1]
+        tf.transform.translation.z = 0.0
+        tf.transform.rotation = euler_to_quaternion(0, 0, angle)
+        self.tf_broadcaster.sendTransform(tf)
+
+    def distance_callback(self, stamp):
+        distance_from_center = 0.035
+
+        for key in self.sensors:
+            msg = Range()
+            msg.field_of_view = self.sensors[key].getAperture()
+            msg.min_range = intensity_to_distance(
+                self.sensors[key].getMaxValue() - 8.2) + distance_from_center
+            msg.max_range = intensity_to_distance(
+                self.sensors[key].getMinValue() + 3.3) + distance_from_center
+            msg.range = intensity_to_distance(self.sensors[key].getValue())
+            msg.radiation_type = Range.INFRARED
+            self.sensor_publishers[key].publish(msg)
+
+        # Max range of ToF sensor is 2m so we put it as maximum laser range.
+        # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
+
+        msg = LaserScan()
+        msg.header.frame_id = 'laser_scanner'
+        msg.header.stamp = stamp
+        msg.angle_min = 0.0
+        msg.angle_max = 2 * pi
+        msg.angle_increment = 15 * pi / 180.0
+        msg.scan_time = self.period.value / 1000
+        msg.range_min = intensity_to_distance(
+            self.sensors['ps0'].getMaxValue() - 20) + distance_from_center
+        msg.range_max = 1.0 + distance_from_center
+        msg.ranges = [
+            tof_intensity_to_distance(self.sensors['tof'].getValue()),  # 0
+            intensity_to_distance(self.sensors['ps7'].getValue()),      # 15
+            0.0,                                                        # 30
+            intensity_to_distance(self.sensors['ps6'].getValue()),      # 45
+            0.0,                                                        # 60
+            0.0,                                                        # 75
+            intensity_to_distance(self.sensors['ps5'].getValue()),      # 90
+            0.0,                                                        # 105
+            0.0,                                                        # 120
+            0.0,                                                        # 135
+            intensity_to_distance(self.sensors['ps4'].getValue()),      # 150
+            0.0,                                                        # 165
+            0.0,                                                        # 180
+            0.0,                                                        # 195
+            intensity_to_distance(self.sensors['ps3'].getValue()),      # 210
+            0.0,                                                        # 225
+            0.0,                                                        # 240
+            0.0,                                                        # 255
+            intensity_to_distance(self.sensors['ps2'].getValue()),      # 270
+            0.0,                                                        # 285
+            0.0,                                                        # 300
+            intensity_to_distance(self.sensors['ps1'].getValue()),      # 315
+            0.0,                                                        # 330
+            intensity_to_distance(self.sensors['ps0'].getValue()),      # 345
+            tof_intensity_to_distance(self.sensors['tof'].getValue()),  # 0
+        ]
+        for i in range(len(msg.ranges)):
+            if msg.ranges[i] != 0:
+                msg.ranges[i] += distance_from_center
+
+        self.laser_publisher.publish(msg)
 
     def imu_callback(self):
         imu_data = self.imu.getRollPitchYaw()
@@ -178,82 +392,6 @@ class EPuck2Controller(WebotsNode):
         msg.linear_acceleration.y = accelerometer_data[1]
         msg.linear_acceleration.z = accelerometer_data[2]
         self.imu_publisher.publish(msg)
-
-    def odometry_callback(self):
-        # Calculate velocities
-        left_wheel_ticks = self.left_wheel_sensor.getValue()
-        right_wheel_ticks = self.right_wheel_sensor.getValue()
-        v_left_rad = (left_wheel_ticks -
-                      self.prev_left_wheel_ticks) / ENCODER_PERIOD_S
-        v_right_rad = (right_wheel_ticks -
-                       self.prev_right_wheel_ticks) / ENCODER_PERIOD_S
-        v_left = v_left_rad * WHEEL_RADIUS
-        v_right = v_right_rad * WHEEL_RADIUS
-        v = (v_left + v_right) / 2
-        omega = (v_right - v_left) / WHEEL_DISTANCE
-
-        # Calculate position & angle
-        # Fourth order Runge - Kutta
-        # Reference: https://www.cs.cmu.edu/~16311/s07/labs/NXTLabs/Lab%203.html
-        k00 = v * cos(self.prev_angle)
-        k01 = v * sin(self.prev_angle)
-        k02 = omega
-        k10 = v * cos(self.prev_angle + ENCODER_PERIOD_S * k02 / 2)
-        k11 = v * sin(self.prev_angle + ENCODER_PERIOD_S * k02 / 2)
-        k12 = omega
-        k20 = v * cos(self.prev_angle + ENCODER_PERIOD_S * k12 / 2)
-        k21 = v * sin(self.prev_angle + ENCODER_PERIOD_S * k12 / 2)
-        k22 = omega
-        k30 = v * cos(self.prev_angle + ENCODER_PERIOD_S * k22 / 2)
-        k31 = v * sin(self.prev_angle + ENCODER_PERIOD_S * k22 / 2)
-        k32 = omega
-        position = [
-            self.prev_position[0] + (ENCODER_PERIOD_S / 6) *
-            (k00 + 2 * (k10 + k20) + k30),
-            self.prev_position[1] + (ENCODER_PERIOD_S / 6) *
-            (k01 + 2 * (k11 + k21) + k31)
-        ]
-        angle = self.prev_angle + \
-            (ENCODER_PERIOD_S / 6) * (k02 + 2 * (k12 + k22) + k32)
-
-        # Update variables
-        self.prev_position = position.copy()
-        self.prev_angle = angle
-        self.prev_left_wheel_ticks = left_wheel_ticks
-        self.prev_right_wheel_ticks = right_wheel_ticks
-
-        # Pack & publish odometry
-        msg = Odometry()
-        msg.header.frame_id = 'odom'
-        msg.child_frame_id = 'base_link'
-        msg.twist.twist.linear.x = v
-        msg.twist.twist.linear.z = omega
-        msg.pose.pose.position.x = position[0]
-        msg.pose.pose.position.y = position[1]
-        msg.pose.pose.orientation = euler_to_quaternion(0, 0, angle)
-        self.odometry_publisher.publish(msg)
-
-        # Pack & publish transforms
-        tf_broadcaster = TransformBroadcaster(self)
-        tf = TransformStamped()
-        tf.header.frame_id = 'odom'
-        tf.child_frame_id = 'base_link'
-        tf.transform.translation.x = position[0]
-        tf.transform.translation.y = position[1]
-        tf.transform.translation.z = 0.0
-        tf.transform.rotation = euler_to_quaternion(0, 0, angle)
-        tf_broadcaster.sendTransform(tf)
-
-        # Pack & publish transforms
-        tf_broadcaster = TransformBroadcaster(self)
-        tf = TransformStamped()
-        tf.header.frame_id = 'base_link'
-        tf.child_frame_id = 'laser_scanner'
-        tf.transform.translation.x = 0.0
-        tf.transform.translation.y = 0.0
-        tf.transform.translation.z = 0.0
-        tf.transform.rotation = euler_to_quaternion(0, 0, 0)
-        tf_broadcaster.sendTransform(tf)
 
     def led_callback(self, req, res, index):
         self.leds[index].set(req.value)
@@ -289,64 +427,6 @@ class EPuck2Controller(WebotsNode):
             0.0, 0.0, 1.0, 0.0
         ]
         self.camera_info_publisher.publish(msg)
-
-    def cmd_vel_callback(self, twist):
-        left_velocity = (2.0 * twist.linear.x - twist.angular.z *
-                         WHEEL_DISTANCE) / (2.0 * WHEEL_RADIUS)
-        right_velocity = (2.0 * twist.linear.x + twist.angular.z *
-                          WHEEL_DISTANCE) / (2.0 * WHEEL_RADIUS)
-        self.left_motor.setVelocity(left_velocity)
-        self.right_motor.setVelocity(right_velocity)
-
-    def distance_callback(self):
-        for key in self.sensors:
-            msg = Range()
-            msg.field_of_view = self.sensors[key].getAperture()
-            msg.min_range = intensity_to_distance(
-                self.sensors[key].getMaxValue() - 8.2)
-            msg.max_range = intensity_to_distance(
-                self.sensors[key].getMinValue() + 3.3)
-            msg.range = intensity_to_distance(self.sensors[key].getValue())
-            msg.radiation_type = Range.INFRARED
-            self.sensor_publishers[key].publish(msg)
-
-        msg = LaserScan()
-        msg.header.frame_id = 'laser_scanner'
-        msg.angle_min = 0.0
-        msg.angle_max = 2 * pi
-        msg.angle_increment = 15 * pi / 180.0
-        msg.scan_time = DISTANCE_PERIOD_MS / 1000
-        msg.range_min = intensity_to_distance(
-            self.sensors['ps0'].getMaxValue() - 20)
-        msg.range_max = intensity_to_distance(
-            self.sensors['ps0'].getMinValue() + 10)
-        msg.ranges = [
-            intensity_to_distance(self.sensors['tof'].getValue()),  # 0
-            intensity_to_distance(self.sensors['ps7'].getValue()),  # 15
-            0.0,                            # 30
-            intensity_to_distance(self.sensors['ps6'].getValue()),  # 45
-            0.0,                            # 60
-            0.0,                            # 75
-            intensity_to_distance(self.sensors['ps5'].getValue()),  # 90
-            0.0,                            # 105
-            0.0,                            # 120
-            0.0,                            # 135
-            intensity_to_distance(self.sensors['ps4'].getValue()),  # 150
-            0.0,                            # 165
-            0.0,                            # 180
-            0.0,                            # 195
-            intensity_to_distance(self.sensors['ps3'].getValue()),  # 210
-            0.0,                            # 225
-            0.0,                            # 240
-            0.0,                            # 255
-            intensity_to_distance(self.sensors['ps2'].getValue()),  # 270
-            0.0,                            # 285
-            0.0,                            # 300
-            intensity_to_distance(self.sensors['ps1'].getValue()),  # 315
-            0.0,                            # 330
-            intensity_to_distance(self.sensors['ps0'].getValue()),  # 345
-        ]
-        self.laser_publisher.publish(msg)
 
 
 def main(args=None):

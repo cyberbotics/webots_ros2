@@ -35,7 +35,7 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['epuck2_driver = webots_ros2_epuck2.epuck2_driver:main'],
+        'console_scripts': ['epuck2_driver = webots_ros2_epuck2.epuck2_driver:main', 'drive_calibrator = webots_ros2_epuck2.drive_calibrator:main'],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

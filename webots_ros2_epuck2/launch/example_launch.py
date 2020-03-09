@@ -13,6 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# ros2 launch webots_ros2_epuck2 example_launch.py
 
 """Launch Webots and the controller."""
 
@@ -46,14 +48,25 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('rviz', default=False)
     rviz_config = os.path.join(get_package_share_directory(
         'webots_ros2_epuck2'), 'resource', 'all.rviz')
+
     rviz = Node(package='rviz2', node_executable='rviz2', output='screen',
                 arguments=['--display-config=' + rviz_config],
                 condition=launch.conditions.IfCondition(use_rviz))
+
+    laser_tf = Node(package='tf2_ros', node_executable='static_transform_publisher', output='screen',
+                    arguments=[
+                        '0.0', '0.0', '0.0',
+                        '1.0', '0.0', '0.0', '0.0',
+                        'base_link',
+                        'laser_frame'
+                    ])
 
     # Launch descriptor
     launch_entities = [webots,
                        controller,
                        rviz,
+                       laser_tf,
+
                        # Shutdown launch when Webots exits.
                        RegisterEventHandler(
                            event_handler=launch.event_handlers.OnProcessExit(

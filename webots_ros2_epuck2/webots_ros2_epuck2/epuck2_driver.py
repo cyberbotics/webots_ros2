@@ -58,8 +58,7 @@ def intensity_to_distance(p_x):
         [0.04, 158.03],
         [0.05, 120],
         [0.06, 104.09],
-        [0.07, 67.19],
-        [0.1, 0.0]
+        # [0.07, 67.19]
     ]
     for i in range(len(table) - 1):
         if table[i][1] >= p_x and table[i+1][1] < p_x:
@@ -69,31 +68,30 @@ def intensity_to_distance(p_x):
             a_y = table[i+1][0]
             p_y = ((b_y - a_y) / (b_x - a_x)) * (p_x - a_x) + a_y
             return p_y
-    print('Errr', p_x)
-    return 0.0
+    return 2.0
 
 
 def tof_intensity_to_distance(p_x):
     table = [
-        [0.00,    19.8],
-        [0.05,    58.5],
-        [0.10,   111.0],
-        [0.20,   218.9],
-        [0.50,   531.9],
-        [1.00,  1052.0],
-        [1.70,  1780.5],
-        [2.00,  2000.0]
+        [0.00, 19.8],
+        [0.05, 58.5],
+        [0.10, 111.0],
+        [0.20, 218.9],
+        [0.50, 531.9],
+        [1.00, 1052.0],
+        [1.70, 1780.5],
+        [2.00, 2000.0]
     ]
+
     for i in range(len(table) - 1):
-        if table[i][1] >= p_x and table[i+1][1] < p_x:
+        if table[i][1] < p_x and table[i+1][1] >= p_x:
             b_x = table[i][1]
             b_y = table[i][0]
             a_x = table[i+1][1]
             a_y = table[i+1][0]
             p_y = ((b_y - a_y) / (b_x - a_x)) * (p_x - a_x) + a_y
             return p_y
-    print('Errr', p_x)
-    return 2.1
+    return 2.0
 
 
 class EPuck2Controller(WebotsNode):
@@ -163,7 +161,7 @@ class EPuck2Controller(WebotsNode):
         self.camera.enable(self.camera_period)
         self.camera_publisher = self.create_publisher(
             Image, '/camera/image_raw', 10)
-        self.create_timer(self.camera_period / 1000, self.camera_callback)
+        # self.create_timer(self.camera_period / 1000, self.camera_callback)
         self.camera_info_publisher = self.create_publisher(
             CameraInfo, '/camera/image_raw/camera_info', 10)
 
@@ -182,13 +180,6 @@ class EPuck2Controller(WebotsNode):
 
         # Transforms
         self.tf_broadcaster = TransformBroadcaster(self)
-        self.tf_laser_scanner = TransformStamped()
-        self.tf_laser_scanner.header.frame_id = 'base_footprint'
-        self.tf_laser_scanner.child_frame_id = 'laser_scanner'
-        self.tf_laser_scanner.transform.translation.x = 0.0
-        self.tf_laser_scanner.transform.translation.y = 0.0
-        self.tf_laser_scanner.transform.translation.z = 0.0
-        self.tf_laser_scanner.transform.rotation = euler_to_quaternion(0, 0, 0)
 
     def reset_odometry(self):
         self.prev_left_wheel_ticks = 0
@@ -220,12 +211,6 @@ class EPuck2Controller(WebotsNode):
 
         self.odometry_callback(stamp)
         self.distance_callback(stamp)
-        self.publish_static_transforms(stamp)
-
-    def publish_static_transforms(self, stamp):
-        # Pack & publish transforms
-        self.tf_laser_scanner.header.stamp = stamp
-        self.tf_broadcaster.sendTransform(self.tf_laser_scanner)
 
     def cmd_vel_callback(self, twist):
         self.get_logger().info('Message received')
@@ -298,7 +283,7 @@ class EPuck2Controller(WebotsNode):
         msg = Odometry()
         msg.header.stamp = stamp
         msg.header.frame_id = 'odom'
-        msg.child_frame_id = 'base_footprint'
+        msg.child_frame_id = 'base_link'
         msg.twist.twist.linear.x = v
         msg.twist.twist.linear.z = omega
         msg.pose.pose.position.x = position[0]
@@ -310,7 +295,7 @@ class EPuck2Controller(WebotsNode):
         tf = TransformStamped()
         tf.header.stamp = stamp
         tf.header.frame_id = 'odom'
-        tf.child_frame_id = 'base_footprint'
+        tf.child_frame_id = 'base_link'
         tf.transform.translation.x = position[0]
         tf.transform.translation.y = position[1]
         tf.transform.translation.z = 0.0
@@ -335,41 +320,35 @@ class EPuck2Controller(WebotsNode):
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
 
         msg = LaserScan()
-        msg.header.frame_id = 'laser_scanner'
+        msg.header.frame_id = 'laser_frame'
         msg.header.stamp = stamp
-        msg.angle_min = 0.0
-        msg.angle_max = 2 * pi
-        msg.angle_increment = 15 * pi / 180.0
-        msg.scan_time = self.period.value / 1000
-        msg.range_min = intensity_to_distance(
-            self.sensors['ps0'].getMaxValue() - 20) + distance_from_center
+        msg.angle_min = - 150 * pi / 180
+        msg.angle_max = 150 * pi / 180
+        msg.angle_increment = 15 * pi / 180
+        msg.range_min = 0.005 + distance_from_center
         msg.range_max = 1.0 + distance_from_center
         msg.ranges = [
+            intensity_to_distance(self.sensors['ps4'].getValue()),      # -150
+            0.0,                                                        # -135
+            0.0,                                                        # -120
+            0.0,                                                        # -105
+            intensity_to_distance(self.sensors['ps5'].getValue()),      # -90
+            0.0,                                                        # -75
+            0.0,                                                        # -60
+            intensity_to_distance(self.sensors['ps6'].getValue()),      # -45
+            0.0,                                                        # -30
+            intensity_to_distance(self.sensors['ps7'].getValue()),      # -15
             tof_intensity_to_distance(self.sensors['tof'].getValue()),  # 0
-            intensity_to_distance(self.sensors['ps7'].getValue()),      # 15
+            intensity_to_distance(self.sensors['ps0'].getValue()),      # 15
             0.0,                                                        # 30
-            intensity_to_distance(self.sensors['ps6'].getValue()),      # 45
+            intensity_to_distance(self.sensors['ps1'].getValue()),      # 45
             0.0,                                                        # 60
             0.0,                                                        # 75
-            intensity_to_distance(self.sensors['ps5'].getValue()),      # 90
+            intensity_to_distance(self.sensors['ps2'].getValue()),      # 90
             0.0,                                                        # 105
             0.0,                                                        # 120
             0.0,                                                        # 135
-            intensity_to_distance(self.sensors['ps4'].getValue()),      # 150
-            0.0,                                                        # 165
-            0.0,                                                        # 180
-            0.0,                                                        # 195
-            intensity_to_distance(self.sensors['ps3'].getValue()),      # 210
-            0.0,                                                        # 225
-            0.0,                                                        # 240
-            0.0,                                                        # 255
-            intensity_to_distance(self.sensors['ps2'].getValue()),      # 270
-            0.0,                                                        # 285
-            0.0,                                                        # 300
-            intensity_to_distance(self.sensors['ps1'].getValue()),      # 315
-            0.0,                                                        # 330
-            intensity_to_distance(self.sensors['ps0'].getValue()),      # 345
-            tof_intensity_to_distance(self.sensors['tof'].getValue()),  # 0
+            intensity_to_distance(self.sensors['ps3'].getValue()),      # 150
         ]
         for i in range(len(msg.ranges)):
             if msg.ranges[i] != 0:

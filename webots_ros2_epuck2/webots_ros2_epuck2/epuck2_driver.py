@@ -82,14 +82,13 @@ def tof_intensity_to_distance(p_x):
         [1.70, 1780.5],
         [2.00, 2000.0]
     ]
-
     for i in range(len(table) - 1):
         if table[i][1] < p_x and table[i+1][1] >= p_x:
             b_x = table[i][1]
             b_y = table[i][0]
             a_x = table[i+1][1]
             a_y = table[i+1][0]
-            p_y = ((b_y - a_y) / (b_x - a_x)) * (p_x - a_x) + a_y
+            p_y = ((a_y - b_y) / (a_x - b_x)) * (p_x - b_x) + b_y
             return p_y
     return 2.0
 
@@ -318,7 +317,7 @@ class EPuck2Controller(WebotsNode):
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
-
+        
         msg = LaserScan()
         msg.header.frame_id = 'laser_frame'
         msg.header.stamp = stamp

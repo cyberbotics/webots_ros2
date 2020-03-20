@@ -4,7 +4,8 @@ from setuptools import setup
 
 package_name = 'webots_ros2_epuck2'
 data_files = []
-data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
+data_files.append(
+    ('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['launch/example_launch.py']))
 data_files.append(('share/' + package_name + '/worlds',
                    ['worlds/epuck2_world.wbt', 'worlds/.epuck2_world.wbproj']))
@@ -35,7 +36,10 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['epuck2_driver = webots_ros2_epuck2.epuck2_driver:main', 'drive_calibrator = webots_ros2_epuck2.drive_calibrator:main'],
+        'console_scripts': [
+            'driver = webots_ros2_epuck2.driver:main',
+            'drive_calibrator = webots_ros2_epuck2.drive_calibrator:main'
+        ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

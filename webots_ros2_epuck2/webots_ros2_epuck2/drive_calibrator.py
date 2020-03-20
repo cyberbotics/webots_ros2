@@ -1,6 +1,19 @@
+# Copyright 1996-2020 Cyberbotics Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import rclpy
 import math
-from math import pi
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rcl_interfaces.srv import SetParameters
@@ -73,7 +86,7 @@ class EPuckDriveCalibrator(Node):
         self.pub.publish(msg)
 
     def odometry_callback(self, msg: Odometry):
-        if self.test_done == False and self.type.value == 'rotation':
+        if not self.test_done and self.type.value == 'rotation':
             # Send velocity
             print('Rotation calibration in progress...')
             msg_twist = Twist()
@@ -96,7 +109,7 @@ class EPuckDriveCalibrator(Node):
             print('Circle: {}; Current angle: {}'.format(
                 self.rotation_count, yaw))
 
-        if self.test_done == False and self.type.value == 'linear':
+        if not self.test_done and self.type.value == 'linear':
             # Send velocity
             print('Rotation calibration in progress...')
             msg_twist = Twist()

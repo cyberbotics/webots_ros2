@@ -53,7 +53,9 @@ def generate_launch_description():
                 arguments=['--display-config=' + rviz_config],
                 condition=launch.conditions.IfCondition(use_rviz))
 
-    laser_tf = Node(package='tf2_ros', node_executable='static_transform_publisher', output='screen',
+    laser_tf = Node(package='tf2_ros',
+                    node_executable='static_transform_publisher',
+                    output='screen',
                     arguments=[
                         '0.0', '0.0', '0.0',
                         '1.0', '0.0', '0.0', '0.0',

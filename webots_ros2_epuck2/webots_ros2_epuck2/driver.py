@@ -11,10 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-#
 
-"""ROS2 EPuck2 controller."""
+"""ROS2 e-puck driver."""
 
 from functools import partial
 from math import pi, cos, sin
@@ -23,18 +21,15 @@ from tf2_ros import TransformBroadcaster
 from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan
 from geometry_msgs.msg import Twist, Quaternion, TransformStamped
 from nav_msgs.msg import Odometry
-from std_srvs.srv import SetBool
-import cv2
 from webots_ros2_msgs.srv import SetInt
 from webots_ros2_core.webots_node import WebotsNode
 import time
+from rcl_interfaces.msg import SetParametersResult
 from builtin_interfaces.msg import Time
 
 
 def euler_to_quaternion(roll, pitch, yaw):
-    """
-    Source: https://computergraphics.stackexchange.com/a/8229
-    """
+    """Source: https://computergraphics.stackexchange.com/a/8229."""
     q = Quaternion()
     q.x = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - \
         cos(roll/2) * sin(pitch/2) * sin(yaw/2)
@@ -93,9 +88,9 @@ def tof_intensity_to_distance(p_x):
     return 2.0
 
 
-class EPuck2Controller(WebotsNode):
+class EPuckDriver(WebotsNode):
     def __init__(self, args):
-        super().__init__('epuck2_controller', args)
+        super().__init__('epuck_driver', args)
 
         # Parameters
         wheel_distance_param = self.declare_parameter("wheel_distance", 0.0552)
@@ -144,13 +139,13 @@ class EPuck2Controller(WebotsNode):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.period.value)
             sensor_publisher = self.create_publisher(
-                Range, '/distance/ps{}'.format(i), 10)
+                Range, '/ps{}'.format(i), 10)
             self.sensors['ps{}'.format(i)] = sensor
             self.sensor_publishers['ps{}'.format(i)] = sensor_publisher
 
         sensor = self.robot.getDistanceSensor('tof')
         sensor.enable(self.period.value)
-        sensor_publisher = self.create_publisher(Range, '/distance/tof', 1)
+        sensor_publisher = self.create_publisher(Range, '/tof', 1)
         self.sensors['tof'] = sensor
         self.sensor_publishers['tof'] = sensor_publisher
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
@@ -159,10 +154,10 @@ class EPuck2Controller(WebotsNode):
         self.camera = self.robot.getCamera('camera')
         self.camera.enable(self.camera_period)
         self.camera_publisher = self.create_publisher(
-            Image, '/camera/image_raw', 10)
+            Image, '/image_raw', 10)
         # self.create_timer(self.camera_period / 1000, self.camera_callback)
         self.camera_info_publisher = self.create_publisher(
-            CameraInfo, '/camera/image_raw/camera_info', 10)
+            CameraInfo, '/image_raw/camera_info', 10)
 
         # Initialize LEDs
         self.leds = []
@@ -259,19 +254,6 @@ class EPuck2Controller(WebotsNode):
         angle = self.prev_angle + \
             (encoder_period_s / 6) * (k02 + 2 * (k12 + k22) + k32)
 
-        if (position[0]-self.prev_position[0])**2 + (position[1]-self.prev_position[1])**2 > 0.1**2:
-            print('Odometry error! Jump!')
-            print('Previous position: {}; New position {}'.format(
-                self.prev_position, position))
-            print('Previous angle: {}; New angle {}'.format(
-                self.prev_angle, angle))
-            print('v_left: {}; v_right: {}'.format(v_left, v_right))
-            print('prev_left_wheel_ticks: {}; left_wheel_ticks: {}'.format(
-                self.prev_left_wheel_ticks, left_wheel_ticks))
-            print('prev_right_wheel_ticks: {}; right_wheel_ticks: {}'.format(
-                self.prev_right_wheel_ticks, right_wheel_ticks))
-            print('Quaternion: {}'.format(euler_to_quaternion(0, 0, angle)))
-
         # Update variables
         self.prev_position = position.copy()
         self.prev_angle = angle
@@ -317,7 +299,7 @@ class EPuck2Controller(WebotsNode):
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
-        
+
         msg = LaserScan()
         msg.header.frame_id = 'laser_frame'
         msg.header.stamp = stamp
@@ -389,7 +371,7 @@ class EPuck2Controller(WebotsNode):
 
         # CameraInfo data
         msg = CameraInfo()
-        msg.header.frame_id = 'base_link'
+        msg.header.frame_id = 'camera_frame'
         msg.height = self.camera.getHeight()
         msg.width = self.camera.getWidth()
         msg.distortion_model = 'plumb_bob'
@@ -410,7 +392,7 @@ class EPuck2Controller(WebotsNode):
 def main(args=None):
     rclpy.init(args=args)
 
-    epuck2_controller = EPuck2Controller(args=args)
+    epuck2_controller = EPuckDriver(args=args)
 
     rclpy.spin(epuck2_controller)
     rclpy.shutdown()

@@ -266,7 +266,7 @@ class EPuckDriver(WebotsNode):
         msg.header.frame_id = 'odom'
         msg.child_frame_id = 'base_link'
         msg.twist.twist.linear.x = v
-        msg.twist.twist.linear.z = omega
+        msg.twist.twist.angular.z = omega
         msg.pose.pose.position.x = position[0]
         msg.pose.pose.position.y = position[1]
         msg.pose.pose.orientation = euler_to_quaternion(0, 0, angle)

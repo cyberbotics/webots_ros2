@@ -15,15 +15,15 @@
 """ROS2 e-puck driver."""
 
 from functools import partial
+import time
 from math import pi, cos, sin
 import rclpy
+from std_msgs.msg import Bool, Int32
 from tf2_ros import TransformBroadcaster
 from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan
 from geometry_msgs.msg import Twist, Quaternion, TransformStamped
 from nav_msgs.msg import Odometry
-from webots_ros2_msgs.srv import SetInt
 from webots_ros2_core.webots_node import WebotsNode
-import time
 from rcl_interfaces.msg import SetParametersResult
 from builtin_interfaces.msg import Time
 
@@ -190,21 +190,48 @@ class EPuckDriver(WebotsNode):
         self.camera_info_publisher = self.create_publisher(
             CameraInfo, '/image_raw/camera_info', 10)
 
-        # Initialize LEDs
-        self.leds = []
-        self.led_services = []
-        for i in range(8):
-            led = self.robot.getLED('led{}'.format(i))
-            led_service = self.create_service(
-                SetInt, '/set_led{}'.format(i), partial(self.led_callback, index=i))
-            self.leds.append(led)
-            self.led_services.append(led_service)
+        # Initialize binary LEDs
+        self.binary_leds = []
+        self.binary_led_subscribers = []
+        for i in range(NB_BINARY_LEDS):
+            index = i * 2
+            led = self.robot.getLED('led{}'.format(index))
+            led_subscriber = self.create_subscription(
+                Bool,
+                '/led{}'.format(index),
+                partial(self.on_binary_led_callback, index=i),
+                1
+            )
+            self.binary_leds.append(led)
+            self.binary_led_subscribers.append(led_subscriber)
+
+        # Initialize RGB LEDs
+        self.rgb_leds = []
+        self.rgb_led_subscribers = []
+        for i in range(NB_RGB_LEDS):
+            index = i * 2 + 1
+            led = self.robot.getLED('led{}'.format(index))
+            led_subscriber = self.create_subscription(
+                Int32,
+                '/led{}'.format(index),
+                partial(self.on_rgb_led_callback, index=i),
+                1
+            )
+            self.rgb_leds.append(led)
+            self.rgb_led_subscribers.append(led_subscriber)
 
         # Main loop
         self.create_timer(self.period.value / 1000, self.step_callback)
 
         # Transforms
         self.tf_broadcaster = TransformBroadcaster(self)
+
+    def on_rgb_led_callback(self, msg, index):
+        self.rgb_leds[index].set(msg.data)
+
+    def on_binary_led_callback(self, msg, index):
+        value = 1 if msg.data else 0
+        self.binary_leds[index].set(value)
 
     def reset_odometry(self):
         self.prev_left_wheel_ticks = 0
@@ -381,11 +408,6 @@ class EPuckDriver(WebotsNode):
         msg.linear_acceleration.y = accelerometer_data[1]
         msg.linear_acceleration.z = accelerometer_data[2]
         self.imu_publisher.publish(msg)
-
-    def led_callback(self, req, res, index):
-        self.leds[index].set(req.value)
-        res.success = True
-        return res
 
     def camera_callback(self):
         # Image data

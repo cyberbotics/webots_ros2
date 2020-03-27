@@ -77,6 +77,17 @@ LIGHT_TABLE = [
     [2, 0]
 ]
 
+DISTANCE_SENSOR_ANGLE = [
+    -15 * pi / 180,   # ps0
+    -45 * pi / 180,   # ps1
+    -90 * pi / 180,   # ps2
+    -150 * pi / 180,  # ps3
+    150 * pi / 180,   # ps4
+    90 * pi / 180,    # ps5
+    45 * pi / 180,    # ps6
+    15 * pi / 180,    # ps7
+]
+
 
 def euler_to_quaternion(roll, pitch, yaw):
     """Source: https://computergraphics.stackexchange.com/a/8229."""
@@ -183,13 +194,30 @@ class EPuckDriver(WebotsNode):
         # Intialize distance sensors
         self.distance_sensor_publishers = {}
         self.distance_sensors = {}
+        self.distance_sensor_broadcasters = []
         for i in range(8):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.period.value)
             sensor_publisher = self.create_publisher(
                 Range, '/ps{}'.format(i), 10)
             self.distance_sensors['ps{}'.format(i)] = sensor
-            self.distance_sensor_publishers['ps{}'.format(i)] = sensor_publisher
+            self.distance_sensor_publishers['ps{}'.format(
+                i)] = sensor_publisher
+
+            distance_sensor_broadcaster = StaticTransformBroadcaster(self)
+            distance_sensor_transform = TransformStamped()
+            distance_sensor_transform.header.stamp = now()
+            distance_sensor_transform.header.frame_id = "base_link"
+            distance_sensor_transform.child_frame_id = "ps" + str(i)
+            distance_sensor_transform.transform.rotation = euler_to_quaternion(
+                0, 0, DISTANCE_SENSOR_ANGLE[i])
+            distance_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * \
+                cos(DISTANCE_SENSOR_ANGLE[i])
+            distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
+                sin(DISTANCE_SENSOR_ANGLE[i])
+            distance_sensor_transform.transform.translation.z = 0.9
+            distance_sensor_broadcaster.sendTransform(distance_sensor_transform)
+            self.distance_sensor_broadcasters.append(distance_sensor_broadcaster)
 
         self.tof_sensor = self.robot.getDistanceSensor('tof')
         self.tof_sensor.enable(self.period.value)
@@ -238,12 +266,28 @@ class EPuckDriver(WebotsNode):
         # Initialize Light sensors
         self.light_sensors = []
         self.light_publishers = []
+        self.light_sensor_broadcasters = []
         for i in range(NB_LIGHT_SENSORS):
             light_sensor = self.robot.getLightSensor(f'ls{i}')
             light_sensor.enable(self.period.value)
             light_publisher = self.create_publisher(Illuminance, f'/ls{i}', 1)
             self.light_publishers.append(light_publisher)
             self.light_sensors.append(light_sensor)
+
+            light_sensor_broadcaster = StaticTransformBroadcaster(self)
+            light_transform = TransformStamped()
+            light_transform.header.stamp = now()
+            light_transform.header.frame_id = "base_link"
+            light_transform.child_frame_id = "ls" + str(i)
+            light_transform.transform.rotation = euler_to_quaternion(
+                0, 0, DISTANCE_SENSOR_ANGLE[i])
+            light_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * \
+                cos(DISTANCE_SENSOR_ANGLE[i])
+            light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
+                sin(DISTANCE_SENSOR_ANGLE[i])
+            light_transform.transform.translation.z = 0.9
+            light_sensor_broadcaster.sendTransform(light_transform)
+            self.light_sensor_broadcasters.append(light_sensor_broadcaster)
 
         # Static tf broadcaster: Laser
         self.laser_broadcaster = StaticTransformBroadcaster(self)
@@ -296,7 +340,7 @@ class EPuckDriver(WebotsNode):
     def step_callback(self):
         self.robot.step(self.period.value)
         stamp = now()
-        
+
         self.publish_odometry_data(stamp)
         self.publish_distance_data(stamp)
         self.publish_light_data(stamp)

@@ -1,0 +1,42 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.11564241154814468 0.8864931155533069 0.4480589121175034 2.6781208824909455
+  position 0.698295812289575 1.8577531400558038 -1.210345052372357
+}
+TexturedBackground {
+}
+RectangleArena {
+  floorTileSize 0.25 0.25
+  wallHeight 0.05
+}
+WoodenBox {
+  translation 0.243691 0.05 0.227558
+  name "wooden box 1"
+  size 0.1 0.1 0.1
+}
+WoodenBox {
+  translation -0.222935 0.05 0.0440814
+  name "wooden box 2"
+  size 0.1 0.1 0.1
+}
+WoodenBox {
+  translation -0.0237151 0.05 -0.244088
+  name "wooden box 3"
+  size 0.1 0.1 0.1
+}
+E-puck {
+  controller "<extern>"
+  version "2"
+  turretSlot [
+    Pi-puck {
+    }
+  ]
+}
+DirectionalLight {
+  direction 0.5 -1 0.5
+  intensity 1.8
+  castShadows TRUE
+  castLensFlares TRUE
+}

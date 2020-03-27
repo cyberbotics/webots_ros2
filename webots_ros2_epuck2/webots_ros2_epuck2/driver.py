@@ -20,7 +20,7 @@ from math import pi, cos, sin
 import rclpy
 from std_msgs.msg import Bool, Int32
 from tf2_ros import TransformBroadcaster
-from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan
+from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan, Illuminance
 from geometry_msgs.msg import Twist, Quaternion, TransformStamped
 from nav_msgs.msg import Odometry
 from webots_ros2_core.webots_node import WebotsNode
@@ -46,6 +46,8 @@ NB_RGB_LEDS = 4
 NB_BINARY_LEDS = 4
 NB_INFRARED_SENSORS = 8
 SENSOR_DIST_FROM_CENTER = 0.035
+# https://ieee-dataport.org/open-access/conversion-guide-solar-irradiance-and-lux-illuminance
+IRRADIANCE_TO_ILLUMINANCE = 120
 
 TOF_TABLE = [
     [2.00, 2000.0],
@@ -68,6 +70,11 @@ DISTANCE_TABLE = [
     [0.04, 158.03],
     [0.05, 120],
     [0.06, 104.09]
+]
+
+LIGHT_TABLE = [
+    [1, 4095],
+    [2, 0]
 ]
 
 
@@ -200,7 +207,7 @@ class EPuckDriver(WebotsNode):
                 Bool,
                 '/led{}'.format(index),
                 partial(self.on_binary_led_callback, index=i),
-                1
+                10
             )
             self.binary_leds.append(led)
             self.binary_led_subscribers.append(led_subscriber)
@@ -215,10 +222,20 @@ class EPuckDriver(WebotsNode):
                 Int32,
                 '/led{}'.format(index),
                 partial(self.on_rgb_led_callback, index=i),
-                1
+                10
             )
             self.rgb_leds.append(led)
             self.rgb_led_subscribers.append(led_subscriber)
+
+        # Initialize Light sensors
+        self.light_sensors = []
+        self.light_publishers = []
+        for i in range(NB_LIGHT_SENSORS):
+            light_sensor = self.robot.getLightSensor(f'ls{i}')
+            light_sensor.enable(self.period.value)
+            light_publisher = self.create_publisher(Illuminance, f'/ls{i}', 1)
+            self.light_publishers.append(light_publisher)
+            self.light_sensors.append(light_sensor)
 
         # Main loop
         self.create_timer(self.period.value / 1000, self.step_callback)
@@ -263,6 +280,7 @@ class EPuckDriver(WebotsNode):
 
         self.odometry_callback(stamp)
         self.distance_callback(stamp)
+        self.publish_light_data(stamp)
 
     def cmd_vel_callback(self, twist):
         self.get_logger().info('Message received')
@@ -340,6 +358,15 @@ class EPuckDriver(WebotsNode):
         tf.transform.translation.z = 0.0
         tf.transform.rotation = euler_to_quaternion(0, 0, angle)
         self.tf_broadcaster.sendTransform(tf)
+
+    def publish_light_data(self, stamp):
+        for light_publisher, light_sensor in zip(self.light_publishers, self.light_sensors):
+            msg = Illuminance()
+            msg.header.stamp = stamp
+            msg.illuminance = interpolate_table(
+                light_sensor.getValue(), LIGHT_TABLE) * IRRADIANCE_TO_ILLUMINANCE
+            msg.variance = 0.1
+            light_publisher.publish(msg)
 
     def distance_callback(self, stamp):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS

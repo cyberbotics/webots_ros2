@@ -1,15 +1,20 @@
 ## Run demo
-```
+
+``` 
 ros2 launch webots_ros2_epuck2 example_launch.py
 ```
+
 and you can use `teleop_twist_keyboard` in another window to control the robot:
-```
+
+``` 
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
+
 but make sure you have `ros-eloquent-teleop-twist-keyboard` installed.
 
 ### Topics Overview
-```
+
+``` 
 $ ros2 topic list -t
 /camera/image_raw/camera_info [sensor_msgs/msg/CameraInfo]
 /camera/image_raw [sensor_msgs/msg/Image]
@@ -28,12 +33,14 @@ $ ros2 topic list -t
 ```
 
 ### IR Sensors
-```
+
+``` 
 ros2 topic echo /distance/ps6
 ```
 
 ### Velocity
-```
+
+``` 
 ros2 topic pub /cmd_vel geometry_msgs/Twist "linear:
   x: 0.1
   y: 0.0
@@ -45,26 +52,34 @@ angular:
 ```
 
 ### Odometry
-```
+
+``` 
 ros2 topic echo /odom
 ```
+
 > Note that ROS uses [REP](https://www.ros.org/reps/rep-0103.html) convention (x-forward, y-left and z-up) while Webots inherited convention from [VRML](https://en.wikipedia.org/wiki/VRML) (x-right, y-up, z-backward). Therefore, you will see translations in Webots as following <img src ="https://render.githubusercontent.com/render/math?math=x_{Webots} = -y_{ROS}" />, <img src ="https://render.githubusercontent.com/render/math?math=y_{Webots} = z_{ROS}" /> and <img src ="https://render.githubusercontent.com/render/math?math=z_{Webots} = -x_{ROS}" />.
 
-You can also visualise odometry in `rviz`:
-```
+You can also visualise odometry in `rviz` :
+
+``` 
 ros2 launch webots_ros2_epuck2 example.launch.py rviz:=true
 ```
 
 ### Camera
-Run `rqt`, navigate to `Plugins > Visualization > Image View` and for topic choose `/camera/image_raw`. Note that the image encoding is BGRA.
 
-> Make sure your QT5 Plugins are properly configured:  
-> https://askubuntu.com/questions/308128/failed-to-load-platform-plugin-xcb-while-launching-qt5-app-on-linux-without
-> ```
-> sudo ln -sf /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/ /usr/bin/
-> ```
+Run `rqt` , navigate to `Plugins > Visualization > Image View` and for topic choose `/camera/image_raw` . Note that the image encoding is BGRA.
 
 ### LEDs
+
+``` 
+ros2 topic pub /led0 std_msgs/Bool '{ "data": true }'
 ```
-ros2 service call /set_led0 webots_ros2_msgs/srv/SetInt "{ value: 1 }"
+
+### Light Sensors
+
+There are 8 light sensors and they are positioned at the same place as distance sensors. In ROS2 e-puck driver data from the sensors is published as [sensor_msgs/Illuminance](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Illuminance.msg) (Lux) message and you can subscribe to it as follows:
+
+``` 
+ros2 topic echo ls0
 ```
+

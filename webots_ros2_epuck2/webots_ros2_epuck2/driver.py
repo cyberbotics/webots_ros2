@@ -28,6 +28,49 @@ from rcl_interfaces.msg import SetParametersResult
 from builtin_interfaces.msg import Time
 
 
+PERIOD_MS = 64
+PERIOD_S = PERIOD_MS / 1000.0
+OUT_OF_RANGE = 0.0
+ENCODER_RESOLUTION = 1000.0
+TOF_MAX_RANGE = 0.0
+TOF_MIN_RANGE = 1.0
+INFRARED_MAX_RANGE = 0.04
+INFRARED_MIN_RANGE = 0.009
+GROUND_MIN_RANGE = 0.0
+GROUND_MAX_RANGE = 0.016
+DEFAULT_WHEEL_RADIUS = 0.02
+DEFAULT_WHEEL_DISTANCE = 0.05685
+NB_LIGHT_SENSORS = 8
+NB_GROUND_SENSORS = 3
+NB_RGB_LEDS = 4
+NB_BINARY_LEDS = 4
+NB_INFRARED_SENSORS = 8
+SENSOR_DIST_FROM_CENTER = 0.035
+
+TOF_TABLE = [
+    [2.00, 2000.0],
+    [1.70, 1780.5],
+    [1.00, 1052.0],
+    [0.50, 531.9],
+    [0.20, 218.9],
+    [0.10, 111.0],
+    [0.05, 58.5],
+    [0.00, 19.8]
+]
+
+DISTANCE_TABLE = [
+    [0, 4095],
+    [0.005, 2133.33],
+    [0.01, 1465.73],
+    [0.015, 601.46],
+    [0.02, 383.84],
+    [0.03, 234.93],
+    [0.04, 158.03],
+    [0.05, 120],
+    [0.06, 104.09]
+]
+
+
 def euler_to_quaternion(roll, pitch, yaw):
     """Source: https://computergraphics.stackexchange.com/a/8229."""
     q = Quaternion()
@@ -42,50 +85,42 @@ def euler_to_quaternion(roll, pitch, yaw):
     return q
 
 
-def intensity_to_distance(p_x):
-    table = [
-        [0, 4095],
-        [0.005, 2133.33],
-        [0.01, 1465.73],
-        [0.015, 601.46],
-        [0.02, 383.84],
-        [0.03, 234.93],
-        [0.04, 158.03],
-        [0.05, 120],
-        [0.06, 104.09],
-        # [0.07, 67.19]
-    ]
-    for i in range(len(table) - 1):
-        if table[i][1] >= p_x and table[i+1][1] < p_x:
-            b_x = table[i][1]
-            b_y = table[i][0]
-            a_x = table[i+1][1]
-            a_y = table[i+1][0]
-            p_y = ((b_y - a_y) / (b_x - a_x)) * (p_x - a_x) + a_y
-            return p_y
-    return 2.0
+def interpolate_function(value, startX, startY, endX, endY):
+    slope = (endY - startY) / (endX - startX)
+    return slope * (value - startX) + startY
 
 
-def tof_intensity_to_distance(p_x):
-    table = [
-        [0.00, 19.8],
-        [0.05, 58.5],
-        [0.10, 111.0],
-        [0.20, 218.9],
-        [0.50, 531.9],
-        [1.00, 1052.0],
-        [1.70, 1780.5],
-        [2.00, 2000.0]
-    ]
+def interpolate_table(value, table):
     for i in range(len(table) - 1):
-        if table[i][1] < p_x and table[i+1][1] >= p_x:
-            b_x = table[i][1]
-            b_y = table[i][0]
-            a_x = table[i+1][1]
-            a_y = table[i+1][0]
-            p_y = ((a_y - b_y) / (a_x - b_x)) * (p_x - b_x) + b_y
-            return p_y
-    return 2.0
+        if (value < table[i][1] and value >= table[i + 1][1]) or \
+                (value > table[i][1] and value <= table[i + 1][1]):
+            return interpolate_function(
+                value,
+                table[i][1],
+                table[i][0],
+                table[i + 1][1],
+                table[i + 1][0]
+            )
+    # Edge case, search outside of two points.
+    # This code assumes that the table is sorted in descending order
+    if value > table[0][1]:
+        # Interpolate as first
+        return interpolate_function(
+            value,
+            table[0][1],
+            table[0][0],
+            table[1][1],
+            table[1][0]
+        )
+    else:
+        # Interpolate as last
+        return interpolate_function(
+            value,
+            table[len(table) - 2][1],
+            table[len(table) - 2][0],
+            table[len(table) - 1][1],
+            table[len(table) - 1][0]
+        )
 
 
 class EPuckDriver(WebotsNode):
@@ -141,11 +176,9 @@ class EPuckDriver(WebotsNode):
             self.sensors['ps{}'.format(i)] = sensor
             self.sensor_publishers['ps{}'.format(i)] = sensor_publisher
 
-        sensor = self.robot.getDistanceSensor('tof')
-        sensor.enable(self.period.value)
-        sensor_publisher = self.create_publisher(Range, '/tof', 1)
-        self.sensors['tof'] = sensor
-        self.sensor_publishers['tof'] = sensor_publisher
+        self.tof_sensor = self.robot.getDistanceSensor('tof')
+        self.tof_sensor.enable(self.period.value)
+        self.tof_publisher = self.create_publisher(Range, '/tof', 1)
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
         # Initialize camera
@@ -282,57 +315,58 @@ class EPuckDriver(WebotsNode):
         self.tf_broadcaster.sendTransform(tf)
 
     def distance_callback(self, stamp):
-        distance_from_center = 0.035
+        dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
+        dist_tof = OUT_OF_RANGE
 
-        for key in self.sensors:
+        # Calculate distances
+        for i, key in enumerate(self.sensors):
+            dists[i] = interpolate_table(
+                self.sensors[key].getValue(), DISTANCE_TABLE)
+        dist_tof = interpolate_table(self.sensors[key].getValue(), TOF_TABLE)
+
+        # Publish range
+        for i, key in enumerate(self.sensors):
             msg = Range()
             msg.field_of_view = self.sensors[key].getAperture()
-            msg.min_range = intensity_to_distance(
-                self.sensors[key].getMaxValue() - 8.2) + distance_from_center
-            msg.max_range = intensity_to_distance(
-                self.sensors[key].getMinValue() + 3.3) + distance_from_center
-            msg.range = intensity_to_distance(self.sensors[key].getValue())
+            msg.min_range = INFRARED_MIN_RANGE
+            msg.max_range = INFRARED_MAX_RANGE
+            msg.range = dists[i]
             msg.radiation_type = Range.INFRARED
             self.sensor_publishers[key].publish(msg)
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
-
         msg = LaserScan()
-        msg.header.frame_id = 'laser_frame'
+        msg.header.frame_id = 'laser_scanner'
         msg.header.stamp = stamp
         msg.angle_min = - 150 * pi / 180
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180
-        msg.range_min = 0.005 + distance_from_center
-        msg.range_max = 1.0 + distance_from_center
+        msg.range_min = 0.005 + SENSOR_DIST_FROM_CENTER
+        msg.range_max = 1.0 + SENSOR_DIST_FROM_CENTER
         msg.ranges = [
-            intensity_to_distance(self.sensors['ps4'].getValue()),      # -150
-            0.0,                                                        # -135
-            0.0,                                                        # -120
-            0.0,                                                        # -105
-            intensity_to_distance(self.sensors['ps5'].getValue()),      # -90
-            0.0,                                                        # -75
-            0.0,                                                        # -60
-            intensity_to_distance(self.sensors['ps6'].getValue()),      # -45
-            0.0,                                                        # -30
-            intensity_to_distance(self.sensors['ps7'].getValue()),      # -15
-            tof_intensity_to_distance(self.sensors['tof'].getValue()),  # 0
-            intensity_to_distance(self.sensors['ps0'].getValue()),      # 15
-            0.0,                                                        # 30
-            intensity_to_distance(self.sensors['ps1'].getValue()),      # 45
-            0.0,                                                        # 60
-            0.0,                                                        # 75
-            intensity_to_distance(self.sensors['ps2'].getValue()),      # 90
-            0.0,                                                        # 105
-            0.0,                                                        # 120
-            0.0,                                                        # 135
-            intensity_to_distance(self.sensors['ps3'].getValue()),      # 150
+            dists[3] + SENSOR_DIST_FROM_CENTER,  # -150
+            OUT_OF_RANGE,                       # -135
+            OUT_OF_RANGE,                       # -120
+            OUT_OF_RANGE,                       # -105
+            dists[2] + SENSOR_DIST_FROM_CENTER,  # -90
+            OUT_OF_RANGE,                       # -75
+            OUT_OF_RANGE,                       # -60
+            dists[1] + SENSOR_DIST_FROM_CENTER,  # -45
+            OUT_OF_RANGE,                       # -30
+            dists[0] + SENSOR_DIST_FROM_CENTER,  # -15
+            dist_tof + SENSOR_DIST_FROM_CENTER,  # 0
+            dists[7] + SENSOR_DIST_FROM_CENTER,  # 15
+            OUT_OF_RANGE,                       # 30
+            dists[6] + SENSOR_DIST_FROM_CENTER,  # 45
+            OUT_OF_RANGE,                       # 60
+            OUT_OF_RANGE,                       # 75
+            dists[5] + SENSOR_DIST_FROM_CENTER,  # 90
+            OUT_OF_RANGE,                       # 105
+            OUT_OF_RANGE,                       # 120
+            OUT_OF_RANGE,                       # 135
+            dists[4] + SENSOR_DIST_FROM_CENTER,  # 150
         ]
-        for i in range(len(msg.ranges)):
-            if msg.ranges[i] != 0:
-                msg.ranges[i] += distance_from_center
-
         self.laser_publisher.publish(msg)
 
     def imu_callback(self):

@@ -124,8 +124,6 @@ class EPuckDriver(WebotsNode):
         self.odometry_publisher = self.create_publisher(Odometry, '/odom', 1)
 
         # Initialize IMU
-        self.imu = self.robot.getInertialUnit('inertial unit')
-        self.imu.enable(self.period.value)
         self.gyro = self.robot.getGyro('gyro')
         self.gyro.enable(self.period.value)
         self.accelerometer = self.robot.getAccelerometer('accelerometer')
@@ -338,13 +336,10 @@ class EPuckDriver(WebotsNode):
         self.laser_publisher.publish(msg)
 
     def imu_callback(self):
-        imu_data = self.imu.getRollPitchYaw()
         gyro_data = self.gyro.getValues()
         accelerometer_data = self.accelerometer.getValues()
 
         msg = Imu()
-        msg.orientation = euler_to_quaternion(
-            imu_data[0], imu_data[1], imu_data[2])
         msg.angular_velocity.x = gyro_data[0]
         msg.angular_velocity.y = gyro_data[1]
         msg.angular_velocity.z = gyro_data[2]

@@ -39,7 +39,7 @@ def generate_launch_description():
     # Controller node
     synchronization = LaunchConfiguration('synchronization', default=False)
     controller = ControllerLauncher(package='webots_ros2_epuck2',
-                                    node_executable='epuck2_driver',
+                                    node_executable='driver',
                                     parameters=[
                                         {'synchronization': synchronization}],
                                     output='screen')

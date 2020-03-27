@@ -1,6 +1,6 @@
 ## Run demo
 ```
-ros2 launch webots_ros2_epuck2 example.launch.py
+ros2 launch webots_ros2_epuck2 example_launch.py
 ```
 and you can use `teleop_twist_keyboard` in another window to control the robot:
 ```

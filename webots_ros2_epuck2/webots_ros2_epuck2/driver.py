@@ -19,7 +19,7 @@ import time
 from math import pi, cos, sin
 import rclpy
 from std_msgs.msg import Bool, Int32
-from tf2_ros import TransformBroadcaster
+from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
 from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan, Illuminance
 from geometry_msgs.msg import Twist, Quaternion, TransformStamped
 from nav_msgs.msg import Odometry
@@ -92,9 +92,9 @@ def euler_to_quaternion(roll, pitch, yaw):
     return q
 
 
-def interpolate_function(value, startX, startY, endX, endY):
-    slope = (endY - startY) / (endX - startX)
-    return slope * (value - startX) + startY
+def interpolate_function(value, start_x, start_y, end_x, end_y):
+    slope = (end_y - start_y) / (end_x - start_x)
+    return slope * (value - start_x) + start_y
 
 
 def interpolate_table(value, table):
@@ -128,6 +128,14 @@ def interpolate_table(value, table):
             table[len(table) - 1][1],
             table[len(table) - 1][0]
         )
+
+
+def now():
+    epoch = time.time()
+    stamp = Time()
+    stamp.sec = int(epoch)
+    stamp.nanosec = int((epoch - int(epoch)) * 1E9)
+    return stamp
 
 
 class EPuckDriver(WebotsNode):
@@ -173,15 +181,15 @@ class EPuckDriver(WebotsNode):
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
 
         # Intialize distance sensors
-        self.sensor_publishers = {}
-        self.sensors = {}
+        self.distance_sensor_publishers = {}
+        self.distance_sensors = {}
         for i in range(8):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.period.value)
             sensor_publisher = self.create_publisher(
                 Range, '/ps{}'.format(i), 10)
-            self.sensors['ps{}'.format(i)] = sensor
-            self.sensor_publishers['ps{}'.format(i)] = sensor_publisher
+            self.distance_sensors['ps{}'.format(i)] = sensor
+            self.distance_sensor_publishers['ps{}'.format(i)] = sensor_publisher
 
         self.tof_sensor = self.robot.getDistanceSensor('tof')
         self.tof_sensor.enable(self.period.value)
@@ -237,6 +245,21 @@ class EPuckDriver(WebotsNode):
             self.light_publishers.append(light_publisher)
             self.light_sensors.append(light_sensor)
 
+        # Static tf broadcaster: Laser
+        self.laser_broadcaster = StaticTransformBroadcaster(self)
+        laser_transform = TransformStamped()
+        laser_transform.header.stamp = now()
+        laser_transform.header.frame_id = "base_link"
+        laser_transform.child_frame_id = "laser_scanner"
+        laser_transform.transform.rotation.x = 0.0
+        laser_transform.transform.rotation.y = 0.0
+        laser_transform.transform.rotation.z = 0.0
+        laser_transform.transform.rotation.w = 1.0
+        laser_transform.transform.translation.x = 0.0
+        laser_transform.transform.translation.y = 0.0
+        laser_transform.transform.translation.z = 0.0
+        self.laser_broadcaster.sendTransform(laser_transform)
+
         # Main loop
         self.create_timer(self.period.value / 1000, self.step_callback)
 
@@ -272,14 +295,10 @@ class EPuckDriver(WebotsNode):
 
     def step_callback(self):
         self.robot.step(self.period.value)
-
-        epoch = time.time()
-        stamp = Time()
-        stamp.sec = int(epoch)
-        stamp.nanosec = int((epoch - int(epoch)) * 1E9)
-
-        self.odometry_callback(stamp)
-        self.distance_callback(stamp)
+        stamp = now()
+        
+        self.publish_odometry_data(stamp)
+        self.publish_distance_data(stamp)
         self.publish_light_data(stamp)
 
     def cmd_vel_callback(self, twist):
@@ -291,7 +310,7 @@ class EPuckDriver(WebotsNode):
         self.left_motor.setVelocity(left_velocity)
         self.right_motor.setVelocity(right_velocity)
 
-    def odometry_callback(self, stamp):
+    def publish_odometry_data(self, stamp):
         encoder_period_s = self.period.value / 1000.0
         left_wheel_ticks = self.left_wheel_sensor.getValue()
         right_wheel_ticks = self.right_wheel_sensor.getValue()
@@ -368,25 +387,25 @@ class EPuckDriver(WebotsNode):
             msg.variance = 0.1
             light_publisher.publish(msg)
 
-    def distance_callback(self, stamp):
+    def publish_distance_data(self, stamp):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
 
         # Calculate distances
-        for i, key in enumerate(self.sensors):
+        for i, key in enumerate(self.distance_sensors):
             dists[i] = interpolate_table(
-                self.sensors[key].getValue(), DISTANCE_TABLE)
-        dist_tof = interpolate_table(self.sensors[key].getValue(), TOF_TABLE)
+                self.distance_sensors[key].getValue(), DISTANCE_TABLE)
+        dist_tof = interpolate_table(self.tof_sensor.getValue(), TOF_TABLE)
 
         # Publish range
-        for i, key in enumerate(self.sensors):
+        for i, key in enumerate(self.distance_sensors):
             msg = Range()
-            msg.field_of_view = self.sensors[key].getAperture()
+            msg.field_of_view = self.distance_sensors[key].getAperture()
             msg.min_range = INFRARED_MIN_RANGE
             msg.max_range = INFRARED_MAX_RANGE
             msg.range = dists[i]
             msg.radiation_type = Range.INFRARED
-            self.sensor_publishers[key].publish(msg)
+            self.distance_sensor_publishers[key].publish(msg)
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz

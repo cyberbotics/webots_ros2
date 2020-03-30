@@ -77,6 +77,11 @@ LIGHT_TABLE = [
     [2, 0]
 ]
 
+GROUND_TABLE = [
+    [0, 1000],
+    [0.016, 300]
+]
+
 DISTANCE_SENSOR_ANGLE = [
     -15 * pi / 180,   # ps0
     -45 * pi / 180,   # ps1
@@ -190,6 +195,34 @@ class EPuckDriver(WebotsNode):
         self.accelerometer = self.robot.getAccelerometer('accelerometer')
         self.accelerometer.enable(self.period.value)
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
+
+        # Initialize ground sensors
+        self.ground_sensors = {}
+        self.ground_sensor_publishers = {}
+        self.ground_sensor_broadcasters = []
+        for i in range(3):
+            idx = 'gs{}'.format(i)
+            ground_sensor = self.robot.getDistanceSensor(idx)
+            if ground_sensor:
+                ground_sensor.enable(self.period.value)
+                self.ground_sensors[idx] = ground_sensor
+                self.ground_sensor_publishers[idx] = self.create_publisher(
+                    Range, '/' + idx, 1)
+
+                ground_sensor_broadcaster = StaticTransformBroadcaster(self)
+                ground_sensor_transform = TransformStamped()
+                ground_sensor_transform.header.stamp = now()
+                ground_sensor_transform.header.frame_id = "base_link"
+                ground_sensor_transform.child_frame_id = "gs" + str(i)
+                ground_sensor_transform.transform.rotation = euler_to_quaternion(
+                    0, pi/2, 0)
+                ground_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER - 0.005
+                ground_sensor_transform.transform.translation.y = 0.009 - i * 0.009
+                ground_sensor_transform.transform.translation.z = 0.0
+                ground_sensor_broadcaster.sendTransform(
+                    ground_sensor_transform)
+                self.ground_sensor_broadcasters.append(
+                    ground_sensor_broadcaster)
 
         # Intialize distance sensors
         self.distance_sensor_publishers = {}
@@ -360,6 +393,20 @@ class EPuckDriver(WebotsNode):
         self.publish_odometry_data(stamp)
         self.publish_distance_data(stamp)
         self.publish_light_data(stamp)
+        self.publish_ground_sensor_data(stamp)
+
+    def publish_ground_sensor_data(self, stamp):
+        for idx in self.ground_sensors.keys():
+            msg = Range()
+            msg.header.stamp = stamp
+            msg.header.frame_id = idx
+            msg.field_of_view = self.ground_sensors[idx].getAperture()
+            msg.min_range = GROUND_MIN_RANGE
+            msg.max_range = GROUND_MAX_RANGE
+            msg.range = interpolate_table(
+                self.ground_sensors[idx].getValue(), GROUND_TABLE)
+            msg.radiation_type = Range.INFRARED
+            self.ground_sensor_publishers[idx].publish(msg)
 
     def cmd_vel_callback(self, twist):
         self.get_logger().info('Message received')

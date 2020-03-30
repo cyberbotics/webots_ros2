@@ -216,8 +216,10 @@ class EPuckDriver(WebotsNode):
             distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
                 sin(DISTANCE_SENSOR_ANGLE[i])
             distance_sensor_transform.transform.translation.z = 0.9
-            distance_sensor_broadcaster.sendTransform(distance_sensor_transform)
-            self.distance_sensor_broadcasters.append(distance_sensor_broadcaster)
+            distance_sensor_broadcaster.sendTransform(
+                distance_sensor_transform)
+            self.distance_sensor_broadcasters.append(
+                distance_sensor_broadcaster)
 
         self.tof_sensor = self.robot.getDistanceSensor('tof')
         self.tof_sensor.enable(self.period.value)

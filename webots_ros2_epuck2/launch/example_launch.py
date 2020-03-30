@@ -57,7 +57,6 @@ def generate_launch_description():
     launch_entities = [webots,
                        controller,
                        rviz,
-                       laser_tf,
 
                        # Shutdown launch when Webots exits.
                        RegisterEventHandler(

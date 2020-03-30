@@ -215,7 +215,7 @@ class EPuckDriver(WebotsNode):
                 cos(DISTANCE_SENSOR_ANGLE[i])
             distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
                 sin(DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.z = 0.9
+            distance_sensor_transform.transform.translation.z = 0.0
             distance_sensor_broadcaster.sendTransform(
                 distance_sensor_transform)
             self.distance_sensor_broadcasters.append(
@@ -226,12 +226,26 @@ class EPuckDriver(WebotsNode):
         self.tof_publisher = self.create_publisher(Range, '/tof', 1)
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
+        self.tof_broadcaster = StaticTransformBroadcaster(self)
+        tof_transform = TransformStamped()
+        tof_transform.header.stamp = now()
+        tof_transform.header.frame_id = "base_link"
+        tof_transform.child_frame_id = "tof"
+        tof_transform.transform.rotation.x = 0.0
+        tof_transform.transform.rotation.y = 0.0
+        tof_transform.transform.rotation.z = 0.0
+        tof_transform.transform.rotation.w = 1.0
+        tof_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER
+        tof_transform.transform.translation.y = 0.0
+        tof_transform.transform.translation.z = 0.0
+        self.tof_broadcaster.sendTransform(tof_transform)
+
         # Initialize camera
         self.camera = self.robot.getCamera('camera')
         self.camera.enable(self.camera_period)
         self.camera_publisher = self.create_publisher(
             Image, '/image_raw', 10)
-        # self.create_timer(self.camera_period / 1000, self.camera_callback)
+        self.create_timer(self.camera_period / 1000, self.camera_callback)
         self.camera_info_publisher = self.create_publisher(
             CameraInfo, '/image_raw/camera_info', 10)
 
@@ -287,7 +301,7 @@ class EPuckDriver(WebotsNode):
                 cos(DISTANCE_SENSOR_ANGLE[i])
             light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
                 sin(DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.z = 0.9
+            light_transform.transform.translation.z = 0.0
             light_sensor_broadcaster.sendTransform(light_transform)
             self.light_sensor_broadcasters.append(light_sensor_broadcaster)
 
@@ -446,12 +460,23 @@ class EPuckDriver(WebotsNode):
         # Publish range
         for i, key in enumerate(self.distance_sensors):
             msg = Range()
+            msg.header.stamp = stamp
+            msg.header.frame_id = key
             msg.field_of_view = self.distance_sensors[key].getAperture()
             msg.min_range = INFRARED_MIN_RANGE
             msg.max_range = INFRARED_MAX_RANGE
             msg.range = dists[i]
             msg.radiation_type = Range.INFRARED
             self.distance_sensor_publishers[key].publish(msg)
+        msg = Range()
+        msg.header.stamp = stamp
+        msg.header.frame_id = 'tof'
+        msg.field_of_view = self.tof_sensor.getAperture()
+        msg.min_range = TOF_MAX_RANGE
+        msg.max_range = TOF_MIN_RANGE
+        msg.range = dist_tof
+        msg.radiation_type = Range.INFRARED
+        self.tof_publisher.publish(msg)
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
@@ -461,30 +486,30 @@ class EPuckDriver(WebotsNode):
         msg.angle_min = - 150 * pi / 180
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180
-        msg.range_min = 0.005 + SENSOR_DIST_FROM_CENTER
-        msg.range_max = 1.0 + SENSOR_DIST_FROM_CENTER
+        msg.range_min = SENSOR_DIST_FROM_CENTER + INFRARED_MIN_RANGE
+        msg.range_max = SENSOR_DIST_FROM_CENTER + INFRARED_MAX_RANGE
         msg.ranges = [
-            dists[3] + SENSOR_DIST_FROM_CENTER,  # -150
-            OUT_OF_RANGE,                       # -135
-            OUT_OF_RANGE,                       # -120
-            OUT_OF_RANGE,                       # -105
-            dists[2] + SENSOR_DIST_FROM_CENTER,  # -90
-            OUT_OF_RANGE,                       # -75
-            OUT_OF_RANGE,                       # -60
-            dists[1] + SENSOR_DIST_FROM_CENTER,  # -45
-            OUT_OF_RANGE,                       # -30
-            dists[0] + SENSOR_DIST_FROM_CENTER,  # -15
-            dist_tof + SENSOR_DIST_FROM_CENTER,  # 0
-            dists[7] + SENSOR_DIST_FROM_CENTER,  # 15
-            OUT_OF_RANGE,                       # 30
-            dists[6] + SENSOR_DIST_FROM_CENTER,  # 45
-            OUT_OF_RANGE,                       # 60
-            OUT_OF_RANGE,                       # 75
-            dists[5] + SENSOR_DIST_FROM_CENTER,  # 90
-            OUT_OF_RANGE,                       # 105
-            OUT_OF_RANGE,                       # 120
-            OUT_OF_RANGE,                       # 135
-            dists[4] + SENSOR_DIST_FROM_CENTER,  # 150
+            dists[3] + SENSOR_DIST_FROM_CENTER,     # -150
+            OUT_OF_RANGE,                           # -135
+            OUT_OF_RANGE,                           # -120
+            OUT_OF_RANGE,                           # -105
+            dists[2] + SENSOR_DIST_FROM_CENTER,     # -90
+            OUT_OF_RANGE,                           # -75
+            OUT_OF_RANGE,                           # -60
+            dists[1] + SENSOR_DIST_FROM_CENTER,     # -45
+            OUT_OF_RANGE,                           # -30
+            dists[0] + SENSOR_DIST_FROM_CENTER,     # -15
+            dist_tof + SENSOR_DIST_FROM_CENTER,     # 0
+            dists[7] + SENSOR_DIST_FROM_CENTER,     # 15
+            OUT_OF_RANGE,                           # 30
+            dists[6] + SENSOR_DIST_FROM_CENTER,     # 45
+            OUT_OF_RANGE,                           # 60
+            OUT_OF_RANGE,                           # 75
+            dists[5] + SENSOR_DIST_FROM_CENTER,     # 90
+            OUT_OF_RANGE,                           # 105
+            OUT_OF_RANGE,                           # 120
+            OUT_OF_RANGE,                           # 135
+            dists[4] + SENSOR_DIST_FROM_CENTER,     # 150
         ]
         self.laser_publisher.publish(msg)
 

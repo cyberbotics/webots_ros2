@@ -15,17 +15,17 @@
 """ROS2 e-puck driver."""
 
 from functools import partial
-import time
 from math import pi, cos, sin
 import rclpy
 from std_msgs.msg import Bool, Int32
 from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
 from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan, Illuminance
-from geometry_msgs.msg import Twist, Quaternion, TransformStamped
+from geometry_msgs.msg import Twist, TransformStamped
 from nav_msgs.msg import Odometry
 from webots_ros2_core.webots_node import WebotsNode
+from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_table
+from webots_ros2_core.utils import get_ros_stamp
 from rcl_interfaces.msg import SetParametersResult
-from builtin_interfaces.msg import Time
 
 
 PERIOD_MS = 64
@@ -94,66 +94,6 @@ DISTANCE_SENSOR_ANGLE = [
 ]
 
 
-def euler_to_quaternion(roll, pitch, yaw):
-    """Source: https://computergraphics.stackexchange.com/a/8229."""
-    q = Quaternion()
-    q.x = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - \
-        cos(roll/2) * sin(pitch/2) * sin(yaw/2)
-    q.y = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + \
-        sin(roll/2) * cos(pitch/2) * sin(yaw/2)
-    q.z = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - \
-        sin(roll/2) * sin(pitch/2) * cos(yaw/2)
-    q.w = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + \
-        sin(roll/2) * sin(pitch/2) * sin(yaw/2)
-    return q
-
-
-def interpolate_function(value, start_x, start_y, end_x, end_y):
-    slope = (end_y - start_y) / (end_x - start_x)
-    return slope * (value - start_x) + start_y
-
-
-def interpolate_table(value, table):
-    for i in range(len(table) - 1):
-        if (value < table[i][1] and value >= table[i + 1][1]) or \
-                (value > table[i][1] and value <= table[i + 1][1]):
-            return interpolate_function(
-                value,
-                table[i][1],
-                table[i][0],
-                table[i + 1][1],
-                table[i + 1][0]
-            )
-    # Edge case, search outside of two points.
-    # This code assumes that the table is sorted in descending order
-    if value > table[0][1]:
-        # Interpolate as first
-        return interpolate_function(
-            value,
-            table[0][1],
-            table[0][0],
-            table[1][1],
-            table[1][0]
-        )
-    else:
-        # Interpolate as last
-        return interpolate_function(
-            value,
-            table[len(table) - 2][1],
-            table[len(table) - 2][0],
-            table[len(table) - 1][1],
-            table[len(table) - 1][0]
-        )
-
-
-def now():
-    epoch = time.time()
-    stamp = Time()
-    stamp.sec = int(epoch)
-    stamp.nanosec = int((epoch - int(epoch)) * 1E9)
-    return stamp
-
-
 class EPuckDriver(WebotsNode):
     def __init__(self, args):
         super().__init__('epuck_driver', args)
@@ -211,7 +151,7 @@ class EPuckDriver(WebotsNode):
 
                 ground_sensor_broadcaster = StaticTransformBroadcaster(self)
                 ground_sensor_transform = TransformStamped()
-                ground_sensor_transform.header.stamp = now()
+                ground_sensor_transform.header.stamp = get_ros_stamp()
                 ground_sensor_transform.header.frame_id = "base_link"
                 ground_sensor_transform.child_frame_id = "gs" + str(i)
                 ground_sensor_transform.transform.rotation = euler_to_quaternion(
@@ -239,7 +179,7 @@ class EPuckDriver(WebotsNode):
 
             distance_sensor_broadcaster = StaticTransformBroadcaster(self)
             distance_sensor_transform = TransformStamped()
-            distance_sensor_transform.header.stamp = now()
+            distance_sensor_transform.header.stamp = get_ros_stamp()
             distance_sensor_transform.header.frame_id = "base_link"
             distance_sensor_transform.child_frame_id = "ps" + str(i)
             distance_sensor_transform.transform.rotation = euler_to_quaternion(
@@ -261,7 +201,7 @@ class EPuckDriver(WebotsNode):
 
         self.tof_broadcaster = StaticTransformBroadcaster(self)
         tof_transform = TransformStamped()
-        tof_transform.header.stamp = now()
+        tof_transform.header.stamp = get_ros_stamp()
         tof_transform.header.frame_id = "base_link"
         tof_transform.child_frame_id = "tof"
         tof_transform.transform.rotation.x = 0.0
@@ -325,7 +265,7 @@ class EPuckDriver(WebotsNode):
 
             light_sensor_broadcaster = StaticTransformBroadcaster(self)
             light_transform = TransformStamped()
-            light_transform.header.stamp = now()
+            light_transform.header.stamp = get_ros_stamp()
             light_transform.header.frame_id = "base_link"
             light_transform.child_frame_id = "ls" + str(i)
             light_transform.transform.rotation = euler_to_quaternion(
@@ -341,7 +281,7 @@ class EPuckDriver(WebotsNode):
         # Static tf broadcaster: Laser
         self.laser_broadcaster = StaticTransformBroadcaster(self)
         laser_transform = TransformStamped()
-        laser_transform.header.stamp = now()
+        laser_transform.header.stamp = get_ros_stamp()
         laser_transform.header.frame_id = "base_link"
         laser_transform.child_frame_id = "laser_scanner"
         laser_transform.transform.rotation.x = 0.0
@@ -388,7 +328,7 @@ class EPuckDriver(WebotsNode):
 
     def step_callback(self):
         self.robot.step(self.period.value)
-        stamp = now()
+        stamp = get_ros_stamp()
 
         self.publish_odometry_data(stamp)
         self.publish_distance_data(stamp)

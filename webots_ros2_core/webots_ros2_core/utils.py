@@ -19,6 +19,7 @@
 import os
 import re
 import sys
+import time
 
 from typing import List
 from typing import Optional
@@ -26,6 +27,8 @@ from typing import Optional
 from launch_ros.actions import Node
 from launch.action import Action
 from launch.launch_context import LaunchContext
+
+from builtin_interfaces.msg import Time
 
 try:
     import webots_ros2_desktop.webots_path  # this module might not be installed
@@ -115,6 +118,14 @@ def get_webots_version():
     with open(versionFile, 'r') as f:
         return f.read().replace('\n', '').strip()
     return None
+
+
+def get_ros_stamp():
+    epoch = time.time()
+    stamp = Time()
+    stamp.sec = int(epoch)
+    stamp.nanosec = int((epoch - int(epoch)) * 1E9)
+    return stamp
 
 
 class ControllerLauncher(Node):

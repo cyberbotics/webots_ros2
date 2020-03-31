@@ -10,7 +10,7 @@ and you can use `teleop_twist_keyboard` in another window to control the robot:
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
-but make sure you have `ros-eloquent-teleop-twist-keyboard` installed.
+but make sure you have the `teleop-twist-keyboard` ROS package installed.
 
 ### Topics Overview
 Here you can find a full list of ROS2 topics:

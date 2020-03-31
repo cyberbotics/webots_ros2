@@ -27,7 +27,8 @@ from geometry_msgs.msg import Twist
 from webots_ros2_core.math_utils import quaternion_to_euler
 
 
-DEFAULT_DISTANCE = 0.1335           # Target distance for robot to pass in meters
+# Target distance for robot to pass in meters
+DEFAULT_DISTANCE = 0.1335
 # Default separation between two wheels (from e-puck website)
 DEFAULT_WHEEL_DISTANCE = 0.0552
 # Default wheel radius (from e-puck website)

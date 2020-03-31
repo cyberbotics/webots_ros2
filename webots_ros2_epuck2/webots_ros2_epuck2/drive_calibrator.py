@@ -11,6 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# This node helps you to calibrate wheel radius and distance between the wheels
+# by moving the robot forward and correcting wheel radius, and rotating robot and
+# correcting distance between the wheels.
+# ros2 run webots_ros2_epuck2 drive_calibrator --ros-args -p type:=linear -p wheel_radius:=0.021
 
 import rclpy
 import math
@@ -20,24 +25,7 @@ from rcl_interfaces.srv import SetParameters
 from rcl_interfaces.msg._parameter import Parameter
 from rclpy.parameter import ParameterType, ParameterValue
 from geometry_msgs.msg import Twist
-
-
-# ros2 run webots_ros2_epuck2 drive_calibrator --ros-args -p type:=linear -p wheel_radius:=0.021
-
-
-def quaternion_to_euler(q):
-    # Reference: https://computergraphics.stackexchange.com/a/8229
-    t0 = +2.0 * (q.w * q.x + q.y * q.z)
-    t1 = +1.0 - 2.0 * (q.x * q.x + q.y * q.y)
-    roll = math.atan2(t0, t1)
-    t2 = +2.0 * (q.w * q.y - q.z * q.x)
-    t2 = +1.0 if t2 > +1.0 else t2
-    t2 = -1.0 if t2 < -1.0 else t2
-    pitch = math.asin(t2)
-    t3 = +2.0 * (q.w * q.z + q.x * q.y)
-    t4 = +1.0 - 2.0 * (q.y * q.y + q.z * q.z)
-    yaw = math.atan2(t3, t4)
-    return [yaw, pitch, roll]
+from webots_ros2_core.math_utils import euler_to_quaternion
 
 
 class EPuckDriveCalibrator(Node):

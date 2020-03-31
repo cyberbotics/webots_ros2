@@ -280,7 +280,7 @@ class EPuckDriver(WebotsNode):
             Image, '/image_raw', 10)
         self.create_timer(self.camera_period / 1000, self.camera_callback)
         self.camera_info_publisher = self.create_publisher(
-            CameraInfo, '/image_raw/camera_info', 10)
+            CameraInfo, '/camera_info', 10)
 
         # Initialize binary LEDs
         self.binary_leds = []

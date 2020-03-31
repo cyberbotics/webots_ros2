@@ -25,7 +25,7 @@ from rcl_interfaces.srv import SetParameters
 from rcl_interfaces.msg._parameter import Parameter
 from rclpy.parameter import ParameterType, ParameterValue
 from geometry_msgs.msg import Twist
-from webots_ros2_core.math_utils import euler_to_quaternion
+from webots_ros2_core.math_utils import quaternion_to_euler
 
 
 class EPuckDriveCalibrator(Node):
@@ -51,8 +51,8 @@ class EPuckDriveCalibrator(Node):
         self.cli.wait_for_service(timeout_sec=1.0)
         self.set_param('wheel_distance', self.wheel_distance.value)
         self.set_param('wheel_radius', self.wheel_radius.value)
-        print('Setting wheel distance to: {}m'.format(self.wheel_distance.value))
-        print('Setting wheel radius to: {}m'.format(self.wheel_radius.value))
+        self.get_logger().info('Setting wheel distance to: {}m'.format(self.wheel_distance.value))
+        self.get_logger().info('Setting wheel radius to: {}m'.format(self.wheel_radius.value))
 
     def set_param(self, name, value):
         req = SetParameters.Request()
@@ -76,7 +76,7 @@ class EPuckDriveCalibrator(Node):
     def odometry_callback(self, msg: Odometry):
         if not self.test_done and self.type.value == 'rotation':
             # Send velocity
-            print('Rotation calibration in progress...')
+            self.get_logger().info('Rotation calibration in progress...')
             msg_twist = Twist()
             msg_twist.angular.x = 0.0
             msg_twist.angular.y = 0.0
@@ -94,12 +94,12 @@ class EPuckDriveCalibrator(Node):
                 self.send_stop()
             self.last_yaw = yaw
 
-            print('Circle: {}; Current angle: {}'.format(
+            self.get_logger().info('Circle: {}; Current angle: {}'.format(
                 self.rotation_count, yaw))
 
         if not self.test_done and self.type.value == 'linear':
             # Send velocity
-            print('Rotation calibration in progress...')
+            self.get_logger().info('Rotation calibration in progress...')
             msg_twist = Twist()
             msg_twist.angular.x = 0.0
             msg_twist.angular.y = 0.0

@@ -1,4 +1,4 @@
-from math import cos, sin
+from math import cos, sin, atan2, asin
 from geometry_msgs.msg import Quaternion
 
 
@@ -52,3 +52,18 @@ def interpolate_table(value, table):
             table[len(table) - 1][1],
             table[len(table) - 1][0]
         )
+
+
+def quaternion_to_euler(q):
+    """Source: https://computergraphics.stackexchange.com/a/8229."""
+    t0 = +2.0 * (q.w * q.x + q.y * q.z)
+    t1 = +1.0 - 2.0 * (q.x * q.x + q.y * q.y)
+    roll = atan2(t0, t1)
+    t2 = +2.0 * (q.w * q.y - q.z * q.x)
+    t2 = +1.0 if t2 > +1.0 else t2
+    t2 = -1.0 if t2 < -1.0 else t2
+    pitch = asin(t2)
+    t3 = +2.0 * (q.w * q.z + q.x * q.y)
+    t4 = +1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+    yaw = atan2(t3, t4)
+    return [yaw, pitch, roll]

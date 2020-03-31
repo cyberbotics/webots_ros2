@@ -2,6 +2,6 @@
 Changelog for package webots_ros2_epuck2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.0.1 (2020-02-20)
+0.0.1 (2020-XX-YY)
 ------------------
 * Initial version

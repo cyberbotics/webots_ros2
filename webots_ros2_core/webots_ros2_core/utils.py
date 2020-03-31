@@ -120,14 +120,6 @@ def get_webots_version():
     return None
 
 
-def get_ros_stamp():
-    epoch = time.time()
-    stamp = Time()
-    stamp.sec = int(epoch)
-    stamp.nanosec = int((epoch - int(epoch)) * 1E9)
-    return stamp
-
-
 class ControllerLauncher(Node):
     """Utility class to launch a controller from a launch file."""
 

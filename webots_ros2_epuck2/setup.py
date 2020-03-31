@@ -32,7 +32,7 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='Minimal example showing how to control a robot with ROS2 in Webots.',
+    description='E-puck2 driver for Webots simulated robot',
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={

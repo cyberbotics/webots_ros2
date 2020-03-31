@@ -18,7 +18,6 @@
 # ros2 run webots_ros2_epuck2 drive_calibrator --ros-args -p type:=linear -p wheel_radius:=0.021
 
 import rclpy
-import math
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rcl_interfaces.srv import SetParameters

@@ -129,3 +129,5 @@ Ground sensors come as an [optional module](http://www.e-puck.org/index.php?opti
 ``` 
 ros2 topic echo /gs1
 ```
+To put the ground sensor module, select `groundSensorsSlot` in `e-puck2` robot tree, click `+` button and find `E-puckGroundSensors` (check the image bellow).
+![e-puck2 ground sensors](./assets/ground_sensors_webots.png)

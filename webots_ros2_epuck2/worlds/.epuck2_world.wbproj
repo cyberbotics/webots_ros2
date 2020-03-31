@@ -8,5 +8,5 @@ selectionDisabled: 0
 viewpointLocked: 0
 orthographicViewHeight: 1
 textFiles: 0
-globalOptionalRendering: ContactPoints::CoordinateSystem::DistanceSensorRays
+globalOptionalRendering: DistanceSensorRays
 renderingDevicePerspectives: e-puck:camera;1;1;0;0

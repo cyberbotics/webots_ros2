@@ -16,7 +16,7 @@
 #
 # ros2 launch webots_ros2_epuck2 example_launch.py
 
-"""Launch Webots and the controller."""
+"""Launch Webots, the controller and Rviz."""
 
 import os
 import launch

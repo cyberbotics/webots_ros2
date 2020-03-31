@@ -1,4 +1,4 @@
-"""webots_ros2 package setup file."""
+"""webots_ros2_epuck package setup file."""
 
 from setuptools import setup
 

@@ -547,9 +547,9 @@ class EPuckDriver(WebotsNode):
 def main(args=None):
     rclpy.init(args=args)
 
-    epuck2_controller = EPuckDriver(args=args)
+    epuck_controller = EPuckDriver(args=args)
 
-    rclpy.spin(epuck2_controller)
+    rclpy.spin(epuck_controller)
     rclpy.shutdown()
 
 

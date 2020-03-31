@@ -15,7 +15,7 @@
 # This node helps you to calibrate wheel radius and distance between the wheels
 # by moving the robot forward and correcting wheel radius, and rotating robot and
 # correcting distance between the wheels.
-# ros2 run webots_ros2_epuck2 drive_calibrator --ros-args -p type:=linear -p wheel_radius:=0.021
+# ros2 run webots_ros2_epuck drive_calibrator --ros-args -p type:=linear -p wheel_radius:=0.021
 
 import rclpy
 from nav_msgs.msg import Odometry
@@ -55,7 +55,7 @@ class EPuckDriveCalibrator(Node):
         self.pub = self.create_publisher(Twist, '/cmd_vel', 10)
 
         # Parameter service
-        self.cli = self.create_client(SetParameters, 'epuck2/set_parameters')
+        self.cli = self.create_client(SetParameters, 'epuck/set_parameters')
         self.cli.wait_for_service(timeout_sec=1.0)
         self.set_param('wheel_distance', self.wheel_distance.value)
         self.set_param('wheel_radius', self.wheel_radius.value)
@@ -125,10 +125,10 @@ class EPuckDriveCalibrator(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    epuck2_controller = EPuckDriveCalibrator(
+    epuck_controller = EPuckDriveCalibrator(
         'epuck_drive_calibrator', args=args)
-    rclpy.spin(epuck2_controller)
-    epuck2_controller.destroy_node()
+    rclpy.spin(epuck_controller)
+    epuck_controller.destroy_node()
     rclpy.shutdown()
 
 

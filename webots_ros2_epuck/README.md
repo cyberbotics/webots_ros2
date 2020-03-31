@@ -1,7 +1,7 @@
 ## Run demo
 
 ``` 
-ros2 launch webots_ros2_epuck2 example_launch.py
+ros2 launch webots_ros2_epuck example_launch.py
 ```
 
 and you can use `teleop_twist_keyboard` in another window to control the robot:
@@ -110,7 +110,7 @@ ros2 topic echo --no-arr /odom
 You can also visualise odometry in `rviz` :
 
 ``` 
-ros2 launch webots_ros2_epuck2 example.launch.py rviz:=true
+ros2 launch webots_ros2_epuck example.launch.py rviz:=true
 ```
 
 ### Camera

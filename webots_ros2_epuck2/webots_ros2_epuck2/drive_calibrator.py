@@ -28,6 +28,13 @@ from geometry_msgs.msg import Twist
 from webots_ros2_core.math_utils import quaternion_to_euler
 
 
+DEFAULT_DISTANCE = 0.1335           # Target distance for robot to pass in meters
+# Default separation between two wheels (from e-puck website)
+DEFAULT_WHEEL_DISTANCE = 0.0552
+# Default wheel radius (from e-puck website)
+DEFAULT_WHEEL_RADIUS = 0.021
+
+
 class EPuckDriveCalibrator(Node):
     def __init__(self, name, args=None):
         super().__init__(name)
@@ -38,9 +45,11 @@ class EPuckDriveCalibrator(Node):
 
         # Parameters
         self.type = self.declare_parameter('type', 'rotation')
-        self.distance = self.declare_parameter('distance', 133.5 / 1000)
-        self.wheel_distance = self.declare_parameter('wheel_distance', 0.0552)
-        self.wheel_radius = self.declare_parameter('wheel_radius', 0.021)
+        self.distance = self.declare_parameter('distance', DEFAULT_DISTANCE)
+        self.wheel_distance = self.declare_parameter(
+            'wheel_distance', DEFAULT_WHEEL_DISTANCE)
+        self.wheel_radius = self.declare_parameter(
+            'wheel_radius', DEFAULT_WHEEL_RADIUS)
 
         # Topics
         self.create_subscription(Odometry, '/odom', self.odometry_callback, 1)

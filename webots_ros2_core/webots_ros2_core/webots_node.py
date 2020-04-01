@@ -28,6 +28,7 @@ from rosgraph_msgs.msg import Clock
 
 from rclpy.node import Node
 from rclpy.parameter import Parameter
+from builtin_interfaces.msg import Time
 
 try:
     append_webots_python_lib_to_path()
@@ -85,3 +86,9 @@ class WebotsNode(Node):
         self.step(request.value)
         response.success = True
         return response
+
+    def now(self):
+        sim_time = self.robot.getTime()
+        seconds = int(sim_time)
+        nanoseconds = int((sim_time - seconds) * 1.0e+6)
+        return Time(sec=seconds, nanosec=nanoseconds)

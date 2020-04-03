@@ -36,7 +36,7 @@ class DifferentialDriveNode(WebotsNode):
                  odometry_frame='odom',
                  robot_base_frame='base_link'
                  ):
-        super().__init__(name)
+        super().__init__(name, args)
 
         # Store config
         self._odometry_frame = odometry_frame

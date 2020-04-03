@@ -34,3 +34,9 @@ ros2 topic pub --once /cmd_vel  geometry_msgs/msg/Twist '{
   }
 }'
 ```
+
+### Visualization
+You can visualize the odometry by running RViz2 in parallel with the driver: 
+```
+ros2 launch webots_ros2_tiago tiago.launch.py rviz:=true
+```

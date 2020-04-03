@@ -45,8 +45,7 @@ def generate_launch_description():
     # Rviz node
     use_rviz = launch.substitutions.LaunchConfiguration('rviz', default=False)
     rviz_config = os.path.join(get_package_share_directory(
-        'webots_ros2_epuck'), 'resource', 'all.rviz')
-
+        'webots_ros2_tiago'), 'resource', 'odometry.rviz')
     rviz = launch_ros.actions.Node(package='rviz2', node_executable='rviz2', output='screen',
                                    arguments=[
                                        '--display-config=' + rviz_config],

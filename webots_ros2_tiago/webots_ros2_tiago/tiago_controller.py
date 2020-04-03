@@ -15,14 +15,14 @@
 """ROS2 TIAGo controller."""
 
 import rclpy
-from webots_ros2_core.differential_drive_node import DifferentialDriveNode
+from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
 DEFAULT_WHEEL_DISTANCE = 0.404
 DEFAULT_WHEEL_RADIUS = 0.1955
 
 
-class TiagoController(DifferentialDriveNode):
+class TiagoController(WebotsDifferentialDriveNode):
 
     def __init__(self, args):
         super().__init__(

@@ -22,7 +22,7 @@ from tf2_ros import StaticTransformBroadcaster
 from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan, Illuminance
 from geometry_msgs.msg import TransformStamped
 from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_table
-from webots_ros2_core.differential_drive_node import DifferentialDriveNode
+from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
 OUT_OF_RANGE = 0.0
@@ -88,7 +88,7 @@ DISTANCE_SENSOR_ANGLE = [
 ]
 
 
-class EPuckDriver(DifferentialDriveNode):
+class EPuckDriver(WebotsDifferentialDriveNode):
     def __init__(self, args):
         super().__init__('epuck_driver', args, wheel_distance=DEFAULT_WHEEL_DISTANCE,
                          wheel_radius=DEFAULT_WHEEL_RADIUS)

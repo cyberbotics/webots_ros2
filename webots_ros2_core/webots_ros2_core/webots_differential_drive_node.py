@@ -21,7 +21,7 @@ from geometry_msgs.msg import Twist, TransformStamped
 from tf2_ros import TransformBroadcaster
 
 
-class DifferentialDriveNode(WebotsNode):
+class WebotsDifferentialDriveNode(WebotsNode):
     def __init__(self,
                  name,
                  args,

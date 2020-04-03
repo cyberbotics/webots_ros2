@@ -25,12 +25,9 @@ from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_table
 from webots_ros2_core.differential_drive_node import DifferentialDriveNode
 
 
-PERIOD_MS = 64
-PERIOD_S = PERIOD_MS / 1000.0
 OUT_OF_RANGE = 0.0
-ENCODER_RESOLUTION = 1000.0
-TOF_MAX_RANGE = 0.0
-TOF_MIN_RANGE = 1.0
+TOF_MIN_RANGE = 0.0
+TOF_MAX_RANGE = 1.0
 INFRARED_MAX_RANGE = 0.04
 INFRARED_MIN_RANGE = 0.009
 GROUND_MIN_RANGE = 0.0
@@ -93,22 +90,23 @@ DISTANCE_SENSOR_ANGLE = [
 
 class EPuckDriver(DifferentialDriveNode):
     def __init__(self, args):
-        super().__init__('epuck_driver', args, wheel_separation=0.05685, wheel_diameter=0.04)
+        super().__init__('epuck_driver', args, wheel_distance=DEFAULT_WHEEL_DISTANCE,
+                         wheel_radius=DEFAULT_WHEEL_RADIUS)
 
         # Parameters
-        self.period = self.declare_parameter("period", self.timestep)
         camera_period_param = self.declare_parameter(
             "camera_period", self.timestep)
+        self.camera_period = camera_period_param.value
         self.camera_period = camera_period_param.value
 
         # Initialize IMU
         self.gyro = self.robot.getGyro('gyro')
         if self.gyro:
-            self.gyro.enable(self.period.value)
+            self.gyro.enable(self.timestep)
         else:
             self.get_logger().info('Gyroscope is not present for this e-puck version')
         self.accelerometer = self.robot.getAccelerometer('accelerometer')
-        self.accelerometer.enable(self.period.value)
+        self.accelerometer.enable(self.timestep)
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
 
         # Initialize ground sensors
@@ -119,7 +117,7 @@ class EPuckDriver(DifferentialDriveNode):
             idx = 'gs{}'.format(i)
             ground_sensor = self.robot.getDistanceSensor(idx)
             if ground_sensor:
-                ground_sensor.enable(self.period.value)
+                ground_sensor.enable(self.timestep)
                 self.ground_sensors[idx] = ground_sensor
                 self.ground_sensor_publishers[idx] = self.create_publisher(
                     Range, '/' + idx, 1)
@@ -148,7 +146,7 @@ class EPuckDriver(DifferentialDriveNode):
         self.distance_sensor_broadcasters = []
         for i in range(8):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
-            sensor.enable(self.period.value)
+            sensor.enable(self.timestep)
             sensor_publisher = self.create_publisher(
                 Range, '/ps{}'.format(i), 10)
             self.distance_sensors['ps{}'.format(i)] = sensor
@@ -176,7 +174,7 @@ class EPuckDriver(DifferentialDriveNode):
 
         self.tof_sensor = self.robot.getDistanceSensor('tof')
         if self.tof_sensor:
-            self.tof_sensor.enable(self.period.value)
+            self.tof_sensor.enable(self.timestep)
             self.tof_publisher = self.create_publisher(Range, '/tof', 1)
             self.tof_broadcaster = StaticTransformBroadcaster(self)
             tof_transform = TransformStamped()
@@ -239,7 +237,7 @@ class EPuckDriver(DifferentialDriveNode):
         self.light_sensor_broadcasters = []
         for i in range(NB_LIGHT_SENSORS):
             light_sensor = self.robot.getLightSensor(f'ls{i}')
-            light_sensor.enable(self.period.value)
+            light_sensor.enable(self.timestep)
             light_publisher = self.create_publisher(Illuminance, f'/ls{i}', 1)
             self.light_publishers.append(light_publisher)
             self.light_sensors.append(light_sensor)
@@ -275,7 +273,7 @@ class EPuckDriver(DifferentialDriveNode):
         self.laser_broadcaster.sendTransform(laser_transform)
 
         # Main loop
-        self.create_timer(self.period.value / 1000, self.step_callback)
+        self.create_timer(self.timestep / 1000, self.step_callback)
 
     def on_rgb_led_callback(self, msg, index):
         self.rgb_leds[index].set(msg.data)
@@ -285,7 +283,7 @@ class EPuckDriver(DifferentialDriveNode):
         self.binary_leds[index].set(value)
 
     def step_callback(self):
-        self.robot.step(self.period.value)
+        self.robot.step(self.timestep)
         stamp = self.now()
 
         self.publish_distance_data(stamp)
@@ -342,8 +340,8 @@ class EPuckDriver(DifferentialDriveNode):
             msg.header.stamp = stamp
             msg.header.frame_id = 'tof'
             msg.field_of_view = self.tof_sensor.getAperture()
-            msg.min_range = TOF_MAX_RANGE
-            msg.max_range = TOF_MIN_RANGE
+            msg.min_range = TOF_MIN_RANGE
+            msg.max_range = TOF_MAX_RANGE
             msg.range = dist_tof
             msg.radiation_type = Range.INFRARED
             self.tof_publisher.publish(msg)

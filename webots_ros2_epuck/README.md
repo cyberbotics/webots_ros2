@@ -131,3 +131,14 @@ ros2 topic echo /gs1
 ```
 To put the ground sensor module, select `groundSensorsSlot` in `e-puck2` robot tree, click `+` button and find `E-puckGroundSensors` (check the image bellow).
 ![e-puck2 ground sensors](./assets/ground_sensors_webots.png)
+
+### Transformations
+Dynamic transformations are only used for the odometry and you can show it as:
+```
+ros2 topic echo tf
+```
+
+All other transformations are static and they are exposed as latched topics, so you show them with the following command:
+```
+ros2 topic echo --qos-profile services_default --qos-durability transient_local tf_static
+```

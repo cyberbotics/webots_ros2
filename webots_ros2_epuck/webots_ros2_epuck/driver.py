@@ -93,6 +93,8 @@ class EPuckDriver(DifferentialDriveNode):
         super().__init__('epuck_driver', args, wheel_distance=DEFAULT_WHEEL_DISTANCE,
                          wheel_radius=DEFAULT_WHEEL_RADIUS)
 
+        self.static_transforms = []
+
         # Parameters
         camera_period_param = self.declare_parameter(
             "camera_period", self.timestep)
@@ -113,7 +115,7 @@ class EPuckDriver(DifferentialDriveNode):
         self.ground_sensors = {}
         self.ground_sensor_publishers = {}
         self.ground_sensor_broadcasters = []
-        for i in range(3):
+        for i in range(NB_GROUND_SENSORS):
             idx = 'gs{}'.format(i)
             ground_sensor = self.robot.getDistanceSensor(idx)
             if ground_sensor:
@@ -122,7 +124,6 @@ class EPuckDriver(DifferentialDriveNode):
                 self.ground_sensor_publishers[idx] = self.create_publisher(
                     Range, '/' + idx, 1)
 
-                ground_sensor_broadcaster = StaticTransformBroadcaster(self)
                 ground_sensor_transform = TransformStamped()
                 ground_sensor_transform.header.stamp = self.now()
                 ground_sensor_transform.header.frame_id = "base_link"
@@ -132,10 +133,7 @@ class EPuckDriver(DifferentialDriveNode):
                 ground_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER - 0.005
                 ground_sensor_transform.transform.translation.y = 0.009 - i * 0.009
                 ground_sensor_transform.transform.translation.z = 0.0
-                ground_sensor_broadcaster.sendTransform(
-                    ground_sensor_transform)
-                self.ground_sensor_broadcasters.append(
-                    ground_sensor_broadcaster)
+                self.static_transforms.append(ground_sensor_transform)
             else:
                 self.get_logger().info(
                     'Ground sensor `{}` is not present for this e-puck version'.format(idx))
@@ -143,8 +141,7 @@ class EPuckDriver(DifferentialDriveNode):
         # Intialize distance sensors
         self.distance_sensor_publishers = {}
         self.distance_sensors = {}
-        self.distance_sensor_broadcasters = []
-        for i in range(8):
+        for i in range(NB_INFRARED_SENSORS):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.timestep)
             sensor_publisher = self.create_publisher(
@@ -153,7 +150,6 @@ class EPuckDriver(DifferentialDriveNode):
             self.distance_sensor_publishers['ps{}'.format(
                 i)] = sensor_publisher
 
-            distance_sensor_broadcaster = StaticTransformBroadcaster(self)
             distance_sensor_transform = TransformStamped()
             distance_sensor_transform.header.stamp = self.now()
             distance_sensor_transform.header.frame_id = "base_link"
@@ -165,10 +161,8 @@ class EPuckDriver(DifferentialDriveNode):
             distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
                 sin(DISTANCE_SENSOR_ANGLE[i])
             distance_sensor_transform.transform.translation.z = 0.0
-            distance_sensor_broadcaster.sendTransform(
+            self.static_transforms.append(
                 distance_sensor_transform)
-            self.distance_sensor_broadcasters.append(
-                distance_sensor_broadcaster)
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
@@ -176,7 +170,6 @@ class EPuckDriver(DifferentialDriveNode):
         if self.tof_sensor:
             self.tof_sensor.enable(self.timestep)
             self.tof_publisher = self.create_publisher(Range, '/tof', 1)
-            self.tof_broadcaster = StaticTransformBroadcaster(self)
             tof_transform = TransformStamped()
             tof_transform.header.stamp = self.now()
             tof_transform.header.frame_id = "base_link"
@@ -188,7 +181,7 @@ class EPuckDriver(DifferentialDriveNode):
             tof_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER
             tof_transform.transform.translation.y = 0.0
             tof_transform.transform.translation.z = 0.0
-            self.tof_broadcaster.sendTransform(tof_transform)
+            self.static_transforms.append(tof_transform)
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
 
@@ -234,7 +227,6 @@ class EPuckDriver(DifferentialDriveNode):
         # Initialize Light sensors
         self.light_sensors = []
         self.light_publishers = []
-        self.light_sensor_broadcasters = []
         for i in range(NB_LIGHT_SENSORS):
             light_sensor = self.robot.getLightSensor(f'ls{i}')
             light_sensor.enable(self.timestep)
@@ -242,7 +234,6 @@ class EPuckDriver(DifferentialDriveNode):
             self.light_publishers.append(light_publisher)
             self.light_sensors.append(light_sensor)
 
-            light_sensor_broadcaster = StaticTransformBroadcaster(self)
             light_transform = TransformStamped()
             light_transform.header.stamp = self.now()
             light_transform.header.frame_id = "base_link"
@@ -254,11 +245,9 @@ class EPuckDriver(DifferentialDriveNode):
             light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
                 sin(DISTANCE_SENSOR_ANGLE[i])
             light_transform.transform.translation.z = 0.0
-            light_sensor_broadcaster.sendTransform(light_transform)
-            self.light_sensor_broadcasters.append(light_sensor_broadcaster)
+            self.static_transforms.append(light_transform)
 
         # Static tf broadcaster: Laser
-        self.laser_broadcaster = StaticTransformBroadcaster(self)
         laser_transform = TransformStamped()
         laser_transform.header.stamp = self.now()
         laser_transform.header.frame_id = "base_link"
@@ -270,7 +259,10 @@ class EPuckDriver(DifferentialDriveNode):
         laser_transform.transform.translation.x = 0.0
         laser_transform.transform.translation.y = 0.0
         laser_transform.transform.translation.z = 0.0
-        self.laser_broadcaster.sendTransform(laser_transform)
+        self.static_transforms.append(laser_transform)
+
+        self.static_broadcaster = StaticTransformBroadcaster(self)
+        self.static_broadcaster.sendTransform(self.static_transforms)
 
         # Main loop
         self.create_timer(self.timestep / 1000, self.step_callback)

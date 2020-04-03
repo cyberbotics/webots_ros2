@@ -34,19 +34,34 @@ def generate_launch_description():
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
     # Controller node
-    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
+    synchronization = launch.substitutions.LaunchConfiguration(
+        'synchronization', default=False)
     controller = ControllerLauncher(package='webots_ros2_tiago',
                                     node_executable='tiago_controller',
-                                    parameters=[{'synchronization': synchronization}],
+                                    parameters=[
+                                        {'synchronization': synchronization}],
                                     output='screen')
+
+    # Rviz node
+    use_rviz = launch.substitutions.LaunchConfiguration('rviz', default=False)
+    rviz_config = os.path.join(get_package_share_directory(
+        'webots_ros2_epuck'), 'resource', 'all.rviz')
+
+    rviz = launch_ros.actions.Node(package='rviz2', node_executable='rviz2', output='screen',
+                                   arguments=[
+                                       '--display-config=' + rviz_config],
+                                   condition=launch.conditions.IfCondition(use_rviz))
+
     return launch.LaunchDescription([
         webots,
         controller,
+        rviz,
         # Shutdown launch when Webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
-                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+                on_exit=[launch.actions.EmitEvent(
+                    event=launch.events.Shutdown())],
             )
         ),
     ])

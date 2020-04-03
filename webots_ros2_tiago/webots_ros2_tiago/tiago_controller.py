@@ -15,48 +15,36 @@
 """ROS2 TIAGo controller."""
 
 from webots_ros2_core.webots_node import WebotsNode
-
+from webots_ros2_core.differential_drive_node import DifferentialDriveNode
 import rclpy
 
 from geometry_msgs.msg import Twist
 
+DEFAULT_WHEEL_DISTANCE = 0.404
+DEFAULT_WHEEL_RADIUS = 0.1955
 
-class TiagoController(WebotsNode):
+
+class TiagoController(DifferentialDriveNode):
 
     def __init__(self, args):
-        super().__init__('tiago_controller', args)
-        self.leftMotor = self.robot.getMotor('wheel_left_joint')
-        self.rightMotor = self.robot.getMotor('wheel_right_joint')
-        self.leftMotor.setPosition(float('inf'))
-        self.rightMotor.setPosition(float('inf'))
-        self.leftMotor.setVelocity(0)
-        self.rightMotor.setVelocity(0)
-        self.motorMaxSpeed = self.leftMotor.getMaxVelocity()
-        self.cmdVelSubscriber = self.create_subscription(Twist, 'cmd_vel',
-                                                         self.cmd_vel_callback,
-                                                         10)
-
-    def cmd_vel_callback(self, msg):
-        wheelGap = 0.404  # in meter
-        wheelRadius = 0.1955  # in meter
-        leftSpeed = ((2.0 * msg.linear.x - msg.angular.z * wheelGap) /
-                     (2.0 * wheelRadius))
-        rightSpeed = ((2.0 * msg.linear.x + msg.angular.z * wheelGap) /
-                      (2.0 * wheelRadius))
-        leftSpeed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed,
-                                                leftSpeed))
-        rightSpeed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed,
-                                                 rightSpeed))
-        self.leftMotor.setVelocity(leftSpeed)
-        self.rightMotor.setVelocity(rightSpeed)
+        super().__init__(
+            'epuck_driver',
+            args,
+            wheel_distance=DEFAULT_WHEEL_DISTANCE,
+            wheel_radius=DEFAULT_WHEEL_RADIUS,
+            left_joint='wheel_left_joint',
+            right_joint='wheel_right_joint',
+            left_encoder='wheel_left_joint_sensor',
+            right_encoder='wheel_right_joint_sensor',
+        )
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    tiagoController = TiagoController(args=args)
+    tiago_controller = TiagoController(args=args)
 
-    rclpy.spin(tiagoController)
+    rclpy.spin(tiago_controller)
     rclpy.shutdown()
 
 

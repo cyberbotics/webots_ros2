@@ -18,21 +18,16 @@ from functools import partial
 from math import pi, cos, sin
 import rclpy
 from std_msgs.msg import Bool, Int32
-from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
+from tf2_ros import StaticTransformBroadcaster
 from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan, Illuminance
-from geometry_msgs.msg import Twist, TransformStamped
-from nav_msgs.msg import Odometry
-from webots_ros2_core.webots_node import WebotsNode
+from geometry_msgs.msg import TransformStamped
 from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_table
-from rcl_interfaces.msg import SetParametersResult
+from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
-PERIOD_MS = 64
-PERIOD_S = PERIOD_MS / 1000.0
 OUT_OF_RANGE = 0.0
-ENCODER_RESOLUTION = 1000.0
-TOF_MAX_RANGE = 0.0
-TOF_MIN_RANGE = 1.0
+TOF_MIN_RANGE = 0.0
+TOF_MAX_RANGE = 1.0
 INFRARED_MAX_RANGE = 0.04
 INFRARED_MIN_RANGE = 0.009
 GROUND_MIN_RANGE = 0.0
@@ -93,65 +88,42 @@ DISTANCE_SENSOR_ANGLE = [
 ]
 
 
-class EPuckDriver(WebotsNode):
+class EPuckDriver(WebotsDifferentialDriveNode):
     def __init__(self, args):
-        super().__init__('epuck_driver', args)
+        super().__init__('epuck_driver', args, wheel_distance=DEFAULT_WHEEL_DISTANCE,
+                         wheel_radius=DEFAULT_WHEEL_RADIUS)
+
+        self.static_transforms = []
 
         # Parameters
-        wheel_distance_param = self.declare_parameter("wheel_distance", 0.0552)
-        wheel_radius_param = self.declare_parameter("wheel_radius", 0.021)
         camera_period_param = self.declare_parameter(
             "camera_period", self.timestep)
-        self.period = self.declare_parameter("period", self.timestep)
         self.camera_period = camera_period_param.value
-        self.wheel_radius = wheel_radius_param.value
-        self.wheel_distance = wheel_distance_param.value
-        self.set_parameters_callback(self.on_param_changed)
-
-        # Initialize motors
-        self.left_motor = self.robot.getMotor('left wheel motor')
-        self.right_motor = self.robot.getMotor('right wheel motor')
-        self.left_motor.setPosition(float('inf'))
-        self.right_motor.setPosition(float('inf'))
-        self.left_motor.setVelocity(0)
-        self.right_motor.setVelocity(0)
-        self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 1)
-        self.get_logger().info('EPuck Initialized')
-
-        # Initialize odometry
-        self.reset_odometry()
-        self.left_wheel_sensor = self.robot.getPositionSensor(
-            'left wheel sensor')
-        self.right_wheel_sensor = self.robot.getPositionSensor(
-            'right wheel sensor')
-        self.left_wheel_sensor.enable(self.period.value)
-        self.right_wheel_sensor.enable(self.period.value)
-        self.odometry_publisher = self.create_publisher(Odometry, '/odom', 1)
+        self.camera_period = camera_period_param.value
 
         # Initialize IMU
         self.gyro = self.robot.getGyro('gyro')
         if self.gyro:
-            self.gyro.enable(self.period.value)
+            self.gyro.enable(self.timestep)
         else:
             self.get_logger().info('Gyroscope is not present for this e-puck version')
         self.accelerometer = self.robot.getAccelerometer('accelerometer')
-        self.accelerometer.enable(self.period.value)
+        self.accelerometer.enable(self.timestep)
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
 
         # Initialize ground sensors
         self.ground_sensors = {}
         self.ground_sensor_publishers = {}
         self.ground_sensor_broadcasters = []
-        for i in range(3):
+        for i in range(NB_GROUND_SENSORS):
             idx = 'gs{}'.format(i)
             ground_sensor = self.robot.getDistanceSensor(idx)
             if ground_sensor:
-                ground_sensor.enable(self.period.value)
+                ground_sensor.enable(self.timestep)
                 self.ground_sensors[idx] = ground_sensor
                 self.ground_sensor_publishers[idx] = self.create_publisher(
                     Range, '/' + idx, 1)
 
-                ground_sensor_broadcaster = StaticTransformBroadcaster(self)
                 ground_sensor_transform = TransformStamped()
                 ground_sensor_transform.header.stamp = self.now()
                 ground_sensor_transform.header.frame_id = "base_link"
@@ -161,10 +133,7 @@ class EPuckDriver(WebotsNode):
                 ground_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER - 0.005
                 ground_sensor_transform.transform.translation.y = 0.009 - i * 0.009
                 ground_sensor_transform.transform.translation.z = 0.0
-                ground_sensor_broadcaster.sendTransform(
-                    ground_sensor_transform)
-                self.ground_sensor_broadcasters.append(
-                    ground_sensor_broadcaster)
+                self.static_transforms.append(ground_sensor_transform)
             else:
                 self.get_logger().info(
                     'Ground sensor `{}` is not present for this e-puck version'.format(idx))
@@ -172,17 +141,15 @@ class EPuckDriver(WebotsNode):
         # Intialize distance sensors
         self.distance_sensor_publishers = {}
         self.distance_sensors = {}
-        self.distance_sensor_broadcasters = []
-        for i in range(8):
+        for i in range(NB_INFRARED_SENSORS):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
-            sensor.enable(self.period.value)
+            sensor.enable(self.timestep)
             sensor_publisher = self.create_publisher(
                 Range, '/ps{}'.format(i), 10)
             self.distance_sensors['ps{}'.format(i)] = sensor
             self.distance_sensor_publishers['ps{}'.format(
                 i)] = sensor_publisher
 
-            distance_sensor_broadcaster = StaticTransformBroadcaster(self)
             distance_sensor_transform = TransformStamped()
             distance_sensor_transform.header.stamp = self.now()
             distance_sensor_transform.header.frame_id = "base_link"
@@ -194,18 +161,15 @@ class EPuckDriver(WebotsNode):
             distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
                 sin(DISTANCE_SENSOR_ANGLE[i])
             distance_sensor_transform.transform.translation.z = 0.0
-            distance_sensor_broadcaster.sendTransform(
+            self.static_transforms.append(
                 distance_sensor_transform)
-            self.distance_sensor_broadcasters.append(
-                distance_sensor_broadcaster)
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
         self.tof_sensor = self.robot.getDistanceSensor('tof')
         if self.tof_sensor:
-            self.tof_sensor.enable(self.period.value)
+            self.tof_sensor.enable(self.timestep)
             self.tof_publisher = self.create_publisher(Range, '/tof', 1)
-            self.tof_broadcaster = StaticTransformBroadcaster(self)
             tof_transform = TransformStamped()
             tof_transform.header.stamp = self.now()
             tof_transform.header.frame_id = "base_link"
@@ -217,7 +181,7 @@ class EPuckDriver(WebotsNode):
             tof_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER
             tof_transform.transform.translation.y = 0.0
             tof_transform.transform.translation.z = 0.0
-            self.tof_broadcaster.sendTransform(tof_transform)
+            self.static_transforms.append(tof_transform)
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
 
@@ -263,15 +227,13 @@ class EPuckDriver(WebotsNode):
         # Initialize Light sensors
         self.light_sensors = []
         self.light_publishers = []
-        self.light_sensor_broadcasters = []
         for i in range(NB_LIGHT_SENSORS):
             light_sensor = self.robot.getLightSensor(f'ls{i}')
-            light_sensor.enable(self.period.value)
+            light_sensor.enable(self.timestep)
             light_publisher = self.create_publisher(Illuminance, f'/ls{i}', 1)
             self.light_publishers.append(light_publisher)
             self.light_sensors.append(light_sensor)
 
-            light_sensor_broadcaster = StaticTransformBroadcaster(self)
             light_transform = TransformStamped()
             light_transform.header.stamp = self.now()
             light_transform.header.frame_id = "base_link"
@@ -283,11 +245,9 @@ class EPuckDriver(WebotsNode):
             light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
                 sin(DISTANCE_SENSOR_ANGLE[i])
             light_transform.transform.translation.z = 0.0
-            light_sensor_broadcaster.sendTransform(light_transform)
-            self.light_sensor_broadcasters.append(light_sensor_broadcaster)
+            self.static_transforms.append(light_transform)
 
         # Static tf broadcaster: Laser
-        self.laser_broadcaster = StaticTransformBroadcaster(self)
         laser_transform = TransformStamped()
         laser_transform.header.stamp = self.now()
         laser_transform.header.frame_id = "base_link"
@@ -299,13 +259,13 @@ class EPuckDriver(WebotsNode):
         laser_transform.transform.translation.x = 0.0
         laser_transform.transform.translation.y = 0.0
         laser_transform.transform.translation.z = 0.0
-        self.laser_broadcaster.sendTransform(laser_transform)
+        self.static_transforms.append(laser_transform)
+
+        self.static_broadcaster = StaticTransformBroadcaster(self)
+        self.static_broadcaster.sendTransform(self.static_transforms)
 
         # Main loop
-        self.create_timer(self.period.value / 1000, self.step_callback)
-
-        # Transforms
-        self.tf_broadcaster = TransformBroadcaster(self)
+        self.create_timer(self.timestep / 1000, self.step_callback)
 
     def on_rgb_led_callback(self, msg, index):
         self.rgb_leds[index].set(msg.data)
@@ -314,31 +274,10 @@ class EPuckDriver(WebotsNode):
         value = 1 if msg.data else 0
         self.binary_leds[index].set(value)
 
-    def reset_odometry(self):
-        self.prev_left_wheel_ticks = 0
-        self.prev_right_wheel_ticks = 0
-        self.prev_position = (0.0, 0.0)
-        self.prev_angle = 0.0
-
-    def on_param_changed(self, params):
-        result = SetParametersResult()
-        result.successful = True
-
-        for param in params:
-            if param.name == "wheel_radius":
-                self.reset_odometry()
-                self.wheel_radius = param.value
-            elif param.name == "wheel_distance":
-                self.reset_odometry()
-                self.wheel_distance = param.value
-
-        return result
-
     def step_callback(self):
-        self.robot.step(self.period.value)
+        self.robot.step(self.timestep)
         stamp = self.now()
 
-        self.publish_odometry_data(stamp)
         self.publish_distance_data(stamp)
         self.publish_light_data(stamp)
         self.publish_ground_sensor_data(stamp)
@@ -355,83 +294,6 @@ class EPuckDriver(WebotsNode):
                 self.ground_sensors[idx].getValue(), GROUND_TABLE)
             msg.radiation_type = Range.INFRARED
             self.ground_sensor_publishers[idx].publish(msg)
-
-    def cmd_vel_callback(self, twist):
-        self.get_logger().info('Message received')
-        left_velocity = (2.0 * twist.linear.x - twist.angular.z *
-                         self.wheel_distance) / (2.0 * self.wheel_radius)
-        right_velocity = (2.0 * twist.linear.x + twist.angular.z *
-                          self.wheel_distance) / (2.0 * self.wheel_radius)
-        self.left_motor.setVelocity(left_velocity)
-        self.right_motor.setVelocity(right_velocity)
-
-    def publish_odometry_data(self, stamp):
-        encoder_period_s = self.period.value / 1000.0
-        left_wheel_ticks = self.left_wheel_sensor.getValue()
-        right_wheel_ticks = self.right_wheel_sensor.getValue()
-
-        # Calculate velocities
-        v_left_rad = (left_wheel_ticks -
-                      self.prev_left_wheel_ticks) / encoder_period_s
-        v_right_rad = (right_wheel_ticks -
-                       self.prev_right_wheel_ticks) / encoder_period_s
-        v_left = v_left_rad * self.wheel_radius
-        v_right = v_right_rad * self.wheel_radius
-        v = (v_left + v_right) / 2
-        omega = (v_right - v_left) / self.wheel_distance
-
-        # Calculate position & angle
-        # Fourth order Runge - Kutta
-        # Reference: https://www.cs.cmu.edu/~16311/s07/labs/NXTLabs/Lab%203.html
-        k00 = v * cos(self.prev_angle)
-        k01 = v * sin(self.prev_angle)
-        k02 = omega
-        k10 = v * cos(self.prev_angle + encoder_period_s * k02 / 2)
-        k11 = v * sin(self.prev_angle + encoder_period_s * k02 / 2)
-        k12 = omega
-        k20 = v * cos(self.prev_angle + encoder_period_s * k12 / 2)
-        k21 = v * sin(self.prev_angle + encoder_period_s * k12 / 2)
-        k22 = omega
-        k30 = v * cos(self.prev_angle + encoder_period_s * k22 / 2)
-        k31 = v * sin(self.prev_angle + encoder_period_s * k22 / 2)
-        k32 = omega
-        position = [
-            self.prev_position[0] + (encoder_period_s / 6) *
-            (k00 + 2 * (k10 + k20) + k30),
-            self.prev_position[1] + (encoder_period_s / 6) *
-            (k01 + 2 * (k11 + k21) + k31)
-        ]
-        angle = self.prev_angle + \
-            (encoder_period_s / 6) * (k02 + 2 * (k12 + k22) + k32)
-
-        # Update variables
-        self.prev_position = position.copy()
-        self.prev_angle = angle
-        self.prev_left_wheel_ticks = left_wheel_ticks
-        self.prev_right_wheel_ticks = right_wheel_ticks
-
-        # Pack & publish odometry
-        msg = Odometry()
-        msg.header.stamp = stamp
-        msg.header.frame_id = 'odom'
-        msg.child_frame_id = 'base_link'
-        msg.twist.twist.linear.x = v
-        msg.twist.twist.angular.z = omega
-        msg.pose.pose.position.x = position[0]
-        msg.pose.pose.position.y = position[1]
-        msg.pose.pose.orientation = euler_to_quaternion(0, 0, angle)
-        self.odometry_publisher.publish(msg)
-
-        # Pack & publish transforms
-        tf = TransformStamped()
-        tf.header.stamp = stamp
-        tf.header.frame_id = 'odom'
-        tf.child_frame_id = 'base_link'
-        tf.transform.translation.x = position[0]
-        tf.transform.translation.y = position[1]
-        tf.transform.translation.z = 0.0
-        tf.transform.rotation = euler_to_quaternion(0, 0, angle)
-        self.tf_broadcaster.sendTransform(tf)
 
     def publish_light_data(self, stamp):
         for light_publisher, light_sensor in zip(self.light_publishers, self.light_sensors):
@@ -470,8 +332,8 @@ class EPuckDriver(WebotsNode):
             msg.header.stamp = stamp
             msg.header.frame_id = 'tof'
             msg.field_of_view = self.tof_sensor.getAperture()
-            msg.min_range = TOF_MAX_RANGE
-            msg.max_range = TOF_MIN_RANGE
+            msg.min_range = TOF_MIN_RANGE
+            msg.max_range = TOF_MAX_RANGE
             msg.range = dist_tof
             msg.radiation_type = Range.INFRARED
             self.tof_publisher.publish(msg)

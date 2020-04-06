@@ -53,6 +53,8 @@ def generate_launch_description():
                 arguments=['--display-config=' + rviz_config],
                 condition=launch.conditions.IfCondition(use_rviz))
 
+    # https://raw.githubusercontent.com/ros-planning/navigation2/eloquent-devel/doc/architecture/navigation_overview.png
+
     # Launch descriptor
     launch_entities = [webots,
                        controller,

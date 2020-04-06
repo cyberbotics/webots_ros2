@@ -38,7 +38,8 @@ setup(
     entry_points={
         'console_scripts': [
             'driver = webots_ros2_epuck.driver:main',
-            'drive_calibrator = webots_ros2_epuck.drive_calibrator:main'
+            'drive_calibrator = webots_ros2_epuck.drive_calibrator:main',
+            'simple_mapper = webots_ros2_epuck.simple_mapper:main'
         ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }

@@ -21,11 +21,12 @@
 import os
 import launch
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, EmitEvent
+from launch.actions import RegisterEventHandler, EmitEvent, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from webots_ros2_core.utils import ControllerLauncher
 from ament_index_python.packages import get_package_share_directory
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
@@ -54,11 +55,20 @@ def generate_launch_description():
                 condition=launch.conditions.IfCondition(use_rviz))
 
     # https://raw.githubusercontent.com/ros-planning/navigation2/eloquent-devel/doc/architecture/navigation_overview.png
+    use_nav = LaunchConfiguration('nav', default=False)
+    nav2 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'nav2_navigation_launch.py')
+        ),
+        launch_arguments={'params_file': '/home/lukic/ros2_tooling/src/webots_ros2/webots_ros2_epuck/resource/nav2_params.yaml'}.items(),
+        condition=launch.conditions.IfCondition(use_nav)
+    )
 
     # Launch descriptor
     launch_entities = [webots,
                        controller,
                        rviz,
+                       nav2,
 
                        # Shutdown launch when Webots exits.
                        RegisterEventHandler(

@@ -38,17 +38,17 @@ controller_server:
     FollowPath.debug_trajectory_details: True
     FollowPath.min_vel_x: 0.0
     FollowPath.min_vel_y: 0.0
-    FollowPath.max_vel_x: 0.26
+    FollowPath.max_vel_x: 0.1
     FollowPath.max_vel_y: 0.0
     FollowPath.max_vel_theta: 1.0
     FollowPath.min_speed_xy: 0.0
-    FollowPath.max_speed_xy: 0.26
+    FollowPath.max_speed_xy: 100.0
     FollowPath.min_speed_theta: 0.0
     # Add high threshold velocity for turtlebot 3 issue.
     # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-    FollowPath.acc_lim_x: 9999.9
-    FollowPath.acc_lim_y: 9999.9
-    FollowPath.acc_lim_theta: 9999.9
+    FollowPath.acc_lim_x: 9.9
+    FollowPath.acc_lim_y: 9.9
+    FollowPath.acc_lim_theta: 9.9
     FollowPath.decel_lim_x: -2.5
     FollowPath.decel_lim_y: 0.0
     FollowPath.decel_lim_theta: -3.2
@@ -59,7 +59,7 @@ controller_server:
     FollowPath.linear_granularity: 0.05
     FollowPath.angular_granularity: 0.025
     FollowPath.transform_tolerance: 0.2
-    FollowPath.xy_goal_tolerance: 0.25
+    FollowPath.xy_goal_tolerance: 0.025
     FollowPath.trans_stopped_velocity: 0.25
     FollowPath.short_circuit_trajectory_evaluation: True
     FollowPath.stateful: True
@@ -86,19 +86,19 @@ local_costmap:
       use_sim_time: True
       global_frame: odom
       rolling_window: true
-      width: 3
-      height: 3
-      resolution: 0.05
+      width: 1
+      height: 1
+      resolution: 0.01
       plugin_names: ["obstacle_layer", "inflation_layer"]
       plugin_types: ["nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
-      robot_radius: 0.22
+      robot_radius: 0.035
       inflation_layer:
         cost_scaling_factor: 3.0
       obstacle_layer:
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scan1
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -124,13 +124,13 @@ global_costmap:
       use_sim_time: True
       plugin_names: ["static_layer", "obstacle_layer", "inflation_layer"]
       plugin_types: ["nav2_costmap_2d::StaticLayer", "nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
-      robot_radius: 0.22
-      resolution: 0.05
+      robot_radius: 0.035
+      resolution: 0.01
       obstacle_layer:
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scan1
           max_obstacle_height: 2.0
           clearing: True
           marking: True

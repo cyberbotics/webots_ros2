@@ -26,7 +26,7 @@ bt_navigator_rclcpp_node:
 controller_server:
   ros__parameters:
     BaseObstacle:
-      scale: 0.02
+      scale: 0.06
       sum_scores: false
     BaseObstacle/class: BaseObstacle
     GoalAlign:
@@ -47,7 +47,7 @@ controller_server:
     PathAlign/class: PathAlign
     PathDist:
       aggregation_type: last
-      scale: 32.0
+      scale: 0.0
     PathDist/class: PathDist
     RotateToGoal:
       scale: 32.0
@@ -65,15 +65,15 @@ controller_server:
     - PathDist
     - GoalDist
     debug_trajectory_details: true
-    decel_lim_theta: -3.2
-    decel_lim_x: -2.5
+    decel_lim_theta: -1.2
+    decel_lim_x: -0.5
     decel_lim_y: 0.0
     discretize_by_time: false
     goal_checker_name: dwb_plugins::SimpleGoalChecker
     local_controller_plugin: dwb_core::DWBLocalPlanner
-    max_speed_xy: 0.08
+    max_speed_xy: 0.04
     max_vel_theta: 1.0
-    max_vel_x: 0.08
+    max_vel_x: 0.04
     max_vel_y: 0.0
     min_speed_theta: 0.0
     min_speed_xy: 0.0
@@ -94,13 +94,13 @@ controller_server:
     trajectory_generator_name: dwb_plugins::StandardTrajectoryGenerator
     transform_tolerance: 0.02
     use_sim_time: true
-    vx_samples: 20
+    vx_samples: 10
     vy_samples: 5
     xy_goal_tolerance: 0.025
     yaw_goal_tolerance: 0.25
     short_circuit_trajectory_evaluation: True
-    trans_stopped_velocity: 0.25
-    slowing_factor: 5.0
+    trans_stopped_velocity: 0.0025
+    slowing_factor: 2.0
     lookahead_time: -1.0
     stateful: True
 
@@ -111,23 +111,24 @@ controller_server_rclcpp_node:
 local_costmap:
   local_costmap:
     ros__parameters:
-      update_frequency: 5.0
-      publish_frequency: 2.0
+      update_frequency: 20.0
+      publish_frequency: 10.0
       robot_base_frame: base_link
       use_sim_time: True
       global_frame: odom
       rolling_window: True
-      width: 3
-      height: 3
+      width: 1
+      height: 1
       resolution: 0.01
+      transform_tolerance: 0.02
       plugin_names: ["obstacle_layer", "inflation_layer"]
       plugin_types:
         ["nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
       robot_radius: 0.035
       inflation_layer:
-        cost_scaling_factor: 3.0
+        cost_scaling_factor: 30.0
       obstacle_layer:
-        enabled: False
+        enabled: true
         observation_sources: scan
         scan:
           topic: /scan
@@ -199,3 +200,22 @@ planner_server_rclcpp_node:
 robot_state_publisher:
   ros__parameters:
     use_sim_time: True
+
+recoveries_server:
+  ros__parameters:
+    costmap_topic: local_costmap/costmap_raw
+    cycle_frequency: 10.0
+    footprint_topic: local_costmap/published_footprint
+    max_rotational_vel: 0.4
+    min_rotational_vel: 0.2
+    plugin_names:
+    - Spin
+    - BackUp
+    - Wait
+    plugin_types:
+    - nav2_recoveries/Spin
+    - nav2_recoveries/BackUp
+    - nav2_recoveries/Wait
+    rotational_acc_lim: 3.2
+    simulate_ahead_time: 2.0
+    use_sim_time: true

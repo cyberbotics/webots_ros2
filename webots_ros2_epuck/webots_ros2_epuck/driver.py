@@ -340,6 +340,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
+        laser_dists = [OUT_OF_RANGE if dist > INFRARED_MAX_RANGE else dist for dist in dists]
         msg = LaserScan()
         msg.header.frame_id = 'laser_scanner'
         msg.header.stamp = stamp
@@ -347,29 +348,29 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180
         msg.range_min = SENSOR_DIST_FROM_CENTER + INFRARED_MIN_RANGE
-        msg.range_max = SENSOR_DIST_FROM_CENTER + INFRARED_MAX_RANGE
+        msg.range_max = SENSOR_DIST_FROM_CENTER + TOF_MAX_RANGE
         msg.ranges = [
-            dists[3] + SENSOR_DIST_FROM_CENTER,     # -150
-            OUT_OF_RANGE,                           # -135
-            OUT_OF_RANGE,                           # -120
-            OUT_OF_RANGE,                           # -105
-            dists[2] + SENSOR_DIST_FROM_CENTER,     # -90
-            OUT_OF_RANGE,                           # -75
-            OUT_OF_RANGE,                           # -60
-            dists[1] + SENSOR_DIST_FROM_CENTER,     # -45
-            OUT_OF_RANGE,                           # -30
-            dists[0] + SENSOR_DIST_FROM_CENTER,     # -15
-            OUT_OF_RANGE,                           # 0
-            dists[7] + SENSOR_DIST_FROM_CENTER,     # 15
-            OUT_OF_RANGE,                           # 30
-            dists[6] + SENSOR_DIST_FROM_CENTER,     # 45
-            OUT_OF_RANGE,                           # 60
-            OUT_OF_RANGE,                           # 75
-            dists[5] + SENSOR_DIST_FROM_CENTER,     # 90
-            OUT_OF_RANGE,                           # 105
-            OUT_OF_RANGE,                           # 120
-            OUT_OF_RANGE,                           # 135
-            dists[4] + SENSOR_DIST_FROM_CENTER,     # 150
+            laser_dists[3] + SENSOR_DIST_FROM_CENTER,   # -150
+            OUT_OF_RANGE,                               # -135
+            OUT_OF_RANGE,                               # -120
+            OUT_OF_RANGE,                               # -105
+            laser_dists[2] + SENSOR_DIST_FROM_CENTER,   # -90
+            OUT_OF_RANGE,                               # -75
+            OUT_OF_RANGE,                               # -60
+            laser_dists[1] + SENSOR_DIST_FROM_CENTER,   # -45
+            OUT_OF_RANGE,                               # -30
+            laser_dists[0] + SENSOR_DIST_FROM_CENTER,   # -15
+            dist_tof + SENSOR_DIST_FROM_CENTER,         # 0
+            laser_dists[7] + SENSOR_DIST_FROM_CENTER,   # 15
+            OUT_OF_RANGE,                               # 30
+            laser_dists[6] + SENSOR_DIST_FROM_CENTER,   # 45
+            OUT_OF_RANGE,                               # 60
+            OUT_OF_RANGE,                               # 75
+            laser_dists[5] + SENSOR_DIST_FROM_CENTER,   # 90
+            OUT_OF_RANGE,                               # 105
+            OUT_OF_RANGE,                               # 120
+            OUT_OF_RANGE,                               # 135
+            laser_dists[4] + SENSOR_DIST_FROM_CENTER,   # 150
         ]
         self.laser_publisher.publish(msg)
 

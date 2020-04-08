@@ -50,17 +50,25 @@ def generate_launch_description():
     rviz_config = os.path.join(get_package_share_directory(
         'webots_ros2_epuck'), 'resource', 'all.rviz')
 
-    rviz = Node(package='rviz2', node_executable='rviz2', output='screen',
+    rviz = Node(package='rviz2', node_executable='rviz2', output='log',
                 arguments=['--display-config=' + rviz_config],
                 condition=launch.conditions.IfCondition(use_rviz))
 
-    # https://raw.githubusercontent.com/ros-planning/navigation2/eloquent-devel/doc/architecture/navigation_overview.png
+    # Navigation
     use_nav = LaunchConfiguration('nav', default=False)
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'nav2_navigation_launch.py')
         ),
-        launch_arguments={'params_file': '/home/lukic/ros2_tooling/src/webots_ros2/webots_ros2_epuck/resource/nav2_params.yaml'}.items(),
+        launch_arguments={
+            'params_file': '/home/lukic/ros2_tooling/src/webots_ros2/webots_ros2_epuck/resource/nav2_params.yaml'}.items(),
+        condition=launch.conditions.IfCondition(use_nav)
+    )
+    simple_mapper = Node(
+        package='webots_ros2_epuck',
+        node_executable='simple_mapper',
+        output='screen',
+        parameters=[{'use_sim_time': True}],
         condition=launch.conditions.IfCondition(use_nav)
     )
 
@@ -69,6 +77,7 @@ def generate_launch_description():
                        controller,
                        rviz,
                        nav2,
+                       simple_mapper,
 
                        # Shutdown launch when Webots exits.
                        RegisterEventHandler(

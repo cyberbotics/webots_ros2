@@ -138,7 +138,32 @@ Dynamic transformations are only used for the odometry and you can show it as:
 ros2 topic echo tf
 ```
 
-All other transformations are static and they are exposed as latched topics, so you show them with the following command:
+All other transformations are static and they are exposed as latched topics, so you can show them with the following command:
 ```
 ros2 topic echo --qos-profile services_default --qos-durability transient_local tf_static
+```
+
+### Navigation
+https://raw.githubusercontent.com/ros-planning/navigation2/eloquent-devel/doc/architecture/navigation_overview.png
+
+
+```
+ros2 launch webots_ros2_epuck example_launch.py rviz:=true nav:=true
+```
+
+
+or you without RViz2 you can just publish a desired pose:
+```
+ros2 topic pub -1 /goal_pose geometry_msgs/PoseStamped \"
+pose:
+  position:
+    x: 0.3
+    y: 0.0
+    z: 0.0
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+"
 ```

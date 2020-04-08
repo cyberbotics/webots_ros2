@@ -7,27 +7,8 @@ from geometry_msgs.msg import TransformStamped
 from tf2_ros import StaticTransformBroadcaster, TransformBroadcaster
 
 
-# [ERROR] [controller_server]: No valid trajectories out of 0!
 # python3 simple_mapper.py --ros-args --param use_sim_time:=true
-# ros2 launch nav2_bringup nav2_navigation_launch.py params_file:=/home/lukic/ros2_tooling/src/webots_ros2/webots_ros2_epuck/resource/nav2_params.yaml
-# RViz may not show cost map: https://github.com/ros-planning/navigation2/issues/921
 # https://answers.ros.org/question/286221/create-2d-occupancy-grid-map-by-laser-data/
-
-"""
-ros2 topic pub -1 /goal_pose geometry_msgs/PoseStamped \ '
-pose:
-  position:
-    x: 0.3
-    y: 0.0
-    z: 0.0
-  orientation:
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-'
-"""
-
 
 class SimpleMapper(Node):
     def __init__(self, name, args=None):

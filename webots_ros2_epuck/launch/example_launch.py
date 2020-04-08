@@ -61,7 +61,9 @@ def generate_launch_description():
             os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'nav2_navigation_launch.py')
         ),
         launch_arguments={
-            'params_file': '/home/lukic/ros2_tooling/src/webots_ros2/webots_ros2_epuck/resource/nav2_params.yaml'}.items(),
+            'params_file': '/home/lukic/ros2_tooling/src/webots_ros2/webots_ros2_epuck/resource/nav2_params.yaml',
+            'use_sim_time': 'true'
+        }.items(),
         condition=launch.conditions.IfCondition(use_nav)
     )
     simple_mapper = Node(

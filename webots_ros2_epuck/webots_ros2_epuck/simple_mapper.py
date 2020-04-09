@@ -1,17 +1,26 @@
-import numpy
+# Copyright 1996-2020 Cyberbotics Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import OccupancyGrid
-from builtin_interfaces.msg import Time
 from geometry_msgs.msg import TransformStamped
-from tf2_ros import StaticTransformBroadcaster, TransformBroadcaster
+from tf2_ros import TransformBroadcaster
 
-
-# python3 simple_mapper.py --ros-args --param use_sim_time:=true
-# https://answers.ros.org/question/286221/create-2d-occupancy-grid-map-by-laser-data/
 
 class SimpleMapper(Node):
-    def __init__(self, name, args=None):
+    def __init__(self, name):
         super().__init__(name)
 
         self.create_timer(1, self.main_loop)
@@ -44,7 +53,7 @@ class SimpleMapper(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    epuck_controller = SimpleMapper('epuck_simple_mapper', args=args)
+    epuck_controller = SimpleMapper('epuck_simple_mapper')
     rclpy.spin(epuck_controller)
     epuck_controller.destroy_node()
     rclpy.shutdown()

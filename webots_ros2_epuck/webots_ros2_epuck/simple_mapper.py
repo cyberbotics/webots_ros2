@@ -25,8 +25,8 @@ import numpy as np
 from webots_ros2_core.math_utils import quaternion_to_euler
 
 
-WORLD_WIDTH = 1
-WORLD_HEIGHT = 1
+WORLD_WIDTH = 3
+WORLD_HEIGHT = 3
 RESOLUTION = 0.01
 
 WORLD_ORIGIN_X = - WORLD_WIDTH / 2.0
@@ -81,7 +81,7 @@ class SimpleMapper(Node):
             laser_rotation = quaternion_to_euler(tf.transform.rotation)[0]
             laser_translation = tf.transform.translation
         except (LookupException, ConnectivityException, ExtrapolationException) as e:
-            print('No transformation found', e)
+            print('No required transformation found: `{}`'.format(str(e)))
             return
 
         # Determine position of robot and laser
@@ -89,7 +89,7 @@ class SimpleMapper(Node):
         world_robot_y = laser_translation.y + WORLD_ORIGIN_Y
         world_laser_xs = []
         world_laser_ys = []
-        laser_range_angle = laser_rotation + msg.angle_min
+        laser_range_angle = msg.angle_min - laser_rotation
         for laser_range in msg.ranges:
             if laser_range < msg.range_max and laser_range > msg.range_min:
                 laser_x = world_robot_x + laser_range * cos(laser_range_angle)
@@ -99,31 +99,38 @@ class SimpleMapper(Node):
             laser_range_angle += msg.angle_increment
 
         # Determine position on map (from world coordinates)
-        robot_x = round(world_robot_x / RESOLUTION) - 1
-        robot_y = round(world_robot_y / RESOLUTION) - 1
+        robot_x = int(world_robot_x / RESOLUTION)
+        robot_y = int(world_robot_y / RESOLUTION)
         laser_xs = []
         laser_ys = []
         for world_laser_x, world_laser_y in zip(world_laser_xs, world_laser_ys):
-            laser_x = round(world_laser_x / RESOLUTION) - 1
-            laser_y = round(world_laser_y / RESOLUTION) - 1
+            laser_x = int(world_laser_x / RESOLUTION)
+            laser_y = int(world_laser_y / RESOLUTION)
             laser_xs.append(laser_x)
             laser_ys.append(laser_y)
 
-        # Bresenham's line algorithm (https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
         for laser_x, laser_y in zip(laser_xs, laser_ys):
-            delta_x = laser_x - robot_x
-            delta_y = laser_y - robot_y
-            delta_x += 1e-6 if delta_x == 0 else 0
-            delta_err = abs(delta_y / delta_x)
-            error = 0.0
-            y = int(robot_y)
-            for x in range(robot_x, laser_x, 1 if laser_x > robot_x else -1):
-                self.map[x * MAP_WIDTH + y] = 0
-                error = error + delta_err
-                if error >= 0.5:
-                    y += 1 if delta_y > 0 else -1
-                    error -= 1.0
-            self.map[laser_x * MAP_WIDTH + y] = 100
+            self.plot_bresenham_line(robot_x, laser_x, robot_y, laser_y)
+            self.map[laser_y * MAP_WIDTH + laser_x] = 100
+
+    def plot_bresenham_line(self, x0, x1, y0, y1):
+        # Bresenham's line algorithm (https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
+        dx = abs(x1 - x0)
+        sx = 1 if x0 < x1 else -1
+        dy = -abs(y1 - y0)
+        sy = 1 if y0 < y1 else -1
+        err = dx + dy
+        while True:
+            self.map[y0 * MAP_WIDTH + x0] = 0
+            if x0 == x1 and y0 == y1:
+                break
+            e2 = 2 * err
+            if e2 >= dy:
+                err += dy
+                x0 += sx
+            if e2 <= dx:
+                err += dx
+                y0 += sy
 
 
 def main(args=None):

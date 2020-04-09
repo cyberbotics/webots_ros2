@@ -109,6 +109,7 @@ class SimpleMapper(Node):
             laser_xs.append(laser_x)
             laser_ys.append(laser_y)
 
+        # Fill the map based on known readings
         for laser_x, laser_y in zip(laser_xs, laser_ys):
             self.plot_bresenham_line(robot_x, laser_x, robot_y, laser_y)
             self.map[laser_y * MAP_WIDTH + laser_x] = 100

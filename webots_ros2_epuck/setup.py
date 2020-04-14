@@ -10,7 +10,7 @@ data_files.append(('share/' + package_name, ['launch/example_launch.py']))
 data_files.append(('share/' + package_name + '/worlds',
                    ['worlds/epuck_world.wbt', 'worlds/.epuck_world.wbproj']))
 data_files.append(('share/' + package_name + '/resource',
-                   ['resource/all.rviz']))
+                   ['resource/all.rviz', 'resource/nav2_params.yaml']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 

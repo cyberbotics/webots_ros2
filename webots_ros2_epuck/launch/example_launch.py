@@ -30,6 +30,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
+    package_dir = get_package_share_directory('webots_ros2_epuck')
+
     # Webots
     arguments = ['--mode=realtime', '--world=' +
                  os.path.join(get_package_share_directory('webots_ros2_epuck'),
@@ -47,8 +49,7 @@ def generate_launch_description():
 
     # Rviz node
     use_rviz = LaunchConfiguration('rviz', default=False)
-    rviz_config = os.path.join(get_package_share_directory(
-        'webots_ros2_epuck'), 'resource', 'all.rviz')
+    rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
 
     rviz = Node(package='rviz2', node_executable='rviz2', output='log',
                 arguments=['--display-config=' + rviz_config],
@@ -61,7 +62,7 @@ def generate_launch_description():
             os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
         ),
         launch_arguments={
-            'params_file': '/home/lukic/ros2_tooling/src/webots_ros2/webots_ros2_epuck/resource/nav2_params.yaml',
+            'params_file': os.path.join(package_dir, 'resource', 'nav2_params.yaml'),
             'use_sim_time': 'true'
         }.items(),
         condition=launch.conditions.IfCondition(use_nav)
@@ -73,7 +74,7 @@ def generate_launch_description():
         package='webots_ros2_epuck',
         node_executable='simple_mapper',
         output='screen',
-        parameters=[{'use_sim_time': True}],
+        parameters=[{'use_sim_time': 'true'}],
         condition=launch.conditions.IfCondition(use_mapper)
     )
 

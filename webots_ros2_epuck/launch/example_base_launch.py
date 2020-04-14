@@ -21,9 +21,10 @@
 import os
 import launch
 from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
-from launch.actions import RegisterEventHandler, EmitEvent, IncludeLaunchDescription
 from launch_ros.actions import Node
+from webots_ros2_core.utils import ControllerLauncher
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
@@ -31,43 +32,47 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_epuck')
 
+    use_sim_time = LaunchConfiguration('use_sim_time', default=False)
     use_nav = LaunchConfiguration('nav', default=False)
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_mapper = LaunchConfiguration('mapper', default=False)
 
-    print('test', dir(use_nav))
-
-    # Webots
-    arguments = [
-        '--mode=realtime',
-        '--world=' + os.path.join(package_dir, 'worlds', 'epuck_world.wbt')
-    ]
-    webots = Node(package='webots_ros2_core', node_executable='webots_launcher',
-                  arguments=arguments, output='screen')
-
     # Controller node
-    base_configuration = IncludeLaunchDescription(
+    controller = ControllerLauncher(package='webots_ros2_epuck',
+                                    node_executable='driver',
+                                    output='screen')
+
+    # Rviz node
+    rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
+    rviz = Node(package='rviz2', node_executable='rviz2', output='log',
+                arguments=['--display-config=' + rviz_config],
+                condition=launch.conditions.IfCondition(use_rviz))
+
+    # Navigation
+    nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'example_base_launch.py')
+            os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
         ),
         launch_arguments={
-            'nav': use_nav,
-            'rviz': use_rviz,
-            'mapper': use_mapper,
-            'use_sim_time': 'true'
-        }.items()
+            'params_file': os.path.join(package_dir, 'resource', 'nav2_params.yaml'),
+            'use_sim_time': use_sim_time
+        }.items(),
+        condition=launch.conditions.IfCondition(use_nav)
     )
 
-    return LaunchDescription([
-        webots,
-        base_configuration,
+    # Mapping
+    simple_mapper = Node(
+        package='webots_ros2_epuck',
+        node_executable='simple_mapper',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
+        condition=launch.conditions.IfCondition(use_mapper)
+    )
 
-        # Shutdown launch when Webots exits.
-        RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[
-                    EmitEvent(event=launch.events.Shutdown())],
-            )
-        )
+    # Launch descriptor
+    return LaunchDescription([
+        controller,
+        rviz,
+        nav2,
+        simple_mapper
     ])

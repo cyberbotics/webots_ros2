@@ -66,12 +66,15 @@ def generate_launch_description():
         }.items(),
         condition=launch.conditions.IfCondition(use_nav)
     )
+
+    # Mapping
+    use_mapper = LaunchConfiguration('mapper', default=False)
     simple_mapper = Node(
         package='webots_ros2_epuck',
         node_executable='simple_mapper',
         output='screen',
         parameters=[{'use_sim_time': True}],
-        condition=launch.conditions.IfCondition(use_nav)
+        condition=launch.conditions.IfCondition(use_mapper)
     )
 
     # Launch descriptor

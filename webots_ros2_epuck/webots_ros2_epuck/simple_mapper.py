@@ -18,10 +18,9 @@ from rclpy.node import Node
 from nav_msgs.msg import OccupancyGrid
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import TransformStamped
-from tf2_ros import TransformBroadcaster, TransformListener, Buffer, LookupException, ConnectivityException, ExtrapolationException
-from builtin_interfaces.msg import Time, Duration
-import matplotlib.pyplot as plt
-import numpy as np
+from tf2_ros import TransformBroadcaster, TransformListener, Buffer
+from tf2_ros import LookupException, ConnectivityException, ExtrapolationException
+from builtin_interfaces.msg import Time
 from webots_ros2_core.math_utils import quaternion_to_euler
 
 
@@ -77,7 +76,7 @@ class SimpleMapper(Node):
         laser_rotation = None
         laser_translation = None
         try:
-            tf = self.tf_buffer.lookup_transform(msg.header.frame_id, 'odom', Time(sec=0, nanosec=0))
+            tf = self.tf_buffer.lookup_transform('odom', msg.header.frame_id, Time(sec=0, nanosec=0))
             laser_rotation = quaternion_to_euler(tf.transform.rotation)[0]
             laser_translation = tf.transform.translation
         except (LookupException, ConnectivityException, ExtrapolationException) as e:
@@ -89,7 +88,7 @@ class SimpleMapper(Node):
         world_robot_y = laser_translation.y + WORLD_ORIGIN_Y
         world_laser_xs = []
         world_laser_ys = []
-        laser_range_angle = msg.angle_min - laser_rotation
+        laser_range_angle = msg.angle_min + laser_rotation
         for laser_range in msg.ranges:
             if laser_range < msg.range_max and laser_range > msg.range_min:
                 laser_x = world_robot_x + laser_range * cos(laser_range_angle)

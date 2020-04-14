@@ -1,7 +1,7 @@
 bt_navigator:
   ros__parameters:
     use_sim_time: True
-    bt_xml_filename: "navigate_w_replanning_and_recovery.xml"
+    bt_xml_filename: "navigate_w_replanning.xml"
     plugin_lib_names:
     - nav2_compute_path_to_pose_action_bt_node
     - nav2_follow_path_action_bt_node
@@ -32,6 +32,8 @@ controller_server:
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
+    movement_time_allowance: 20.0
+    required_movement_radius: 0.1
 
     # DWB parameters
     FollowPath.debug_trajectory_details: True

@@ -170,3 +170,24 @@ pose:
 This example will work properly only for [ROS2 Foxy](https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/) (the first ROS2 release that has a long support - 3+ years):
 - Navigation2 stack is tested with version `e3469486675beb3` that includes [fix of progress checker parameters](https://answers.ros.org/question/344004/configuring-the-progress-checker-in-navigation2/) and [namespaced plugins for servers](https://github.com/ros-planning/navigation2/pull/1468).
 - RViz2 for Eloquent has a bug and [cannot show a local cost map](https://github.com/ros-planning/navigation2/issues/921), therefore, `ff8fcf9a2411` (or up) version of RViz2 is desired.
+
+
+### Mapping
+Unfortunately, default SLAM implementation doesn't work well with e-puck. Therefore, we created a simple mapping node that relies purely on odometry. You can launch it as a part of the e-puck example launch file by adding `mapper` parameter:
+```
+ros2 launch webots_ros2_epuck example_launch.py rviz:=true mapper:=true
+```
+Drive the robot around (with e.g. `teleop_twist_keyboard`) to discover as much of the map as possible.
+![Mapping process](./assets/mapping.gif) 
+
+Once you are sattisfied with the result you can save the map as:
+```
+ros2 run nav2_map_server map_saver -f $HOME/Pictures/map
+```
+and load it later to use it with e.g. navigation (`t1` and `t2` represent 2 different terminals):
+```
+t1$ ros2 run nav2_map_server map_server --ros-args -p yaml_filename:=$HOME/Pictures/map.yaml -p use_sim_time:=true
+t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{transition: {id: 1}}"
+t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{transition: {id: 3}}"
+t2$ ros2 launch webots_ros2_epuck example_launch.py rviz:=true nav:=true
+```

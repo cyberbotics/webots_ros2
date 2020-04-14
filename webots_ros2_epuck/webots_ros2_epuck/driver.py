@@ -281,6 +281,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.publish_distance_data(stamp)
         self.publish_light_data(stamp)
         self.publish_ground_sensor_data(stamp)
+        self.publish_imu_data(stamp)
 
     def publish_ground_sensor_data(self, stamp):
         for idx in self.ground_sensors.keys():
@@ -374,16 +375,17 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         ]
         self.laser_publisher.publish(msg)
 
-    def imu_callback(self):
+    def publish_imu_data(self, stamp):
         gyro_data = self.gyro.getValues()
         accelerometer_data = self.accelerometer.getValues()
 
         msg = Imu()
-        msg.angular_velocity.x = gyro_data[0]
-        msg.angular_velocity.y = gyro_data[1]
+        msg.header.stamp = stamp
+        msg.angular_velocity.x = gyro_data[1]
+        msg.angular_velocity.y = - gyro_data[0]
         msg.angular_velocity.z = gyro_data[2]
-        msg.linear_acceleration.x = accelerometer_data[0]
-        msg.linear_acceleration.y = accelerometer_data[1]
+        msg.linear_acceleration.x = accelerometer_data[1]
+        msg.linear_acceleration.y = - accelerometer_data[0]
         msg.linear_acceleration.z = accelerometer_data[2]
         self.imu_publisher.publish(msg)
 

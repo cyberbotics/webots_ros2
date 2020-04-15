@@ -90,9 +90,9 @@ local_costmap:
       resolution: 0.01
       plugin_names: ["obstacle_layer", "inflation_layer"]
       plugin_types: ["nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
-      robot_radius: 0.06
+      robot_radius: 0.04
       inflation_layer:
-        cost_scaling_factor: 50.0
+        cost_scaling_factor: 10.0
       obstacle_layer:
         enabled: True
         observation_sources: scan
@@ -122,7 +122,7 @@ global_costmap:
       use_sim_time: True
       plugin_names: ["static_layer", "obstacle_layer", "inflation_layer"]
       plugin_types: ["nav2_costmap_2d::StaticLayer", "nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
-      robot_radius: 0.06
+      robot_radius: 0.04
       resolution: 0.01
       obstacle_layer:
         enabled: True

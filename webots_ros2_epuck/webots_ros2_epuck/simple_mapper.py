@@ -62,8 +62,7 @@ class SimpleMapper(Node):
 
         # Start publishing the map
         self.publish_map()
-        if fill_map_param.value:
-            self.create_timer(1, self.publish_map)
+        self.create_timer(1, self.publish_map)
 
     def publish_map(self):
         now = self.get_clock().now()

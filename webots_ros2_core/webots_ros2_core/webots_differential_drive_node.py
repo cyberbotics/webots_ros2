@@ -68,7 +68,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
         self._tf_broadcaster = TransformBroadcaster(self)
 
         # Initialize timer
-        self._last_sample_time = self.robot.getTime()
+        self._last_odometry_sample_time = self.robot.getTime()
         self.create_timer(self.timestep / 1000, self._publish_odometry_data)
 
     def _cmd_vel_callback(self, twist):
@@ -83,7 +83,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
     def _publish_odometry_data(self):
         stamp = self.now()
 
-        time_diff_s = self.robot.getTime() - self._last_sample_time
+        time_diff_s = self.robot.getTime() - self._last_odometry_sample_time
         left_wheel_ticks = self.left_wheel_sensor.getValue()
         right_wheel_ticks = self.right_wheel_sensor.getValue()
 
@@ -124,7 +124,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
         self._prev_angle = angle
         self._prev_left_wheel_ticks = left_wheel_ticks
         self._prev_right_wheel_ticks = right_wheel_ticks
-        self._last_sample_time = self.robot.getTime()
+        self._last_odometry_sample_time = self.robot.getTime()
 
         # Pack & publish odometry
         msg = Odometry()

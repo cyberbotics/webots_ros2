@@ -99,7 +99,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         camera_period_param = self.declare_parameter(
             "camera_period", self.timestep)
         self.camera_period = camera_period_param.value
-        self.camera_period = camera_period_param.value
 
         # Initialize IMU
         self.gyro = self.robot.getGyro('gyro')

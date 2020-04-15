@@ -81,7 +81,7 @@ ros2 topic pub /led1 std_msgs/Int32 '{ "data": 0xFF0000 }'
 ```
 where 3 lower bytes of Int32 represent 3 bytes of R, G and B components. 
 
-### Velocity
+### Velocity Control
 Standard [geometry_msgs/Twist](https://github.com/ros2/common_interfaces/blob/master/geometry_msgs/msg/Twist.msg) topic with name `/cmd_vel` is exposed for velocity control.
 ``` 
 ros2 topic pub /cmd_vel geometry_msgs/Twist "linear:
@@ -141,6 +141,16 @@ All other transformations are static and they are exposed as latched topics, so 
 ```
 ros2 topic echo --qos-profile services_default --qos-durability transient_local tf_static
 ```
+
+For general access to transformations you can use `tf2_monitor`:
+```
+ros2 run tf2_ros tf2_monitor
+```
+or if you want to read transformation between arbitrary two coordinate frames in a tree:
+```
+ros2 run tf2_ros tf2_echo odom map
+```
+
 
 ### Navigation
 ROS2 Navigation2 stack (see [this figure](https://raw.githubusercontent.com/ros-planning/navigation2/eloquent-devel/doc/architecture/navigation_overview.png)) allows us to move robot from point A to point B by creating a global plan and avoiding local obstacles. It is integrated into e-puck example and you can run it by including `nav` parameter:

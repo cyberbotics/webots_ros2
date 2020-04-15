@@ -24,6 +24,7 @@ from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch.actions import RegisterEventHandler, EmitEvent, IncludeLaunchDescription
 from launch_ros.actions import Node
+from webots_ros2_core.utils import ControllerLauncher
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
@@ -34,8 +35,8 @@ def generate_launch_description():
     use_nav = LaunchConfiguration('nav', default=False)
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_mapper = LaunchConfiguration('mapper', default=False)
-
-    print('test', dir(use_nav))
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+    synchronization = LaunchConfiguration('synchronization', default=False)
 
     # Webots
     arguments = [
@@ -45,29 +46,37 @@ def generate_launch_description():
     webots = Node(package='webots_ros2_core', node_executable='webots_launcher',
                   arguments=arguments, output='screen')
 
-    # Controller node
+    # Driver node
+    controller = ControllerLauncher(
+        package='webots_ros2_epuck',
+        node_executable='driver',
+        parameters=[{'synchronization': synchronization}],
+        output='screen'
+    )
+
+    # Base configuration
     base_configuration = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'example_base_launch.py')
+            os.path.join(package_dir, 'example_tools_launch.py')
         ),
         launch_arguments={
             'nav': use_nav,
             'rviz': use_rviz,
             'mapper': use_mapper,
-            'use_sim_time': 'true'
+            'use_sim_time': use_sim_time
         }.items()
     )
 
     return LaunchDescription([
         webots,
+        controller,
         base_configuration,
 
         # Shutdown launch when Webots exits.
         RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
-                on_exit=[
-                    EmitEvent(event=launch.events.Shutdown())],
+                on_exit=[EmitEvent(event=launch.events.Shutdown())],
             )
         )
     ])

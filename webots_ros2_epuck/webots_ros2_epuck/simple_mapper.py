@@ -15,10 +15,11 @@
 from math import sin, cos
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile
 from nav_msgs.msg import OccupancyGrid
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import TransformStamped
-from tf2_ros import TransformBroadcaster, TransformListener, Buffer
+from tf2_ros import StaticTransformBroadcaster, TransformListener, Buffer
 from tf2_ros import LookupException, ConnectivityException, ExtrapolationException
 from builtin_interfaces.msg import Time
 from webots_ros2_core.math_utils import quaternion_to_euler
@@ -38,17 +39,33 @@ class SimpleMapper(Node):
     def __init__(self, name):
         super().__init__(name)
 
+        fill_map_param = self.declare_parameter('fill_map', True)
+
+        # Init map related elements
         self.map = [-1]*MAP_WIDTH*MAP_HEIGHT
+        self.map_publisher = self.create_publisher(
+            OccupancyGrid,
+            '/map',
+            qos_profile=QoSProfile(
+                depth=1,
+                durability=DurabilityPolicy.TRANSIENT_LOCAL,
+                history=HistoryPolicy.KEEP_LAST,
+            )
+        )
+        self.tf_publisher = StaticTransformBroadcaster(self)
 
-        self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self)
+        # Init laser related elements
+        if fill_map_param.value:
+            self.tf_buffer = Buffer()
+            self.tf_listener = TransformListener(self.tf_buffer, self)
+            self.scanner_subscriber = self.create_subscription(LaserScan, '/scan', self.update_map, 1)
 
-        self.create_timer(1, self.main_loop)
-        self.map_publisher = self.create_publisher(OccupancyGrid, '/map', 1)
-        self.scanner_subscriber = self.create_subscription(LaserScan, '/scan', self.update_map, 1)
-        self.tf_publisher = TransformBroadcaster(self)
+        # Start publishing the map
+        self.publish_map()
+        if fill_map_param.value:
+            self.create_timer(1, self.publish_map)
 
-    def main_loop(self):
+    def publish_map(self):
         now = self.get_clock().now()
 
         tf = TransformStamped()

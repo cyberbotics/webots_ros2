@@ -13,10 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# ros2 launch webots_ros2_epuck example_launch.py
 
-"""Launch Webots, the controller and Rviz."""
+"""Launch additional tools for e-puck controller to allow visualization, mapping and navigation"""
 
 import os
 import launch
@@ -24,7 +22,6 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from webots_ros2_core.utils import ControllerLauncher
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
@@ -37,16 +34,15 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_mapper = LaunchConfiguration('mapper', default=False)
 
-    # Controller node
-    controller = ControllerLauncher(package='webots_ros2_epuck',
-                                    node_executable='driver',
-                                    output='screen')
-
     # Rviz node
     rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
-    rviz = Node(package='rviz2', node_executable='rviz2', output='log',
-                arguments=['--display-config=' + rviz_config],
-                condition=launch.conditions.IfCondition(use_rviz))
+    rviz = Node(
+        package='rviz2',
+        node_executable='rviz2',
+        output='log',
+        arguments=['--display-config=' + rviz_config],
+        condition=launch.conditions.IfCondition(use_rviz)
+    )
 
     # Navigation
     nav2 = IncludeLaunchDescription(
@@ -65,13 +61,11 @@ def generate_launch_description():
         package='webots_ros2_epuck',
         node_executable='simple_mapper',
         output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-        condition=launch.conditions.IfCondition(use_mapper)
+        parameters=[{'use_sim_time': use_sim_time, 'fill_map': use_mapper}],
     )
 
     # Launch descriptor
     return LaunchDescription([
-        controller,
         rviz,
         nav2,
         simple_mapper

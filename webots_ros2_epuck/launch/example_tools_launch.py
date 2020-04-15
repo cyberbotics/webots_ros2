@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch additional tools for e-puck controller to allow visualization, mapping and navigation"""
+"""Launch additional tools for e-puck controller to allow visualization, mapping and navigation."""
 
 import os
 import launch

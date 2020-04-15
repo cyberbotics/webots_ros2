@@ -33,6 +33,7 @@ def generate_launch_description():
     use_nav = LaunchConfiguration('nav', default=False)
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_mapper = LaunchConfiguration('mapper', default=False)
+    fill_map = LaunchConfiguration('fill_map', default=True)
 
     # Rviz node
     rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
@@ -61,7 +62,8 @@ def generate_launch_description():
         package='webots_ros2_epuck',
         node_executable='simple_mapper',
         output='screen',
-        parameters=[{'use_sim_time': use_sim_time, 'fill_map': use_mapper}],
+        parameters=[{'use_sim_time': use_sim_time, 'fill_map': fill_map}],
+        condition=launch.conditions.IfCondition(use_mapper)
     )
 
     # Launch descriptor

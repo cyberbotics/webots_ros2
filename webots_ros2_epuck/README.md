@@ -146,7 +146,7 @@ ros2 topic echo --qos-profile services_default --qos-durability transient_local 
 ROS2 Navigation2 stack (see [this figure](https://raw.githubusercontent.com/ros-planning/navigation2/eloquent-devel/doc/architecture/navigation_overview.png)) allows us to move robot from point A to point B by creating a global plan and avoiding local obstacles. It is integrated into e-puck example and you can run it by including `nav` parameter:
 
 ```
-ros2 launch webots_ros2_epuck example_launch.py rviz:=true nav:=true
+ros2 launch webots_ros2_epuck example_launch.py rviz:=true nav:=true mapper:=true fill_map:=false
 ```
 or without RViz2 you can just publish a desired pose:
 ```

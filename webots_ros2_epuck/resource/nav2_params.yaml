@@ -79,6 +79,7 @@ controller_server_rclcpp_node:
 local_costmap:
   local_costmap:
     ros__parameters:
+      unknown_cost_value: 0
       update_frequency: 20.0
       publish_frequency: 10.0
       robot_base_frame: base_link
@@ -92,7 +93,8 @@ local_costmap:
       plugin_types: ["nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
       robot_radius: 0.04
       inflation_layer:
-        cost_scaling_factor: 10.0
+        cost_scaling_factor: 20.0
+        inflation_radius: 0.03
       obstacle_layer:
         enabled: True
         observation_sources: scan
@@ -124,6 +126,9 @@ global_costmap:
       plugin_types: ["nav2_costmap_2d::StaticLayer", "nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
       robot_radius: 0.04
       resolution: 0.01
+      inflation_layer:
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.2
       obstacle_layer:
         enabled: True
         observation_sources: scan

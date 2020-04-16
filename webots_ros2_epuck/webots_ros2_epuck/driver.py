@@ -97,8 +97,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.static_transforms = []
 
         # Parameters
-        camera_period_param = self.declare_parameter(
-            "camera_period", self.timestep)
+        camera_period_param = self.declare_parameter("camera_period", self.timestep)
         self.camera_period = camera_period_param.value
 
         # Initialize IMU
@@ -187,12 +186,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Initialize camera
         self.camera = self.robot.getCamera('camera')
-        self.camera.enable(self.camera_period)
-        self.camera_publisher = self.create_publisher(
-            Image, '/image_raw', 10)
+        self.camera_publisher = self.create_publisher(Image, '/image_raw', 10)
         self.create_timer(self.camera_period / 1000, self.camera_callback)
-        self.camera_info_publisher = self.create_publisher(
-            CameraInfo, '/camera_info', 10)
+        self.camera_info_publisher = self.create_publisher(CameraInfo, '/camera_info', 10)
 
         # Initialize binary LEDs
         self.binary_leds = []
@@ -393,34 +389,39 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.imu_publisher.publish(msg)
 
     def camera_callback(self):
-        # Image data
-        msg = Image()
-        msg.height = self.camera.getHeight()
-        msg.width = self.camera.getWidth()
-        msg.is_bigendian = False
-        msg.step = self.camera.getWidth() * 4
-        msg.data = self.camera.getImage()
-        msg.encoding = 'bgra8'
-        self.camera_publisher.publish(msg)
+        if self.camera_publisher.get_subscription_count() > 0:
+            self.camera.enable(self.camera_period)
 
-        # CameraInfo data
-        msg = CameraInfo()
-        msg.header.frame_id = 'camera_frame'
-        msg.height = self.camera.getHeight()
-        msg.width = self.camera.getWidth()
-        msg.distortion_model = 'plumb_bob'
-        msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
-        msg.k = [
-            self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2,
-            0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2,
-            0.0, 0.0, 1.0
-        ]
-        msg.p = [
-            self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2, 0.0,
-            0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2, 0.0,
-            0.0, 0.0, 1.0, 0.0
-        ]
-        self.camera_info_publisher.publish(msg)
+            # Image data
+            msg = Image()
+            msg.height = self.camera.getHeight()
+            msg.width = self.camera.getWidth()
+            msg.is_bigendian = False
+            msg.step = self.camera.getWidth() * 4
+            msg.data = self.camera.getImage()
+            msg.encoding = 'bgra8'
+            self.camera_publisher.publish(msg)
+
+            # CameraInfo data
+            msg = CameraInfo()
+            msg.header.frame_id = 'camera_frame'
+            msg.height = self.camera.getHeight()
+            msg.width = self.camera.getWidth()
+            msg.distortion_model = 'plumb_bob'
+            msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
+            msg.k = [
+                self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2,
+                0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2,
+                0.0, 0.0, 1.0
+            ]
+            msg.p = [
+                self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2, 0.0,
+                0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2, 0.0,
+                0.0, 0.0, 1.0, 0.0
+            ]
+            self.camera_info_publisher.publish(msg)
+        else:
+            self.camera.disable()
 
 
 def main(args=None):

@@ -25,6 +25,7 @@ from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
+GYRO_RAW2DEG = 32768.0 / 250.0
 OUT_OF_RANGE = 0.0
 TOF_MIN_RANGE = 0.0
 TOF_MAX_RANGE = 1.0
@@ -267,7 +268,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.create_timer(self.timestep / 1000, self.step_callback)
 
     def on_rgb_led_callback(self, msg, index):
-        self.rgb_leds[index].set(msg.data)
+        self.rgb_leds[index].set(msg.data)>
 
     def on_binary_led_callback(self, msg, index):
         value = 1 if msg.data else 0
@@ -380,9 +381,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         msg = Imu()
         msg.header.stamp = stamp
-        msg.angular_velocity.x = gyro_data[1]
-        msg.angular_velocity.y = - gyro_data[0]
-        msg.angular_velocity.z = gyro_data[2]
+        msg.angular_velocity.x = (gyro_data[1]  / RAW2DEG) * (pi / 180)
+        msg.angular_velocity.y = - (gyro_data[0]  / RAW2DEG) * (pi / 180)
+        msg.angular_velocity.z = (gyro_data[2]  / RAW2DEG) * (pi / 180)
         msg.linear_acceleration.x = accelerometer_data[1]
         msg.linear_acceleration.y = - accelerometer_data[0]
         msg.linear_acceleration.z = accelerometer_data[2]

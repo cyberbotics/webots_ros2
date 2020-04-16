@@ -268,7 +268,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.create_timer(self.timestep / 1000, self.step_callback)
 
     def on_rgb_led_callback(self, msg, index):
-        self.rgb_leds[index].set(msg.data)>
+        self.rgb_leds[index].set(msg.data)
 
     def on_binary_led_callback(self, msg, index):
         value = 1 if msg.data else 0
@@ -381,9 +381,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         msg = Imu()
         msg.header.stamp = stamp
-        msg.angular_velocity.x = (gyro_data[1]  / RAW2DEG) * (pi / 180)
-        msg.angular_velocity.y = - (gyro_data[0]  / RAW2DEG) * (pi / 180)
-        msg.angular_velocity.z = (gyro_data[2]  / RAW2DEG) * (pi / 180)
+        msg.angular_velocity.x = (gyro_data[1]  / GYRO_RAW2DEG) * (pi / 180)
+        msg.angular_velocity.y = - (gyro_data[0]  / GYRO_RAW2DEG) * (pi / 180)
+        msg.angular_velocity.z = (gyro_data[2]  / GYRO_RAW2DEG) * (pi / 180)
         msg.linear_acceleration.x = accelerometer_data[1]
         msg.linear_acceleration.y = - accelerometer_data[0]
         msg.linear_acceleration.z = accelerometer_data[2]

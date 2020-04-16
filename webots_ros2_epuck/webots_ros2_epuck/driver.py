@@ -376,17 +376,20 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.laser_publisher.publish(msg)
 
     def publish_imu_data(self, stamp):
-        gyro_data = self.gyro.getValues()
-        accelerometer_data = self.accelerometer.getValues()
-
         msg = Imu()
         msg.header.stamp = stamp
-        msg.angular_velocity.x = (gyro_data[1]  / GYRO_RAW2DEG) * (pi / 180)
-        msg.angular_velocity.y = - (gyro_data[0]  / GYRO_RAW2DEG) * (pi / 180)
-        msg.angular_velocity.z = (gyro_data[2]  / GYRO_RAW2DEG) * (pi / 180)
+
+        accelerometer_data = self.accelerometer.getValues()
         msg.linear_acceleration.x = accelerometer_data[1]
         msg.linear_acceleration.y = - accelerometer_data[0]
         msg.linear_acceleration.z = accelerometer_data[2]
+
+        if self.gyro:
+            gyro_data = self.gyro.getValues()
+            msg.angular_velocity.x = (gyro_data[1] / GYRO_RAW2DEG) * (pi / 180)
+            msg.angular_velocity.y = - (gyro_data[0] / GYRO_RAW2DEG) * (pi / 180)
+            msg.angular_velocity.z = (gyro_data[2] / GYRO_RAW2DEG) * (pi / 180)
+
         self.imu_publisher.publish(msg)
 
     def camera_callback(self):

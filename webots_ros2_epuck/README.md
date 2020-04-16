@@ -174,6 +174,12 @@ pose:
 "
 ```
 
+In case the navigation fails, you can restart `bt_navigator`:
+```
+ros2 service call /bt_navigator/change_state lifecycle_msgs/ChangeState "{transition: {id: 4}}"
+ros2 service call /bt_navigator/change_state lifecycle_msgs/ChangeState "{transition: {id: 3}}"
+```
+
 ![Demo](./assets/nav2.gif)
 
 This example will work properly only for [ROS2 Foxy](https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/) (the first ROS2 release that has a long support - 3+ years):

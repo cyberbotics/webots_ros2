@@ -102,12 +102,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Initialize IMU
         self.gyro = self.robot.getGyro('gyro')
-        if self.gyro:
-            self.gyro.enable(self.timestep)
-        else:
+        if not self.gyro:
             self.get_logger().info('Gyroscope is not present for this e-puck version')
         self.accelerometer = self.robot.getAccelerometer('accelerometer')
-        self.accelerometer.enable(self.timestep)
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
 
         # Initialize ground sensors
@@ -118,24 +115,20 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             idx = 'gs{}'.format(i)
             ground_sensor = self.robot.getDistanceSensor(idx)
             if ground_sensor:
-                ground_sensor.enable(self.timestep)
                 self.ground_sensors[idx] = ground_sensor
-                self.ground_sensor_publishers[idx] = self.create_publisher(
-                    Range, '/' + idx, 1)
+                self.ground_sensor_publishers[idx] = self.create_publisher(Range, '/' + idx, 1)
 
                 ground_sensor_transform = TransformStamped()
                 ground_sensor_transform.header.stamp = self.now()
                 ground_sensor_transform.header.frame_id = "base_link"
                 ground_sensor_transform.child_frame_id = "gs" + str(i)
-                ground_sensor_transform.transform.rotation = euler_to_quaternion(
-                    0, pi/2, 0)
+                ground_sensor_transform.transform.rotation = euler_to_quaternion(0, pi/2, 0)
                 ground_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER - 0.005
                 ground_sensor_transform.transform.translation.y = 0.009 - i * 0.009
                 ground_sensor_transform.transform.translation.z = 0.0
                 self.static_transforms.append(ground_sensor_transform)
             else:
-                self.get_logger().info(
-                    'Ground sensor `{}` is not present for this e-puck version'.format(idx))
+                self.get_logger().info('Ground sensor `{}` is not present for this e-puck version'.format(idx))
 
         # Intialize distance sensors
         self.distance_sensor_publishers = {}
@@ -143,25 +136,19 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         for i in range(NB_INFRARED_SENSORS):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.timestep)
-            sensor_publisher = self.create_publisher(
-                Range, '/ps{}'.format(i), 10)
+            sensor_publisher = self.create_publisher(Range, '/ps{}'.format(i), 10)
             self.distance_sensors['ps{}'.format(i)] = sensor
-            self.distance_sensor_publishers['ps{}'.format(
-                i)] = sensor_publisher
+            self.distance_sensor_publishers['ps{}'.format(i)] = sensor_publisher
 
             distance_sensor_transform = TransformStamped()
             distance_sensor_transform.header.stamp = self.now()
             distance_sensor_transform.header.frame_id = "base_link"
             distance_sensor_transform.child_frame_id = "ps" + str(i)
-            distance_sensor_transform.transform.rotation = euler_to_quaternion(
-                0, 0, DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * \
-                cos(DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
-                sin(DISTANCE_SENSOR_ANGLE[i])
+            distance_sensor_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
+            distance_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * cos(DISTANCE_SENSOR_ANGLE[i])
+            distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
             distance_sensor_transform.transform.translation.z = 0.0
-            self.static_transforms.append(
-                distance_sensor_transform)
+            self.static_transforms.append(distance_sensor_transform)
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
@@ -225,7 +212,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.light_publishers = []
         for i in range(NB_LIGHT_SENSORS):
             light_sensor = self.robot.getLightSensor(f'ls{i}')
-            light_sensor.enable(self.timestep)
             light_publisher = self.create_publisher(Illuminance, f'/ls{i}', 1)
             self.light_publishers.append(light_publisher)
             self.light_sensors.append(light_sensor)
@@ -234,12 +220,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             light_transform.header.stamp = self.now()
             light_transform.header.frame_id = "base_link"
             light_transform.child_frame_id = "ls" + str(i)
-            light_transform.transform.rotation = euler_to_quaternion(
-                0, 0, DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * \
-                cos(DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
-                sin(DISTANCE_SENSOR_ANGLE[i])
+            light_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
+            light_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * cos(DISTANCE_SENSOR_ANGLE[i])
+            light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
             light_transform.transform.translation.z = 0.0
             self.static_transforms.append(light_transform)
 
@@ -281,25 +264,33 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
     def publish_ground_sensor_data(self, stamp):
         for idx in self.ground_sensors.keys():
-            msg = Range()
-            msg.header.stamp = stamp
-            msg.header.frame_id = idx
-            msg.field_of_view = self.ground_sensors[idx].getAperture()
-            msg.min_range = GROUND_MIN_RANGE
-            msg.max_range = GROUND_MAX_RANGE
-            msg.range = interpolate_table(
-                self.ground_sensors[idx].getValue(), GROUND_TABLE)
-            msg.radiation_type = Range.INFRARED
-            self.ground_sensor_publishers[idx].publish(msg)
+            if self.ground_sensor_publishers[idx].get_subscription_count() > 0:
+                self.ground_sensors[idx].enable(self.timestep)
+                msg = Range()
+                msg.header.stamp = stamp
+                msg.header.frame_id = idx
+                msg.field_of_view = self.ground_sensors[idx].getAperture()
+                msg.min_range = GROUND_MIN_RANGE
+                msg.max_range = GROUND_MAX_RANGE
+                msg.range = interpolate_table(
+                    self.ground_sensors[idx].getValue(), GROUND_TABLE)
+                msg.radiation_type = Range.INFRARED
+                self.ground_sensor_publishers[idx].publish(msg)
+            else:
+                self.ground_sensors[idx].disable()
 
     def publish_light_data(self, stamp):
         for light_publisher, light_sensor in zip(self.light_publishers, self.light_sensors):
-            msg = Illuminance()
-            msg.header.stamp = stamp
-            msg.illuminance = interpolate_table(
-                light_sensor.getValue(), LIGHT_TABLE) * IRRADIANCE_TO_ILLUMINANCE
-            msg.variance = 0.1
-            light_publisher.publish(msg)
+            if light_publisher.get_subscription_count() > 0:
+                light_sensor.enable(self.timestep)
+                msg = Illuminance()
+                msg.header.stamp = stamp
+                msg.illuminance = interpolate_table(
+                    light_sensor.getValue(), LIGHT_TABLE) * IRRADIANCE_TO_ILLUMINANCE
+                msg.variance = 0.1
+                light_publisher.publish(msg)
+            else:
+                light_sensor.disable()
 
     def publish_distance_data(self, stamp):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
@@ -372,21 +363,28 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.laser_publisher.publish(msg)
 
     def publish_imu_data(self, stamp):
-        msg = Imu()
-        msg.header.stamp = stamp
+        if self.imu_publisher.get_subscription_count() > 0:
+            msg = Imu()
+            msg.header.stamp = stamp
 
-        accelerometer_data = self.accelerometer.getValues()
-        msg.linear_acceleration.x = accelerometer_data[1]
-        msg.linear_acceleration.y = - accelerometer_data[0]
-        msg.linear_acceleration.z = accelerometer_data[2]
+            self.accelerometer.enable(self.timestep)
+            accelerometer_data = self.accelerometer.getValues()
+            msg.linear_acceleration.x = accelerometer_data[1]
+            msg.linear_acceleration.y = - accelerometer_data[0]
+            msg.linear_acceleration.z = accelerometer_data[2]
 
-        if self.gyro:
-            gyro_data = self.gyro.getValues()
-            msg.angular_velocity.x = (gyro_data[1] / GYRO_RAW2DEG) * (pi / 180)
-            msg.angular_velocity.y = - (gyro_data[0] / GYRO_RAW2DEG) * (pi / 180)
-            msg.angular_velocity.z = (gyro_data[2] / GYRO_RAW2DEG) * (pi / 180)
+            if self.gyro:
+                self.gyro.enable(self.timestep)
+                gyro_data = self.gyro.getValues()
+                msg.angular_velocity.x = (gyro_data[1] / GYRO_RAW2DEG) * (pi / 180)
+                msg.angular_velocity.y = - (gyro_data[0] / GYRO_RAW2DEG) * (pi / 180)
+                msg.angular_velocity.z = (gyro_data[2] / GYRO_RAW2DEG) * (pi / 180)
 
-        self.imu_publisher.publish(msg)
+            self.imu_publisher.publish(msg)
+        else:
+            self.accelerometer.disable()
+            if self.gyro:
+                self.gyro.disable()
 
     def camera_callback(self):
         if self.camera_publisher.get_subscription_count() > 0:

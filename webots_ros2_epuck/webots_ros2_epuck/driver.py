@@ -25,6 +25,7 @@ from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
+GYRO_RAW2DEG = 32768.0 / 250.0
 OUT_OF_RANGE = 0.0
 TOF_MIN_RANGE = 0.0
 TOF_MAX_RANGE = 1.0
@@ -96,19 +97,14 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.static_transforms = []
 
         # Parameters
-        camera_period_param = self.declare_parameter(
-            "camera_period", self.timestep)
-        self.camera_period = camera_period_param.value
+        camera_period_param = self.declare_parameter("camera_period", self.timestep)
         self.camera_period = camera_period_param.value
 
         # Initialize IMU
         self.gyro = self.robot.getGyro('gyro')
-        if self.gyro:
-            self.gyro.enable(self.timestep)
-        else:
+        if not self.gyro:
             self.get_logger().info('Gyroscope is not present for this e-puck version')
         self.accelerometer = self.robot.getAccelerometer('accelerometer')
-        self.accelerometer.enable(self.timestep)
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
 
         # Initialize ground sensors
@@ -119,24 +115,20 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             idx = 'gs{}'.format(i)
             ground_sensor = self.robot.getDistanceSensor(idx)
             if ground_sensor:
-                ground_sensor.enable(self.timestep)
                 self.ground_sensors[idx] = ground_sensor
-                self.ground_sensor_publishers[idx] = self.create_publisher(
-                    Range, '/' + idx, 1)
+                self.ground_sensor_publishers[idx] = self.create_publisher(Range, '/' + idx, 1)
 
                 ground_sensor_transform = TransformStamped()
                 ground_sensor_transform.header.stamp = self.now()
                 ground_sensor_transform.header.frame_id = "base_link"
                 ground_sensor_transform.child_frame_id = "gs" + str(i)
-                ground_sensor_transform.transform.rotation = euler_to_quaternion(
-                    0, pi/2, 0)
+                ground_sensor_transform.transform.rotation = euler_to_quaternion(0, pi/2, 0)
                 ground_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER - 0.005
                 ground_sensor_transform.transform.translation.y = 0.009 - i * 0.009
                 ground_sensor_transform.transform.translation.z = 0.0
                 self.static_transforms.append(ground_sensor_transform)
             else:
-                self.get_logger().info(
-                    'Ground sensor `{}` is not present for this e-puck version'.format(idx))
+                self.get_logger().info('Ground sensor `{}` is not present for this e-puck version'.format(idx))
 
         # Intialize distance sensors
         self.distance_sensor_publishers = {}
@@ -144,25 +136,19 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         for i in range(NB_INFRARED_SENSORS):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.timestep)
-            sensor_publisher = self.create_publisher(
-                Range, '/ps{}'.format(i), 10)
+            sensor_publisher = self.create_publisher(Range, '/ps{}'.format(i), 10)
             self.distance_sensors['ps{}'.format(i)] = sensor
-            self.distance_sensor_publishers['ps{}'.format(
-                i)] = sensor_publisher
+            self.distance_sensor_publishers['ps{}'.format(i)] = sensor_publisher
 
             distance_sensor_transform = TransformStamped()
             distance_sensor_transform.header.stamp = self.now()
             distance_sensor_transform.header.frame_id = "base_link"
             distance_sensor_transform.child_frame_id = "ps" + str(i)
-            distance_sensor_transform.transform.rotation = euler_to_quaternion(
-                0, 0, DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * \
-                cos(DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
-                sin(DISTANCE_SENSOR_ANGLE[i])
+            distance_sensor_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
+            distance_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * cos(DISTANCE_SENSOR_ANGLE[i])
+            distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
             distance_sensor_transform.transform.translation.z = 0.0
-            self.static_transforms.append(
-                distance_sensor_transform)
+            self.static_transforms.append(distance_sensor_transform)
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
@@ -187,12 +173,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Initialize camera
         self.camera = self.robot.getCamera('camera')
-        self.camera.enable(self.camera_period)
-        self.camera_publisher = self.create_publisher(
-            Image, '/image_raw', 10)
+        self.camera_publisher = self.create_publisher(Image, '/image_raw', 10)
         self.create_timer(self.camera_period / 1000, self.camera_callback)
-        self.camera_info_publisher = self.create_publisher(
-            CameraInfo, '/camera_info', 10)
+        self.camera_info_publisher = self.create_publisher(CameraInfo, '/camera_info', 10)
 
         # Initialize binary LEDs
         self.binary_leds = []
@@ -229,7 +212,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.light_publishers = []
         for i in range(NB_LIGHT_SENSORS):
             light_sensor = self.robot.getLightSensor(f'ls{i}')
-            light_sensor.enable(self.timestep)
             light_publisher = self.create_publisher(Illuminance, f'/ls{i}', 1)
             self.light_publishers.append(light_publisher)
             self.light_sensors.append(light_sensor)
@@ -238,12 +220,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             light_transform.header.stamp = self.now()
             light_transform.header.frame_id = "base_link"
             light_transform.child_frame_id = "ls" + str(i)
-            light_transform.transform.rotation = euler_to_quaternion(
-                0, 0, DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * \
-                cos(DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * \
-                sin(DISTANCE_SENSOR_ANGLE[i])
+            light_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
+            light_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * cos(DISTANCE_SENSOR_ANGLE[i])
+            light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
             light_transform.transform.translation.z = 0.0
             self.static_transforms.append(light_transform)
 
@@ -281,28 +260,37 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.publish_distance_data(stamp)
         self.publish_light_data(stamp)
         self.publish_ground_sensor_data(stamp)
+        self.publish_imu_data(stamp)
 
     def publish_ground_sensor_data(self, stamp):
         for idx in self.ground_sensors.keys():
-            msg = Range()
-            msg.header.stamp = stamp
-            msg.header.frame_id = idx
-            msg.field_of_view = self.ground_sensors[idx].getAperture()
-            msg.min_range = GROUND_MIN_RANGE
-            msg.max_range = GROUND_MAX_RANGE
-            msg.range = interpolate_table(
-                self.ground_sensors[idx].getValue(), GROUND_TABLE)
-            msg.radiation_type = Range.INFRARED
-            self.ground_sensor_publishers[idx].publish(msg)
+            if self.ground_sensor_publishers[idx].get_subscription_count() > 0:
+                self.ground_sensors[idx].enable(self.timestep)
+                msg = Range()
+                msg.header.stamp = stamp
+                msg.header.frame_id = idx
+                msg.field_of_view = self.ground_sensors[idx].getAperture()
+                msg.min_range = GROUND_MIN_RANGE
+                msg.max_range = GROUND_MAX_RANGE
+                msg.range = interpolate_table(
+                    self.ground_sensors[idx].getValue(), GROUND_TABLE)
+                msg.radiation_type = Range.INFRARED
+                self.ground_sensor_publishers[idx].publish(msg)
+            else:
+                self.ground_sensors[idx].disable()
 
     def publish_light_data(self, stamp):
         for light_publisher, light_sensor in zip(self.light_publishers, self.light_sensors):
-            msg = Illuminance()
-            msg.header.stamp = stamp
-            msg.illuminance = interpolate_table(
-                light_sensor.getValue(), LIGHT_TABLE) * IRRADIANCE_TO_ILLUMINANCE
-            msg.variance = 0.1
-            light_publisher.publish(msg)
+            if light_publisher.get_subscription_count() > 0:
+                light_sensor.enable(self.timestep)
+                msg = Illuminance()
+                msg.header.stamp = stamp
+                msg.illuminance = interpolate_table(
+                    light_sensor.getValue(), LIGHT_TABLE) * IRRADIANCE_TO_ILLUMINANCE
+                msg.variance = 0.1
+                light_publisher.publish(msg)
+            else:
+                light_sensor.disable()
 
     def publish_distance_data(self, stamp):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
@@ -340,6 +328,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
+        laser_dists = [OUT_OF_RANGE if dist > INFRARED_MAX_RANGE else dist for dist in dists]
         msg = LaserScan()
         msg.header.frame_id = 'laser_scanner'
         msg.header.stamp = stamp
@@ -347,74 +336,90 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180
         msg.range_min = SENSOR_DIST_FROM_CENTER + INFRARED_MIN_RANGE
-        msg.range_max = SENSOR_DIST_FROM_CENTER + INFRARED_MAX_RANGE
+        msg.range_max = SENSOR_DIST_FROM_CENTER + TOF_MAX_RANGE
         msg.ranges = [
-            dists[3] + SENSOR_DIST_FROM_CENTER,     # -150
-            OUT_OF_RANGE,                           # -135
-            OUT_OF_RANGE,                           # -120
-            OUT_OF_RANGE,                           # -105
-            dists[2] + SENSOR_DIST_FROM_CENTER,     # -90
-            OUT_OF_RANGE,                           # -75
-            OUT_OF_RANGE,                           # -60
-            dists[1] + SENSOR_DIST_FROM_CENTER,     # -45
-            OUT_OF_RANGE,                           # -30
-            dists[0] + SENSOR_DIST_FROM_CENTER,     # -15
-            OUT_OF_RANGE,                           # 0
-            dists[7] + SENSOR_DIST_FROM_CENTER,     # 15
-            OUT_OF_RANGE,                           # 30
-            dists[6] + SENSOR_DIST_FROM_CENTER,     # 45
-            OUT_OF_RANGE,                           # 60
-            OUT_OF_RANGE,                           # 75
-            dists[5] + SENSOR_DIST_FROM_CENTER,     # 90
-            OUT_OF_RANGE,                           # 105
-            OUT_OF_RANGE,                           # 120
-            OUT_OF_RANGE,                           # 135
-            dists[4] + SENSOR_DIST_FROM_CENTER,     # 150
+            laser_dists[3] + SENSOR_DIST_FROM_CENTER,   # -150
+            OUT_OF_RANGE,                               # -135
+            OUT_OF_RANGE,                               # -120
+            OUT_OF_RANGE,                               # -105
+            laser_dists[2] + SENSOR_DIST_FROM_CENTER,   # -90
+            OUT_OF_RANGE,                               # -75
+            OUT_OF_RANGE,                               # -60
+            laser_dists[1] + SENSOR_DIST_FROM_CENTER,   # -45
+            OUT_OF_RANGE,                               # -30
+            laser_dists[0] + SENSOR_DIST_FROM_CENTER,   # -15
+            dist_tof + SENSOR_DIST_FROM_CENTER,         # 0
+            laser_dists[7] + SENSOR_DIST_FROM_CENTER,   # 15
+            OUT_OF_RANGE,                               # 30
+            laser_dists[6] + SENSOR_DIST_FROM_CENTER,   # 45
+            OUT_OF_RANGE,                               # 60
+            OUT_OF_RANGE,                               # 75
+            laser_dists[5] + SENSOR_DIST_FROM_CENTER,   # 90
+            OUT_OF_RANGE,                               # 105
+            OUT_OF_RANGE,                               # 120
+            OUT_OF_RANGE,                               # 135
+            laser_dists[4] + SENSOR_DIST_FROM_CENTER,   # 150
         ]
         self.laser_publisher.publish(msg)
 
-    def imu_callback(self):
-        gyro_data = self.gyro.getValues()
-        accelerometer_data = self.accelerometer.getValues()
+    def publish_imu_data(self, stamp):
+        if self.imu_publisher.get_subscription_count() > 0:
+            msg = Imu()
+            msg.header.stamp = stamp
 
-        msg = Imu()
-        msg.angular_velocity.x = gyro_data[0]
-        msg.angular_velocity.y = gyro_data[1]
-        msg.angular_velocity.z = gyro_data[2]
-        msg.linear_acceleration.x = accelerometer_data[0]
-        msg.linear_acceleration.y = accelerometer_data[1]
-        msg.linear_acceleration.z = accelerometer_data[2]
-        self.imu_publisher.publish(msg)
+            self.accelerometer.enable(self.timestep)
+            accelerometer_data = self.accelerometer.getValues()
+            msg.linear_acceleration.x = accelerometer_data[1]
+            msg.linear_acceleration.y = - accelerometer_data[0]
+            msg.linear_acceleration.z = accelerometer_data[2]
+
+            if self.gyro:
+                self.gyro.enable(self.timestep)
+                gyro_data = self.gyro.getValues()
+                msg.angular_velocity.x = (gyro_data[1] / GYRO_RAW2DEG) * (pi / 180)
+                msg.angular_velocity.y = - (gyro_data[0] / GYRO_RAW2DEG) * (pi / 180)
+                msg.angular_velocity.z = (gyro_data[2] / GYRO_RAW2DEG) * (pi / 180)
+
+            self.imu_publisher.publish(msg)
+        else:
+            self.accelerometer.disable()
+            if self.gyro:
+                self.gyro.disable()
 
     def camera_callback(self):
-        # Image data
-        msg = Image()
-        msg.height = self.camera.getHeight()
-        msg.width = self.camera.getWidth()
-        msg.is_bigendian = False
-        msg.step = self.camera.getWidth() * 4
-        msg.data = self.camera.getImage()
-        msg.encoding = 'bgra8'
-        self.camera_publisher.publish(msg)
+        if self.camera_publisher.get_subscription_count() > 0:
+            self.camera.enable(self.camera_period)
 
-        # CameraInfo data
-        msg = CameraInfo()
-        msg.header.frame_id = 'camera_frame'
-        msg.height = self.camera.getHeight()
-        msg.width = self.camera.getWidth()
-        msg.distortion_model = 'plumb_bob'
-        msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
-        msg.k = [
-            self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2,
-            0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2,
-            0.0, 0.0, 1.0
-        ]
-        msg.p = [
-            self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2, 0.0,
-            0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2, 0.0,
-            0.0, 0.0, 1.0, 0.0
-        ]
-        self.camera_info_publisher.publish(msg)
+            # Image data
+            msg = Image()
+            msg.height = self.camera.getHeight()
+            msg.width = self.camera.getWidth()
+            msg.is_bigendian = False
+            msg.step = self.camera.getWidth() * 4
+            msg.data = self.camera.getImage()
+            msg.encoding = 'bgra8'
+            self.camera_publisher.publish(msg)
+
+            # CameraInfo data
+            msg = CameraInfo()
+            msg.header.frame_id = 'camera_frame'
+            msg.height = self.camera.getHeight()
+            msg.width = self.camera.getWidth()
+            msg.distortion_model = 'plumb_bob'
+            msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
+            msg.k = [
+                self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2,
+                0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2,
+                0.0, 0.0, 1.0
+            ]
+            msg.p = [
+                self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2, 0.0,
+                0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2, 0.0,
+                0.0, 0.0, 1.0, 0.0
+            ]
+            self.camera_info_publisher.publish(msg)
+        else:
+            self.camera.disable()
 
 
 def main(args=None):

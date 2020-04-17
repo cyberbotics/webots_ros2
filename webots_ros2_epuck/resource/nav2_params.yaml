@@ -1,0 +1,164 @@
+bt_navigator:
+  ros__parameters:
+    use_sim_time: True
+    bt_xml_filename: "navigate_w_replanning.xml"
+    plugin_lib_names:
+    - nav2_compute_path_to_pose_action_bt_node
+    - nav2_follow_path_action_bt_node
+    - nav2_back_up_action_bt_node
+    - nav2_spin_action_bt_node
+    - nav2_wait_action_bt_node
+    - nav2_clear_costmap_service_bt_node
+    - nav2_is_stuck_condition_bt_node
+    - nav2_goal_reached_condition_bt_node
+    - nav2_initial_pose_received_condition_bt_node
+    - nav2_reinitialize_global_localization_service_bt_node
+    - nav2_rate_controller_bt_node
+    - nav2_recovery_node_bt_node
+    - nav2_pipeline_sequence_bt_node
+    - nav2_round_robin_node_bt_node
+    - nav2_transform_available_condition_bt_node
+
+bt_navigator_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+
+controller_server:
+  ros__parameters:
+    use_sim_time: True
+    controller_frequency: 20.0
+    controller_plugin_types: ["dwb_core::DWBLocalPlanner"]
+    controller_plugin_ids: ["FollowPath"]
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    movement_time_allowance: 20.0
+    required_movement_radius: 0.1
+
+    # DWB parameters
+    FollowPath.debug_trajectory_details: True
+    FollowPath.min_vel_x: 0.0
+    FollowPath.min_vel_y: 0.0
+    FollowPath.max_vel_x: 0.04
+    FollowPath.max_vel_y: 0.0
+    FollowPath.max_vel_theta: 1.0
+    FollowPath.min_speed_xy: 0.0
+    FollowPath.max_speed_xy: 0.04
+    FollowPath.min_speed_theta: 0.0
+    FollowPath.acc_lim_x: 0.5
+    FollowPath.acc_lim_y: 0.0
+    FollowPath.acc_lim_theta: 3.2
+    FollowPath.decel_lim_x: -2.5
+    FollowPath.decel_lim_y: 0.0
+    FollowPath.decel_lim_theta: -3.2
+    FollowPath.vx_samples: 20
+    FollowPath.vy_samples: 5
+    FollowPath.vtheta_samples: 20
+    FollowPath.sim_time: 1.7
+    FollowPath.linear_granularity: 0.05
+    FollowPath.angular_granularity: 0.025
+    FollowPath.transform_tolerance: 1.5
+    FollowPath.xy_goal_tolerance: 0.03
+    FollowPath.trans_stopped_velocity: 0.25
+    FollowPath.short_circuit_trajectory_evaluation: True
+    FollowPath.stateful: True
+    FollowPath.critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+    FollowPath.BaseObstacle.scale: 0.02
+    FollowPath.PathAlign.scale: 0.0
+    FollowPath.GoalAlign.scale: 0.0
+    FollowPath.PathDist.scale: 32.0
+    FollowPath.GoalDist.scale: 24.0
+    FollowPath.RotateToGoal.scale: 32.0
+    FollowPath.RotateToGoal.slowing_factor: 5.0
+    FollowPath.RotateToGoal.lookahead_time: -1.0
+
+controller_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      unknown_cost_value: 0
+      update_frequency: 20.0
+      publish_frequency: 20.0
+      robot_base_frame: base_link
+      use_sim_time: True
+      global_frame: odom
+      rolling_window: true
+      width: 1
+      height: 1
+      resolution: 0.01
+      plugin_names: ["obstacle_layer", "inflation_layer"]
+      plugin_types: ["nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
+      robot_radius: 0.04
+      inflation_layer:
+        cost_scaling_factor: 20.0
+        inflation_radius: 0.03
+      obstacle_layer:
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          expected_update_rate: 15.0
+          observation_persistence: 0.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+      static_layer:
+        map_subscribe_transient_local: True
+      always_send_full_costmap: true
+  local_costmap_client:
+    ros__parameters:
+      use_sim_time: True
+  local_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: True
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      robot_base_frame: base_link
+      global_frame: map
+      use_sim_time: True
+      plugin_names: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugin_types: ["nav2_costmap_2d::StaticLayer", "nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
+      robot_radius: 0.04
+      resolution: 0.01
+      inflation_layer:
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.2
+      obstacle_layer:
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+      static_layer:
+        map_subscribe_transient_local: True
+      always_send_full_costmap: True
+  global_costmap_client:
+    ros__parameters:
+      use_sim_time: True
+  global_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: True
+
+planner_server:
+  ros__parameters:
+    planner_plugin_types: ["nav2_navfn_planner/NavfnPlanner"]
+    planner_plugin_ids: ["GridBased"]
+    use_sim_time: True
+    GridBased.tolerance: 0.0
+    GridBased.use_astar: false
+    GridBased.allow_unknown: true
+
+planner_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: True

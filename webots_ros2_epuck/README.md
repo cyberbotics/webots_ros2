@@ -81,7 +81,7 @@ ros2 topic pub /led1 std_msgs/Int32 '{ "data": 0xFF0000 }'
 ```
 where 3 lower bytes of Int32 represent 3 bytes of R, G and B components. 
 
-### Velocity
+### Velocity Control
 Standard [geometry_msgs/Twist](https://github.com/ros2/common_interfaces/blob/master/geometry_msgs/msg/Twist.msg) topic with name `/cmd_vel` is exposed for velocity control.
 ``` 
 ros2 topic pub /cmd_vel geometry_msgs/Twist "linear:
@@ -129,8 +129,7 @@ Ground sensors come as an [optional module](http://www.e-puck.org/index.php?opti
 ``` 
 ros2 topic echo /gs1
 ```
-To put the ground sensor module, select `groundSensorsSlot` in `e-puck2` robot tree, click `+` button and find `E-puckGroundSensors` (check the image bellow).
-![e-puck2 ground sensors](./assets/ground_sensors_webots.png)
+To put the ground sensor module, select `groundSensorsSlot` in `e-puck2` robot tree, click `+` button and find `E-puckGroundSensors` (check out [this image](./assets/ground_sensors_webots.png)).
 
 ### Transformations
 Dynamic transformations are only used for the odometry and you can show it as:
@@ -138,7 +137,72 @@ Dynamic transformations are only used for the odometry and you can show it as:
 ros2 topic echo tf
 ```
 
-All other transformations are static and they are exposed as latched topics, so you show them with the following command:
+All other transformations are static and they are exposed as latched topics, so you can show them with the following command:
 ```
 ros2 topic echo --qos-profile services_default --qos-durability transient_local tf_static
+```
+
+For general access to transformations you can use `tf2_monitor`:
+```
+ros2 run tf2_ros tf2_monitor
+```
+or if you want to read transformation between arbitrary two coordinate frames in a tree:
+```
+ros2 run tf2_ros tf2_echo odom map
+```
+
+
+### Navigation
+ROS2 Navigation2 stack (see [this figure](https://raw.githubusercontent.com/ros-planning/navigation2/eloquent-devel/doc/architecture/navigation_overview.png)) allows us to move robot from point A to point B by creating a global plan and avoiding local obstacles. It is integrated into e-puck example and you can run it by including `nav` parameter:
+
+```
+ros2 launch webots_ros2_epuck example_launch.py rviz:=true nav:=true mapper:=true fill_map:=false
+```
+or without RViz2 you can just publish a desired pose:
+```
+ros2 topic pub -1 /goal_pose geometry_msgs/PoseStamped \"
+pose:
+  position:
+    x: 0.3
+    y: 0.0
+    z: 0.0
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+"
+```
+
+In case the navigation fails, you can restart `bt_navigator`:
+```
+ros2 service call /bt_navigator/change_state lifecycle_msgs/ChangeState "{transition: {id: 4}}"
+ros2 service call /bt_navigator/change_state lifecycle_msgs/ChangeState "{transition: {id: 3}}"
+```
+
+![Demo](./assets/nav2.gif)
+
+This example will work properly only for [ROS2 Foxy](https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/) (the first ROS2 release that has a long support - 3+ years):
+- Navigation2 stack is tested with version `e3469486675beb3` that includes [fix of progress checker parameters](https://answers.ros.org/question/344004/configuring-the-progress-checker-in-navigation2/) and [namespaced plugins for servers](https://github.com/ros-planning/navigation2/pull/1468).
+- RViz2 for Eloquent has a bug and [cannot show a local cost map](https://github.com/ros-planning/navigation2/issues/921), therefore, `ff8fcf9a2411` (or up) version of RViz2 is desired.
+
+
+### Mapping
+Unfortunately, default SLAM implementation doesn't work well with e-puck. Therefore, we created a simple mapping node that relies purely on odometry. You can launch it as a part of the e-puck example launch file by adding `mapper` parameter:
+```
+ros2 launch webots_ros2_epuck example_launch.py rviz:=true mapper:=true
+```
+Drive the robot around (with e.g. `teleop_twist_keyboard`) to discover as much of the map as possible.
+![Mapping process](./assets/mapping.gif) 
+
+Once you are sattisfied with the result you can save the map as:
+```
+ros2 run nav2_map_server map_saver -f $HOME/Pictures/map
+```
+and load it later to use it with e.g. navigation (`t1` and `t2` represent 2 different terminals):
+```
+t1$ ros2 run nav2_map_server map_server --ros-args -p yaml_filename:=$HOME/Pictures/map.yaml -p use_sim_time:=true
+t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{transition: {id: 1}}"
+t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{transition: {id: 3}}"
+t2$ ros2 launch webots_ros2_epuck example_launch.py rviz:=true nav:=true
 ```

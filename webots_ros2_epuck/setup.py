@@ -6,11 +6,11 @@ package_name = 'webots_ros2_epuck'
 data_files = []
 data_files.append(
     ('share/ament_index/resource_index/packages', ['resource/' + package_name]))
-data_files.append(('share/' + package_name, ['launch/example_launch.py']))
+data_files.append(('share/' + package_name, ['launch/example_launch.py', 'launch/example_tools_launch.py']))
 data_files.append(('share/' + package_name + '/worlds',
                    ['worlds/epuck_world.wbt', 'worlds/.epuck_world.wbproj']))
 data_files.append(('share/' + package_name + '/resource',
-                   ['resource/all.rviz']))
+                   ['resource/all.rviz', 'resource/nav2_params.yaml']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 
@@ -38,7 +38,8 @@ setup(
     entry_points={
         'console_scripts': [
             'driver = webots_ros2_epuck.driver:main',
-            'drive_calibrator = webots_ros2_epuck.drive_calibrator:main'
+            'drive_calibrator = webots_ros2_epuck.drive_calibrator:main',
+            'simple_mapper = webots_ros2_epuck.simple_mapper:main'
         ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }

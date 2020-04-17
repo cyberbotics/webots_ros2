@@ -1,9 +1,9 @@
-#VRML_SIM R2020b utf8
+#VRML_SIM R2020a utf8
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.11564241154814468 0.8864931155533069 0.4480589121175034 2.6781208824909455
-  position 0.698295812289575 1.8577531400558038 -1.210345052372357
+  orientation -0.9999762751760207 -0.00678219816229184 0.0012045219710213537 1.2943909158905016
+  position -0.003314315612477914 2.2804919721769745 0.6419213799934773
 }
 TexturedBackground {
 }
@@ -29,6 +29,8 @@ WoodenBox {
 E-puck {
   controller "<extern>"
   version "2"
+  camera_width 640
+  camera_height 480
   turretSlot [
     Pi-puck {
     }

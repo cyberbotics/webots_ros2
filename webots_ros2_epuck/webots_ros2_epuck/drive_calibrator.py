@@ -16,6 +16,7 @@
 # by moving the robot forward and correcting wheel radius, and rotating robot and
 # correcting distance between the wheels.
 
+import time
 from math import pi
 import rclpy
 from nav_msgs.msg import Odometry
@@ -45,21 +46,16 @@ class EPuckDriveCalibrator(Node):
         # Odometry
         self.odom_angular_last = 0.0
         self.odom_angular_last_abs = 0.0
-        self.odom_linear_last = 0.0
         self.odom_angular_start = 0.0
         self.odom_linear_start = 0.0
         self.odom_params_initialised = False
 
-    def send_stop(self):
-        self.test_done = True
-        msg = Twist()
-        msg.angular.x = 0.0
-        msg.angular.y = 0.0
-        msg.angular.z = 0.0
-        msg.linear.x = 0.0
-        msg.linear.y = 0.0
-        msg.linear.z = 0.0
-        self.pub.publish(msg)
+    def finish_calibration(self):
+        self.set_velocity(0, 0)
+        self.get_logger().info('The robot has reached the given pose according to odometry')
+        time.sleep(0.5)
+        self.destroy_node()
+        exit(0)
 
     def set_velocity(self, linear, angular):
         msg = Twist()
@@ -80,7 +76,6 @@ class EPuckDriveCalibrator(Node):
             self.odom_angular_last = yaw
             self.odom_angular_start = yaw
             self.odom_angular_last_abs = yaw
-            self.odom_linear_last = msg.pose.pose.position.x
             self.odom_linear_start = msg.pose.pose.position.x
             return
 
@@ -98,7 +93,7 @@ class EPuckDriveCalibrator(Node):
             self.set_velocity(0, ANGULAR_VELOCITY)
             n_rotations = (self.odom_angular_last_abs - self.odom_angular_start)/(2*pi)
             if n_rotations > NUMBER_OF_ROTATIONS:
-                self.send_stop()
+                self.finish_calibration()
             self.get_logger().info(f'Number of rotations: {n_rotations:.2f}')
 
         # Linear calibration
@@ -108,7 +103,7 @@ class EPuckDriveCalibrator(Node):
             passed_distance = msg.pose.pose.position.x - self.odom_linear_start
             self.get_logger().info(f'Passed distance: {passed_distance:.2f}')
             if passed_distance > self.distance.value:
-                self.send_stop()
+                self.finish_calibration()
 
         # Save readings
         self.odom_angular_last = yaw

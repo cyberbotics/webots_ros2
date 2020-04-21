@@ -94,14 +94,14 @@ class EPuckDriveCalibrator(Node):
             n_rotations = (self.odom_angular_last_abs - self.odom_angular_start)/(2*pi)
             if n_rotations > NUMBER_OF_ROTATIONS:
                 self.finish_calibration()
-            self.get_logger().info(f'Number of rotations: {n_rotations:.2f}')
+            self.get_logger().info(f'Number of rotations: {n_rotations:.4f}')
 
         # Linear calibration
         if self.type.value == 'linear':
             self.get_logger().info('Linear calibration in progress...')
             self.set_velocity(LINEAR_VELOCITY, 0)
             passed_distance = msg.pose.pose.position.x - self.odom_linear_start
-            self.get_logger().info(f'Passed distance: {passed_distance:.2f}')
+            self.get_logger().info(f'Passed distance: {passed_distance:.4f}')
             if passed_distance > self.distance.value:
                 self.finish_calibration()
 

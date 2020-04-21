@@ -214,7 +214,7 @@ First, we want to measure wheel radius and we can achieve it by letting the robo
 ```
 ros2 run webots_ros2_epuck drive_calibrator --ros-args -p type:=linear
 ```
-if the robot overshoots the given distance (default 0.1335m) we should decrease the wheel radius, otherwise increase it:
+if the robot overshoots the given distance (default 0.1335m) we should increase the wheel radius, otherwise decrease it:
 ```
 ros2 param set /epuck_driver wheel_radius 0.021
 ```
@@ -225,7 +225,7 @@ ros2 run webots_ros2_epuck drive_calibrator --ros-args -p type:=angular
 ```
 if overshoots the given number of rotations (default 4) then decrease the distance between the wheels, otherwise increase it.
 ```
-ros2 param set /epuck_driver wheel_distance 0.0515
+ros2 param set /epuck_driver wheel_distance 0.0514
 ```
 
 Third, repeat those two steps until you are satisfied with the precision.

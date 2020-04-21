@@ -206,3 +206,28 @@ t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{tran
 t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{transition: {id: 3}}"
 t2$ ros2 launch webots_ros2_epuck example_launch.py rviz:=true nav:=true
 ```
+
+### Differential Drive Calibration
+Based on the rotation speed of each wheel and two constants, distance between the wheels and wheel radius, we can calculate the position of the robot in the local frame. Therefore. the precision of the position estimation depends a lot on the distance between the wheels and wheel radius. Those constants can vary from robot to robot and here we provide a tool to help you to calibrate it (this technique is very similar to one proposed in [_"Measurement and Correction of Systematic Odometry Errors in Mobile Robots"_](http://www-personal.umich.edu/~johannb/Papers/paper58.pdf)).  
+
+First, we want to measure wheel radius and we can achieve it by letting the robot move in a straight line:
+```
+ros2 run webots_ros2_epuck drive_calibrator --ros-args -p type:=linear
+```
+if the robot overshoots the given distance (default 0.1335m) we should decrease the wheel radius, otherwise increase it:
+```
+ros2 param set /epuck_driver wheel_radius 0.021
+```
+
+Second, to calibrate the distance between the wheel we can let the robot rotate in the spot:
+```
+ros2 run webots_ros2_epuck drive_calibrator --ros-args -p type:=angular
+```
+if overshoots the given number of rotations (default 4) then decrease the distance between the wheels, otherwise increase it.
+```
+ros2 param set /epuck_driver wheel_distance 0.0515
+```
+
+Third, repeat those two steps until you are satisfied with the precision.
+
+Note that you can measure distance by a tool (e.g. ruler), it is a good initial guess, but with the technique described above, you will achieve much better results. According to the paper, such techniques can significantly reduce systematic errors (page 4 and 23).

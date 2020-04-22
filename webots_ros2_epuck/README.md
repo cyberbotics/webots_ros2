@@ -208,7 +208,9 @@ t2$ ros2 launch webots_ros2_epuck example_launch.py rviz:=true nav:=true
 ```
 
 ### Differential Drive Calibration
-Based on the rotation speed of each wheel and two constants, distance between the wheels and wheel radius, we can calculate the position of the robot in the local frame. Therefore. the precision of the position estimation depends a lot on the distance between the wheels and wheel radius. Those constants can vary from robot to robot and here we provide a tool to help you to calibrate it (this technique is very similar to one proposed in [_"Measurement and Correction of Systematic Odometry Errors in Mobile Robots"_](http://www-personal.umich.edu/~johannb/Papers/paper58.pdf)).  
+Based on the rotation speed of each wheel and two constants, distance between the wheels and wheel radius, we can calculate the position of the robot in the local frame.
+Therefore, the precision of the position estimation depends a lot on the distance between the wheels and the wheel radius.
+Those constants can vary from robot to robot and here we provide a tool to help you to calibrate it (this technique is very similar to the one proposed in [_"Measurement and Correction of Systematic Odometry Errors in Mobile Robots"_](http://www-personal.umich.edu/~johannb/Papers/paper58.pdf)).
 
 First, we want to measure wheel radius and we can achieve it by letting the robot move in a straight line:
 ```

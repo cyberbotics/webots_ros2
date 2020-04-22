@@ -64,7 +64,8 @@ ros2 topic echo /ps1
 Besides infrared sensors, e-puck2 is upgraded with long-range ToF sensor positioned just above the camera.
 Data from this sensor is also exposed through the [sensor_msgs/Range](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Range.msg) topic with name `tof`.
 
-All distance sensors are combined to create [sensor_msgs/LaserScan](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/LaserScan.msg) so you can use it directly in SLAM packages.You can test it as:
+All distance sensors are combined to create [sensor_msgs/LaserScan](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/LaserScan.msg) so you can use it directly in SLAM packages.
+You can test it as:
 ```
 ros2 topic echo /scan
 ```

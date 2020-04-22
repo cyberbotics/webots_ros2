@@ -225,7 +225,7 @@ Second, to calibrate the distance between the wheel we can let the robot rotate 
 ```
 ros2 run webots_ros2_epuck drive_calibrator --ros-args -p type:=angular
 ```
-if overshoots the given number of rotations (default 4) then decrease the distance between the wheels, otherwise increase it.
+If overshoots, the given number of rotations (default 4) then decrease the distance between the wheels, otherwise increase it.
 ```
 ros2 param set /epuck_driver wheel_distance 0.0514
 ```

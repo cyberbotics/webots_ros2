@@ -15,119 +15,103 @@
 # This node helps you to calibrate wheel radius and distance between the wheels
 # by moving the robot forward and correcting wheel radius, and rotating robot and
 # correcting distance between the wheels.
-# ros2 run webots_ros2_epuck drive_calibrator --ros-args -p type:=linear -p wheel_radius:=0.021
 
+import time
+from math import pi
 import rclpy
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
-from rcl_interfaces.srv import SetParameters
-from rcl_interfaces.msg._parameter import Parameter
-from rclpy.parameter import ParameterType, ParameterValue
 from geometry_msgs.msg import Twist
 from webots_ros2_core.math_utils import quaternion_to_euler
 
 
-# Target distance for robot to pass in meters
 DEFAULT_DISTANCE = 0.1335
-# Default separation between two wheels (from e-puck website)
-DEFAULT_WHEEL_DISTANCE = 0.0552
-# Default wheel radius (from e-puck website)
-DEFAULT_WHEEL_RADIUS = 0.021
+NUMBER_OF_ROTATIONS = 4
+LINEAR_VELOCITY = 0.02
+ANGULAR_VELOCITY = 1
 
 
 class EPuckDriveCalibrator(Node):
-    def __init__(self, name, args=None):
+    def __init__(self, name):
         super().__init__(name)
-
-        self.test_done = False
-        self.rotation_count = 0
-        self.last_yaw = 0
 
         # Parameters
         self.type = self.declare_parameter('type', 'rotation')
         self.distance = self.declare_parameter('distance', DEFAULT_DISTANCE)
-        self.wheel_distance = self.declare_parameter(
-            'wheel_distance', DEFAULT_WHEEL_DISTANCE)
-        self.wheel_radius = self.declare_parameter(
-            'wheel_radius', DEFAULT_WHEEL_RADIUS)
 
         # Topics
         self.create_subscription(Odometry, '/odom', self.odometry_callback, 1)
         self.pub = self.create_publisher(Twist, '/cmd_vel', 10)
 
-        # Parameter service
-        self.cli = self.create_client(SetParameters, 'epuck/set_parameters')
-        self.cli.wait_for_service(timeout_sec=1.0)
-        self.set_param('wheel_distance', self.wheel_distance.value)
-        self.set_param('wheel_radius', self.wheel_radius.value)
-        self.get_logger().info('Setting wheel distance to: {}m'.format(self.wheel_distance.value))
-        self.get_logger().info('Setting wheel radius to: {}m'.format(self.wheel_radius.value))
+        # Odometry
+        self.odom_angular_last = 0.0
+        self.odom_angular_last_abs = 0.0
+        self.odom_angular_start = 0.0
+        self.odom_linear_start = 0.0
+        self.odom_params_initialised = False
 
-    def set_param(self, name, value):
-        req = SetParameters.Request()
-        param_value = ParameterValue(
-            double_value=value, type=ParameterType.PARAMETER_DOUBLE)
-        param = Parameter(name=name, value=param_value)
-        req.parameters.append(param)
-        self.cli.call_async(req)
+    def finish_calibration(self):
+        self.set_velocity(0, 0)
+        self.get_logger().info('The robot has reached the given pose according to odometry')
+        time.sleep(0.5)
+        self.destroy_node()
+        exit(0)
 
-    def send_stop(self):
-        self.test_done = True
+    def set_velocity(self, linear, angular):
         msg = Twist()
         msg.angular.x = 0.0
         msg.angular.y = 0.0
-        msg.angular.z = 0.0
-        msg.linear.x = 0.0
+        msg.angular.z = float(angular)
+        msg.linear.x = float(linear)
         msg.linear.y = 0.0
         msg.linear.z = 0.0
         self.pub.publish(msg)
 
     def odometry_callback(self, msg: Odometry):
-        if not self.test_done and self.type.value == 'rotation':
-            # Send velocity
-            self.get_logger().info('Rotation calibration in progress...')
-            msg_twist = Twist()
-            msg_twist.angular.x = 0.0
-            msg_twist.angular.y = 0.0
-            msg_twist.angular.z = 1.0
-            msg_twist.linear.x = 0.0
-            msg_twist.linear.y = 0.0
-            msg_twist.linear.z = 0.0
-            self.pub.publish(msg_twist)
+        yaw, _, _ = quaternion_to_euler(msg.pose.pose.orientation)
+        if not self.odom_params_initialised:
+            if yaw < 0:
+                yaw = 2 * pi + yaw
+            self.odom_params_initialised = True
+            self.odom_angular_last = yaw
+            self.odom_angular_start = yaw
+            self.odom_angular_last_abs = yaw
+            self.odom_linear_start = msg.pose.pose.position.x
+            return
 
-            # Receive data
-            yaw, _, _ = quaternion_to_euler(msg.pose.pose.orientation)
-            if yaw > 0 and self.last_yaw < 0:
-                self.rotation_count += 1
-            if self.rotation_count == 4:
-                self.send_stop()
-            self.last_yaw = yaw
+        # Resolve singularities (first for positive angle and then for negative angle)
+        if yaw - self.odom_angular_last > pi:
+            self.odom_angular_last_abs += 2*pi - (yaw - self.odom_angular_last)
+        elif self.odom_angular_last - yaw > pi:
+            self.odom_angular_last_abs += 2*pi - (self.odom_angular_last - yaw)
+        else:
+            self.odom_angular_last_abs += yaw - self.odom_angular_last
 
-            self.get_logger().info('Circle: {}; Current angle: {}'.format(
-                self.rotation_count, yaw))
+        # Angular calibration
+        if self.type.value == 'angular':
+            self.get_logger().info('Angular calibration in progress...')
+            self.set_velocity(0, ANGULAR_VELOCITY)
+            n_rotations = (self.odom_angular_last_abs - self.odom_angular_start)/(2*pi)
+            if n_rotations > NUMBER_OF_ROTATIONS:
+                self.finish_calibration()
+            self.get_logger().info(f'Number of rotations: {n_rotations:.4f}')
 
-        if not self.test_done and self.type.value == 'linear':
-            # Send velocity
-            self.get_logger().info('Rotation calibration in progress...')
-            msg_twist = Twist()
-            msg_twist.angular.x = 0.0
-            msg_twist.angular.y = 0.0
-            msg_twist.angular.z = 0.0
-            msg_twist.linear.x = 0.02
-            msg_twist.linear.y = 0.0
-            msg_twist.linear.z = 0.0
-            self.pub.publish(msg_twist)
+        # Linear calibration
+        if self.type.value == 'linear':
+            self.get_logger().info('Linear calibration in progress...')
+            self.set_velocity(LINEAR_VELOCITY, 0)
+            passed_distance = msg.pose.pose.position.x - self.odom_linear_start
+            self.get_logger().info(f'Passed distance: {passed_distance:.4f}')
+            if passed_distance > self.distance.value:
+                self.finish_calibration()
 
-            # Receive data
-            print('X', msg.pose.pose.position.x)
-            if msg.pose.pose.position.x > self.distance.value:
-                self.send_stop()
+        # Save readings
+        self.odom_angular_last = yaw
 
 
 def main(args=None):
     rclpy.init(args=args)
-    epuck_controller = EPuckDriveCalibrator(
-        'epuck_drive_calibrator', args=args)
+    epuck_controller = EPuckDriveCalibrator('epuck_drive_calibrator')
     rclpy.spin(epuck_controller)
     epuck_controller.destroy_node()
     rclpy.shutdown()

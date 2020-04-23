@@ -86,9 +86,3 @@ class WebotsNode(Node):
         self.step(request.value)
         response.success = True
         return response
-
-    def now(self):
-        sim_time = self.robot.getTime()
-        seconds = int(sim_time)
-        nanoseconds = int((sim_time - seconds) * 1.0e+6)
-        return Time(sec=seconds, nanosec=nanoseconds)

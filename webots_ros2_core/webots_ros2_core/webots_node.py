@@ -28,7 +28,6 @@ from rosgraph_msgs.msg import Clock
 
 from rclpy.node import Node
 from rclpy.parameter import Parameter
-from builtin_interfaces.msg import Time
 
 try:
     append_webots_python_lib_to_path()

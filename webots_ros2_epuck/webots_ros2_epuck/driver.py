@@ -119,7 +119,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
                 self.ground_sensor_publishers[idx] = self.create_publisher(Range, '/' + idx, 1)
 
                 ground_sensor_transform = TransformStamped()
-                ground_sensor_transform.header.stamp = self.get_clock().now()
+                ground_sensor_transform.header.stamp = self.get_clock().now().to_msg()
                 ground_sensor_transform.header.frame_id = "base_link"
                 ground_sensor_transform.child_frame_id = "gs" + str(i)
                 ground_sensor_transform.transform.rotation = euler_to_quaternion(0, pi/2, 0)
@@ -141,7 +141,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             self.distance_sensor_publishers['ps{}'.format(i)] = sensor_publisher
 
             distance_sensor_transform = TransformStamped()
-            distance_sensor_transform.header.stamp = self.get_clock().now()
+            distance_sensor_transform.header.stamp = self.get_clock().now().to_msg()
             distance_sensor_transform.header.frame_id = "base_link"
             distance_sensor_transform.child_frame_id = "ps" + str(i)
             distance_sensor_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
@@ -157,7 +157,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             self.tof_sensor.enable(self.timestep)
             self.tof_publisher = self.create_publisher(Range, '/tof', 1)
             tof_transform = TransformStamped()
-            tof_transform.header.stamp = self.get_clock().now()
+            tof_transform.header.stamp = self.get_clock().now().to_msg()
             tof_transform.header.frame_id = "base_link"
             tof_transform.child_frame_id = "tof"
             tof_transform.transform.rotation.x = 0.0
@@ -217,7 +217,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             self.light_sensors.append(light_sensor)
 
             light_transform = TransformStamped()
-            light_transform.header.stamp = self.get_clock().now()
+            light_transform.header.stamp = self.get_clock().now().to_msg()
             light_transform.header.frame_id = "base_link"
             light_transform.child_frame_id = "ls" + str(i)
             light_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
@@ -228,7 +228,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Static tf broadcaster: Laser
         laser_transform = TransformStamped()
-        laser_transform.header.stamp = self.get_clock().now()
+        laser_transform.header.stamp = self.get_clock().now().to_msg()
         laser_transform.header.frame_id = "base_link"
         laser_transform.child_frame_id = "laser_scanner"
         laser_transform.transform.rotation.x = 0.0
@@ -255,7 +255,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
     def step_callback(self):
         self.robot.step(self.timestep)
-        stamp = self.get_clock().now()
+        stamp = self.get_clock().now().to_msg()
 
         self.publish_distance_data(stamp)
         self.publish_light_data(stamp)

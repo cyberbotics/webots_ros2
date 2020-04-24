@@ -1,5 +1,5 @@
 # ROS2 for E-Puck
-Here you will find instructions on how to use utilize e-puck ROS2 API. 
+Here you will find instructions on how to use the e-puck ROS2 API. 
 
 This documentation is common for for physical ([`epuck_ros2`](https://github.com/cyberbotics/epuck_ros2)) and simulated ([`webots_ros2_epuck`](https://github.com/cyberbotics/webots_ros2/tree/master/webots_ros2_epuck)) robot, so there is a slight difference in using the launch file.
 Launch file `example_launch.py` runs the Webots simulation and includes `example_tools_launch.py`.

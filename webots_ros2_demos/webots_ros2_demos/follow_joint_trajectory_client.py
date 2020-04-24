@@ -17,6 +17,7 @@
 from action_msgs.msg import GoalStatus
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
+from builtin_interfaces.msg import Duration
 
 import rclpy
 from rclpy.action import ActionClient
@@ -71,7 +72,10 @@ class followJointTrajectoryClient(Node):
             trajectoryPoint = JointTrajectoryPoint(positions=point['positions'],
                                                    velocities=point['velocities'],
                                                    accelerations=point['accelerations'],
-                                                   time_from_start=point['time_from_start'])
+                                                   time_from_start=Duration(
+                                                       sec=point['time_from_start']['sec'],
+                                                       nanosec=point['time_from_start']['nanosec']
+                                                    ))
             goal_msg.trajectory.points.append(trajectoryPoint)
 
         self.get_logger().info('Sending goal request...')

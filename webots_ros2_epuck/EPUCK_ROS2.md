@@ -10,7 +10,7 @@ ros2 launch webots_ros2_epuck example_[tools_]launch.py rviz:=true
 ```
 
 ## Infra-red, Light Sensors, and LEDs
-![e-puck2 camera and infrared sensors](https://raw.githubusercontent.com/cyberbotics/webots/master/docs/guide/images/robots/epuck/sensors_and_leds.png)  
+![e-puck2 camera and infrared sensors](./assets/sensors_and_leds.png)  
 E-puck2 has 8 infra-red sensors (named as `ps0-7`) all of which are mapped to the same name ROS2 topics of type [sensor_msgs/Range](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Range.msg).
 Therefore, you can obtain a distance from a sensor as follows:
 ``` 

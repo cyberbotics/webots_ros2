@@ -19,7 +19,7 @@ import sys
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from sensor_msgs.msg import JointState
-from builtin_interfaces.msg import Time
+from rclpy.time import Time
 
 try:
     append_webots_python_lib_to_path()
@@ -57,10 +57,8 @@ class JointStatePublisher():
 
     def publish(self):
         """Publish the 'joint_states' topic with up to date value."""
-        seconds = int(self.robot.getTime())
-        nanoseconds = int((self.robot.getTime() - seconds) * 1.0e+6)
         msg = JointState()
-        msg.header.stamp = Time(sec=seconds, nanosec=nanoseconds)
+        msg.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
         msg.header.frame_id = 'From simulation state data'
         msg.name = [s + self.jointPrefix for s in self.jointNames]
         msg.position = []

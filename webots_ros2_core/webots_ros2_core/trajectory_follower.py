@@ -62,31 +62,6 @@ def within_tolerance(a_vec, b_vec, tol_vec):
     return True
 
 
-def interp_cubic(p0, p1, t_abs):
-    """Perform a cubic interpolation between two trajectory points."""
-    t0 = p0.time_from_start.sec + p0.time_from_start.nanosec * 1.0e-6
-    t1 = p1.time_from_start.sec + p1.time_from_start.nanosec * 1.0e-6
-    T = t1 - t0
-    t = t_abs - t0
-    q = [0] * len(p0.positions)
-    qdot = [0] * len(p0.positions)
-    qddot = [0] * len(p0.positions)
-    for i in list(range(len(p0.positions))):
-        a = p0.positions[i]
-        b = p0.velocities[i]
-        c = (-3 * p0.positions[i] + 3 * p1.positions[i] - 2 * T * p0.velocities[i] -
-             T * p1.velocities[i]) / T**2
-        d = (2 * p0.positions[i] - 2 * p1.positions[i] + T * p0.velocities[i] +
-             T * p1.velocities[i]) / T**3
-
-        q[i] = a + b * t + c * t**2 + d * t**3
-        qdot[i] = b + 2 * c * t + 3 * d * t**2
-        qddot[i] = 2 * c + 6 * d * t
-    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot,
-                                time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) *
-                                                                                     1.0e+6)))
-
-
 def interp_linear(p0, p1, t_abs):
     """Perform a linear interpolation between two trajectory points."""
     t0 = p0.time_from_start.sec + p0.time_from_start.nanosec * 1.0e-6

@@ -89,7 +89,6 @@ class LaserPublisher():
 
     def publish(self, lidar, transforms):
         """Publish the laser scan topics with up to date value."""
-
         stamp = Time(seconds=self.robot.getTime() + 0.001 * self.timestep).to_msg()
         for i in range(lidar.getNumberOfLayers()):
             name = self.prefix + lidar.getName() + '_scan'

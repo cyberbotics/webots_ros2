@@ -22,7 +22,8 @@ from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
-from builtin_interfaces.msg import Duration
+from rclpy.duration import Duration
+from rclpy.time import Time
 
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
 
@@ -64,10 +65,8 @@ def within_tolerance(a_vec, b_vec, tol_vec):
 
 def interp_cubic(p0, p1, t_abs):
     """Perform a cubic interpolation between two trajectory points."""
-    t0 = p0.time_from_start.sec + p0.time_from_start.nanosec * 1.0e-6
-    t1 = p1.time_from_start.sec + p1.time_from_start.nanosec * 1.0e-6
-    T = t1 - t0
-    t = t_abs - t0
+    T = (p1.time_from_start - p0.time_from_start).nanoseconds / 1e9
+    t = (t_abs - p0.time_from_start).nanoseconds / 1e9
     q = [0] * len(p0.positions)
     qdot = [0] * len(p0.positions)
     qddot = [0] * len(p0.positions)
@@ -82,17 +81,15 @@ def interp_cubic(p0, p1, t_abs):
         q[i] = a + b * t + c * t**2 + d * t**3
         qdot[i] = b + 2 * c * t + 3 * d * t**2
         qddot[i] = 2 * c + 6 * d * t
-    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot,
-                                time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) *
-                                                                                     1.0e+6)))
+    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot, time_from_start=t_abs.to_msg())
 
 
 def interp_linear(p0, p1, t_abs):
     """Perform a linear interpolation between two trajectory points."""
-    t0 = p0.time_from_start.sec + p0.time_from_start.nanosec * 1.0e-6
-    t1 = p1.time_from_start.sec + p1.time_from_start.nanosec * 1.0e-6
+    t0 = Duration.from_msg(p0.time_from_start).nanoseconds / 1e9
+    t1 = Duration.from_msg(p1.time_from_start).nanoseconds / 1e9
     T = t1 - t0
-    t = t_abs - t0
+    t = t_abs.nanoseconds / 1e9 - t0
     ratio = max(min((t / T), 1), 0)
     q = [0] * len(p0.positions)
     qdot = [0] * len(p0.positions)
@@ -101,9 +98,7 @@ def interp_linear(p0, p1, t_abs):
         q[i] = (1.0 - ratio) * p0.positions[i] + ratio * p1.positions[i]
         qdot[i] = (1.0 - ratio) * p0.velocities[i] + ratio * p1.velocities[i]
         qddot[i] = (1.0 - ratio) * p0.accelerations[i] + ratio * p1.accelerations[i]
-    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot,
-                                time_from_start=Duration(sec=int(t_abs), nanosec=int(int(t_abs) *
-                                                                                     1.0e+6)))
+    return JointTrajectoryPoint(positions=q, velocities=qdot, accelerations=qddot, time_from_start=t_abs.to_msg())
 
 
 def sample_trajectory(trajectory, t):
@@ -114,16 +109,14 @@ def sample_trajectory(trajectory, t):
     the time t is the time since the trajectory was started.
     """
     # First point
-    if t <= 0.0:
+    if t <= Duration(seconds=0):
         return copy.deepcopy(trajectory.points[0])
     # Last point
-    if t >= (trajectory.points[-1].time_from_start.sec +
-             trajectory.points[-1].time_from_start.nanosec * 1.0e-6):
+    if t >= Duration.from_msg(trajectory.points[-1].time_from_start):
         return copy.deepcopy(trajectory.points[-1])
     # Finds the (middle) segment containing t
     i = 0
-    while (trajectory.points[i + 1].time_from_start.sec +
-           trajectory.points[i + 1].time_from_start.nanosec * 1.0e-6) < t:
+    while Duration.from_msg(trajectory.points[i + 1].time_from_start) < t:
         i += 1
     return interp_linear(trajectory.points[i], trajectory.points[i + 1], t)
 
@@ -152,7 +145,7 @@ class TrajectoryFollower():
     def __init__(self, robot, node, jointPrefix, goal_time_tolerance=None):
         self.robot = robot
         self.node = node
-        self.previousTime = robot.getTime()
+        self.previousTime = Time(seconds=robot.getTime())
         self.timestep = int(robot.getBasicTimeStep())
         # Parse motor and position sensors
         self.motors = {}
@@ -208,7 +201,7 @@ class TrajectoryFollower():
             return GoalResponse.REJECT
 
         # Inserts the current setpoint at the head of the trajectory
-        now = self.robot.getTime()
+        now = Time(seconds=self.robot.getTime())
         positions = []
         velocities = []
         accelerations = []
@@ -220,7 +213,7 @@ class TrajectoryFollower():
             positions=positions,
             velocities=velocities,
             accelerations=accelerations,
-            time_from_start=Duration())
+            time_from_start=Duration().to_msg())
         goal_handle.trajectory.points.insert(0, point0)
 
         # Add this trajectory to the list if not conflicting with a current trajectory
@@ -253,14 +246,14 @@ class TrajectoryFollower():
         result = FollowJointTrajectory.Result()
         while self.robot:
             # Update position and velocites
-            now = self.robot.getTime()
+            now = Time(seconds=self.robot.getTime())
             position = {}
             velocity = {}
             timeDifference = now - self.previousTime
             for name in self.sensors.keys():
                 position[name] = self.sensors[name].getValue()
-                if timeDifference > 0.0:
-                    velocity[name] = (position[name] - self.position[name]) / timeDifference
+                if timeDifference > Duration(seconds=0):
+                    velocity[name] = (position[name] - self.position[name]) / (timeDifference.nanoseconds * 1e9)
                 else:
                     velocity[name] = self.velocity[name]
 
@@ -279,9 +272,8 @@ class TrajectoryFollower():
             if not trajectory:
                 break
             # Apply trajectory
-            lastPointStart = trajectory.jointTrajectory.points[-1].time_from_start
-            if (now - trajectory.startTime) <= (lastPointStart.sec +
-                                                lastPointStart.nanosec * 1.0e-6):
+            lastPointStart = Duration.from_msg(trajectory.jointTrajectory.points[-1].time_from_start)
+            if (now - trajectory.startTime) <= lastPointStart:
                 # Sending intermediate points
                 trajectory.lastPointSent = False
                 setpoint = sample_trajectory(trajectory.jointTrajectory,
@@ -295,8 +287,7 @@ class TrajectoryFollower():
             elif not trajectory.lastPointSent:
                 # All intermediate points sent, sending last point to make sure we reach the goal
                 trajectory.lastPointSent = True
-                setpoint = sample_trajectory(trajectory.jointTrajectory,
-                                             lastPointStart.sec + lastPointStart.nanosec * 1.0e-6)
+                setpoint = sample_trajectory(trajectory.jointTrajectory, lastPointStart)
                 for name in trajectory.jointTrajectory.joint_names:
                     index = trajectory.jointTrajectory.joint_names.index(name)
                     set_position_in_limit(self.motors[name], setpoint.positions[index])

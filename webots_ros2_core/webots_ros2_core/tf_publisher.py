@@ -51,7 +51,7 @@ class TfPublisher(WebotsNode):
             position = self.nodes[name].getPosition()
             orientation = self.nodes[name].getOrientation()
             transformStamped = TransformStamped()
-            transformStamped.header.stamp = Time(sec=nextSec, nanosec=nextNanosec)
+            transformStamped.header.stamp = (self.get_clock().now() + Dura).to_msg()
             transformStamped.header.frame_id = 'map'
             transformStamped.child_frame_id = name
             transformStamped.transform.translation.x = position[0]

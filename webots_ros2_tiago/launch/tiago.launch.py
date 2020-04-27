@@ -47,6 +47,7 @@ def generate_launch_description():
             'left_encoder': 'wheel_left_joint_sensor',
             'right_encoder': 'wheel_right_joint_sensor'
         }],
+        arguments=['--name=tiago_driver'],
         output='screen'
     )
 

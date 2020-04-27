@@ -12,21 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
 from math import cos, sin
-from webots_ros2_core.webots_node import WebotsNode
+import rclpy
+from rclpy.time import Time
 from rcl_interfaces.msg import SetParametersResult
 from nav_msgs.msg import Odometry
-from webots_ros2_core.math_utils import euler_to_quaternion
 from geometry_msgs.msg import Twist, TransformStamped
 from tf2_ros import TransformBroadcaster
+from webots_ros2_core.webots_node import WebotsNode
+from webots_ros2_core.math_utils import euler_to_quaternion
 
 
 class WebotsDifferentialDriveNode(WebotsNode):
     def __init__(self,
                  name,
                  args,
-                 wheel_distance,
-                 wheel_radius,
+                 wheel_distance=0,
+                 wheel_radius=0,
                  left_joint='left wheel motor',
                  right_joint='right wheel motor',
                  left_encoder='left wheel sensor',
@@ -38,33 +41,49 @@ class WebotsDifferentialDriveNode(WebotsNode):
                  ):
         super().__init__(name, args)
 
-        # Store config
-        self._odometry_frame = odometry_frame
-        self._robot_base_frame = robot_base_frame
-
         # Parametrise
-        wheel_distance_param = self.declare_parameter("wheel_distance", wheel_distance)
-        wheel_radius_param = self.declare_parameter("wheel_radius", wheel_radius)
+        wheel_distance_param = self.declare_parameter('wheel_distance', wheel_distance)
+        wheel_radius_param = self.declare_parameter('wheel_radius', wheel_radius)
+        left_joint_param = self.declare_parameter('left_joint', left_joint)
+        right_joint_param = self.declare_parameter('right_joint', right_joint)
+        left_encoder_param = self.declare_parameter('left_encoder', left_encoder)
+        right_encoder_param = self.declare_parameter('right_encoder', right_encoder)
+        command_topic_param = self.declare_parameter('command_topic', command_topic)
+        odometry_topic_param = self.declare_parameter('odometry_topic', odometry_topic)
+        odometry_frame_param = self.declare_parameter('odometry_frame', odometry_frame)
+        robot_base_frame_param = self.declare_parameter('robot_base_frame', robot_base_frame)
         self._wheel_radius = wheel_radius_param.value
         self._wheel_distance = wheel_distance_param.value
         self.set_parameters_callback(self._on_param_changed)
+        if self._wheel_radius == 0 or self._wheel_distance == 0:
+            self.get_logger().error('Parameters `wheel_distance` and `wheel_radius` have to greater than 0')
+            self.destroy_node()
+            exit(1)
+        self.get_logger().info(
+            f'Initializing differential drive node with wheel_distance = {self._wheel_distance} and ' +
+            f'wheel_radius = {self._wheel_radius}'
+        )
+
+        # Store config
+        self._odometry_frame = odometry_frame_param.value
+        self._robot_base_frame = robot_base_frame_param.value
 
         # Initialize motors
-        self.left_motor = self.robot.getMotor(left_joint)
-        self.right_motor = self.robot.getMotor(right_joint)
+        self.left_motor = self.robot.getMotor(left_joint_param.value)
+        self.right_motor = self.robot.getMotor(right_joint_param.value)
         self.left_motor.setPosition(float('inf'))
         self.right_motor.setPosition(float('inf'))
         self.left_motor.setVelocity(0)
         self.right_motor.setVelocity(0)
-        self.create_subscription(Twist, command_topic, self._cmd_vel_callback, 1)
+        self.create_subscription(Twist, command_topic_param.value, self._cmd_vel_callback, 1)
 
         # Initialize odometry
         self.reset_odometry()
-        self.left_wheel_sensor = self.robot.getPositionSensor(left_encoder)
-        self.right_wheel_sensor = self.robot.getPositionSensor(right_encoder)
+        self.left_wheel_sensor = self.robot.getPositionSensor(left_encoder_param.value)
+        self.right_wheel_sensor = self.robot.getPositionSensor(right_encoder_param.value)
         self.left_wheel_sensor.enable(self.timestep)
         self.right_wheel_sensor.enable(self.timestep)
-        self._odometry_publisher = self.create_publisher(Odometry, odometry_topic, 1)
+        self._odometry_publisher = self.create_publisher(Odometry, odometry_topic_param.value, 1)
         self._tf_broadcaster = TransformBroadcaster(self)
 
         # Initialize timer
@@ -81,7 +100,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
         self.right_motor.setVelocity(right_omega)
 
     def _publish_odometry_data(self):
-        stamp = self.now()
+        stamp = Time(seconds=self.robot.getTime()).to_msg()
 
         time_diff_s = self.robot.getTime() - self._last_odometry_sample_time
         left_wheel_ticks = self.left_wheel_sensor.getValue()
@@ -168,3 +187,19 @@ class WebotsDifferentialDriveNode(WebotsNode):
         self._prev_right_wheel_ticks = 0
         self._prev_position = (0.0, 0.0)
         self._prev_angle = 0.0
+
+
+def main(args=None):
+    rclpy.init(args=args)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--name', default='diff_driver', help='Name of your diff drive node')
+    args, _ = parser.parse_known_args()
+
+    differential_drive = WebotsDifferentialDriveNode(args.name, args=args)
+    rclpy.spin(differential_drive)
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

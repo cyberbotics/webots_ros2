@@ -1,15 +1,33 @@
 # ROS2 for E-Puck
 Here you will find instructions on how to use the e-puck ROS2 API. 
+This documentation is common for the physical ([`epuck_ros2`](https://github.com/cyberbotics/epuck_ros2)) and simulated ([`webots_ros2_epuck`](https://github.com/cyberbotics/webots_ros2/tree/master/webots_ros2_epuck)) robot.
 
-This documentation is common for the physical ([`epuck_ros2`](https://github.com/cyberbotics/epuck_ros2)) and simulated ([`webots_ros2_epuck`](https://github.com/cyberbotics/webots_ros2/tree/master/webots_ros2_epuck)) robot, so there is a slight difference in using the launch file.
-Launch file `example_launch.py` runs the Webots simulation and includes `example_tools_launch.py`.
-Therefore, you can use the launch file `example_tools_launch.py` for the physical robot with the same parameters as you would `example_launch.py` for the simulated robot.
-To emphasis this, you will see `[tools_]` in the commands which indicates you can use `example_tools_launch.py` and `example_launch.py` depending on whether you work with the physical or simulated robot, e.g.:
+## Getting Started
+Please make sure that you have the robot driver running.
+This will ensure that access to sensors and actuators is exposed through the ROS2 API.
+
+### Simulated Robot
+The launch file starts Webots and ROS2 driver:
 ```
-ros2 launch webots_ros2_epuck example_[tools_]launch.py rviz:=true
+ros2 launch webots_ros2_epuck robot_launch.py
 ```
 
-## Infra-red, Light Sensors, and LEDs
+For the convience, you can also launch `robot_with_tools_launch.py` which includes `robot_launch.py` and `robot_tools_launch.py`, e.g.:
+```
+ros2 launch webots_ros2_epuck robot_with_tools_launch.py rviz:=true
+```
+This launch file has the same parameters as `robot_tools_launch.py`.
+
+### Physical Robot
+This launch file starts e-puck driver for physical robot:
+```
+ros2 launch epuck_ros2 robot_launch.py
+```
+
+## Tutorials
+When you have the ROS2 driver running you can proceed with the tutorials.
+
+### Infra-red, Light Sensors, and LEDs
 ![e-puck2 camera and infrared sensors](./assets/sensors_and_leds.png)  
 E-puck2 has 8 infra-red sensors (named as `ps0-7`) all of which are mapped to the same name ROS2 topics of type [sensor_msgs/Range](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Range.msg).
 Therefore, you can obtain a distance from a sensor as follows:
@@ -42,7 +60,7 @@ ros2 topic pub /led1 std_msgs/Int32 '{ "data": 0xFF0000 }'
 ```
 where 3 lower bytes of Int32 represent 3 bytes of R, G and B components.
 
-## Velocity Control
+### Velocity Control
 Standard [geometry_msgs/Twist](https://github.com/ros2/common_interfaces/blob/master/geometry_msgs/msg/Twist.msg) topic with name `/cmd_vel` is exposed for velocity control.
 ``` 
 ros2 topic pub /cmd_vel geometry_msgs/Twist "linear:
@@ -56,7 +74,7 @@ angular:
 ```
 > Note that only `linear.x` and `angular.z` are considered as e-puck2 is differential wheeled robot.
 
-## Odometry
+### Odometry
 Standard ROS2 messages [nav_msgs/Odometry](https://github.com/ros2/common_interfaces/blob/master/nav_msgs/msg/Odometry.msg) are used to publish odometry data
 You can subscribe to it with:
 ``` 
@@ -73,24 +91,24 @@ ros2 topic echo --no-arr /odom
 You can also visualise odometry in `rviz` :
 
 ``` 
-ros2 launch webots_ros2_epuck example_[tools_]launch.py rviz:=true
+ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true
 ```
 
-## Camera
+### Camera
 Camera data and details are described through `image_raw` (type [sensor_msgs/Image](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Image.msg)) and `camera_info` (type [sensor_msgs/CameraInfo](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/CameraInfo.msg)) topics.
 Compared to the physical robot driver there is no [sensor_msgs/CompressedImage](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/CompressedImage.msg) since the images are not meant to be transfer thourgh a network.
 
 You can run `rqt` , navigate to `Plugins > Visualization > Image View` and for topic choose `/image_raw`.
 Note that the image encoding is BGRA.
 
-## IMU
+### IMU
 There are 3D accelerometer and 3D gyro hardware on e-puck2.
 You can access to this data through `imu` topic (type [sensor_msgs/Imu](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Imu.msg)), e.g.:
 ```
 ros2 topic echo --no-arr /imu
 ```
 
-## Ground Sensors
+### Ground Sensors
 Ground sensors come as an [optional module](http://www.e-puck.org/index.php?option=com_content&view=article&id=17&Itemid=18) for e-puck2.
 If the module is present, the ROS2 driver will automatically detect it and publish data.
 You can test them as:
@@ -99,7 +117,7 @@ ros2 topic echo /gs1
 ```
 To put the ground sensor module, select `groundSensorsSlot` in `e-puck2` robot tree, click `+` button and find `E-puckGroundSensors` (check out [this image](./assets/ground_sensors_webots.png)).
 
-## Transformations
+### Transformations
 Dynamic transformations are only used for the odometry and you can show it as:
 ```
 ros2 topic echo tf
@@ -119,12 +137,12 @@ or if you want to read transformation between arbitrary two coordinate frames in
 ros2 run tf2_ros tf2_echo odom map
 ```
 
-## Navigation
+### Navigation
 ROS2 Navigation2 stack (see [this figure](https://raw.githubusercontent.com/ros-planning/navigation2/eloquent-devel/doc/architecture/navigation_overview.png)) allows us to move robot from point A to point B by creating a global plan and avoiding local obstacles.
 It is integrated into e-puck example and you can run it by including `nav` parameter:
 
 ```
-ros2 launch webots_ros2_[tools_]_epuck example_launch.py rviz:=true nav:=true mapper:=true fill_map:=false
+ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true nav:=true mapper:=true fill_map:=false
 ```
 or without RViz2 you can just publish a desired pose:
 ```
@@ -155,12 +173,12 @@ This example will work properly only for [ROS2 Foxy](https://index.ros.org/doc/r
 - RViz2 for Eloquent has a bug and [cannot show a local cost map](https://github.com/ros-planning/navigation2/issues/921), therefore, `ff8fcf9a2411` (or up) version of RViz2 is desired.
 
 
-## Mapping
+### Mapping
 Unfortunately, default SLAM implementation doesn't work well with e-puck.
 Therefore, we created a simple mapping node that relies purely on odometry.
 You can launch it as a part of the e-puck example launch file by adding `mapper` parameter:
 ```
-ros2 launch webots_ros2_[tools_]_epuck example_launch.py rviz:=true mapper:=true
+ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true mapper:=true
 ```
 Drive the robot around (with e.g. `teleop_twist_keyboard`) to discover as much of the map as possible.
 ![Mapping process](./assets/mapping.gif) 
@@ -174,10 +192,10 @@ and load it later to use it with e.g. navigation (`t1` and `t2` represent 2 diff
 t1$ ros2 run nav2_map_server map_server --ros-args -p yaml_filename:=$HOME/Pictures/map.yaml -p use_sim_time:=true
 t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{transition: {id: 1}}"
 t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{transition: {id: 3}}"
-t2$ ros2 launch webots_ros2_[tools_]_epuck example_launch.py rviz:=true nav:=true
+t2$ ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true nav:=true
 ```
 
-## Differential Drive Calibration
+### Differential Drive Calibration
 Based on the rotation speed of each wheel and two constants, distance between the wheels and wheel radius, we can calculate the position of the robot in the local frame.
 Therefore, the precision of the position estimation depends a lot on the distance between the wheels and the wheel radius.
 Those constants can vary from robot to robot and here we provide a tool to help you to calibrate it (this technique is very similar to the one proposed in [_"Measurement and Correction of Systematic Odometry Errors in Mobile Robots"_](http://www-personal.umich.edu/~johannb/Papers/paper58.pdf)).

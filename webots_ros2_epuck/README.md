@@ -7,5 +7,5 @@ Since ROS2 driver for the physical ([`epuck_ros2`](https://github.com/cyberbotic
 ## Launching the Simulation
 There is a launch file available that starts Webots simulation and e-puck ROS2 driver.
 ``` 
-ros2 launch webots_ros2_epuck example_launch.py
+ros2 launch webots_ros2_epuck robot_launch.py
 ```

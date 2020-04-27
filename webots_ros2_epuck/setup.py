@@ -6,7 +6,7 @@ package_name = 'webots_ros2_epuck'
 data_files = []
 data_files.append(
     ('share/ament_index/resource_index/packages', ['resource/' + package_name]))
-data_files.append(('share/' + package_name, ['launch/example_launch.py', 'launch/example_tools_launch.py']))
+data_files.append(('share/' + package_name, ['launch/robot_launch.py', 'launch/robot_tools_launch.py', 'launch/robot_with_tools_launch.py']))
 data_files.append(('share/' + package_name + '/worlds',
                    ['worlds/epuck_world.wbt', 'worlds/.epuck_world.wbproj']))
 data_files.append(('share/' + package_name + '/resource',

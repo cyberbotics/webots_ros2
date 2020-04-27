@@ -44,7 +44,7 @@ def generate_launch_description():
             'wheel_radius': 0.1955,
             'left_joint': 'wheel_left_joint',
             'right_joint': 'wheel_right_joint',
-            'left_encoder':'wheel_left_joint_sensor',
+            'left_encoder': 'wheel_left_joint_sensor',
             'right_encoder': 'wheel_right_joint_sensor'
         }],
         output='screen'

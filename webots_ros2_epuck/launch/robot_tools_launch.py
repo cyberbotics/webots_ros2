@@ -31,7 +31,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time', default=False)
     use_nav = LaunchConfiguration('nav', default=False)
-    use_rviz = LaunchConfiguration('rviz', default=False)
+    use_rviz = LaunchConfiguration('rviz', default=True)
     use_mapper = LaunchConfiguration('mapper', default=False)
     fill_map = LaunchConfiguration('fill_map', default=True)
 

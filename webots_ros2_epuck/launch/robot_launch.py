@@ -13,29 +13,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# ros2 launch webots_ros2_epuck example_launch.py
 
-"""Launch Webots, the controller and Rviz."""
+"""Launch Webots e-puck driver."""
 
 import os
 import launch
 from launch import LaunchDescription
+from launch.actions import RegisterEventHandler, EmitEvent
 from launch.substitutions import LaunchConfiguration
-from launch.actions import RegisterEventHandler, EmitEvent, IncludeLaunchDescription
 from launch_ros.actions import Node
-from webots_ros2_core.utils import ControllerLauncher
 from ament_index_python.packages import get_package_share_directory
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from webots_ros2_core.utils import ControllerLauncher
 
 
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_epuck')
-
-    use_nav = LaunchConfiguration('nav', default=False)
-    use_rviz = LaunchConfiguration('rviz', default=False)
-    use_mapper = LaunchConfiguration('mapper', default=False)
-    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     synchronization = LaunchConfiguration('synchronization', default=False)
 
     # Webots
@@ -43,8 +35,12 @@ def generate_launch_description():
         '--mode=realtime',
         '--world=' + os.path.join(package_dir, 'worlds', 'epuck_world.wbt')
     ]
-    webots = Node(package='webots_ros2_core', node_executable='webots_launcher',
-                  arguments=arguments, output='screen')
+    webots = Node(
+        package='webots_ros2_core',
+        node_executable='webots_launcher',
+        arguments=arguments,
+        output='screen'
+    )
 
     # Driver node
     controller = ControllerLauncher(
@@ -54,23 +50,9 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Base configuration
-    base_configuration = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'example_tools_launch.py')
-        ),
-        launch_arguments={
-            'nav': use_nav,
-            'rviz': use_rviz,
-            'mapper': use_mapper,
-            'use_sim_time': use_sim_time
-        }.items()
-    )
-
     return LaunchDescription([
         webots,
         controller,
-        base_configuration,
 
         # Shutdown launch when Webots exits.
         RegisterEventHandler(

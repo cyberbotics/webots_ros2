@@ -172,12 +172,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
 
-        # Initialize camera
-        self.camera = self.robot.getCamera('camera')
-        self.camera_publisher = self.create_publisher(Image, '/image_raw', 10)
-        self.create_timer(self.camera_period / 1000, self.camera_callback)
-        self.camera_info_publisher = self.create_publisher(CameraInfo, '/camera_info', 10)
-
         # Initialize binary LEDs
         self.binary_leds = []
         self.binary_led_subscribers = []
@@ -386,41 +380,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             self.accelerometer.disable()
             if self.gyro:
                 self.gyro.disable()
-
-    def camera_callback(self):
-        if self.camera_publisher.get_subscription_count() > 0:
-            self.camera.enable(self.camera_period)
-
-            # Image data
-            msg = Image()
-            msg.height = self.camera.getHeight()
-            msg.width = self.camera.getWidth()
-            msg.is_bigendian = False
-            msg.step = self.camera.getWidth() * 4
-            msg.data = self.camera.getImage()
-            msg.encoding = 'bgra8'
-            self.camera_publisher.publish(msg)
-
-            # CameraInfo data
-            msg = CameraInfo()
-            msg.header.frame_id = 'camera_frame'
-            msg.height = self.camera.getHeight()
-            msg.width = self.camera.getWidth()
-            msg.distortion_model = 'plumb_bob'
-            msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
-            msg.k = [
-                self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2,
-                0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2,
-                0.0, 0.0, 1.0
-            ]
-            msg.p = [
-                self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2, 0.0,
-                0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2, 0.0,
-                0.0, 0.0, 1.0, 0.0
-            ]
-            self.camera_info_publisher.publish(msg)
-        else:
-            self.camera.disable()
 
 
 def main(args=None):

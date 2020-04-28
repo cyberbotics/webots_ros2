@@ -19,7 +19,7 @@
 import argparse
 import os
 import sys
-
+from webots_ros2_core.camera_publisher import CameraPublisher
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from webots_ros2_msgs.srv import SetInt
@@ -39,7 +39,7 @@ except Exception as e:
 
 class WebotsNode(Node):
 
-    def __init__(self, name, args=None):
+    def __init__(self, name, args=None, auto_init=True):
         super().__init__(name)
         self.declare_parameter('synchronization',
                                Parameter('synchronization', Parameter.Type.BOOL, False))
@@ -58,6 +58,10 @@ class WebotsNode(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
+
+         # Other stuff
+        if auto_init:
+            CameraPublisher(self)
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:

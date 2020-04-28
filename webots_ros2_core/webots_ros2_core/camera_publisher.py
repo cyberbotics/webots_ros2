@@ -16,7 +16,6 @@
 
 import sys
 from sensor_msgs.msg import Image, CameraInfo
-from tf2_msgs.msg import TFMessage
 from rclpy.time import Time
 from geometry_msgs.msg import TransformStamped
 from webots_ros2_core.utils import append_webots_python_lib_to_path
@@ -35,14 +34,17 @@ class CameraPublisherParams:
         self,
         timestep=None,
         topic_name=None,
-        always_publish=False
+        always_publish=False,
+        ignore=False
     ):
         self.timestep = timestep
         self.topic_name = topic_name
         self.always_publish = always_publish
+        self.ignore = ignore
 
 
-class RosCamera:
+class _WBRCamera:
+    """Webots + ROS2 camera wrapper."""
     def __init__(self, device):
         self.device = device
         self.params = CameraPublisherParams()
@@ -54,83 +56,89 @@ class RosCamera:
 class CameraPublisher():
     """Publish as ROS topics the laser scans of the lidars."""
 
-    def __init__(self, node, parameters={}):
+    def __init__(self, node, parameters=None):
         """
         Initialize the cameras and the topics.
         """
         self.node = node
         self.timestep = int(node.robot.getBasicTimeStep())
-        self.cameras = {}
+        self.wbr_cameras = {}
+        parameters = parameters or {}
 
         # Find camera devices
         for i in range(node.robot.getNumberOfDevices()):
             device = node.robot.getDeviceByIndex(i)
             if device.getNodeType() == Node.CAMERA:
-                self.cameras[device.getName()] = RosCamera(device)
+                self.wbr_cameras[device.getName()] = _WBRCamera(device)
 
         # Assign parameters
         for device_name, params in parameters.items():
-            if device_name not in self.cameras:
+            if device_name not in self.wbr_cameras:
                 raise NameError(f'There is no camera with name `{device_name}`')
-            if not params.timestep:
-                params.timestep = self.timestep
-            if not params.topic_name:
-                params.topic_name = device_name
-            self.cameras[device_name].params = params
+            if params.ignore:
+                del self.wbr_cameras[device_name]
+                continue
+            params.timestep = params.timestep or self.timestep
+            params.topic_name = params.topic_name or device_name
+            self.wbr_cameras[device_name].params = params
 
         # Register all devices
-        for camera in self.cameras:
-            self.register_camera(camera)
+        for wbr_camera in self.wbr_cameras:
+            self._register_camera(wbr_camera)
 
         # Create a loop
-        self.node.create_timer(1e-3 * self.timestep, self.callback)
+        self.node.create_timer(1e-3 * self.timestep, self._callback)
 
-    def register_camera(self, camera):
-        camera.device.enable(camera.params.timestep)
-        camera.image_publisher = self.node.create_publisher(Image, camera.params.topic_name + '/image_raw', 1)
-        camera.camera_info_publisher = self.node.create_publisher(CameraInfo, camera.paprams.topic_name + '/camera_info', 10)
+    def _register_camera(self, wbr_camera):
+        wbr_camera.device.enable(wbr_camera.params.timestep)
+        wbr_camera.image_publisher = self.node.create_publisher(Image, wbr_camera.params.topic_name + '/image_raw', 1)
+        wbr_camera.camera_info_publisher = self.node.create_publisher(
+            CameraInfo,
+            wbr_camera.paprams.topic_name + '/camera_info',
+            10
+        )
 
+    def _callback(self):
+        for wbr_camera in self.wbr_cameras:
+            if self.node.robot.getTime() - wbr_camera.last_update >= wbr_camera.device.getSamplingPeriod():
+                self._publish(wbr_camera)
 
-    def callback(self):
-        for camera in self.cameras:
-            if self.node.robot.getTime() - camera.last_update >= camera.device.getSamplingPeriod():
-                self.publish(camera)
-
-    def publish(self, camera):
+    def _publish(self, wbr_camera):
         """Publish the camera topics with up to date value."""
         stamp = Time(seconds=self.node.robot.getTime() + 1e-3 * self.timestep).to_msg()
 
-        if camera.image_publisher.get_subscription_count() > 0 or camera.params.always_publish:
-            camera.device.enable(camera.params.timestep)
+        # Publish camera data
+        if wbr_camera.image_publisher.get_subscription_count() > 0 or wbr_camera.params.always_publish:
+            wbr_camera.device.enable(wbr_camera.params.timestep)
 
             # Image data
             msg = Image()
             msg.header.stamp = stamp
-            msg.height = camera.device.getHeight()
-            msg.width = camera.device.getWidth()
+            msg.height = wbr_camera.device.getHeight()
+            msg.width = wbr_camera.device.getWidth()
             msg.is_bigendian = False
-            msg.step = camera.device.getWidth() * 4
-            msg.data = camera.device.getImage()
+            msg.step = wbr_camera.device.getWidth() * 4
+            msg.data = wbr_camera.device.getImage()
             msg.encoding = 'bgra8'
-            camera.image_publisher.publish(msg)
+            wbr_camera.image_publisher.publish(msg)
 
             # CameraInfo data
             msg = CameraInfo()
             msg.header.stamp = stamp
-            msg.height = camera.device.getHeight()
-            msg.width = camera.device.getWidth()
+            msg.height = wbr_camera.device.getHeight()
+            msg.width = wbr_camera.device.getWidth()
             msg.distortion_model = 'plumb_bob'
             msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
             msg.k = [
-                camera.device.getFocalLength(), 0.0, camera.device.getWidth() / 2,
-                0.0, camera.device.getFocalLength(), camera.device.getHeight() / 2,
+                wbr_camera.device.getFocalLength(), 0.0, wbr_camera.device.getWidth() / 2,
+                0.0, wbr_camera.device.getFocalLength(), wbr_camera.device.getHeight() / 2,
                 0.0, 0.0, 1.0
             ]
             msg.p = [
-                camera.device.getFocalLength(), 0.0, camera.device.getWidth() / 2, 0.0,
-                0.0, camera.device.getFocalLength(), camera.device.getHeight() / 2, 0.0,
+                wbr_camera.device.getFocalLength(), 0.0, wbr_camera.device.getWidth() / 2, 0.0,
+                0.0, wbr_camera.device.getFocalLength(), wbr_camera.device.getHeight() / 2, 0.0,
                 0.0, 0.0, 1.0, 0.0
             ]
-            camera.camera_info_publisher.publish(msg)
+            wbr_camera.camera_info_publisher.publish(msg)
         else:
-            camera.device.disable()
+            wbr_camera.device.disable()

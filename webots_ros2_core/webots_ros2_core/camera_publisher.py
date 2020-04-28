@@ -17,10 +17,8 @@
 import sys
 from sensor_msgs.msg import Image, CameraInfo
 from rclpy.time import Time
-from geometry_msgs.msg import TransformStamped
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 import transforms3d
-
 try:
     append_webots_python_lib_to_path()
     from controller import Node
@@ -45,6 +43,7 @@ class CameraPublisherParams:
 
 class _WBRCamera:
     """Webots + ROS2 camera wrapper."""
+
     def __init__(self, device):
         self.device = device
         self.params = CameraPublisherParams()
@@ -70,38 +69,42 @@ class CameraPublisher():
             device = node.robot.getDeviceByIndex(i)
             if device.getNodeType() == Node.CAMERA:
                 self.wbr_cameras[device.getName()] = _WBRCamera(device)
+                params = parameters[device.getName()] if device.getName() in parameters else CameraPublisherParams()
+                params.timestep = params.timestep or self.timestep
+                params.topic_name = params.topic_name or device.getName()
+                self.wbr_cameras[device.getName()].params = params
 
-        # Assign parameters
+        # Verify parameters
         for device_name, params in parameters.items():
             if device_name not in self.wbr_cameras:
-                raise NameError(f'There is no camera with name `{device_name}`')
-            if params.ignore:
+                self.node.get_logger().warn(f'There is no camera with name `{device_name}`')
+
+        # Ignore camera if needed
+        for device_name, wbr_camera in self.wbr_cameras.items():
+            if wbr_camera.params.ignore:
                 del self.wbr_cameras[device_name]
                 continue
-            params.timestep = params.timestep or self.timestep
-            params.topic_name = params.topic_name or device_name
-            self.wbr_cameras[device_name].params = params
 
         # Register all devices
-        for wbr_camera in self.wbr_cameras:
+        for wbr_camera in self.wbr_cameras.values():
             self._register_camera(wbr_camera)
 
         # Create a loop
         self.node.create_timer(1e-3 * self.timestep, self._callback)
 
     def _register_camera(self, wbr_camera):
-        wbr_camera.device.enable(wbr_camera.params.timestep)
         wbr_camera.image_publisher = self.node.create_publisher(Image, wbr_camera.params.topic_name + '/image_raw', 1)
         wbr_camera.camera_info_publisher = self.node.create_publisher(
             CameraInfo,
-            wbr_camera.paprams.topic_name + '/camera_info',
+            wbr_camera.params.topic_name + '/camera_info',
             10
         )
 
     def _callback(self):
-        for wbr_camera in self.wbr_cameras:
-            if self.node.robot.getTime() - wbr_camera.last_update >= wbr_camera.device.getSamplingPeriod():
+        for wbr_camera in self.wbr_cameras.values():
+            if self.node.robot.getTime() - wbr_camera.last_update >= wbr_camera.device.getSamplingPeriod() / 1e6:
                 self._publish(wbr_camera)
+                wbr_camera.last_update = self.node.robot.getTime()
 
     def _publish(self, wbr_camera):
         """Publish the camera topics with up to date value."""

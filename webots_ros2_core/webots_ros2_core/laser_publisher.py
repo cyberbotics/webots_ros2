@@ -20,7 +20,7 @@ from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from tf2_msgs.msg import TFMessage
 from sensor_msgs.msg import LaserScan
-from builtin_interfaces.msg import Time
+from rclpy.time import Time
 from geometry_msgs.msg import TransformStamped
 
 
@@ -89,17 +89,14 @@ class LaserPublisher():
 
     def publish(self, lidar, transforms):
         """Publish the laser scan topics with up to date value."""
-        nextTime = self.robot.getTime() + 0.001 * self.timestep
-        nextSec = int(nextTime)
-        # rounding prevents precision issues that can cause problems with ROS timers
-        nextNanosec = int(round(1000 * (nextTime - nextSec)) * 1.0e+6)
+        stamp = Time(seconds=self.robot.getTime() + 0.001 * self.timestep).to_msg()
         for i in range(lidar.getNumberOfLayers()):
             name = self.prefix + lidar.getName() + '_scan'
             if lidar.getNumberOfLayers() > 1:
                 name += '_' + str(i)
             # publish the lidar to scan transform
             transformStamped = TransformStamped()
-            transformStamped.header.stamp = Time(sec=nextSec, nanosec=nextNanosec)
+            transformStamped.header.stamp = stamp
             transformStamped.header.frame_id = self.prefix + lidar.getName()
             transformStamped.child_frame_id = name
             q1 = transforms3d.quaternions.axangle2quat([0, 1, 0], -1.5708)
@@ -117,7 +114,7 @@ class LaserPublisher():
             transforms.append(transformStamped)
             # publish the actual laser scan
             msg = LaserScan()
-            msg.header.stamp = Time(sec=self.node.sec, nanosec=self.node.nanosec)
+            msg.header.stamp = stamp
             msg.header.frame_id = name
             msg.angle_min = -0.5 * lidar.getFov()
             msg.angle_max = 0.5 * lidar.getFov()

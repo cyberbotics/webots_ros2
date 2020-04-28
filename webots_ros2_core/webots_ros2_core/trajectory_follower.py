@@ -62,7 +62,7 @@ def within_tolerance(a_vec, b_vec, tol_vec):
             return False
     return True
 
-  
+
 def interp_linear(p0, p1, t_abs):
     """Perform a linear interpolation between two trajectory points."""
     t0 = Duration.from_msg(p0.time_from_start).nanoseconds / 1e9

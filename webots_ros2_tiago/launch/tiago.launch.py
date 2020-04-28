@@ -35,10 +35,21 @@ def generate_launch_description():
                                      arguments=arguments, output='screen')
     # Controller node
     synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
-    controller = ControllerLauncher(package='webots_ros2_tiago',
-                                    node_executable='tiago_controller',
-                                    parameters=[{'synchronization': synchronization}],
-                                    output='screen')
+    controller = ControllerLauncher(
+        package='webots_ros2_core',
+        node_executable='webots_differential_drive_node',
+        parameters=[{
+            'synchronization': synchronization,
+            'wheel_distance': 0.404,
+            'wheel_radius': 0.1955,
+            'left_joint': 'wheel_left_joint',
+            'right_joint': 'wheel_right_joint',
+            'left_encoder': 'wheel_left_joint_sensor',
+            'right_encoder': 'wheel_right_joint_sensor'
+        }],
+        arguments=['--name=tiago_driver'],
+        output='screen'
+    )
 
     # Rviz node
     use_rviz = launch.substitutions.LaunchConfiguration('rviz', default=False)

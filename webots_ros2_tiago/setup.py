@@ -17,7 +17,7 @@ data_files.append(('share/' + package_name, ['package.xml']))
 setup(
     name=package_name,
     version='1.0.0',
-    packages=[package_name],
+    packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],
     zip_safe=True,
@@ -36,7 +36,6 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['tiago_controller = webots_ros2_tiago.tiago_controller:main'],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

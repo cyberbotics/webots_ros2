@@ -1,5 +1,7 @@
 import sys
 from .camera_publisher import CameraPublisher
+from .distance_sensor_publisher import DistanceSensorPublisher
+from .light_sensor_publisher import LightSensorPublisher
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 try:
     append_webots_python_lib_to_path()
@@ -20,11 +22,15 @@ class PublisherManager:
         self._publishers = {}
         parameters = parameters or {}
 
-        # Find camera devices
+        # Find devices
         for i in range(node.robot.getNumberOfDevices()):
             device = node.robot.getDeviceByIndex(i)
             if device.getNodeType() == Node.CAMERA:
                 self._publishers[device.getName()] = CameraPublisher(node, device, parameters.get(device.getName(), None))
+            elif device.getNodeType() == Node.DISTANCE_SENSOR:
+                self._publishers[device.getName()] = DistanceSensorPublisher(node, device, parameters.get(device.getName(), None))
+            elif device.getNodeType() == Node.LIGHT_SENSOR:
+                self._publishers[device.getName()] = LightSensorPublisher(node, device, parameters.get(device.getName(), None))
 
         # Verify parameters
         for device_name in parameters.keys():

@@ -20,7 +20,7 @@ import rclpy
 from rclpy.time import Time
 from std_msgs.msg import Bool, Int32
 from tf2_ros import StaticTransformBroadcaster
-from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan, Illuminance
+from sensor_msgs.msg import Range, Imu, LaserScan, Illuminance
 from geometry_msgs.msg import TransformStamped
 from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
@@ -66,11 +66,6 @@ DISTANCE_TABLE = [
     [0.04, 158.03],
     [0.05, 120],
     [0.06, 104.09]
-]
-
-LIGHT_TABLE = [
-    [1, 4095],
-    [2, 0]
 ]
 
 GROUND_TABLE = [
@@ -202,25 +197,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             self.rgb_leds.append(led)
             self.rgb_led_subscribers.append(led_subscriber)
 
-        # Initialize Light sensors
-        self.light_sensors = []
-        self.light_publishers = []
-        for i in range(NB_LIGHT_SENSORS):
-            light_sensor = self.robot.getLightSensor(f'ls{i}')
-            light_publisher = self.create_publisher(Illuminance, f'/ls{i}', 1)
-            self.light_publishers.append(light_publisher)
-            self.light_sensors.append(light_sensor)
-
-            light_transform = TransformStamped()
-            light_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-            light_transform.header.frame_id = "base_link"
-            light_transform.child_frame_id = "ls" + str(i)
-            light_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * cos(DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.z = 0.0
-            self.static_transforms.append(light_transform)
-
         # Static tf broadcaster: Laser
         laser_transform = TransformStamped()
         laser_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
@@ -253,7 +229,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         stamp = Time(seconds=self.robot.getTime()).to_msg()
 
         self.publish_distance_data(stamp)
-        self.publish_light_data(stamp)
         self.publish_ground_sensor_data(stamp)
         self.publish_imu_data(stamp)
 
@@ -274,52 +249,19 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             else:
                 self.ground_sensors[idx].disable()
 
-    def publish_light_data(self, stamp):
-        for light_publisher, light_sensor in zip(self.light_publishers, self.light_sensors):
-            if light_publisher.get_subscription_count() > 0:
-                light_sensor.enable(self.timestep)
-                msg = Illuminance()
-                msg.header.stamp = stamp
-                msg.illuminance = interpolate_table(
-                    light_sensor.getValue(), LIGHT_TABLE) * IRRADIANCE_TO_ILLUMINANCE
-                msg.variance = 0.1
-                light_publisher.publish(msg)
-            else:
-                light_sensor.disable()
-
     def publish_distance_data(self, stamp):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
 
         # Calculate distances
         for i, key in enumerate(self.distance_sensors):
+            self.distance_sensors[key].enable(self.timestep)
             dists[i] = interpolate_table(
                 self.distance_sensors[key].getValue(), DISTANCE_TABLE)
 
-        # Publish range: Infrared
-        for i, key in enumerate(self.distance_sensors):
-            msg = Range()
-            msg.header.stamp = stamp
-            msg.header.frame_id = key
-            msg.field_of_view = self.distance_sensors[key].getAperture()
-            msg.min_range = INFRARED_MIN_RANGE
-            msg.max_range = INFRARED_MAX_RANGE
-            msg.range = dists[i]
-            msg.radiation_type = Range.INFRARED
-            self.distance_sensor_publishers[key].publish(msg)
-
-        # Publish range: ToF
         if self.tof_sensor:
+            self.tof_sensor.enable(self.timestep)
             dist_tof = interpolate_table(self.tof_sensor.getValue(), TOF_TABLE)
-            msg = Range()
-            msg.header.stamp = stamp
-            msg.header.frame_id = 'tof'
-            msg.field_of_view = self.tof_sensor.getAperture()
-            msg.min_range = TOF_MIN_RANGE
-            msg.max_range = TOF_MAX_RANGE
-            msg.range = dist_tof
-            msg.radiation_type = Range.INFRARED
-            self.tof_publisher.publish(msg)
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz

@@ -19,7 +19,7 @@
 import argparse
 import os
 import sys
-from webots_ros2_core.camera_publisher import CameraPublisher
+from webots_ros2_core.publishers.publisher_manager import PublisherManager
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 
 from webots_ros2_msgs.srv import SetInt
@@ -61,7 +61,7 @@ class WebotsNode(Node):
 
          # Other stuff
         if auto_init:
-            CameraPublisher(self)
+            PublisherManager(self)
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:

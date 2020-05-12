@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2019 Cyberbotics Ltd.
+# Copyright 1996-2020 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class PublisherManager:
             if device_name not in self._publishers:
                 self._node.get_logger().warn(f'There is no device with name `{device_name}`')
 
-        # Ignore camera if needed
+        # Ignore device if needed
         for device_name, publisher in self._publishers.items():
             if publisher.params.ignore:
                 del self._publishers[device_name]

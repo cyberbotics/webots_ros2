@@ -39,7 +39,7 @@ def generate_launch_description():
     rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
     rviz = Node(
         package='rviz2',
-        node_executable='rviz2',
+        executable='rviz2',
         output='log',
         arguments=['--display-config=' + rviz_config],
         condition=launch.conditions.IfCondition(use_rviz)
@@ -60,7 +60,7 @@ def generate_launch_description():
     # Mapping
     simple_mapper = Node(
         package='webots_ros2_epuck',
-        node_executable='simple_mapper',
+        executable='simple_mapper',
         output='screen',
         parameters=[{'use_sim_time': use_sim_time, 'fill_map': fill_map}],
         condition=launch.conditions.IfCondition(use_mapper)

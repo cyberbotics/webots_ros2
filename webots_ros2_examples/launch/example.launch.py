@@ -31,12 +31,12 @@ def generate_launch_description():
     arguments = ['--mode=realtime', '--world=' +
                  os.path.join(get_package_share_directory('webots_ros2_examples'),
                               'worlds', 'ros_example.wbt')]
-    webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
+    webots = launch_ros.actions.Node(package='webots_ros2_core', executable='webots_launcher',
                                      arguments=arguments, output='screen')
     # Controller node
     synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
     controller = ControllerLauncher(package='webots_ros2_examples',
-                                    node_executable='example_controller',
+                                    executable='example_controller',
                                     parameters=[{'synchronization': synchronization}],
                                     output='screen')
     return launch.LaunchDescription([

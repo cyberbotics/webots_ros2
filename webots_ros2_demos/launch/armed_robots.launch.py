@@ -31,12 +31,12 @@ def generate_launch_description():
     arguments = ['--mode=realtime', '--world=' +
                  os.path.join(get_package_share_directory('webots_ros2_demos'),
                               'worlds', 'armed_robots.wbt')]
-    webots = launch_ros.actions.Node(package='webots_ros2_core', executable='webots_launcher',
+    webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
     # Controller nodes
     synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
     AbbController = ControllerLauncher(package='webots_ros2_abb',
-                                       executable='abb_driver',
+                                       node_executable='abb_driver',
                                        # this argument should match the 'name' field
                                        # of the robot in Webots
                                        arguments=['--webots-robot-name=abbirb4600'],
@@ -44,7 +44,7 @@ def generate_launch_description():
                                        parameters=[{'synchronization': synchronization}],
                                        output='screen')
     Ure5controller = ControllerLauncher(package='webots_ros2_universal_robot',
-                                        executable='universal_robot',
+                                        node_executable='universal_robot',
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
                                         arguments=['--webots-robot-name=UR5e'],
@@ -53,10 +53,10 @@ def generate_launch_description():
                                         output='screen')
     # Control nodes
     armedRobotsUr = ControllerLauncher(package='webots_ros2_demos',
-                                       executable='armed_robots_ur',
+                                       node_executable='armed_robots_ur',
                                        output='screen')
     armedRobotsAbb = ControllerLauncher(package='webots_ros2_demos',
-                                        executable='armed_robots_abb',
+                                        node_executable='armed_robots_abb',
                                         output='screen')
     return launch.LaunchDescription([
         webots, AbbController, Ure5controller, armedRobotsUr, armedRobotsAbb,

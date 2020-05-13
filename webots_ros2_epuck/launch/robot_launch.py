@@ -37,7 +37,7 @@ def generate_launch_description():
     ]
     webots = Node(
         package='webots_ros2_core',
-        executable='webots_launcher',
+        node_executable='webots_launcher',
         arguments=arguments,
         output='screen'
     )
@@ -45,7 +45,7 @@ def generate_launch_description():
     # Driver node
     controller = ControllerLauncher(
         package='webots_ros2_epuck',
-        executable='driver',
+        node_executable='driver',
         parameters=[{'synchronization': synchronization}],
         output='screen'
     )

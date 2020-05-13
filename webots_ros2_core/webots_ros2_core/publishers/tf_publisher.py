@@ -18,6 +18,7 @@ from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 from .publisher import Publisher
+import math
 
 
 class TfPublisherParams:
@@ -48,15 +49,26 @@ class TfPublisher(Publisher):
 
             if tf_node.get_type() == node.robot.TF_NODE_LINK:
                 if tf_node.get_parent().get_type() == node.robot.TF_NODE_LINK:
-                    static_transform = TransformStamped()
-                    static_transform.header.stamp = Time(seconds=node.robot.getTime()).to_msg()
-                    static_transform.header.frame_id = tf_node.get_parent().get_name()
-                    static_transform.child_frame_id = tf_node.get_name()
-                    # TODO: Convert rotation matrix to quaternion
-                    static_transform.transform.translation.x = tf_node.get_translation()[0]
-                    static_transform.transform.translation.y = tf_node.get_translation()[1]
-                    static_transform.transform.translation.z = tf_node.get_translation()[2]
-                    self.static_transforms.append(static_transform)
+                    rotation = tf_node.get_rotation()
+                    translation = tf_node.get_translation()
+                    
+                    static_tf = TransformStamped()
+                    static_tf.header.stamp = Time(seconds=node.robot.getTime()).to_msg()
+                    static_tf.header.frame_id = self.__create_frame_name(tf_node.get_parent())
+                    static_tf.child_frame_id = self.__create_frame_name(tf_node)
+                    static_tf.transform.rotation.w = math.sqrt(1.0 + rotation[0] + rotation[4] + rotation[8]) / 2.0
+                    static_tf.transform.rotation.x = (rotation[7] - rotation[5]) / (4.0 * static_tf.transform.rotation.w)
+                    static_tf.transform.rotation.y = (rotation[2] - rotation[6]) / (4.0 * static_tf.transform.rotation.w)
+                    static_tf.transform.rotation.z = (rotation[3] - rotation[1]) / (4.0 * static_tf.transform.rotation.w)
+                    static_tf.transform.translation.x = translation[0]
+                    static_tf.transform.translation.y = translation[1]
+                    static_tf.transform.translation.z = translation[2]
+                    self.static_transforms.append(static_tf)
+
+    def __create_frame_name(self, tf_node):
+        if not tf_node.get_parent():
+            return 'base_link'
+        return tf_node.get_name() if tf_node.is_link_device() else tf_node.get_name() + '_solid'
 
     def register(self):
         self.static_broadcaster = StaticTransformBroadcaster(self.node)

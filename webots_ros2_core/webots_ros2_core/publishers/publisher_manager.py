@@ -20,6 +20,7 @@ import sys
 from .camera_publisher import CameraPublisher
 from .distance_sensor_publisher import DistanceSensorPublisher
 from .light_sensor_publisher import LightSensorPublisher
+from .tf_publisher import TfPublisher
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 try:
     append_webots_python_lib_to_path()
@@ -39,6 +40,9 @@ class PublisherManager:
         self._node = node
         self._publishers = {}
         parameters = parameters or {}
+
+        # Transform publisher
+        self._publishers['tf'] = TfPublisher(node, parameters.get('tf', None))
 
         # Find devices
         for i in range(node.robot.getNumberOfDevices()):

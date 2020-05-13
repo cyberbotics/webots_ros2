@@ -32,12 +32,9 @@ TOF_MIN_RANGE = 0.0
 TOF_MAX_RANGE = 1.0
 INFRARED_MAX_RANGE = 0.04
 INFRARED_MIN_RANGE = 0.009
-GROUND_MIN_RANGE = 0.0
-GROUND_MAX_RANGE = 0.016
 DEFAULT_WHEEL_RADIUS = 0.02
 DEFAULT_WHEEL_DISTANCE = 0.05685
 NB_LIGHT_SENSORS = 8
-NB_GROUND_SENSORS = 3
 NB_RGB_LEDS = 4
 NB_BINARY_LEDS = 4
 NB_INFRARED_SENSORS = 8
@@ -68,11 +65,6 @@ DISTANCE_TABLE = [
     [0.06, 104.09]
 ]
 
-GROUND_TABLE = [
-    [0, 1000],
-    [0.016, 300]
-]
-
 DISTANCE_SENSOR_ANGLE = [
     -15 * pi / 180,   # ps0
     -45 * pi / 180,   # ps1
@@ -92,10 +84,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         self.static_transforms = []
 
-        # Parameters
-        camera_period_param = self.declare_parameter("camera_period", self.timestep)
-        self.camera_period = camera_period_param.value
-
         # Initialize IMU
         self.gyro = self.robot.getGyro('gyro')
         if not self.gyro:
@@ -103,67 +91,19 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.accelerometer = self.robot.getAccelerometer('accelerometer')
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
 
-        # Initialize ground sensors
-        self.ground_sensors = {}
-        self.ground_sensor_publishers = {}
-        self.ground_sensor_broadcasters = []
-        for i in range(NB_GROUND_SENSORS):
-            idx = 'gs{}'.format(i)
-            ground_sensor = self.robot.getDistanceSensor(idx)
-            if ground_sensor:
-                self.ground_sensors[idx] = ground_sensor
-                self.ground_sensor_publishers[idx] = self.create_publisher(Range, '/' + idx, 1)
-
-                ground_sensor_transform = TransformStamped()
-                ground_sensor_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-                ground_sensor_transform.header.frame_id = "base_link"
-                ground_sensor_transform.child_frame_id = "gs" + str(i)
-                ground_sensor_transform.transform.rotation = euler_to_quaternion(0, pi/2, 0)
-                ground_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER - 0.005
-                ground_sensor_transform.transform.translation.y = 0.009 - i * 0.009
-                ground_sensor_transform.transform.translation.z = 0.0
-                self.static_transforms.append(ground_sensor_transform)
-            else:
-                self.get_logger().info('Ground sensor `{}` is not present for this e-puck version'.format(idx))
-
         # Intialize distance sensors
         self.distance_sensor_publishers = {}
         self.distance_sensors = {}
         for i in range(NB_INFRARED_SENSORS):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.timestep)
-            sensor_publisher = self.create_publisher(Range, '/ps{}'.format(i), 10)
             self.distance_sensors['ps{}'.format(i)] = sensor
-            self.distance_sensor_publishers['ps{}'.format(i)] = sensor_publisher
-
-            distance_sensor_transform = TransformStamped()
-            distance_sensor_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-            distance_sensor_transform.header.frame_id = "base_link"
-            distance_sensor_transform.child_frame_id = "ps" + str(i)
-            distance_sensor_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * cos(DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.z = 0.0
-            self.static_transforms.append(distance_sensor_transform)
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
         self.tof_sensor = self.robot.getDistanceSensor('tof')
         if self.tof_sensor:
             self.tof_sensor.enable(self.timestep)
-            self.tof_publisher = self.create_publisher(Range, '/tof', 1)
-            tof_transform = TransformStamped()
-            tof_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-            tof_transform.header.frame_id = "base_link"
-            tof_transform.child_frame_id = "tof"
-            tof_transform.transform.rotation.x = 0.0
-            tof_transform.transform.rotation.y = 0.0
-            tof_transform.transform.rotation.z = 0.0
-            tof_transform.transform.rotation.w = 1.0
-            tof_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER
-            tof_transform.transform.translation.y = 0.0
-            tof_transform.transform.translation.z = 0.0
-            self.static_transforms.append(tof_transform)
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
 
@@ -229,25 +169,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         stamp = Time(seconds=self.robot.getTime()).to_msg()
 
         self.publish_distance_data(stamp)
-        self.publish_ground_sensor_data(stamp)
         self.publish_imu_data(stamp)
-
-    def publish_ground_sensor_data(self, stamp):
-        for idx in self.ground_sensors.keys():
-            if self.ground_sensor_publishers[idx].get_subscription_count() > 0:
-                self.ground_sensors[idx].enable(self.timestep)
-                msg = Range()
-                msg.header.stamp = stamp
-                msg.header.frame_id = idx
-                msg.field_of_view = self.ground_sensors[idx].getAperture()
-                msg.min_range = GROUND_MIN_RANGE
-                msg.max_range = GROUND_MAX_RANGE
-                msg.range = interpolate_table(
-                    self.ground_sensors[idx].getValue(), GROUND_TABLE)
-                msg.radiation_type = Range.INFRARED
-                self.ground_sensor_publishers[idx].publish(msg)
-            else:
-                self.ground_sensors[idx].disable()
 
     def publish_distance_data(self, stamp):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS

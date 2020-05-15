@@ -17,15 +17,11 @@
 from sensor_msgs.msg import Illuminance
 from rclpy.time import Time
 from rclpy.qos import qos_profile_sensor_data
-from webots_ros2_core.math_utils import interpolate_table
+from webots_ros2_core.math_utils import interpolate_lookup_table
 from .publisher import Publisher
 
-
+# https://ieee-dataport.org/open-access/conversion-guide-solar-irradiance-and-lux-illuminance
 IRRADIANCE_TO_ILLUMINANCE = 120
-LIGHT_TABLE = [
-    [1, 4095],
-    [2, 0]
-]
 
 
 class LightSensorPublisherParams:
@@ -69,8 +65,8 @@ class LightSensorPublisher(Publisher):
             self._device.enable(self.params.timestep)
             msg = Illuminance()
             msg.header.stamp = stamp
-            msg.illuminance = interpolate_table(
-                self._device.getValue(), LIGHT_TABLE) * IRRADIANCE_TO_ILLUMINANCE
+            msg.illuminance = interpolate_lookup_table(
+                self._device.getValue(), self._device.getLookupTable()) * IRRADIANCE_TO_ILLUMINANCE
             msg.variance = 0.1
             self._publisher.publish(msg)
         else:

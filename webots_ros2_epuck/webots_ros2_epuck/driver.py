@@ -22,7 +22,7 @@ from std_msgs.msg import Bool, Int32
 from tf2_ros import StaticTransformBroadcaster
 from sensor_msgs.msg import Range, Imu, LaserScan, Illuminance
 from geometry_msgs.msg import TransformStamped
-from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_table
+from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_lookup_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
@@ -178,12 +178,12 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         # Calculate distances
         for i, key in enumerate(self.distance_sensors):
             self.distance_sensors[key].enable(self.timestep)
-            dists[i] = interpolate_table(
-                self.distance_sensors[key].getValue(), DISTANCE_TABLE)
+            dists[i] = interpolate_lookup_table(
+                self.distance_sensors[key].getValue(), self.distance_sensors[key].getLookupTable())
 
         if self.tof_sensor:
             self.tof_sensor.enable(self.timestep)
-            dist_tof = interpolate_table(self.tof_sensor.getValue(), TOF_TABLE)
+            dist_tof = interpolate_lookup_table(self.tof_sensor.getValue(), self.tof_sensor.getLookupTable())
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz

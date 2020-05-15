@@ -17,14 +17,8 @@
 from sensor_msgs.msg import Range
 from rclpy.time import Time
 from rclpy.qos import qos_profile_sensor_data
-from webots_ros2_core.math_utils import interpolate_table
+from webots_ros2_core.math_utils import interpolate_lookup_table
 from .publisher import Publisher
-
-
-TOF_TABLE = [
-    [1, 4095],
-    [2, 0]
-]
 
 
 class DistanceSensorPublisherParams:
@@ -71,7 +65,7 @@ class DistanceSensorPublisher(Publisher):
             msg.field_of_view = self._device.getAperture()
             msg.min_range = self._device.getMinValue()
             msg.max_range = self._device.getMaxValue()
-            msg.range = interpolate_table(self._device.getValue(), TOF_TABLE)
+            msg.range = interpolate_lookup_table(self._device.getValue(), self._device.getLookupTable())
             msg.radiation_type = Range.INFRARED
             self._publisher.publish(msg)
         else:

@@ -14,11 +14,12 @@
 
 """ROS2 TF publisher."""
 
+import numpy as np
+import transforms3d
 from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster, TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 from .publisher import Publisher
-import math
 
 
 class _TfDescriptor:
@@ -28,7 +29,8 @@ class _TfDescriptor:
         initial_translation=None,
         axis=None,
         position=None,
-        frame_name=None
+        frame_name=None,
+        parent_frame_name=None
     ):
         self.position_sensor = position_sensor
         self.initial_rotation = initial_rotation
@@ -36,6 +38,7 @@ class _TfDescriptor:
         self.axis = axis
         self.position = position
         self.frame_name = frame_name
+        self.parent_frame_name = parent_frame_name
 
 
 class TfPublisherParams:
@@ -52,9 +55,11 @@ class TfPublisher(Publisher):
     def __init__(self, node, params=None):
         self._node = node
         self._last_update = -1
-        self.static_transforms = []
-        self.initial_dynamic_transforms = []
+        self._static_transforms = []
+        self._initial_dynamic_transforms = []
         self._tf_descriptions = []
+        self._static_broadcaster = None
+        self._broadcaster = None
 
         self.params = params or TfPublisherParams()
         self.params.timestep = self.params.timestep or int(node.robot.getBasicTimeStep())
@@ -68,36 +73,43 @@ class TfPublisher(Publisher):
                 continue
 
             if tf_node.get_type() == node.robot.TF_NODE_LINK:
-                rotation = tf_node.get_rotation()
-                translation = tf_node.get_translation()
                 tf_stamped = TransformStamped()
-                tf_stamped.header.stamp = Time(seconds=node.robot.getTime()).to_msg()
-                tf_stamped.header.frame_id = self._create_frame_name(tf_node.get_parent())
-                tf_stamped.child_frame_id = self._create_frame_name(tf_node)
-                tf_stamped.transform.rotation.w = math.sqrt(1.0 + rotation[0] + rotation[4] + rotation[8]) / 2.0
-                tf_stamped.transform.rotation.x = (rotation[7] - rotation[5]) / (4.0 * tf_stamped.transform.rotation.w)
-                tf_stamped.transform.rotation.y = (rotation[2] - rotation[6]) / (4.0 * tf_stamped.transform.rotation.w)
-                tf_stamped.transform.rotation.z = (rotation[3] - rotation[1]) / (4.0 * tf_stamped.transform.rotation.w)
-                tf_stamped.transform.translation.x = translation[0]
-                tf_stamped.transform.translation.y = translation[1]
-                tf_stamped.transform.translation.z = translation[2]
+
+                rotation = transforms3d.quaternions.mat2quat(np.array(tf_node.get_rotation()).reshape(3, 3))
+                translation = tf_node.get_translation()
+                frame_name = self._create_frame_name(tf_node)
+                parent_frame_name = None
 
                 if tf_node.get_parent().get_type() == node.robot.TF_NODE_LINK:
-                    self.static_transforms.append(tf_stamped)
+                    parent_frame_name = self._create_frame_name(tf_node.get_parent())
+                    self._static_transforms.append(tf_stamped)
                 elif tf_node.get_parent().get_type() == node.robot.TF_NODE_JOINT:
-                    self.initial_dynamic_transforms.append(tf_stamped)
+                    parent_frame_name = self._create_frame_name(tf_node.get_parent().get_parent())
+                    self._initial_dynamic_transforms.append(tf_stamped)
                     position_sensor_name = tf_node.get_parent().get_position_sensor_name()
                     if position_sensor_name:
                         position_sensor = node.robot.getPositionSensor(position_sensor_name)
                         position_sensor.enable(node.timestep)
                         self._tf_descriptions.append(_TfDescriptor(
-                            frame_name=self._create_frame_name(tf_node),
+                            frame_name=frame_name,
+                            parent_frame_name=parent_frame_name,
                             position_sensor=position_sensor,
                             initial_rotation=rotation,
                             initial_translation=translation,
                             axis=tf_node.get_parent().get_axis(),
                             position=tf_node.get_parent().get_position()
                         ))
+
+                tf_stamped.header.stamp = Time(seconds=node.robot.getTime()).to_msg()
+                tf_stamped.header.frame_id = parent_frame_name
+                tf_stamped.child_frame_id = frame_name
+                tf_stamped.transform.rotation.w = rotation[0]
+                tf_stamped.transform.rotation.x = rotation[1]
+                tf_stamped.transform.rotation.y = rotation[2]
+                tf_stamped.transform.rotation.z = rotation[3]
+                tf_stamped.transform.translation.x = translation[0]
+                tf_stamped.transform.translation.y = translation[1]
+                tf_stamped.transform.translation.z = translation[2]
 
     def _create_frame_name(self, tf_node):
         if not tf_node.get_parent():
@@ -109,15 +121,25 @@ class TfPublisher(Publisher):
             return
         self._last_update = self._node.robot.getTime()
 
-        stamp = Time(seconds=self._node.robot.getTime() + 1e-3 * int(self._node.robot.getBasicTimeStep())).to_msg()
-
-        # Publish distance sensor data
         for tf_description in self._tf_descriptions:
             value = tf_description.position_sensor.getValue()
-            self._node.get_logger().info(str(value))
+            rotation = transforms3d.quaternions.axangle2quat(tf_description.axis, value)
+
+            tf_stamped = TransformStamped()
+            tf_stamped.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
+            tf_stamped.header.frame_id = tf_description.parent_frame_name
+            tf_stamped.child_frame_id = tf_description.frame_name
+            tf_stamped.transform.rotation.w = rotation[0]
+            tf_stamped.transform.rotation.x = rotation[1]
+            tf_stamped.transform.rotation.y = rotation[2]
+            tf_stamped.transform.rotation.z = rotation[3]
+            tf_stamped.transform.translation.x = tf_description.initial_translation[0]
+            tf_stamped.transform.translation.y = tf_description.initial_translation[1]
+            tf_stamped.transform.translation.z = tf_description.initial_translation[2]
+            self._broadcaster.sendTransform(tf_stamped)
 
     def register(self):
-        self.static_broadcaster = StaticTransformBroadcaster(self._node)
-        self.static_broadcaster.sendTransform(self.static_transforms)
-        self.broadcaster = TransformBroadcaster(self._node)
-        self.static_broadcaster.sendTransform(self.initial_dynamic_transforms)
+        self._static_broadcaster = StaticTransformBroadcaster(self._node)
+        self._static_broadcaster.sendTransform(self._static_transforms)
+        self._broadcaster = TransformBroadcaster(self._node)
+        self._broadcaster.sendTransform(self._initial_dynamic_transforms)

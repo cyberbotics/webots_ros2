@@ -34,9 +34,7 @@ class PublisherManager:
     """Publish as ROS topics the laser scans of the lidars."""
 
     def __init__(self, node, parameters=None):
-        """
-        Initialize the cameras and the topics.
-        """
+        """Initialize the devices and the topics."""
         self._node = node
         self._publishers = {}
         parameters = parameters or {}
@@ -50,7 +48,8 @@ class PublisherManager:
             if device.getNodeType() == Node.CAMERA:
                 self._publishers[device.getName()] = CameraPublisher(node, device, parameters.get(device.getName(), None))
             elif device.getNodeType() == Node.DISTANCE_SENSOR:
-                self._publishers[device.getName()] = DistanceSensorPublisher(node, device, parameters.get(device.getName(), None))
+                self._publishers[device.getName()] = DistanceSensorPublisher(
+                    node, device, parameters.get(device.getName(), None))
             elif device.getNodeType() == Node.LIGHT_SENSOR:
                 self._publishers[device.getName()] = LightSensorPublisher(node, device, parameters.get(device.getName(), None))
 

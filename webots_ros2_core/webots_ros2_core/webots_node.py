@@ -59,7 +59,7 @@ class WebotsNode(Node):
         self.sec = 0
         self.nanosec = 0
 
-         # Other stuff
+        # Other stuff
         if auto_init:
             PublisherManager(self)
 

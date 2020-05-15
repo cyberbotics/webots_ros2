@@ -26,6 +26,7 @@ TOF_TABLE = [
     [2, 0]
 ]
 
+
 class DistanceSensorPublisherParams:
     def __init__(
         self,

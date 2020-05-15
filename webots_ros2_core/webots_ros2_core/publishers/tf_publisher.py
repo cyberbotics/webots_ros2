@@ -24,14 +24,14 @@ from .publisher import Publisher
 
 class _TfDescriptor:
     def __init__(self,
-        position_sensor=None,
-        initial_rotation=None,
-        initial_translation=None,
-        axis=None,
-        position=None,
-        frame_name=None,
-        parent_frame_name=None
-    ):
+                 position_sensor=None,
+                 initial_rotation=None,
+                 initial_translation=None,
+                 axis=None,
+                 position=None,
+                 frame_name=None,
+                 parent_frame_name=None
+                 ):
         self.position_sensor = position_sensor
         self.initial_rotation = initial_rotation
         self.initial_translation = initial_translation

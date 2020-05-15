@@ -27,6 +27,7 @@ LIGHT_TABLE = [
     [2, 0]
 ]
 
+
 class LightSensorPublisherParams:
     def __init__(
         self,

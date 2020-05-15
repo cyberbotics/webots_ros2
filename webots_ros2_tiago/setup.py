@@ -8,7 +8,7 @@ data_files.append(
     ('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['launch/tiago.launch.py']))
 data_files.append(('share/' + package_name + '/worlds',
-                   ['worlds/ros_tiago.wbt', 'worlds/.ros_tiago.wbproj']))
+                   ['worlds/ros_tiago.wbt', 'worlds/.ros_tiago.wbproj', 'worlds/basic_world.wbt']))
 data_files.append(('share/' + package_name + '/resource',
                    ['resource/odometry.rviz']))
 data_files.append(('share/' + package_name, ['package.xml']))

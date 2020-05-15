@@ -1,0 +1,34 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  gravity 0 0 -9.81
+}
+Solid {
+  children [
+    DEF FLOOR_SHAPE Shape {
+      appearance Parquetry {
+      }
+      geometry Box {
+        size 7 7 0.04
+      }
+    }
+  ]
+  boundingObject USE FLOOR_SHAPE
+}
+PointLight {
+  intensity 1.5
+  location 1 1 1
+}
+Viewpoint {
+  orientation -0.5773688378859649 0.49063039463223646 0.6526308611314869 4.568794476527568
+  position -7.484425336434042 -1.5856953601751307 3.0329686182120086
+}
+Background {
+  skyColor [
+    0.827451 0.843137 0.811765
+  ]
+}
+TiagoBase {
+  translation 0.08 0.12088 0.116592
+  rotation 0 1 0 0
+  controller "<extern>"
+}

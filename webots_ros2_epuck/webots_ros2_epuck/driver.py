@@ -14,11 +14,9 @@
 
 """ROS2 e-puck driver."""
 
-from functools import partial
 from math import pi, cos, sin
 import rclpy
 from rclpy.time import Time
-from std_msgs.msg import Bool, Int32
 from tf2_ros import StaticTransformBroadcaster
 from sensor_msgs.msg import Range, Imu, LaserScan, Illuminance
 from geometry_msgs.msg import TransformStamped
@@ -58,8 +56,10 @@ DISTANCE_SENSOR_ANGLE = [
 
 class EPuckDriver(WebotsDifferentialDriveNode):
     def __init__(self, args):
-        super().__init__('epuck_driver', args, wheel_distance=DEFAULT_WHEEL_DISTANCE,
-                         wheel_radius=DEFAULT_WHEEL_RADIUS)
+        super().__init__('epuck_driver', args, plugin_config={
+            'camera': {'topic_name': ''}
+        }, wheel_distance=DEFAULT_WHEEL_DISTANCE,
+            wheel_radius=DEFAULT_WHEEL_RADIUS)
 
         self.static_transforms = []
 

@@ -20,20 +20,6 @@ from rclpy.qos import qos_profile_sensor_data
 from .plugin import Plugin
 
 
-class CameraPluginParams:
-    def __init__(
-        self,
-        timestep=None,
-        topic_name=None,
-        always_publish=False,
-        disable=False
-    ):
-        self.timestep = timestep
-        self.topic_name = topic_name
-        self.always_publish = always_publish
-        self.disable = disable
-
-
 class CameraPlugin(Plugin):
     """Webots + ROS2 camera wrapper."""
 
@@ -43,40 +29,43 @@ class CameraPlugin(Plugin):
         self._last_update = -1
         self._camera_info_plugin = None
         self._image_publisher = None
-        self.params = params or CameraPluginParams()
 
         # Determine default params
-        self.params.timestep = self.params.timestep or int(node.robot.getBasicTimeStep())
-        self.params.topic_name = self.params.topic_name or device.getName()
+        params = params or {}
+        self._topic_name = params.setdefault('topic_name', self._create_topic_name(device))
+        self._timestep = params.setdefault('timestep', int(node.robot.getBasicTimeStep()))
+        self._disable = params.setdefault('disable', False)
+        self._always_publish = params.setdefault('always_publish', False)
 
-        if not self.params.disable:
+        # Create topics
+        if not self._disable:
             self._image_publisher = self._node.create_publisher(
                 Image,
-                self.params.topic_name + '/image_raw',
+                self._topic_name + '/image_raw',
                 qos_profile_sensor_data
             )
             self._camera_info_publisher = self._node.create_publisher(
                 CameraInfo,
-                self.params.topic_name + '/camera_info',
+                self._topic_name + '/camera_info',
                 qos_profile_sensor_data
             )
-            camera_period_param = node.declare_parameter(device.getName() + '_period', self.params.timestep)
+            camera_period_param = node.declare_parameter(device.getName() + '_period', self._timestep)
             self._camera_period = camera_period_param.value
 
     def step(self):
         """Publish the camera topics with up to date value."""
-        if self.params.disable:
+        if self._disable:
             return
 
-        if self._node.robot.getTime() - self._last_update < self.params.timestep / 1e6:
+        if self._node.robot.getTime() - self._last_update < self._timestep / 1e6:
             return
         self._last_update = self._node.robot.getTime()
 
         stamp = Time(seconds=self._node.robot.getTime() + 1e-3 * int(self._node.robot.getBasicTimeStep())).to_msg()
 
         # Publish camera data
-        if self._image_publisher.get_subscription_count() > 0 or self.params.always_publish:
-            self._device.enable(self.params.timestep)
+        if self._image_publisher.get_subscription_count() > 0 or self._always_publish:
+            self._device.enable(self._timestep)
 
             # Image data
             msg = Image()

@@ -31,22 +31,25 @@ except Exception as e:
 class PluginManager:
     """Publish as ROS topics the laser scans of the lidars."""
 
-    def __init__(self, node, parameters=None):
+    def __init__(self, node, config=None):
         """Initialize the devices and the topics."""
         self._node = node
         self._plugins = {}
-        parameters = parameters or {}
+        config = config or {}
+
+        # Determine default global parameters
+        self._auto = config.setdefault('@auto', False)
 
         # Find devices
         for i in range(node.robot.getNumberOfDevices()):
             device = node.robot.getDeviceByIndex(i)
             if device.getNodeType() == Node.CAMERA:
-                self._plugins[device.getName()] = CameraPlugin(node, device, parameters.get(device.getName(), None))
+                self._plugins[device.getName()] = CameraPlugin(node, device, config.get(device.getName(), None))
             elif device.getNodeType() == Node.LED:
-                self._plugins[device.getName()] = LEDPlugin(node, device, parameters.get(device.getName(), None))
+                self._plugins[device.getName()] = LEDPlugin(node, device, config.get(device.getName(), None))
 
         # Verify parameters
-        for device_name in parameters.keys():
+        for device_name in config.keys():
             if device_name not in self._plugins:
                 self._node.get_logger().warn(f'There is no device with name `{device_name}`')
 

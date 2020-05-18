@@ -20,20 +20,6 @@ from rclpy.qos import qos_profile_sensor_data
 from .plugin import Plugin
 
 
-class CameraPluginParams:
-    def __init__(
-        self,
-        timestep=None,
-        topic_name=None,
-        always_publish=False,
-        disable=False
-    ):
-        self.timestep = timestep
-        self.topic_name = topic_name
-        self.always_publish = always_publish
-        self.disable = disable
-
-
 class LEDPlugin(Plugin):
     """Webots + ROS2 camera wrapper."""
 
@@ -43,15 +29,15 @@ class LEDPlugin(Plugin):
         self._last_update = -1
         self._camera_info_plugin = None
         self._image_plugin = None
-        self.params = params or CameraPluginParams()
 
         # Determine default params
-        self.params.timestep = self.params.timestep or int(node.robot.getBasicTimeStep())
-        self.params.topic_name = self.params.topic_name or self._create_topic_name(device)
+        params = params or {}
+        self._topic_name = params.setdefault('topic_name', self._create_topic_name(device))
 
+        # Create publishers
         self._led_subscriber = node.create_subscription(
             Int32,
-            self.params.topic_name,
+            self._topic_name,
             self._callback,
             10
         )

@@ -39,7 +39,7 @@ except Exception as e:
 
 class WebotsNode(Node):
 
-    def __init__(self, name, args=None, auto_init=True):
+    def __init__(self, name, args=None, plugin_config=None):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         parser = argparse.ArgumentParser()
@@ -58,9 +58,7 @@ class WebotsNode(Node):
         self.sec = 0
         self.nanosec = 0
 
-        # Other stuff
-        if auto_init:
-            PluginManager(self)
+        PluginManager(self, plugin_config)
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:

@@ -17,10 +17,8 @@
 """Auto discover Webots devices and publish suitable ROS2 topics."""
 
 import sys
-from .camera_publisher import CameraPublisher
-from .distance_sensor_publisher import DistanceSensorPublisher
-from .light_sensor_publisher import LightSensorPublisher
-from .tf_publisher import TfPublisher
+from .camera_plugin import CameraPlugin
+from .led_plugin import LEDPlugin
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 try:
     append_webots_python_lib_to_path()
@@ -30,31 +28,31 @@ except Exception as e:
     raise e
 
 
-class PublisherManager:
+class PluginManager:
     """Publish as ROS topics the laser scans of the lidars."""
 
     def __init__(self, node, parameters=None):
         """Initialize the devices and the topics."""
         self._node = node
-        self._publishers = {}
+        self._plugins = {}
         parameters = parameters or {}
 
         # Find devices
         for i in range(node.robot.getNumberOfDevices()):
             device = node.robot.getDeviceByIndex(i)
             if device.getNodeType() == Node.CAMERA:
-                self._publishers[device.getName()] = CameraPublisher(node, device, parameters.get(device.getName(), None))
+                self._plugins[device.getName()] = CameraPlugin(node, device, parameters.get(device.getName(), None))
             elif device.getNodeType() == Node.LED:
-                pass
+                self._plugins[device.getName()] = LEDPlugin(node, device, parameters.get(device.getName(), None))
 
         # Verify parameters
         for device_name in parameters.keys():
-            if device_name not in self._publishers:
+            if device_name not in self._plugins:
                 self._node.get_logger().warn(f'There is no device with name `{device_name}`')
 
         # Create a loop
         self._node.create_timer(1e-3 * int(node.robot.getBasicTimeStep()), self._callback)
 
     def _callback(self):
-        for publisher in self._publishers.values():
-            publisher.step()
+        for plugin in self._plugins.values():
+            plugin.step()

@@ -13,6 +13,9 @@
 # limitations under the License.
 
 
-class Publisher:
+class Plugin:
     def step(self):
         pass
+
+    def _create_topic_name(self, device):
+        return device.getName().replace('-', '_').replace(' ', '_')

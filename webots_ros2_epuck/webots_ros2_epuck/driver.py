@@ -38,8 +38,6 @@ DEFAULT_WHEEL_RADIUS = 0.02
 DEFAULT_WHEEL_DISTANCE = 0.05685
 NB_LIGHT_SENSORS = 8
 NB_GROUND_SENSORS = 3
-NB_RGB_LEDS = 4
-NB_BINARY_LEDS = 4
 NB_INFRARED_SENSORS = 8
 SENSOR_DIST_FROM_CENTER = 0.035
 # https://ieee-dataport.org/open-access/conversion-guide-solar-irradiance-and-lux-illuminance
@@ -136,36 +134,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
 
-        # Initialize binary LEDs
-        self.binary_leds = []
-        self.binary_led_subscribers = []
-        for i in range(NB_BINARY_LEDS):
-            index = i * 2
-            led = self.robot.getLED('led{}'.format(index))
-            led_subscriber = self.create_subscription(
-                Bool,
-                '/led{}'.format(index),
-                partial(self.on_binary_led_callback, index=i),
-                10
-            )
-            self.binary_leds.append(led)
-            self.binary_led_subscribers.append(led_subscriber)
-
-        # Initialize RGB LEDs
-        self.rgb_leds = []
-        self.rgb_led_subscribers = []
-        for i in range(NB_RGB_LEDS):
-            index = i * 2 + 1
-            led = self.robot.getLED('led{}'.format(index))
-            led_subscriber = self.create_subscription(
-                Int32,
-                '/led{}'.format(index),
-                partial(self.on_rgb_led_callback, index=i),
-                10
-            )
-            self.rgb_leds.append(led)
-            self.rgb_led_subscribers.append(led_subscriber)
-
         # Initialize Light sensors
         self.light_sensors = []
         self.light_publishers = []
@@ -204,13 +172,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Main loop
         self.create_timer(self.timestep / 1000, self.step_callback)
-
-    def on_rgb_led_callback(self, msg, index):
-        self.rgb_leds[index].set(msg.data)
-
-    def on_binary_led_callback(self, msg, index):
-        value = 1 if msg.data else 0
-        self.binary_leds[index].set(value)
 
     def step_callback(self):
         self.robot.step(self.timestep)

@@ -20,9 +20,9 @@ import rclpy
 from rclpy.time import Time
 from std_msgs.msg import Bool, Int32
 from tf2_ros import StaticTransformBroadcaster
-from sensor_msgs.msg import Range, Image, CameraInfo, Imu, LaserScan, Illuminance
+from sensor_msgs.msg import Range, Imu, LaserScan, Illuminance
 from geometry_msgs.msg import TransformStamped
-from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_table
+from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_lookup_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
@@ -45,38 +45,6 @@ SENSOR_DIST_FROM_CENTER = 0.035
 # https://ieee-dataport.org/open-access/conversion-guide-solar-irradiance-and-lux-illuminance
 IRRADIANCE_TO_ILLUMINANCE = 120
 
-TOF_TABLE = [
-    [2.00, 2000.0],
-    [1.70, 1780.5],
-    [1.00, 1052.0],
-    [0.50, 531.9],
-    [0.20, 218.9],
-    [0.10, 111.0],
-    [0.05, 58.5],
-    [0.00, 19.8]
-]
-
-DISTANCE_TABLE = [
-    [0, 4095],
-    [0.005, 2133.33],
-    [0.01, 1465.73],
-    [0.015, 601.46],
-    [0.02, 383.84],
-    [0.03, 234.93],
-    [0.04, 158.03],
-    [0.05, 120],
-    [0.06, 104.09]
-]
-
-LIGHT_TABLE = [
-    [1, 4095],
-    [2, 0]
-]
-
-GROUND_TABLE = [
-    [0, 1000],
-    [0.016, 300]
-]
 
 DISTANCE_SENSOR_ANGLE = [
     -15 * pi / 180,   # ps0
@@ -96,10 +64,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
                          wheel_radius=DEFAULT_WHEEL_RADIUS)
 
         self.static_transforms = []
-
-        # Parameters
-        camera_period_param = self.declare_parameter("camera_period", self.timestep)
-        self.camera_period = camera_period_param.value
 
         # Initialize IMU
         self.gyro = self.robot.getGyro('gyro')
@@ -171,12 +135,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             self.static_transforms.append(tof_transform)
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
-
-        # Initialize camera
-        self.camera = self.robot.getCamera('camera')
-        self.camera_publisher = self.create_publisher(Image, '/image_raw', 10)
-        self.create_timer(self.camera_period / 1000, self.camera_callback)
-        self.camera_info_publisher = self.create_publisher(CameraInfo, '/camera_info', 10)
 
         # Initialize binary LEDs
         self.binary_leds = []
@@ -274,7 +232,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
                 msg.min_range = GROUND_MIN_RANGE
                 msg.max_range = GROUND_MAX_RANGE
                 msg.range = interpolate_table(
-                    self.ground_sensors[idx].getValue(), GROUND_TABLE)
+                    self.ground_sensors[idx].getValue(), self.ground_sensors[idx].getLookupTable())
                 msg.radiation_type = Range.INFRARED
                 self.ground_sensor_publishers[idx].publish(msg)
             else:
@@ -287,7 +245,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
                 msg = Illuminance()
                 msg.header.stamp = stamp
                 msg.illuminance = interpolate_table(
-                    light_sensor.getValue(), LIGHT_TABLE) * IRRADIANCE_TO_ILLUMINANCE
+                    light_sensor.getValue(), light_sensor.getLookupTable()) * IRRADIANCE_TO_ILLUMINANCE
                 msg.variance = 0.1
                 light_publisher.publish(msg)
             else:
@@ -299,8 +257,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Calculate distances
         for i, key in enumerate(self.distance_sensors):
-            dists[i] = interpolate_table(
-                self.distance_sensors[key].getValue(), DISTANCE_TABLE)
+            dists[i] = interpolate_lookup_table(
+                self.distance_sensors[key].getValue(), self.distance_sensors[key].getLookupTable()
+            )
 
         # Publish range: Infrared
         for i, key in enumerate(self.distance_sensors):
@@ -316,7 +275,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Publish range: ToF
         if self.tof_sensor:
-            dist_tof = interpolate_table(self.tof_sensor.getValue(), TOF_TABLE)
+            dist_tof = interpolate_lookup_table(self.tof_sensor.getValue(), self.tof_sensor.getLookupTable())
             msg = Range()
             msg.header.stamp = stamp
             msg.header.frame_id = 'tof'
@@ -386,41 +345,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             self.accelerometer.disable()
             if self.gyro:
                 self.gyro.disable()
-
-    def camera_callback(self):
-        if self.camera_publisher.get_subscription_count() > 0:
-            self.camera.enable(self.camera_period)
-
-            # Image data
-            msg = Image()
-            msg.height = self.camera.getHeight()
-            msg.width = self.camera.getWidth()
-            msg.is_bigendian = False
-            msg.step = self.camera.getWidth() * 4
-            msg.data = self.camera.getImage()
-            msg.encoding = 'bgra8'
-            self.camera_publisher.publish(msg)
-
-            # CameraInfo data
-            msg = CameraInfo()
-            msg.header.frame_id = 'camera_frame'
-            msg.height = self.camera.getHeight()
-            msg.width = self.camera.getWidth()
-            msg.distortion_model = 'plumb_bob'
-            msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
-            msg.k = [
-                self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2,
-                0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2,
-                0.0, 0.0, 1.0
-            ]
-            msg.p = [
-                self.camera.getFocalLength(), 0.0, self.camera.getWidth() / 2, 0.0,
-                0.0, self.camera.getFocalLength(), self.camera.getHeight() / 2, 0.0,
-                0.0, 0.0, 1.0, 0.0
-            ]
-            self.camera_info_publisher.publish(msg)
-        else:
-            self.camera.disable()
 
 
 def main(args=None):

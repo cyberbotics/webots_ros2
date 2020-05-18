@@ -19,6 +19,7 @@
 import argparse
 import os
 import sys
+from webots_ros2_core.publishers.publisher_manager import PublisherManager
 
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 
@@ -38,7 +39,7 @@ except Exception as e:
 
 class WebotsNode(Node):
 
-    def __init__(self, name, args=None):
+    def __init__(self, name, args=None, auto_init=False):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         parser = argparse.ArgumentParser()
@@ -56,6 +57,10 @@ class WebotsNode(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
+
+        # Other stuff
+        if auto_init:
+            PublisherManager(self)
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:

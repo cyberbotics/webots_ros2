@@ -7,7 +7,7 @@ package_name = 'webots_ros2'
 setup(
     name=package_name,
     version='0.0.2',
-    packages=[package_name],
+    packages=[package_name, package_name + '.publishers'],
     data_files=[
         ('share/' + package_name, ['package.xml']),
         ('share/ament_index/resource_index/packages', ['resource/' + package_name])

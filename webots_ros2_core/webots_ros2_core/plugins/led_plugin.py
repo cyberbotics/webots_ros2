@@ -15,7 +15,6 @@
 """LED plugin."""
 
 from std_msgs.msg import Int32
-from rclpy.time import Time
 from rclpy.qos import qos_profile_sensor_data
 from .plugin import Plugin
 
@@ -39,7 +38,7 @@ class LEDPlugin(Plugin):
             Int32,
             self._topic_name,
             self._callback,
-            10
+            qos_profile_sensor_data
         )
 
     def _callback(self, msg):

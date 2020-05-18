@@ -192,7 +192,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
                 msg.field_of_view = self.ground_sensors[idx].getAperture()
                 msg.min_range = GROUND_MIN_RANGE
                 msg.max_range = GROUND_MAX_RANGE
-                msg.range = interpolate_table(
+                msg.range = interpolate_lookup_table(
                     self.ground_sensors[idx].getValue(), self.ground_sensors[idx].getLookupTable())
                 msg.radiation_type = Range.INFRARED
                 self.ground_sensor_publishers[idx].publish(msg)
@@ -205,7 +205,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
                 light_sensor.enable(self.timestep)
                 msg = Illuminance()
                 msg.header.stamp = stamp
-                msg.illuminance = interpolate_table(
+                msg.illuminance = interpolate_lookup_table(
                     light_sensor.getValue(), light_sensor.getLookupTable()) * IRRADIANCE_TO_ILLUMINANCE
                 msg.variance = 0.1
                 light_publisher.publish(msg)

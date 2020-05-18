@@ -30,7 +30,7 @@ def generate_launch_description():
     # Webots
     arguments = ['--mode=realtime', '--world=' +
                  os.path.join(get_package_share_directory('webots_ros2_tiago'),
-                              'worlds', 'basic_world.wbt')]
+                              'worlds', 'ros_tiago.wbt')]
     webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
                                      arguments=arguments, output='screen')
     # Controller node

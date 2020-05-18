@@ -114,7 +114,7 @@ class TfPublisher(Publisher):
     def _create_frame_name(self, tf_node):
         if not tf_node.get_parent():
             return 'base_link'
-        return tf_node.get_name() if tf_node.is_link_device() else tf_node.get_name() + '_solid'
+        return tf_node.get_name()
 
     def publish(self):
         if self._node.robot.getTime() - self._last_update < self.params.timestep / 1e6:

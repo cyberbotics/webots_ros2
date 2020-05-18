@@ -42,7 +42,7 @@ class CameraPlugin(Plugin):
         self._device = device
         self._last_update = -1
         self._camera_info_plugin = None
-        self._image_plugin = None
+        self._image_publisher = None
         self.params = params or CameraPluginParams()
 
         # Determine default params
@@ -50,12 +50,12 @@ class CameraPlugin(Plugin):
         self.params.topic_name = self.params.topic_name or device.getName()
 
         if not self.params.disable:
-            self._image_plugin = self._node.create_publisher(
+            self._image_publisher = self._node.create_publisher(
                 Image,
                 self.params.topic_name + '/image_raw',
                 qos_profile_sensor_data
             )
-            self._camera_info_plugin = self._node.create_publisher(
+            self._camera_info_publisher = self._node.create_publisher(
                 CameraInfo,
                 self.params.topic_name + '/camera_info',
                 qos_profile_sensor_data
@@ -68,14 +68,14 @@ class CameraPlugin(Plugin):
         if self.params.disable:
             return
 
-        if self._node.robot.getTime() - self._last_update < self._device.getSamplingPeriod() / 1e6:
+        if self._node.robot.getTime() - self._last_update < self.params.timestep / 1e6:
             return
         self._last_update = self._node.robot.getTime()
 
         stamp = Time(seconds=self._node.robot.getTime() + 1e-3 * int(self._node.robot.getBasicTimeStep())).to_msg()
 
         # Publish camera data
-        if self._image_plugin.get_subscription_count() > 0 or self.params.always_publish:
+        if self._image_publisher.get_subscription_count() > 0 or self.params.always_publish:
             self._device.enable(self.params.timestep)
 
             # Image data
@@ -87,7 +87,7 @@ class CameraPlugin(Plugin):
             msg.step = self._device.getWidth() * 4
             msg.data = self._device.getImage()
             msg.encoding = 'bgra8'
-            self._image_plugin.publish(msg)
+            self._image_publisher.publish(msg)
 
             # CameraInfo data
             msg = CameraInfo()
@@ -106,6 +106,6 @@ class CameraPlugin(Plugin):
                 0.0, self._device.getFocalLength(), self._device.getHeight() / 2, 0.0,
                 0.0, 0.0, 1.0, 0.0
             ]
-            self._camera_info_plugin.publish(msg)
+            self._camera_info_publisher.publish(msg)
         else:
             self._device.disable()

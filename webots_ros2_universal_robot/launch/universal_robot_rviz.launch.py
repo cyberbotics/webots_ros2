@@ -41,16 +41,9 @@ def generate_launch_description():
                                         node_executable='universal_robot',
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
-                                        arguments=['--webots-robot-name=UR5e'],
+                                        arguments=['--webots-robot-name=base_link'],
                                         parameters=[{'synchronization': synchronization}],
                                         output='screen')
-    tfController = ControllerLauncher(package='webots_ros2_core',
-                                      node_executable='tf_publisher',
-                                      # this argument should match the 'name' field
-                                      # of the robot in Webots
-                                      arguments=['--webots-robot-name=tf_supervisor'],
-                                      parameters=[{'synchronization': synchronization}],
-                                      output='screen')
     # Copy .rviz config file and update path ro URDF file.
     templateRvizFile = os.path.join(get_package_share_directory('webots_ros2_ur_e_description'),
                                     'rviz', 'view_robot') + '.rviz'
@@ -72,7 +65,6 @@ def generate_launch_description():
         rviz,
         webots,
         URe5Controller,
-        tfController,
         # Shutdown launch when Webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

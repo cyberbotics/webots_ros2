@@ -22,6 +22,7 @@ import sys
 from webots_ros2_core.plugins.plugin_manager import PluginManager
 
 from webots_ros2_core.utils import append_webots_python_lib_to_path
+from webots_ros2_core.tf_publisher import TfPublisher
 
 from webots_ros2_msgs.srv import SetInt
 
@@ -38,8 +39,7 @@ except Exception as e:
 
 
 class WebotsNode(Node):
-
-    def __init__(self, name, args=None, plugin_config=None):
+    def __init__(self, name, args=None, plugin_config=None, enableTfPublisher=True):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         parser = argparse.ArgumentParser()
@@ -57,6 +57,12 @@ class WebotsNode(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
+        if enableTfPublisher:
+            if self.robot.getSupervisor():
+                self.tfPublisher = TfPublisher(self.robot, self)
+            else:
+                self.get_logger().warn('Impossible to publish transforms because the "supervisor"'
+                                       ' field is false.')
 
         PluginManager(self, plugin_config)
 

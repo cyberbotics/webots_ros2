@@ -215,6 +215,7 @@ Robot {
       translation 0 0.3 0
       rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
       controller "<extern>"
+      supervisor TRUE
     }
     Shape {
       appearance GalvanizedMetal {

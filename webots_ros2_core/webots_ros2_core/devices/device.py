@@ -19,3 +19,6 @@ class Device:
 
     def _create_topic_name(self, wb_device):
         return wb_device.getName().replace('-', '_').replace(' ', '_')
+
+    def _create_frame_id(self, wb_device):
+        return self._create_topic_name(wb_device)

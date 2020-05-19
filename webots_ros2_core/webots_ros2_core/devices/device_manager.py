@@ -19,6 +19,7 @@
 import sys
 from .camera_device import CameraDevice
 from .led_device import LEDDevice
+from .laser_device import LaserDevice
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 try:
     append_webots_python_lib_to_path()
@@ -50,6 +51,8 @@ class DeviceManager:
                 self._devices[wb_device.getName()] = CameraDevice(node, wb_device, config.get(wb_device.getName(), None))
             elif wb_device.getNodeType() == Node.LED:
                 self._devices[wb_device.getName()] = LEDDevice(node, wb_device, config.get(wb_device.getName(), None))
+            elif wb_device.getNodeType() == Node.LIDAR:
+                self._devices[wb_device.getName()] = LaserDevice(node, wb_device, config.get(wb_device.getName(), None))
 
         # Verify parameters
         for device_name in config.keys():

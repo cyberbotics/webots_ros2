@@ -19,7 +19,7 @@
 import argparse
 import os
 import sys
-from webots_ros2_core.plugins.plugin_manager import PluginManager
+from webots_ros2_core.devices.device_manager import DeviceManager
 
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 from webots_ros2_core.tf_publisher import TfPublisher
@@ -39,7 +39,7 @@ except Exception as e:
 
 
 class WebotsNode(Node):
-    def __init__(self, name, args=None, plugin_config=None, enableTfPublisher=True):
+    def __init__(self, name, args=None, device_config=None, enableTfPublisher=True):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         parser = argparse.ArgumentParser()
@@ -64,7 +64,7 @@ class WebotsNode(Node):
                 self.get_logger().warn('Impossible to publish transforms because the "supervisor"'
                                        ' field is false.')
 
-        PluginManager(self, plugin_config)
+        self.device_manager = DeviceManager(self, device_config)
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:

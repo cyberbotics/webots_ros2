@@ -13,9 +13,9 @@
 # limitations under the License.
 
 
-class Plugin:
+class Device:
     def step(self):
         pass
 
-    def _create_topic_name(self, device):
-        return device.getName().replace('-', '_').replace(' ', '_')
+    def _create_topic_name(self, wb_device):
+        return wb_device.getName().replace('-', '_').replace(' ', '_')

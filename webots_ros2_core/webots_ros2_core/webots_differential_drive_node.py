@@ -30,7 +30,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
                  args,
                  wheel_distance=0,
                  wheel_radius=0,
-                 plugin_config=None,
+                 device_config=None,
                  left_joint='left wheel motor',
                  right_joint='right wheel motor',
                  left_encoder='left wheel sensor',
@@ -40,7 +40,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
                  odometry_frame='odom',
                  robot_base_frame='base_link'
                  ):
-        super().__init__(name, args, plugin_config=plugin_config)
+        super().__init__(name, args, device_config=device_config)
 
         # Parametrise
         wheel_distance_param = self.declare_parameter('wheel_distance', wheel_distance)

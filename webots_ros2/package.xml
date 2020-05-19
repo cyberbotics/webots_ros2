@@ -18,6 +18,7 @@
   <exec_depend>webots_ros2_core</exec_depend>
   <exec_depend>webots_ros2_examples</exec_depend>
   <exec_depend>webots_ros2_importer</exec_depend>
+  <exec_depend>webots_ros2_tiago</exec_depend>
   <exec_depend>webots_ros2_universal_robot</exec_depend>
 
   <!-- These test dependencies are optional

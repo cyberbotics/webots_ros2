@@ -18,7 +18,7 @@ import math
 
 from tf2_msgs.msg import TFMessage
 from geometry_msgs.msg import TransformStamped
-from builtin_interfaces.msg import Time
+from rclpy.time import Time
 
 from rclpy.parameter import Parameter
 
@@ -59,16 +59,13 @@ class TfPublisher():
         """Publish the current transforms."""
         # Publish TF for the next step
         # we use one step in advance to make sure no sensor data are published before
+        stamp = Time(seconds=self.robot.getTime() + 0.001 * self.timestep).to_msg()
         tFMessage = TFMessage()
-        nextTime = self.robot.getTime() + 0.001 * self.timestep
-        nextSec = int(nextTime)
-        # rounding prevents precision issues that can cause problems with ROS timers
-        nextNanosec = int(round(1000 * (nextTime - nextSec)) * 1.0e+6)
         for name in self.nodes:
             position = self.nodes[name].getPosition()
             orientation = self.nodes[name].getOrientation()
             transformStamped = TransformStamped()
-            transformStamped.header.stamp = Time(sec=nextSec, nanosec=nextNanosec)
+            transformStamped.header.stamp = stamp
             transformStamped.header.frame_id = 'map'
             transformStamped.child_frame_id = self.prefix + name
             transformStamped.transform.translation.x = position[0]

@@ -69,12 +69,13 @@ class followJointTrajectoryClient(Node):
         goal_msg = FollowJointTrajectory.Goal()
         goal_msg.trajectory.joint_names = trajectory['joint_names']
         for point in trajectory['points']:
-            duration = Duration(sec=int(point['time_from_start']['sec']),
-                                nanosec=int(int(point['time_from_start']['nanosec']) * 1.0e+6))
             trajectoryPoint = JointTrajectoryPoint(positions=point['positions'],
                                                    velocities=point['velocities'],
                                                    accelerations=point['accelerations'],
-                                                   time_from_start=duration)
+                                                   time_from_start=Duration(
+                                                       sec=point['time_from_start']['sec'],
+                                                       nanosec=point['time_from_start']['nanosec']
+                                                    ))
             goal_msg.trajectory.points.append(trajectoryPoint)
 
         self.get_logger().info('Sending goal request...')

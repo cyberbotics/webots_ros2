@@ -4,3 +4,4 @@
 .eggs/
 
 *.pyc
+.vscode

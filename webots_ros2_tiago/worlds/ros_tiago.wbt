@@ -1,0 +1,381 @@
+#VRML_SIM R2020a utf8
+WorldInfo {
+  info [
+    "Simple TIAGo Base simulation controlled by a ROS node written in Python."
+  ]
+  title "ROS2 simulation of the Tiago robot"
+}
+Viewpoint {
+  orientation 0.7259861099678916 -0.6590060161538492 -0.19660935584737757 5.362622153709845
+  position 13.160963850734786 14.284547654468774 13.683900144385449
+}
+TexturedBackground {
+  texture "empty_office"
+  skybox FALSE
+}
+TiagoBase {
+  rotation 0.5773509358554485 0.5773509358554485 0.5773489358556708 -2.094395307179586
+  controller "<extern>"
+  controllerArgs ""
+}
+PottedTree {
+  translation 0.53 0 4
+  name "potted tree(4)"
+}
+PottedTree {
+  translation 7 0 4
+  name "potted tree(5)"
+}
+PottedTree {
+  translation -2.63 0 -2.84
+  name "potted tree(6)"
+}
+PottedTree {
+  translation 4 0 -3
+  name "potted tree(7)"
+}
+PottedTree {
+  translation 5.8 0 -3.3
+  name "potted tree(8)"
+}
+Floor {
+  tileSize 2 2
+  appearance MattePaint {
+    baseColor 0.605936 0.609995 0.601862
+  }
+}
+Floor {
+  translation 7.5 0 0
+  name "floor(1)"
+  size 5 10
+  tileSize 2 2
+  appearance CementTiles {
+    textureTransform TextureTransform {
+      scale 0.6 0.6
+    }
+  }
+}
+Bench {
+  translation 1.5 0 -4.465
+}
+Window {
+  translation 3.5 0 -5.1
+  size 1 2.4 0.2
+}
+Window {
+  translation 6.5 0 5.1
+  name "window(1)"
+  size 1 2.4 0.2
+}
+Wall {
+  translation 4.5 0 -5.1
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation -1 0 -5.1
+  name "wall(8)"
+  size 8 2.4 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation -5.1 0 0
+  rotation 0 1 0 1.5707996938995747
+  name "wall(3)"
+  size 10.4 2.4 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation 3.5 0 5.1
+  name "wall(4)"
+  size 3 2.4 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation -2 0 5.1
+  name "wall(9)"
+  size 6 2.4 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation 7.5 0 -5.1
+  name "wall(5)"
+  size 5 2.4 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation 5.5 0 5.1
+  name "wall(7)"
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation 8.5 0 5.1
+  name "wall(10)"
+  size 3 2.4 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation 10.1 0 0
+  rotation 0 1 0 1.5707996938995747
+  name "wall(6)"
+  size 10.4 2.4 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation 5 0 -2
+  rotation 0 1 0 1.5707996938995747
+  name "wall(2)"
+  size 6 2.4 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Wall {
+  translation 5 0 3.5
+  rotation 0 1 0 1.5707996938995745
+  name "wall(1)"
+  size 3 2.4 0.2
+  appearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+}
+Radiator {
+  translation 7.5 0.33 -4.87
+  rotation 0 1 0 -1.5707996938995747
+}
+Radiator {
+  translation 3.25 0.33 4.87
+  rotation 0 1 0 1.5707996938995747
+  name "radiator(1)"
+}
+Door {
+  translation 5 0 1.5
+  rotation 0 1 0 -1.5707953071795862
+  position -1.5
+  wallAppearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+  frameAppearance Roughcast {
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Door {
+  translation 1.5 0 5.1
+  rotation 0 1 0 3.141592653589793
+  name "door(1)"
+  wallAppearance Roughcast {
+    textureTransform TextureTransform {
+      scale 7 2.4
+    }
+  }
+  frameAppearance Roughcast {
+    textureTransform TextureTransform {
+      scale 1 2.4
+    }
+  }
+}
+Cabinet {
+  translation 9.5 0 2.5
+  rotation 0 1 0 -1.5708003061004252
+}
+Cabinet {
+  translation -5 0 -3.7
+  rotation 0 1 0 1.5708
+  name "cabinet(2)"
+  depth 0.2
+  outerThickness 0.02
+  rowsHeights [
+    0.3, 0.4, 0.4, 0.4, 0.4
+  ]
+  layout [
+    "Shelf (1, 5, 3, 0)"
+    "Shelf (1, 4, 3, 0)"
+    "Shelf (1, 3, 3, 0)"
+    "Shelf (1, 2, 3, 0)"
+  ]
+  handle NULL
+  primaryAppearance DarkParquetry {
+  }
+}
+Table {
+  translation -3.2 0 2
+  name "table(1)"
+  size 1 0.74 1
+}
+Chair {
+  translation -4.5 0 2.5
+}
+Chair {
+  translation -3.2 0 1.5
+  rotation 0 1 0 -1.5708003061004252
+  name "chair(1)"
+}
+Can {
+  translation -2.84 0.802 2.34
+}
+WaterBottle {
+  translation -3 0.738 1.65
+}
+BiscuitBox {
+  translation -3.44 0.741 2.2
+  rotation 0 1 0 2.3562003061004253
+}
+CardboardBox {
+  translation 9.7 0.3 -4.7
+}
+CardboardBox {
+  translation 9 0.3 -4.6
+  rotation 0 1 0 -0.1308996938995747
+  name "cardboard box(1)"
+}
+CardboardBox {
+  translation 9.6 0.3 -4
+  rotation 0 1 0 0.1308996938995747
+  name "cardboard box(2)"
+}
+CardboardBox {
+  translation 9.4 0.9 -4.5
+  rotation 0 1 0 0.6544996938995746
+  name "cardboard box(3)"
+}
+Fridge {
+  translation 5.7 0 -4.64
+  rotation 0 -1 0 1.5708
+}
+FloorLight {
+  translation 4 0 4
+  bulbColor 0.360784 0.207843 0.4
+  pointLightColor 0.678431 0.498039 0.658824
+  pointLightIntensity 1.5
+  pointLightCastShadows TRUE
+}
+FloorLight {
+  translation 8.84 0 -1
+  name "floor light(1)"
+  bulbColor 0.26331 0.374105 0.963333
+  pointLightColor 0.0350805 0.179232 0.956664
+  pointLightIntensity 4
+  pointLightCastShadows TRUE
+}
+FloorLight {
+  translation -4.5 0 -4.5
+  name "floor light(2)"
+  bulbColor 0.643137 0 0
+  pointLightColor 0.937255 0.160784 0.160784
+  pointLightIntensity 1.9
+  pointLightCastShadows TRUE
+}
+FloorLight {
+  translation 4.5 0 -4.5
+  name "floor light(3)"
+  pointLightIntensity 1.5
+  pointLightCastShadows TRUE
+}
+CeilingLight {
+  translation -3.15 2.4 1.89
+  bulbColor 0.560784 0.34902 0.00784314
+  pointLightColor 0.913725 0.72549 0.431373
+  pointLightIntensity 2.5
+  pointLightCastShadows TRUE
+}
+Sofa {
+  translation 9 0 0.518
+  rotation 0 1 0 3.141592653589793
+}
+Armchair {
+  translation 7.62 0 -1.03
+  rotation 0 1 0 -1.5707996938995747
+}
+LandscapePainting {
+  translation 8.5 1.2 4.98
+  rotation 0 1 0 3.141592653589793
+}
+PottedTree {
+  translation 9.17 0 1.7
+}
+PottedTree {
+  translation -4.5 0 1
+  name "potted tree(1)"
+}
+PottedTree {
+  translation 4.4 0 -1.9
+  name "potted tree(2)"
+}
+PottedTree {
+  translation 5.6 0 4.5
+  name "potted tree(3)"
+}
+Blackboard {
+  translation -4.98 1.3 -1
+  rotation 0 1 0 1.5707996938995747
+}
+Table {
+  translation 7.7 0 0.52
+  rotation 0 1 0 1.5707996938995747
+  size 1.3 0.5 0.8
+}
+AdvertisingBoard {
+  translation -1.97 1.21 -4.96
+  displayWidth 2
+  displayHeight 2
+  frameThickness 0.1
+  frameColor 0 0 0
+}
+RectangularPanel {
+  translation 4.88 1.5 2.45
+  rotation 0 1 0 1.5707903061004251
+}
+DirectionPanel {
+  translation 8 1.5 -5
+  rotation 0 1 0 -6.283185307179586
+  textSize 0.175
+  text "Fresh beer :)"
+  right FALSE
+  left TRUE
+}
+BunchOfSunFlowers {
+  translation 7.68 0.5 0.52
+}

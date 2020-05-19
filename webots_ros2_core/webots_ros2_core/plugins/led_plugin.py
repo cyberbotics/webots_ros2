@@ -20,7 +20,7 @@ from .plugin import Plugin
 
 
 class LEDPlugin(Plugin):
-    """Webots + ROS2 camera wrapper."""
+    """Webots + ROS2 LED wrapper."""
 
     def __init__(self, node, device, params=None):
         self._node = node

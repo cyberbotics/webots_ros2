@@ -16,7 +16,7 @@
 
 from sensor_msgs.msg import Image, CameraInfo
 from rclpy.time import Time
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile
 from .plugin import Plugin
 
 
@@ -42,45 +42,21 @@ class CameraPlugin(Plugin):
             self._image_publisher = self._node.create_publisher(
                 Image,
                 self._topic_name + '/image_raw',
-                qos_profile_sensor_data
+                1
             )
             self._camera_info_publisher = self._node.create_publisher(
                 CameraInfo,
                 self._topic_name + '/camera_info',
-                qos_profile_sensor_data
+                QoSProfile(
+                    depth=1,
+                    durability=DurabilityPolicy.TRANSIENT_LOCAL,
+                    history=HistoryPolicy.KEEP_LAST,
+                )
             )
-            camera_period_param = node.declare_parameter(device.getName() + '_period', self._timestep)
-            self._camera_period = camera_period_param.value
-
-    def step(self):
-        """Publish the camera topics with up to date value."""
-        if self._disable:
-            return
-
-        if self._node.robot.getTime() - self._last_update < self._timestep / 1e6:
-            return
-        self._last_update = self._node.robot.getTime()
-
-        stamp = Time(seconds=self._node.robot.getTime() + 1e-3 * int(self._node.robot.getBasicTimeStep())).to_msg()
-
-        # Publish camera data
-        if self._image_publisher.get_subscription_count() > 0 or self._always_publish:
-            self._device.enable(self._timestep)
-
-            # Image data
-            msg = Image()
-            msg.header.stamp = stamp
-            msg.height = self._device.getHeight()
-            msg.width = self._device.getWidth()
-            msg.is_bigendian = False
-            msg.step = self._device.getWidth() * 4
-            msg.data = self._device.getImage()
-            msg.encoding = 'bgra8'
-            self._image_publisher.publish(msg)
 
             # CameraInfo data
             msg = CameraInfo()
-            msg.header.stamp = stamp
+            msg.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
             msg.height = self._device.getHeight()
             msg.width = self._device.getWidth()
             msg.distortion_model = 'plumb_bob'
@@ -96,5 +72,35 @@ class CameraPlugin(Plugin):
                 0.0, 0.0, 1.0, 0.0
             ]
             self._camera_info_publisher.publish(msg)
+
+            # Load parameters
+            camera_period_param = node.declare_parameter(device.getName() + '_period', self._timestep)
+            self._camera_period = camera_period_param.value
+
+    def step(self):
+        """Publish the camera topics with up to date value."""
+        if self._disable:
+            return
+
+        if self._node.robot.getTime() - self._last_update < self._timestep / 1e6:
+            return
+        self._last_update = self._node.robot.getTime()
+
+        stamp = Time(seconds=self._node.robot.getTime()).to_msg()
+
+        # Publish camera data
+        if self._image_publisher.get_subscription_count() > 0 or self._always_publish:
+            self._device.enable(self._timestep)
+
+            # Image data
+            msg = Image()
+            msg.header.stamp = stamp
+            msg.height = self._device.getHeight()
+            msg.width = self._device.getWidth()
+            msg.is_bigendian = False
+            msg.step = self._device.getWidth() * 4
+            msg.data = self._device.getImage()
+            msg.encoding = 'bgra8'
+            self._image_publisher.publish(msg)
         else:
             self._device.disable()

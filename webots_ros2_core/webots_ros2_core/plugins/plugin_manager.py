@@ -40,6 +40,10 @@ class PluginManager:
         # Determine default global parameters
         self._auto = config.setdefault('@auto', False)
 
+        # Disable `PluginManager` if needed
+        if not self._auto:
+            return
+
         # Find devices
         for i in range(node.robot.getNumberOfDevices()):
             device = node.robot.getDeviceByIndex(i)

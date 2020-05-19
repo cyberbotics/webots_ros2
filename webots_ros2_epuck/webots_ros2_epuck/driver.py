@@ -54,12 +54,23 @@ DISTANCE_SENSOR_ANGLE = [
 ]
 
 
+PLUGIN_CONFIG = {
+    '@auto': True,
+    'camera': {
+        'topic_name': '',
+    }
+}
+
+
 class EPuckDriver(WebotsDifferentialDriveNode):
     def __init__(self, args):
-        super().__init__('epuck_driver', args, plugin_config={
-            'camera': {'topic_name': ''}
-        }, wheel_distance=DEFAULT_WHEEL_DISTANCE,
-            wheel_radius=DEFAULT_WHEEL_RADIUS)
+        super().__init__(
+            'epuck_driver',
+            args,
+            plugin_config=PLUGIN_CONFIG,
+            wheel_distance=DEFAULT_WHEEL_DISTANCE,
+            wheel_radius=DEFAULT_WHEEL_RADIUS
+        )
 
         self.static_transforms = []
 

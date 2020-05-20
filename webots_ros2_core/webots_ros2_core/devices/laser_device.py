@@ -85,8 +85,7 @@ class LaserDevice(Device):
             if n_subscribers > 0:
                 should_publish = True
         if not should_publish:
-            # TODO: Verify and report bug
-            # self._wb_device.disable()
+            self._wb_device.disable()
             return
 
         # Publish data

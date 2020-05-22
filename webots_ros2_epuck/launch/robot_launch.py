@@ -33,7 +33,7 @@ def generate_launch_description():
     # Webots
     arguments = [
         '--mode=realtime',
-        '--world=' + os.path.join(package_dir, 'worlds', 'epuck_world.wbt')
+        '--world=' + os.path.join(package_dir, 'worlds', 'epuck_world_enu.wbt')
     ]
     webots = Node(
         package='webots_ros2_core',

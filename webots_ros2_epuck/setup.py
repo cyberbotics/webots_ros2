@@ -15,7 +15,12 @@ data_files.append(('share/' + package_name, [
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/epuck_world.wbt',
-    'worlds/.epuck_world.wbproj'
+    'worlds/.epuck_world.wbproj',
+    'worlds/epuck_world_enu.wbt'
+]))
+data_files.append(('share/' + package_name + '/protos', [
+    'protos/E-Puck_enu.proto',
+    'protos/E-puckDistanceSensor_enu.proto'
 ]))
 data_files.append(('share/' + package_name + '/resource', [
     'resource/all.rviz',

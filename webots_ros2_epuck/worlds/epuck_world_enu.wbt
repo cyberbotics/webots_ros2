@@ -1,0 +1,34 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  gravity 0 0 -9.81
+}
+Solid {
+  children [
+    DEF FLOOR_SHAPE Shape {
+      appearance Parquetry {
+      }
+      geometry Box {
+        size 1 1 0.04
+      }
+    }
+  ]
+  boundingObject USE FLOOR_SHAPE
+}
+PointLight {
+  intensity 1.5
+  location 1 1 1
+}
+Viewpoint {
+  orientation -0.8405612931454309 0.24997632696629588 0.48059187302962186 5.466840487560803
+  position -0.2901222224939166 -0.5364665466359225 0.8793300542343403
+}
+Background {
+  skyColor [
+    0.827451 0.843137 0.811765
+  ]
+}
+E-Puck_enu {
+  translation 0 0 0.02
+  controller "<extern>"
+  version "2"
+}

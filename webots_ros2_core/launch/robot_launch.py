@@ -25,23 +25,15 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_core.utils import ControllerLauncher
+from webots_ros2_core.webots_executor import WebotsExecutor
 
 
 def generate_launch_description():
     synchronization = LaunchConfiguration('synchronization', default=False)
-
-    params = {arg.split(':=')[0]: arg.split(':=')[1] for arg in sys.argv if ':=' in arg}
+    world = LaunchConfiguration('world')
 
     # Webots
-    webots = Node(
-        package='webots_ros2_core',
-        node_executable='webots_launcher',
-        arguments=[
-            '--mode=realtime',
-            '--world=' + params['world']
-        ],
-        output='screen'
-    )
+    webots = WebotsExecutor()
 
     # Driver node
     controller = ControllerLauncher(
@@ -57,13 +49,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         webots,
-        controller,
-
-        # Shutdown launch when Webots exits.
-        RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[EmitEvent(event=launch.events.Shutdown())],
-            )
-        )
+        controller
     ])

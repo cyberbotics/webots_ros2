@@ -30,7 +30,6 @@ from webots_ros2_core.webots_executor import WebotsExecutor
 
 def generate_launch_description():
     synchronization = LaunchConfiguration('synchronization', default=False)
-    world = LaunchConfiguration('world')
 
     # Webots
     webots = WebotsExecutor()

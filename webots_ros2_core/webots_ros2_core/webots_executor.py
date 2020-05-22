@@ -20,24 +20,42 @@ import os
 import sys
 from launch.actions import ExecuteProcess
 from launch.substitutions import LaunchConfiguration
+from launch import LaunchContext
 from webots_ros2_core.utils import get_webots_home
 
 
 class WebotsExecutor(ExecuteProcess):
-    def __init__(self, output='screen'):
+    def __init__(self, output='screen', **kwargs):
         world = LaunchConfiguration('world')
         no_gui = LaunchConfiguration('no_gui', default=False)
         mode = LaunchConfiguration('mode', default='realtime')
 
+        context = LaunchContext()
+
+        # Add `webots` executable to command
         webots_path = get_webots_home()
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')
         webots_cmd = [os.path.join(webots_path, 'webots')]
 
+        # Add `world`
         webots_cmd += [world]
-        # webots_cmd += [mode]
+
+        # Add parameters to hide GUI if needed
+        if no_gui.perform(context) == 'True':
+            webots_cmd += [
+                '--stdout',
+                '--stderr',
+                '--batch',
+                '--no-sandbox',
+                '--minimize'
+            ]
+
+        # Add mode
+        webots_cmd += ['--mode=' + mode.perform(context)]
 
         super().__init__(
             cmd=webots_cmd,
-            output=output
+            output=output,
+            **kwargs
         )

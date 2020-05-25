@@ -7,7 +7,6 @@ Changelog for package webots_ros2_core
 * Added support for multi robots.
 * Added a new TfPublisher class to publish transforms of all the Solid nodes of the robot (if the robot `supervisor` field is true).
 * Added the possibility to run nodes in synchronized mode (using the 'synchronization' parameter).
-* Added a laser_publisher module.
 * Added better support for differential drive robots ('WebotsDifferentialDriveNode' class).
 * Added CameraDevice, LEDDevice and LaserDevice that create correspoding ROS2 topics
 

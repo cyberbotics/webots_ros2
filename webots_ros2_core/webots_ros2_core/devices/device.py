@@ -15,7 +15,7 @@
 
 class Device:
     def step(self):
-        pass
+        raise NotImplementedError('.step() method is called on every step and it should be implemented.')
 
     def _create_topic_name(self, wb_device):
         return wb_device.getName().replace('-', '_').replace(' ', '_')

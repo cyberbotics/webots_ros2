@@ -39,7 +39,7 @@ except Exception as e:
 
 
 class WebotsNode(Node):
-    def __init__(self, name, args=None, device_config=None, enableTfPublisher=True):
+    def __init__(self, name, args=None, device_config=None, enableTfPublisher=False):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         parser = argparse.ArgumentParser()

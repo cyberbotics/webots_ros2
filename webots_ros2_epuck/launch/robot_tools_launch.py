@@ -22,11 +22,12 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
+    ld_nodes = []
     package_dir = get_package_share_directory('webots_ros2_epuck')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default=False)
@@ -37,38 +38,43 @@ def generate_launch_description():
 
     # Rviz node
     rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
-    rviz = Node(
-        package='rviz2',
-        node_executable='rviz2',
-        output='log',
-        arguments=['--display-config=' + rviz_config],
-        condition=launch.conditions.IfCondition(use_rviz)
+    ld_nodes.append(
+        Node(
+            package='rviz2',
+            node_executable='rviz2',
+            output='log',
+            arguments=['--display-config=' + rviz_config],
+            condition=launch.conditions.IfCondition(use_rviz)
+        )
     )
 
     # Navigation
-    nav2 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
-        ),
-        launch_arguments={
-            'params_file': os.path.join(package_dir, 'resource', 'nav2_params.yaml'),
-            'use_sim_time': use_sim_time
-        }.items(),
-        condition=launch.conditions.IfCondition(use_nav)
-    )
+    if 'nav2_bringup' in get_packages_with_prefixes():
+        ld_nodes.append(
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
+                ),
+                launch_arguments={
+                    'params_file': os.path.join(package_dir, 'resource', 'nav2_params.yaml'),
+                    'use_sim_time': use_sim_time
+                }.items(),
+                condition=launch.conditions.IfCondition(use_nav)
+            )
+        )
+    else:
+        print('Navigation2 is not installed, navigation functionality is disabled')
 
     # Mapping
-    simple_mapper = Node(
-        package='webots_ros2_epuck',
-        node_executable='simple_mapper',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time, 'fill_map': fill_map}],
-        condition=launch.conditions.IfCondition(use_mapper)
+    ld_nodes.append(
+        Node(
+            package='webots_ros2_epuck',
+            node_executable='simple_mapper',
+            output='screen',
+            parameters=[{'use_sim_time': use_sim_time, 'fill_map': fill_map}],
+            condition=launch.conditions.IfCondition(use_mapper)
+        )
     )
 
     # Launch descriptor
-    return LaunchDescription([
-        rviz,
-        nav2,
-        simple_mapper
-    ])
+    return LaunchDescription(ld_nodes)

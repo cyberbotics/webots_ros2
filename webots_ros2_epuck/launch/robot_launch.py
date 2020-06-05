@@ -50,9 +50,19 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Robot state publisher
+    initial_robot_description = '<?xml version="1.0"?><robot name="dummy"><link name="base_link"></link></robot>'
+    rsp = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{'robot_description': initial_robot_description}]
+    )
+
     return LaunchDescription([
         webots,
         controller,
+        rsp,
 
         # Shutdown launch when Webots exits.
         RegisterEventHandler(

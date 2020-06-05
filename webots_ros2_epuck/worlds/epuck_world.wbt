@@ -26,15 +26,13 @@ WoodenBox {
   name "wooden box 3"
   size 0.1 0.1 0.1
 }
-E-puck {
+E-puck_enu {
   controller "<extern>"
   version "2"
   camera_width 640
   camera_height 480
-  turretSlot [
-    Pi-puck {
-    }
-  ]
+  translation -6.416711473723099e-08 -5.5993314385226894e-05 0.03662574800222727
+  rotation 1.6045138681486257e-05 0.7071072217063487 0.7071063404844298 3.141558813888621
 }
 DirectionalLight {
   direction 0.5 -1 0.5

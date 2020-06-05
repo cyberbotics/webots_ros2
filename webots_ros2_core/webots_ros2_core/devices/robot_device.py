@@ -35,6 +35,8 @@ class RobotDevice(Device):
         # Create robot_description publishers if needed
         if self._publish_robot_description:
             urdf = self._wb_device.getUrdf(self.__get_urdf_prefix())
+            with open('/tmp/test.xml', 'w') as f:
+                f.write(urdf)
             self.__set_string_param('robot_state_publisher', 'robot_description', urdf)
 
     def __set_string_param(self, node, name, value):

@@ -47,7 +47,6 @@ def generate_launch_description():
     controller = ControllerLauncher(
         package='webots_ros2_universal_robot',
         node_executable='universal_robot',
-        arguments=['--webots-robot-name=base_link'],
         parameters=[{'synchronization': synchronization}],
         output='screen'
     )

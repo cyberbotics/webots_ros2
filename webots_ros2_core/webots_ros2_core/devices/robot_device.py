@@ -14,6 +14,8 @@
 
 """Robot device."""
 
+import os
+import tempfile
 from .device import Device
 from rcl_interfaces.srv import SetParameters
 from rcl_interfaces.msg._parameter import Parameter
@@ -35,13 +37,17 @@ class RobotDevice(Device):
         # Create robot_description publishers if needed
         if self._publish_robot_description:
             urdf = self._wb_device.getUrdf(self.__get_urdf_prefix())
-            with open('/tmp/test.xml', 'w') as f:
-                f.write(urdf)
+            self.__save_urdf_to_file(urdf)
             self.__set_string_param('robot_state_publisher', 'robot_description', urdf)
+
+    def __save_urdf_to_file(self, urdf):
+        """This file supposed to be used for debugging purposes."""
+        with open(os.path.join(tempfile.gettempdir(), 'webots_robot.urdf'), 'w') as urdf_file:
+            urdf_file.write(urdf)
 
     def __set_string_param(self, node, name, value):
         self.cli = self._node.create_client(SetParameters, self._node.get_namespace() + node + '/set_parameters')
-        self.cli.wait_for_service(timeout_sec=20)
+        self.cli.wait_for_service(timeout_sec=5)
         req = SetParameters.Request()
         param_value = ParameterValue(string_value=value, type=ParameterType.PARAMETER_STRING)
         param = Parameter(name=name, value=param_value)

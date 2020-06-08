@@ -32,11 +32,11 @@ def generate_launch_description():
 
     if 'world' not in params:
         print('No world parameter has been found, please define it!')
-        exit(1)
+        sys.exit(1)
 
     if not os.path.exists(params['world']):
         print('World doesn\'t exist')
-        exit(2)
+        sys.exit(2)
 
     # Webots
     arguments = [

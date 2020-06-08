@@ -67,9 +67,9 @@ class WebotsNode(Node):
                 self.get_logger().warn('Impossible to publish transforms because the "supervisor"'
                                        ' field is false.')
 
+        self.device_manager = DeviceManager(self, device_config)
         if self.get_parameter('use_joint_state_publisher').value:
             self.jointStatePublisher = JointStatePublisher(self.robot, '', self)
-        self.device_manager = DeviceManager(self, device_config)
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:

@@ -41,7 +41,7 @@ class RobotDevice(Device):
             self.__set_string_param('robot_state_publisher', 'robot_description', urdf)
 
     def __save_urdf_to_file(self, urdf):
-        """This file supposed to be used for debugging purposes."""
+        """Write URDF to a file for debugging purposes."""
         with open(os.path.join(tempfile.gettempdir(), 'webots_robot.urdf'), 'w') as urdf_file:
             urdf_file.write(urdf)
 

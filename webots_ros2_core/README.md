@@ -8,7 +8,7 @@ Therefore, in the further text, we will explain how to create ROS2 node that tig
 
 
 ### Universal Launcher
-In `webots_ros2_core` package, we provide launcher that supposed to automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)).
+In `webots_ros2_core` package, we provide launcher that should automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)).
 It is enough to provide path to Webots world file with the robot inside, for example: 
 ```
 ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_rviz.wbt
@@ -21,8 +21,8 @@ ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros
 ```
 
 ### Custom Launcher File and Driver
-In case a Webots device is not covered by the universal launcher or you prefer to create ROS interface differently you can build your driver from scratch.
-First, make sure you have created a new ROS2 package and call it `my_webots_driver` (you can ROS' tutorial given [here](https://index.ros.org/doc/ros2/Tutorials/Creating-Your-First-ROS2-Package/)).
+In case a Webots device is not covered by the universal launcher or you prefer to create ROS interface differently you can build your ROS2 driver from scratch.
+First, make sure you have created a new ROS2 package and call it `my_webots_driver` (you check ROS' tutorial given [here](https://index.ros.org/doc/ros2/Tutorials/Creating-Your-First-ROS2-Package/)).
 After the package is ready, you can create a driver, e.g. `/my_webots_driver/my_webots_driver/driver.py` and populate it with the following content:
 
 ```Python
@@ -47,8 +47,8 @@ if __name__ == '__main__':
     main()
 
 ```
-Notice that you have to inherit `WebotsNode` which contains basic functionality that allows you to interact with a Webots robot.
-Also, you need to create a launch file `/my_webots_driver/launch/robot_launch.py` with the minimal content given here:
+Notice that you have to inherit `WebotsNode` which contains basic functionality which allows interaction with a robot in Webots.
+Also, you need to create a launch file `/my_webots_driver/launch/robot_launch.py` with the minimal content as following:
 ```Python
 import launch
 from launch import LaunchDescription
@@ -89,12 +89,33 @@ def generate_launch_description():
         )
     ])
 ```
-The purpose of the launch file is to start Webots, your driver for Webots and to make sure the everything is stopped once Webots closed.
-Make sure the driver and the launch file are added to `setup.py`, run `colcon build` and your launch file should be ready to be executed:
+The purpose of the launch file is to start Webots, your driver for Webots and to make sure everything is stopped once Webots closed.
+Then, make sure the driver and the launch file are added to `setup.py`, run `colcon build` and your launch file should be ready to be executed:
 ```
 ros2 launch my_webots_driver robot_launch.py
 ```
-To extend the ROS interface you should go back to `/my_webots_driver/launch/robot_launch.py` and implement them.
+To extend the ROS interface you should go back to `/my_webots_driver/launch/robot_launch.py` and implement more features.
+For example, in order to add a basic support for [DistanceSensor](https://cyberbotics.com/doc/reference/distancesensor) `MyWebotsDriver` class can be extended as follows:
+```Python
+class MyWebotsDriver(WebotsNode):
+    def __init__(self, args):
+        super().__init__('my_webots_driver', args=args)
+        self.sensor = self.robot.getDistanceSensor('my_distance_sensor')
+        self.sensor.enable(self.timestep)
+        self.sensor_publisher = self.create_publisher(Range, '/my_distance_sensor', 1)
+        self.create_timer(self.timestep * 1e-3, self.publish_sensor_data)
+
+    def publish_sensor_data(self)
+        msg = Range()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = 'my_distance_sensor'
+        msg.field_of_view = self.sensor.getAperture()
+        msg.min_range = self.sensor.getMinValue()
+        msg.max_range = self.sensor.getMaxValue()
+        msg.range = self.sensor.getValue()
+        msg.radiation_type = Range.INFRARED
+        self.sensor_publisher.publish(msg)
+```
 
 
 ### Examples

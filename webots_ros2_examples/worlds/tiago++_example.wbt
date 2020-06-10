@@ -1,0 +1,56 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  info [
+    "This simulation shows a Tiago++ making hello with both arms in an industrial environment. It can also be controlled using the arrows on the keyboard."
+  ]
+  title "Simulation of PAL Robotics' TIAGo++ robot"
+}
+Viewpoint {
+  orientation 0.3149849066502466 -0.9363824057902312 -0.1548305483715476 5.292634975285798
+  position 1.2389213680329703 3.227489300056352 3.3488555801277418
+  follow "TIAGo++"
+}
+TexturedBackground {
+  texture "factory"
+  skybox FALSE
+}
+TexturedBackgroundLight {
+  texture "factory"
+}
+RectangleArena {
+  floorSize 15 15
+  floorTileSize 1 1
+  floorAppearance ThreadMetalPlate {
+  }
+  wallHeight 2.5
+  wallAppearance Roughcast {
+    colorOverride 0.533333 0.541176 0.521569
+    textureTransform TextureTransform {
+      scale 5 1.75
+    }
+  }
+}
+DEF ROOF RectangleArena {
+  translation 0 2.5 0
+  rotation 1 0 0 3.141592653589793
+  name "rectangle arena(1)"
+  floorSize 15 15
+  floorTileSize 1 1
+  floorAppearance Roughcast {
+    colorOverride 0.533333 0.541176 0.521569
+    textureTransform TextureTransform {
+      scale 5 1.75
+    }
+  }
+  wallHeight 2.5
+  wallAppearance Roughcast {
+    colorOverride 0.533333 0.541176 0.521569
+    textureTransform TextureTransform {
+      scale 5 1.75
+    }
+  }
+}
+Tiago++ {
+  translation -4.416 0.095 -1.063
+  controller "<extern>"
+}

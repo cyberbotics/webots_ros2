@@ -3,8 +3,99 @@
 This package contains essential building blocks for running Webots simulation, such as Webots launcher, ROS2 wrappers for Webots devices and other relevant utils.
 
 ## Creating ROS2 Driver for Webots
-Word "driver" in the context of ROS is usually considered to be a ROS node which has a tight interaction with a robot (physical or simulated).
+ROS drivers are considered to be ROS nodes which have a tight interaction with a robot (physical or simulated).
 Therefore, in the further text, we will explain how to create ROS2 node that tightly interacts with the simulated robot in Webots.
+
+
+### Universal Launcher
+In `webots_ros2_core` package, we provide launcher that supposed to automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)).
+It is enough to provide path to Webots world file with the robot inside, for example: 
+```
+ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_rviz.wbt
+```
+This command will run Webots with [UR5](https://www.universal-robots.com/products/ur5-robot/) and publish joint state positions, transformations and robot description.
+
+Similarly, you can try with TIAGo++:
+```
+ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/tiago++_example.wbt
+```
+
+### Custom Launcher File and Driver
+In case a Webots device is not covered by the universal launcher or you prefer to create ROS interface differently you can build your driver from scratch.
+First, make sure you have created a new ROS2 package and call it `my_webots_driver` (you can ROS' tutorial given [here](https://index.ros.org/doc/ros2/Tutorials/Creating-Your-First-ROS2-Package/)).
+After the package is ready, you can create a driver, e.g. `/my_webots_driver/my_webots_driver/driver.py` and populate it with the following content:
+
+```Python
+import rclpy
+from webots_ros2_core.webots_node import WebotsNode
+
+
+class MyWebotsDriver(WebotsNode):
+    def __init__(self, args):
+        super().__init__('my_webots_driver', args=args)
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    my_webots_driver = MyWebotsDriver(args=args)
+    rclpy.spin(my_webots_driver)
+    my_webots_driver.destroy()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
+
+```
+Notice that you have to inherit `WebotsNode` which contains basic functionality that allows you to interact with a Webots robot.
+Also, you need to create a launch file `/my_webots_driver/launch/robot_launch.py` with the minimal content given here:
+```Python
+import launch
+from launch import LaunchDescription
+from launch.actions import RegisterEventHandler, EmitEvent
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+from webots_ros2_core.utils import ControllerLauncher
+
+
+def generate_launch_description():
+    synchronization = LaunchConfiguration('synchronization', default=False)
+
+    # Webots
+    webots = Node(
+        package='webots_ros2_core',
+        node_executable='webots_launcher',
+        arguments=arguments = [
+            '--mode=realtime',
+            '--world=' + path_to_webots_world_file
+        ]
+    )
+
+    # Driver node
+    controller = ControllerLauncher(
+        package='webots_ros2_epuck',
+        node_executable='driver',
+        parameters=[{'synchronization': synchronization}]
+    )
+
+    return LaunchDescription([
+        webots,
+        controller,
+        RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=webots,
+                on_exit=[EmitEvent(event=launch.events.Shutdown())],
+            )
+        )
+    ])
+```
+The purpose of the launch file is to start Webots, your driver for Webots and to make sure the everything is stopped once Webots closed.
+Make sure the driver and the launch file are added to `setup.py`, run `colcon build` and your launch file should be ready to be executed:
+```
+ros2 launch my_webots_driver robot_launch.py
+```
+To extend the ROS interface you should go back to `/my_webots_driver/launch/robot_launch.py` and implement them.
+
 
 ### Examples
 This Github repository contains a few good examples that you can use as the starting point:
@@ -13,10 +104,3 @@ This Github repository contains a few good examples that you can use as the star
 - `webots_ros2_epuck` is again differential drive robot that creates ROS services and topics for almost all available sensors and actuators.
 This example also contains a [list of instructions](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_epuck/EPUCK_ROS2.md) that explains how the simulation can be used in combination with different ROS2 packages like RViz and Navigation2.
 Also, you will this example useful if you are planning later to go to the real robot as we support [ROS2 driver for the real robot](https://github.com/cyberbotics/epuck_ros2) as well.
-
-### Universal Launcher
-In `webots_ros2_core` package we provide launcher that supposed to automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)). It is enough to provide path to Webots world file with the robot inside, for example: 
-```
-ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_rviz.wbt
-```
-This command will run Webots with [UR5](https://www.universal-robots.com/products/ur5-robot/) and create necessary topics to visualize link positions in RViz.

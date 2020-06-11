@@ -16,14 +16,34 @@
 
 import os
 import tempfile
-from .device import Device
 from rcl_interfaces.srv import SetParameters
 from rcl_interfaces.msg._parameter import Parameter
 from rclpy.parameter import ParameterType, ParameterValue
+from .device import Device
 
 
 class RobotDevice(Device):
-    """Webots + ROS2 Robot wrapper."""
+    """
+    ROS2 wrapper for Webots Robot node.
+
+    Creates suitable ROS2 interface based on Webots Robot node instance:
+    https://cyberbotics.com/doc/reference/robot
+
+    It allows the following functinalities:
+    - Updates `robot_description` parameter of `robot_state_publisher` node based on obtained URDF.
+
+    Args:
+        node (WebotsNode): The ROS2 node.
+        wb_device (Robot): Webots node of type Robot.
+
+    Kwargs:
+        params (dict): Dictionary with configuration options in format of::
+
+            dict: {
+                'publish_robot_description': bool,  # Whether to publish robot description (default True)
+            }
+
+    """
 
     def __init__(self, node, wb_device, params=None):
         self._node = node
@@ -31,7 +51,6 @@ class RobotDevice(Device):
 
         # Determine default params
         params = params or {}
-        self._topic_name = params.setdefault('topic_name', self._create_topic_name(wb_device))
         self._publish_robot_description = params.setdefault('publish_robot_description', True)
 
         # Create robot_description publishers if needed

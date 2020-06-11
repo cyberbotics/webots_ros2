@@ -38,9 +38,11 @@ def generate_launch_description():
         print('World doesn\'t exist')
         sys.exit(2)
 
+    params['mode'] = params.setdefault('mode', 'realtime')
+
     # Webots
     arguments = [
-        '--mode=realtime',
+        '--mode=' + params['mode'],
         '--world=' + params['world']
     ]
     webots = Node(

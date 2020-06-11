@@ -21,7 +21,6 @@
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>
   <exec_depend>rviz2</exec_depend>
-  <exec_depend>navigation2</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

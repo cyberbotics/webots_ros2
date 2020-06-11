@@ -2,7 +2,42 @@
 
 This package contains essential building blocks for running Webots simulation, such as Webots launcher, ROS2 wrappers for Webots devices and other relevant utils.
 
-## Creating ROS2 Driver for Webots
+## Reference Manual
+
+###  webots_launcher
+
+The `webots_launcher` is used to start Webots from your launch file, it has the following arguments:
+- `--world`: defines the path to the simulation world file to load.
+- `--mode`: defines the simulation mode (pause, realtime, run or fast) with which Webots should be started (realtime is set by default). 
+- `--no-gui`: if set, Webots starts with a minimal graphical user interface, this is useful to use on a server for example.
+
+### Python Modules
+
+This package includes the following Python modules that can be used from within other nodes to easily create an interface between a simulated robot and ROS2.
+
+#### webots_node
+
+This module provides the `WebotsNode` class that is used as a base class for all the other nodes.
+It creates the interface between Webots and ROS and publishes the clock topic.
+
+### utils
+
+This module provides the following utility functions:
+- `get_webots_home`: returns the path to the Webots installation directory. None is returned if Webots is not found. 
+- `get_webots_version`: returns the version of Webots as a string. 
+- `append_webots_lib_to_path`: adds the Webots `lib` folder to the library path.
+- `append_webots_python_lib_to_path`: adds the Webots Python API to the Python path.
+
+### joint_state_publisher
+
+This module provides the `JointStatePublisher` class that is used to publish joint states.
+
+### trajectory_follower
+
+This module provides the `TrajectoryFollower` class that is used to provide an action server to move the joints.
+
+
+## Creating ROS2 Driver
 ROS drivers are considered to be ROS nodes which have a tight interaction with a robot (physical or simulated).
 Therefore, in the further text, we will explain how to create ROS2 node that tightly interacts with the simulated robot in Webots.
 

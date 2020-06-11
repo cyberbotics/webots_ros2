@@ -27,7 +27,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
-    ld_nodes = []
+    launch_description_nodes = []
     package_dir = get_package_share_directory('webots_ros2_epuck')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default=False)
@@ -38,7 +38,7 @@ def generate_launch_description():
 
     # Rviz node
     rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
-    ld_nodes.append(
+    launch_description_nodes.append(
         Node(
             package='rviz2',
             node_executable='rviz2',
@@ -50,7 +50,7 @@ def generate_launch_description():
 
     # Navigation
     if 'nav2_bringup' in get_packages_with_prefixes():
-        ld_nodes.append(
+        launch_description_nodes.append(
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
@@ -66,7 +66,7 @@ def generate_launch_description():
         print('Navigation2 is not installed, navigation functionality is disabled')
 
     # Mapping
-    ld_nodes.append(
+    launch_description_nodes.append(
         Node(
             package='webots_ros2_epuck',
             node_executable='simple_mapper',
@@ -77,4 +77,4 @@ def generate_launch_description():
     )
 
     # Launch descriptor
-    return LaunchDescription(ld_nodes)
+    return LaunchDescription(launch_description_nodes)

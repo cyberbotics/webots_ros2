@@ -20,8 +20,7 @@ data_files.append(('share/' + package_name + '/worlds', [
 ]))
 data_files.append(('share/' + package_name + '/protos', [
     'protos/E-puck_enu.proto',
-    'protos/E-puckDistanceSensor_enu.proto',
-    'protos/Pi-puck.proto'
+    'protos/E-puckDistanceSensor_enu.proto'
 ]))
 data_files.append(('share/' + package_name + '/protos/icons', glob('protos/icons/*')))
 data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))

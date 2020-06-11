@@ -17,7 +17,7 @@ This command will run Webots with [UR5](https://www.universal-robots.com/product
 
 Similarly, you can try with TIAGo++:
 ```
-ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/tiago++_example.wbt
+ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
 ```
 
 ### Custom Launcher File and Driver

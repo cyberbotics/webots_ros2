@@ -42,7 +42,8 @@ class RobotDevice(Device):
 
     def __save_urdf_to_file(self, urdf):
         """Write URDF to a file for debugging purposes."""
-        with open(os.path.join(tempfile.gettempdir(), 'webots_robot.urdf'), 'w') as urdf_file:
+        filename = 'webots_robot_{}.urdf'.format(self._node.robot.getName())
+        with open(os.path.join(tempfile.gettempdir(), filename), 'w') as urdf_file:
             urdf_file.write(urdf)
 
     def __set_string_param(self, node, name, value):

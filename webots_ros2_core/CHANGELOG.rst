@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.0 (2019-XX-YY)
+0.0.3 (2020-06-15)
 ------------------
 * Added support for multi robots.
 * Added a new tf_publisher node to publish tf of desired Webots nodes.

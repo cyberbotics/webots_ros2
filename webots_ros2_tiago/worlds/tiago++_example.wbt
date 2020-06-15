@@ -1,7 +1,7 @@
 #VRML_SIM R2020b utf8
 WorldInfo {
   info [
-    "This simulation shows a Tiago++ making hello with both arms in an industrial environment. It can also be controlled using the arrows on the keyboard."
+    "This simulation shows a TIAGo++ robot interfaced with ROS2 controller."
   ]
   title "ROS2 Simulation of PAL Robotics' TIAGo++ robot"
 }

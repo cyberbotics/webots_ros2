@@ -20,6 +20,7 @@ import sys
 from .camera_device import CameraDevice
 from .led_device import LEDDevice
 from .laser_device import LaserDevice
+from .robot_device import RobotDevice
 from webots_ros2_core.utils import append_webots_python_lib_to_path
 try:
     append_webots_python_lib_to_path()
@@ -38,13 +39,14 @@ class DeviceManager:
         config = config or {}
 
         # Determine default global parameters
-        self._auto = config.setdefault('@auto', False)
+        self._auto = config.setdefault('@auto', True)
 
         # Disable `DeviceManager` if needed
         if not self._auto:
             return
 
         # Find devices
+        self._devices['@robot'] = RobotDevice(node, node.robot, config.get('@robot', None))
         for i in range(node.robot.getNumberOfDevices()):
             wb_device = node.robot.getDeviceByIndex(i)
             if wb_device.getNodeType() == Node.CAMERA:
@@ -56,7 +58,7 @@ class DeviceManager:
 
         # Verify parameters
         for device_name in config.keys():
-            if device_name not in self._devices:
+            if device_name not in self._devices and device_name not in ['@auto']:
                 self._node.get_logger().warn(f'There is no device with name `{device_name}`')
 
         # Create a loop

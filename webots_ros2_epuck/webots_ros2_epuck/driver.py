@@ -18,7 +18,7 @@ from math import pi, cos, sin
 import rclpy
 from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster
-from sensor_msgs.msg import Range, Imu, LaserScan, Illuminance
+from sensor_msgs.msg import Imu, LaserScan
 from geometry_msgs.msg import TransformStamped
 from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_lookup_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
@@ -35,7 +35,6 @@ NB_LIGHT_SENSORS = 8
 NB_GROUND_SENSORS = 3
 NB_INFRARED_SENSORS = 8
 SENSOR_DIST_FROM_CENTER = 0.035
-EPSILON = 1e-3
 
 
 DISTANCE_SENSOR_ANGLE = [
@@ -118,9 +117,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
             distance_sensor_transform.transform.translation.z = 0.0
             self.static_transforms.append(distance_sensor_transform)
-        infrared_table = self.distance_sensors['ps0'].getLookupTable()
-        self.infrared_min_range = min(infrared_table[0], infrared_table[-3])
-        self.infrared_max_range = max(infrared_table[0], infrared_table[-3])
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
@@ -140,8 +136,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             self.static_transforms.append(tof_transform)
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
-        tof_table = self.tof_sensor.getLookupTable()
-        self.tof_max_range = max(tof_table[0], tof_table[-3])
 
         # Initialize Light sensors
         for i in range(NB_LIGHT_SENSORS):
@@ -196,15 +190,15 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
-        laser_dists = [OUT_OF_RANGE if dist > self.infrared_max_range - EPSILON else dist for dist in dists]
+        laser_dists = [OUT_OF_RANGE if dist > INFRARED_MAX_RANGE else dist for dist in dists]
         msg = LaserScan()
         msg.header.frame_id = 'laser_scanner'
         msg.header.stamp = stamp
         msg.angle_min = - 150 * pi / 180
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180
-        msg.range_min = SENSOR_DIST_FROM_CENTER + self.infrared_min_range + EPSILON
-        msg.range_max = SENSOR_DIST_FROM_CENTER + self.tof_max_range - EPSILON
+        msg.range_min = SENSOR_DIST_FROM_CENTER + INFRARED_MIN_RANGE
+        msg.range_max = SENSOR_DIST_FROM_CENTER + TOF_MAX_RANGE
         msg.ranges = [
             laser_dists[3] + SENSOR_DIST_FROM_CENTER,   # -150
             OUT_OF_RANGE,                               # -135

@@ -16,7 +16,6 @@
 
 from sensor_msgs.msg import Range
 from rclpy.time import Time
-from rclpy.qos import qos_profile_sensor_data
 from webots_ros2_core.math_utils import interpolate_lookup_table
 from .device import Device
 
@@ -52,8 +51,8 @@ class DistanceSensorDevice(Device):
         self._wb_device = wb_device
         self._last_update = -1
         self._publisher = None
-        self._min_range = self.__get_min_range()
-        self._max_range = self.__get_max_range()
+        self._min_range = self.__get_min_range() + self.__get_lower_std()
+        self._max_range = self.__get_max_range() - self.__get_upper_std()
 
         # Determine default params
         params = params or {}
@@ -64,11 +63,7 @@ class DistanceSensorDevice(Device):
 
         # Create topics
         if not self._disable:
-            self._publisher = self._node.create_publisher(
-                Range,
-                self._topic_name,
-                qos_profile_sensor_data
-            )
+            self._publisher = self._node.create_publisher(Range, self._topic_name, 1)
 
     def __get_max_range(self):
         table = self._wb_device.getLookupTable()

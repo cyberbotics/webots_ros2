@@ -16,7 +16,6 @@
 
 from sensor_msgs.msg import Illuminance
 from rclpy.time import Time
-from rclpy.qos import qos_profile_sensor_data
 from webots_ros2_core.math_utils import interpolate_lookup_table
 from .device import Device
 
@@ -66,11 +65,7 @@ class LightSensorDevice(Device):
 
         # Create topics
         if not self._disable:
-            self._publisher = self._node.create_publisher(
-                Illuminance,
-                self._topic_name,
-                qos_profile_sensor_data
-            )
+            self._publisher = self._node.create_publisher(Illuminance, self._topic_name, 1)
 
     def __get_variance(self, raw_value):
         table = self._wb_device.getLookupTable()

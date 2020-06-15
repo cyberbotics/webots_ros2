@@ -29,7 +29,7 @@ class LightSensorDevice(Device):
     https://cyberbotics.com/doc/reference/lightsensor
 
     It allows the following functinalities:
-    - Publishes range measurements of type `sensor_msgs/Range`
+    - Publishes range measurements of type `sensor_msgs/Illuminance`
 
     Args:
         node (WebotsNode): The ROS2 node.

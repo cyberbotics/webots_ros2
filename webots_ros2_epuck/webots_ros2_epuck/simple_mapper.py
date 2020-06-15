@@ -31,8 +31,8 @@ RESOLUTION = 0.01
 
 WORLD_ORIGIN_X = - WORLD_WIDTH / 2.0
 WORLD_ORIGIN_Y = - WORLD_HEIGHT / 2.0
-MAP_WIDTH = round(WORLD_WIDTH / RESOLUTION)
-MAP_HEIGHT = round(WORLD_HEIGHT / RESOLUTION)
+MAP_WIDTH = int(round(WORLD_WIDTH / RESOLUTION))
+MAP_HEIGHT = int(round(WORLD_HEIGHT / RESOLUTION))
 
 
 class SimpleMapper(Node):
@@ -42,7 +42,7 @@ class SimpleMapper(Node):
         fill_map_param = self.declare_parameter('fill_map', True)
 
         # Init map related elements
-        self.map = [-1] * int(MAP_WIDTH) * int(MAP_HEIGHT)
+        self.map = [-1] * MAP_WIDTH * MAP_HEIGHT
         self.map_publisher = self.create_publisher(
             OccupancyGrid,
             '/map',

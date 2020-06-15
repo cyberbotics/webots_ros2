@@ -26,20 +26,16 @@ from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDr
 
 GYRO_RAW2DEG = 32768.0 / 250.0
 OUT_OF_RANGE = 0.0
-TOF_MIN_RANGE = 0.0
-TOF_MAX_RANGE = 1.0
 INFRARED_MAX_RANGE = 0.04
 INFRARED_MIN_RANGE = 0.009
-GROUND_MIN_RANGE = 0.0
-GROUND_MAX_RANGE = 0.016
+TOF_MAX_RANGE = 1.0
 DEFAULT_WHEEL_RADIUS = 0.02
 DEFAULT_WHEEL_DISTANCE = 0.05685
 NB_LIGHT_SENSORS = 8
 NB_GROUND_SENSORS = 3
 NB_INFRARED_SENSORS = 8
 SENSOR_DIST_FROM_CENTER = 0.035
-# https://ieee-dataport.org/open-access/conversion-guide-solar-irradiance-and-lux-illuminance
-IRRADIANCE_TO_ILLUMINANCE = 120
+EPSILON = 1e-3
 
 
 DISTANCE_SENSOR_ANGLE = [
@@ -56,9 +52,16 @@ DISTANCE_SENSOR_ANGLE = [
 
 DEVICE_CONFIG = {
     '@auto': True,
-    'camera': {
-        'topic_name': '',
-    }
+    'camera': {'topic_name': ''},
+    'ps0': {'always_publish': True},
+    'ps1': {'always_publish': True},
+    'ps2': {'always_publish': True},
+    'ps3': {'always_publish': True},
+    'ps4': {'always_publish': True},
+    'ps5': {'always_publish': True},
+    'ps6': {'always_publish': True},
+    'ps7': {'always_publish': True},
+    'tof': {'always_publish': True}
 }
 
 
@@ -82,16 +85,11 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
 
         # Initialize ground sensors
-        self.ground_sensors = {}
-        self.ground_sensor_publishers = {}
         self.ground_sensor_broadcasters = []
         for i in range(NB_GROUND_SENSORS):
             idx = 'gs{}'.format(i)
             ground_sensor = self.robot.getDistanceSensor(idx)
             if ground_sensor:
-                self.ground_sensors[idx] = ground_sensor
-                self.ground_sensor_publishers[idx] = self.create_publisher(Range, '/' + idx, 1)
-
                 ground_sensor_transform = TransformStamped()
                 ground_sensor_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
                 ground_sensor_transform.header.frame_id = "base_link"
@@ -105,14 +103,11 @@ class EPuckDriver(WebotsDifferentialDriveNode):
                 self.get_logger().info('Ground sensor `{}` is not present for this e-puck version'.format(idx))
 
         # Intialize distance sensors
-        self.distance_sensor_publishers = {}
         self.distance_sensors = {}
         for i in range(NB_INFRARED_SENSORS):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.timestep)
-            sensor_publisher = self.create_publisher(Range, '/ps{}'.format(i), 10)
             self.distance_sensors['ps{}'.format(i)] = sensor
-            self.distance_sensor_publishers['ps{}'.format(i)] = sensor_publisher
 
             distance_sensor_transform = TransformStamped()
             distance_sensor_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
@@ -123,13 +118,14 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
             distance_sensor_transform.transform.translation.z = 0.0
             self.static_transforms.append(distance_sensor_transform)
+        infrared_table = self.distance_sensors['ps0'].getLookupTable()
+        self.infrared_min_range = min(infrared_table[0], infrared_table[-3])
+        self.infrared_max_range = max(infrared_table[0], infrared_table[-3])
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
         self.tof_sensor = self.robot.getDistanceSensor('tof')
         if self.tof_sensor:
-            self.tof_sensor.enable(self.timestep)
-            self.tof_publisher = self.create_publisher(Range, '/tof', 1)
             tof_transform = TransformStamped()
             tof_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
             tof_transform.header.frame_id = "base_link"
@@ -144,16 +140,11 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             self.static_transforms.append(tof_transform)
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
+        tof_table = self.tof_sensor.getLookupTable()
+        self.tof_max_range = max(tof_table[0], tof_table[-3])
 
         # Initialize Light sensors
-        self.light_sensors = []
-        self.light_publishers = []
         for i in range(NB_LIGHT_SENSORS):
-            light_sensor = self.robot.getLightSensor(f'ls{i}')
-            light_publisher = self.create_publisher(Illuminance, f'/ls{i}', 1)
-            self.light_publishers.append(light_publisher)
-            self.light_sensors.append(light_sensor)
-
             light_transform = TransformStamped()
             light_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
             light_transform.header.frame_id = "base_link"
@@ -185,43 +176,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.create_timer(self.timestep / 1000, self.step_callback)
 
     def step_callback(self):
-        self.robot.step(self.timestep)
         stamp = Time(seconds=self.robot.getTime()).to_msg()
-
-        self.publish_distance_data(stamp)
-        self.publish_light_data(stamp)
-        self.publish_ground_sensor_data(stamp)
         self.publish_imu_data(stamp)
-
-    def publish_ground_sensor_data(self, stamp):
-        for idx in self.ground_sensors.keys():
-            if self.ground_sensor_publishers[idx].get_subscription_count() > 0:
-                self.ground_sensors[idx].enable(self.timestep)
-                msg = Range()
-                msg.header.stamp = stamp
-                msg.header.frame_id = idx
-                msg.field_of_view = self.ground_sensors[idx].getAperture()
-                msg.min_range = GROUND_MIN_RANGE
-                msg.max_range = GROUND_MAX_RANGE
-                msg.range = interpolate_lookup_table(
-                    self.ground_sensors[idx].getValue(), self.ground_sensors[idx].getLookupTable())
-                msg.radiation_type = Range.INFRARED
-                self.ground_sensor_publishers[idx].publish(msg)
-            else:
-                self.ground_sensors[idx].disable()
-
-    def publish_light_data(self, stamp):
-        for light_publisher, light_sensor in zip(self.light_publishers, self.light_sensors):
-            if light_publisher.get_subscription_count() > 0:
-                light_sensor.enable(self.timestep)
-                msg = Illuminance()
-                msg.header.stamp = stamp
-                msg.illuminance = interpolate_lookup_table(
-                    light_sensor.getValue(), light_sensor.getLookupTable()) * IRRADIANCE_TO_ILLUMINANCE
-                msg.variance = 0.1
-                light_publisher.publish(msg)
-            else:
-                light_sensor.disable()
+        self.publish_distance_data(stamp)
 
     def publish_distance_data(self, stamp):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
@@ -233,42 +190,21 @@ class EPuckDriver(WebotsDifferentialDriveNode):
                 self.distance_sensors[key].getValue(), self.distance_sensors[key].getLookupTable()
             )
 
-        # Publish range: Infrared
-        for i, key in enumerate(self.distance_sensors):
-            msg = Range()
-            msg.header.stamp = stamp
-            msg.header.frame_id = key
-            msg.field_of_view = self.distance_sensors[key].getAperture()
-            msg.min_range = INFRARED_MIN_RANGE
-            msg.max_range = INFRARED_MAX_RANGE
-            msg.range = dists[i]
-            msg.radiation_type = Range.INFRARED
-            self.distance_sensor_publishers[key].publish(msg)
-
         # Publish range: ToF
         if self.tof_sensor:
             dist_tof = interpolate_lookup_table(self.tof_sensor.getValue(), self.tof_sensor.getLookupTable())
-            msg = Range()
-            msg.header.stamp = stamp
-            msg.header.frame_id = 'tof'
-            msg.field_of_view = self.tof_sensor.getAperture()
-            msg.min_range = TOF_MIN_RANGE
-            msg.max_range = TOF_MAX_RANGE
-            msg.range = dist_tof
-            msg.radiation_type = Range.INFRARED
-            self.tof_publisher.publish(msg)
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
-        laser_dists = [OUT_OF_RANGE if dist > INFRARED_MAX_RANGE else dist for dist in dists]
+        laser_dists = [OUT_OF_RANGE if dist > self.infrared_max_range - EPSILON else dist for dist in dists]
         msg = LaserScan()
         msg.header.frame_id = 'laser_scanner'
         msg.header.stamp = stamp
         msg.angle_min = - 150 * pi / 180
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180
-        msg.range_min = SENSOR_DIST_FROM_CENTER + INFRARED_MIN_RANGE
-        msg.range_max = SENSOR_DIST_FROM_CENTER + TOF_MAX_RANGE
+        msg.range_min = SENSOR_DIST_FROM_CENTER + self.infrared_min_range + EPSILON
+        msg.range_max = SENSOR_DIST_FROM_CENTER + self.tof_max_range - EPSILON
         msg.ranges = [
             laser_dists[3] + SENSOR_DIST_FROM_CENTER,   # -150
             OUT_OF_RANGE,                               # -135

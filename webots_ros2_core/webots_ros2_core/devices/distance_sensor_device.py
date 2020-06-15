@@ -52,6 +52,8 @@ class DistanceSensorDevice(Device):
         self._wb_device = wb_device
         self._last_update = -1
         self._publisher = None
+        self._min_range = self.__get_min_range()
+        self._max_range = self.__get_max_range()
 
         # Determine default params
         params = params or {}
@@ -68,6 +70,26 @@ class DistanceSensorDevice(Device):
                 qos_profile_sensor_data
             )
 
+    def __get_max_range(self):
+        table = self._wb_device.getLookupTable()
+        return max(table[0], table[-3])
+
+    def __get_min_range(self):
+        table = self._wb_device.getLookupTable()
+        return min(table[0], table[-3])
+
+    def __get_lower_std(self):
+        table = self._wb_device.getLookupTable()
+        if table[0] < table[-3]:
+            return table[2] * table[0]
+        return table[-1] * table[-3]
+
+    def __get_upper_std(self):
+        table = self._wb_device.getLookupTable()
+        if table[0] > table[-3]:
+            return table[2] * table[0]
+        return table[-1] * table[-3]
+
     def step(self):
         if self._disable:
             return
@@ -78,14 +100,15 @@ class DistanceSensorDevice(Device):
 
         stamp = Time(seconds=self._node.robot.getTime()).to_msg()
 
-        # Publish camera data
+        # Publish distance sensor data
         if self._publisher.get_subscription_count() > 0 or self._always_publish:
             self._wb_device.enable(self._timestep)
             msg = Range()
             msg.header.stamp = stamp
+            msg.header.frame_id = self._wb_device.getName()
             msg.field_of_view = self._wb_device.getAperture()
-            msg.min_range = self._wb_device.getMinValue()
-            msg.max_range = self._wb_device.getMaxValue()
+            msg.min_range = self._min_range
+            msg.max_range = self._max_range
             msg.range = interpolate_lookup_table(self._wb_device.getValue(), self._wb_device.getLookupTable())
             msg.radiation_type = Range.INFRARED
             self._publisher.publish(msg)

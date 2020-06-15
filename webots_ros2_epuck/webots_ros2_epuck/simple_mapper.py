@@ -42,7 +42,7 @@ class SimpleMapper(Node):
         fill_map_param = self.declare_parameter('fill_map', True)
 
         # Init map related elements
-        self.map = [-1]*MAP_WIDTH*MAP_HEIGHT
+        self.map = [-1] * int(MAP_WIDTH) * int(MAP_HEIGHT)
         self.map_publisher = self.create_publisher(
             OccupancyGrid,
             '/map',

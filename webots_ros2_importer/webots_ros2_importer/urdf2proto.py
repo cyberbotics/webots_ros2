@@ -54,7 +54,7 @@ def main(args=None, input=None):
     # look for package-relative file path and replace them
     urdfFile = file
     generatedFile = False
-    packages = re.findall('filename="package:\/\/([^\/]*)', content)
+    packages = re.findall(r'filename="package:\/\/([^\/]*)', content)
     for package in set(packages):  # do the replacement
         packagePath = ''
         try:

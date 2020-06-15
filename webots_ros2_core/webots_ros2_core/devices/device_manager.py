@@ -58,7 +58,8 @@ class DeviceManager:
             elif wb_device.getNodeType() == Node.LIDAR:
                 self._devices[wb_device.getName()] = LaserDevice(node, wb_device, config.get(wb_device.getName(), None))
             elif wb_device.getNodeType() == Node.DISTANCE_SENSOR:
-                self._devices[wb_device.getName()] = DistanceSensorDevice(node, wb_device, config.get(wb_device.getName(), None))
+                self._devices[wb_device.getName()] = DistanceSensorDevice(
+                    node, wb_device, config.get(wb_device.getName(), None))
             elif wb_device.getNodeType() == Node.LIGHT_SENSOR:
                 self._devices[wb_device.getName()] = LightSensorDevice(node, wb_device, config.get(wb_device.getName(), None))
 

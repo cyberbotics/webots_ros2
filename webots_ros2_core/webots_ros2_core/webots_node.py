@@ -19,6 +19,7 @@
 import argparse
 import os
 import sys
+from webots_ros2_core.joint_state_publisher import JointStatePublisher
 from webots_ros2_core.devices.device_manager import DeviceManager
 
 from webots_ros2_core.utils import append_webots_python_lib_to_path
@@ -28,6 +29,7 @@ from webots_ros2_msgs.srv import SetInt
 
 from rosgraph_msgs.msg import Clock
 
+import rclpy
 from rclpy.node import Node
 
 try:
@@ -39,9 +41,10 @@ except Exception as e:
 
 
 class WebotsNode(Node):
-    def __init__(self, name, args=None, device_config=None, enableTfPublisher=True):
+    def __init__(self, name, args=None, device_config=None, enableTfPublisher=False):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
+        self.declare_parameter('use_joint_state_publisher', False)
         parser = argparse.ArgumentParser()
         parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
                             help='Specifies the "name" field of the robot in Webots.')
@@ -65,6 +68,8 @@ class WebotsNode(Node):
                                        ' field is false.')
 
         self.device_manager = DeviceManager(self, device_config)
+        if self.get_parameter('use_joint_state_publisher').value:
+            self.jointStatePublisher = JointStatePublisher(self.robot, '', self)
 
     def step(self, ms):
         if self.robot is None or self.get_parameter('synchronization').value:
@@ -87,8 +92,25 @@ class WebotsNode(Node):
 
     def timer_callback(self):
         self.step(self.timestep)
+        if self.get_parameter('use_joint_state_publisher').value:
+            self.jointStatePublisher.publish()
 
     def step_callback(self, request, response):
         self.step(request.value)
         response.success = True
         return response
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--name', default='driver', help='Name of your drive node')
+    args, _ = parser.parse_known_args()
+
+    driver = WebotsNode(args.name, args=args)
+    rclpy.spin(driver)
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

@@ -16,6 +16,7 @@
 # by moving the robot forward and correcting wheel radius, and rotating robot and
 # correcting distance between the wheels.
 
+import sys
 import time
 from math import pi
 import rclpy
@@ -55,7 +56,7 @@ class EPuckDriveCalibrator(Node):
         self.get_logger().info('The robot has reached the given pose according to odometry')
         time.sleep(0.5)
         self.destroy_node()
-        exit(0)
+        sys.exit(0)
 
     def set_velocity(self, linear, angular):
         msg = Twist()

@@ -14,39 +14,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch Webots e-puck driver."""
+"""Launch Webots and ROS2 driver."""
 
+import sys
 import os
 import launch
 from launch import LaunchDescription
 from launch.actions import RegisterEventHandler, EmitEvent
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
 from webots_ros2_core.utils import ControllerLauncher
 
 
 def generate_launch_description():
-    package_dir = get_package_share_directory('webots_ros2_epuck')
     synchronization = LaunchConfiguration('synchronization', default=False)
+    params = {arg.split(':=')[0]: arg.split(':=')[1] for arg in sys.argv if ':=' in arg}
+
+    if 'world' not in params:
+        print('No world parameter has been found, please define it!')
+        sys.exit(1)
+
+    if not os.path.exists(params['world']):
+        print('World doesn\'t exist')
+        sys.exit(2)
+
+    params['mode'] = params.setdefault('mode', 'realtime')
 
     # Webots
     arguments = [
-        '--mode=realtime',
-        '--world=' + os.path.join(package_dir, 'worlds', 'epuck_world.wbt')
+        '--mode=' + params['mode'],
+        '--world=' + params['world']
     ]
     webots = Node(
         package='webots_ros2_core',
-        node_executable='webots_launcher',
+        executable='webots_launcher',
         arguments=arguments,
         output='screen'
     )
 
     # Driver node
     controller = ControllerLauncher(
-        package='webots_ros2_epuck',
-        node_executable='driver',
-        parameters=[{'synchronization': synchronization}],
+        package='webots_ros2_core',
+        executable='webots_node',
+        parameters=[{
+            'synchronization': synchronization,
+            'use_joint_state_publisher': True
+        }],
         output='screen'
     )
 
@@ -60,9 +73,9 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        robot_state_publisher,
         webots,
         controller,
-        robot_state_publisher,
 
         # Shutdown launch when Webots exits.
         RegisterEventHandler(

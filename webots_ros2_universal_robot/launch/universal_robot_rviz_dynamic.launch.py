@@ -14,9 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch Webots e-puck driver."""
+"""Launch Webots and the controller."""
 
 import os
+
 import launch
 from launch import LaunchDescription
 from launch.actions import RegisterEventHandler, EmitEvent
@@ -27,13 +28,13 @@ from webots_ros2_core.utils import ControllerLauncher
 
 
 def generate_launch_description():
-    package_dir = get_package_share_directory('webots_ros2_epuck')
+    package_dir = get_package_share_directory('webots_ros2_universal_robot')
     synchronization = LaunchConfiguration('synchronization', default=False)
 
     # Webots
     arguments = [
         '--mode=realtime',
-        '--world=' + os.path.join(package_dir, 'worlds', 'epuck_world.wbt')
+        '--world=' + os.path.join(package_dir, 'worlds', 'universal_robot_rviz.wbt')
     ]
     webots = Node(
         package='webots_ros2_core',
@@ -42,10 +43,10 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Driver node
+    # Controller nodes
     controller = ControllerLauncher(
-        package='webots_ros2_epuck',
-        node_executable='driver',
+        package='webots_ros2_universal_robot',
+        node_executable='universal_robot',
         parameters=[{'synchronization': synchronization}],
         output='screen'
     )
@@ -59,7 +60,17 @@ def generate_launch_description():
         parameters=[{'robot_description': initial_robot_description}]
     )
 
+    # Rviz node
+    rviz_config = os.path.join(package_dir, 'resource', 'view_robot_dynamic.rviz')
+    rviz = Node(
+        package='rviz2',
+        node_executable='rviz2',
+        output='log',
+        arguments=['--display-config=' + rviz_config]
+    )
+
     return LaunchDescription([
+        rviz,
         webots,
         controller,
         robot_state_publisher,

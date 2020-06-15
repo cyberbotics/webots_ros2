@@ -14,13 +14,13 @@
 
 """ROS2 e-puck driver."""
 
-from math import pi, cos, sin
+from math import pi
 import rclpy
 from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster
 from sensor_msgs.msg import Imu, LaserScan
 from geometry_msgs.msg import TransformStamped
-from webots_ros2_core.math_utils import euler_to_quaternion, interpolate_lookup_table
+from webots_ros2_core.math_utils import interpolate_lookup_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
@@ -74,8 +74,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             wheel_radius=DEFAULT_WHEEL_RADIUS
         )
 
-        self.static_transforms = []
-
         # Initialize IMU
         self.gyro = self.robot.getGyro('gyro')
         if not self.gyro:
@@ -83,77 +81,24 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.accelerometer = self.robot.getAccelerometer('accelerometer')
         self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
 
-        # Initialize ground sensors
-        self.ground_sensor_broadcasters = []
-        for i in range(NB_GROUND_SENSORS):
-            idx = 'gs{}'.format(i)
-            ground_sensor = self.robot.getDistanceSensor(idx)
-            if ground_sensor:
-                ground_sensor_transform = TransformStamped()
-                ground_sensor_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-                ground_sensor_transform.header.frame_id = "base_link"
-                ground_sensor_transform.child_frame_id = "gs" + str(i)
-                ground_sensor_transform.transform.rotation = euler_to_quaternion(0, pi/2, 0)
-                ground_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER - 0.005
-                ground_sensor_transform.transform.translation.y = 0.009 - i * 0.009
-                ground_sensor_transform.transform.translation.z = 0.0
-                self.static_transforms.append(ground_sensor_transform)
-            else:
-                self.get_logger().info('Ground sensor `{}` is not present for this e-puck version'.format(idx))
-
-        # Intialize distance sensors
+        # Intialize distance sensors for LaserScan topic
         self.distance_sensors = {}
         for i in range(NB_INFRARED_SENSORS):
             sensor = self.robot.getDistanceSensor('ps{}'.format(i))
             sensor.enable(self.timestep)
             self.distance_sensors['ps{}'.format(i)] = sensor
 
-            distance_sensor_transform = TransformStamped()
-            distance_sensor_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-            distance_sensor_transform.header.frame_id = "base_link"
-            distance_sensor_transform.child_frame_id = "ps" + str(i)
-            distance_sensor_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * cos(DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
-            distance_sensor_transform.transform.translation.z = 0.0
-            self.static_transforms.append(distance_sensor_transform)
-
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
-
         self.tof_sensor = self.robot.getDistanceSensor('tof')
         if self.tof_sensor:
-            tof_transform = TransformStamped()
-            tof_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-            tof_transform.header.frame_id = "base_link"
-            tof_transform.child_frame_id = "tof"
-            tof_transform.transform.rotation.x = 0.0
-            tof_transform.transform.rotation.y = 0.0
-            tof_transform.transform.rotation.z = 0.0
-            tof_transform.transform.rotation.w = 1.0
-            tof_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER
-            tof_transform.transform.translation.y = 0.0
-            tof_transform.transform.translation.z = 0.0
-            self.static_transforms.append(tof_transform)
+            self.tof_sensor.enable(self.timestep)
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
 
-        # Initialize Light sensors
-        for i in range(NB_LIGHT_SENSORS):
-            light_transform = TransformStamped()
-            light_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-            light_transform.header.frame_id = "base_link"
-            light_transform.child_frame_id = "ls" + str(i)
-            light_transform.transform.rotation = euler_to_quaternion(0, 0, DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.x = SENSOR_DIST_FROM_CENTER * cos(DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.y = SENSOR_DIST_FROM_CENTER * sin(DISTANCE_SENSOR_ANGLE[i])
-            light_transform.transform.translation.z = 0.0
-            self.static_transforms.append(light_transform)
-
-        # Static tf broadcaster: Laser
         laser_transform = TransformStamped()
         laser_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-        laser_transform.header.frame_id = "base_link"
-        laser_transform.child_frame_id = "laser_scanner"
+        laser_transform.header.frame_id = 'base_link'
+        laser_transform.child_frame_id = 'laser_scanner'
         laser_transform.transform.rotation.x = 0.0
         laser_transform.transform.rotation.y = 0.0
         laser_transform.transform.rotation.z = 0.0
@@ -161,10 +106,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         laser_transform.transform.translation.x = 0.0
         laser_transform.transform.translation.y = 0.0
         laser_transform.transform.translation.z = 0.0
-        self.static_transforms.append(laser_transform)
 
         self.static_broadcaster = StaticTransformBroadcaster(self)
-        self.static_broadcaster.sendTransform(self.static_transforms)
+        self.static_broadcaster.sendTransform(laser_transform)
 
         # Main loop
         self.create_timer(self.timestep / 1000, self.step_callback)
@@ -172,9 +116,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
     def step_callback(self):
         stamp = Time(seconds=self.robot.getTime()).to_msg()
         self.publish_imu_data(stamp)
-        self.publish_distance_data(stamp)
+        self.publish_laserscan_data(stamp)
 
-    def publish_distance_data(self, stamp):
+    def publish_laserscan_data(self, stamp):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
 

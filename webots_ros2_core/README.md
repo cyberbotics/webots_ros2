@@ -157,6 +157,6 @@ class MyWebotsDriver(WebotsNode):
 This Github repository contains a few good examples that you can use as the starting point:
 - `webots_ros2_example` includes a very simple controller for Thymio (differential driver robot).
 - `webots_ros2_tiago` is another differential drive robot simulation, but here `WebotsDifferentialDriveNode` class from `webots_ros2_core` is utilized to simplify differential drive implementation.
-- `webots_ros2_epuck` is one more example with differential drive robot in which ROS services and topics are created for almost all available sensors and actuators.
+- `webots_ros2_epuck` is one more example with differential drive robot in which ROS services and topics are created for almost all available sensors and actuators available on the robot.
 This example also contains a [list of instructions](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_epuck/EPUCK_ROS2.md) that explains how the simulation can be used in combination with different ROS2 packages like RViz and Navigation2.
 Also, you will find this example useful if you plan later to control the real robot as we support [ROS2 driver for the real robot](https://github.com/cyberbotics/epuck_ros2) as well.

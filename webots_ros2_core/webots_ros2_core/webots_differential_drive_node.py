@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import argparse
+import sys
 from math import cos, sin
 import rclpy
 from rclpy.time import Time
@@ -58,7 +59,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
         if self._wheel_radius == 0 or self._wheel_distance == 0:
             self.get_logger().error('Parameters `wheel_distance` and `wheel_radius` have to greater than 0')
             self.destroy_node()
-            exit(1)
+            sys.exit(1)
         self.get_logger().info(
             f'Initializing differential drive node with wheel_distance = {self._wheel_distance} and ' +
             f'wheel_radius = {self._wheel_radius}'

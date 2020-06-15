@@ -21,6 +21,10 @@ from webots_ros2_core.math_utils import interpolate_lookup_table
 from .device import Device
 
 
+# https://ieee-dataport.org/open-access/conversion-guide-solar-irradiance-and-lux-illuminance
+IRRADIANCE_TO_ILLUMINANCE = 120
+
+
 class LightSensorDevice(Device):
     """
     ROS2 wrapper for Webots LightSensor node.

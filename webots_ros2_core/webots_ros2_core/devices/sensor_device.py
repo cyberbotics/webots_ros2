@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Webots LightSensor device wrapper for ROS2."""
+"""Webots generic sensor device wrapper for ROS2."""
 
 from rclpy.time import Time
 from .device import Device

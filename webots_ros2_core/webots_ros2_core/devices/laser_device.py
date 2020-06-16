@@ -19,27 +19,33 @@ from rclpy.time import Time
 from geometry_msgs.msg import TransformStamped
 from tf2_ros import StaticTransformBroadcaster
 import transforms3d
-from .device import Device
+from .sensor_device import SensorDevice
 
 
-class LaserDevice(Device):
-    """Webots + ROS2 laser wrapper."""
+class LaserDevice(SensorDevice):
+    """
+    ROS2 wrapper for Webots Lidar node.
+
+    Creates suitable ROS2 interface based on Webots Lidar node instance:
+    https://cyberbotics.com/doc/reference/lidar
+
+    It allows the following functinalities:
+    - Publishes range measurements of type `sensor_msgs/LaserScan` for each layer
+
+    Args:
+        node (WebotsNode): The ROS2 node.
+        wb_device (Lidar): Webots node of type Lidar.
+
+    Kwargs:
+        params (dict): Inherited from `SensorDevice`
+
+    """
 
     def __init__(self, node, wb_device, params=None):
-        self._node = node
-        self._wb_device = wb_device
-        self._last_update = -1
+        super().__init__(node, wb_device, params)
         self._publishers = {}
         self._static_transforms = []
         self._static_broadcaster = None
-
-        # Determine default params
-        params = params or {}
-        self._topic_name = params.setdefault('topic_name', self._create_topic_name(wb_device))
-        self._timestep = params.setdefault('timestep', int(node.robot.getBasicTimeStep()))
-        self._disable = params.setdefault('disable', False)
-        self._always_publish = params.setdefault('always_publish', False)
-        self._frame_id = params.setdefault('frame_id', self._create_frame_id(wb_device))
 
         # Exit if disabled
         if self._disable:
@@ -65,15 +71,9 @@ class LaserDevice(Device):
         self._static_broadcaster.sendTransform(self._static_transforms)
 
     def step(self):
-        """Publish the laser topics with up to date value."""
-        # Do nothing if disabled
-        if self._disable:
+        stamp = super().step()
+        if not stamp:
             return
-
-        # Do nothing if not enough steps have passed
-        if self._node.robot.getTime() - self._last_update < self._timestep / 1e6:
-            return
-        self._last_update = self._node.robot.getTime()
 
         # Do nothing if no subscribers or `always_publish` is false
         should_publish = self._always_publish
@@ -89,7 +89,6 @@ class LaserDevice(Device):
             return
 
         # Publish data
-        stamp = Time(seconds=self._node.robot.getTime()).to_msg()
         self._wb_device.enable(self._timestep)
         for layer_i in range(self._wb_device.getNumberOfLayers()):
             self.__publish_data(stamp, layer_i)

@@ -54,7 +54,7 @@ def generate_launch_description():
     initial_robot_description = '<?xml version="1.0"?><robot name="dummy"><link name="base_link"></link></robot>'
     robot_state_publisher = Node(
         package='robot_state_publisher',
-        executable='robot_state_publisher',
+        node_executable='robot_state_publisher',
         output='screen',
         parameters=[{'robot_description': initial_robot_description}]
     )

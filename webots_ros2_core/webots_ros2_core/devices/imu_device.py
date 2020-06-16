@@ -33,7 +33,7 @@ class ImuDevice(SensorDevice):
 
     Args:
         node (WebotsNode): The ROS2 node.
-        wb_devices (array): Webots node in the following orderd, Accelerometer, Gyro and InertialUnit. 
+        wb_devices (array): Webots node in the following orderd, Accelerometer, Gyro and InertialUnit.
 
     Kwargs:
         params (dict): Inherited from `SensorDevice`
@@ -44,12 +44,50 @@ class ImuDevice(SensorDevice):
         print(params)
         super().__init__(node, wb_device, params)
 
+        self.__accelerometer = wb_device[0]
+        self.__gyro = wb_device[1]
+        self.__inertial_unit = wb_device[2]
+
         # Create topics
         self._publisher = None
         if not self._disable:
             self._publisher = self._node.create_publisher(Imu, self._topic_name, 1)
 
+    def __enable_imu(self):
+        for wb_device in self._wb_device:
+            if wb_device:
+                wb_device.enable(self._timestep)
+
+    def __disable_imu(self):
+        for wb_device in self._wb_device:
+            if wb_device:
+                wb_device.disable()
+
     def step(self):
         stamp = super().step()
         if not stamp:
             return
+
+        if self._publisher.get_subscription_count() > 0 or self._always_publish:
+            self.__enable_imu()
+            msg = Imu()
+            msg.header.stamp = stamp
+            msg.header.frame_id = self._frame_id
+            if self.__accelerometer:
+                raw_data = self.__accelerometer.getValues()
+                msg.linear_acceleration.x = interpolate_lookup_table(raw_data[1], self.__accelerometer.getLookupTable())
+                msg.linear_acceleration.y = - interpolate_lookup_table(raw_data[0], self.__accelerometer.getLookupTable())
+                msg.linear_acceleration.z = interpolate_lookup_table(raw_data[2], self.__accelerometer.getLookupTable())
+            if self.__gyro:
+                raw_data = self.__gyro.getValues()
+                msg.angular_velocity.x = interpolate_lookup_table(raw_data[1], self.__gyro.getLookupTable())
+                msg.angular_velocity.y = - interpolate_lookup_table(raw_data[0], self.__gyro.getLookupTable())
+                msg.angular_velocity.z = interpolate_lookup_table(raw_data[2], self.__gyro.getLookupTable())
+            if self.__inertial_unit:
+                raw_data = self.__inertial_unit.getValues()
+                msg.orientation.x = interpolate_lookup_table(raw_data[1], self.__inertial_unit.getLookupTable())
+                msg.orientation.y = - interpolate_lookup_table(raw_data[0], self.__inertial_unit.getLookupTable())
+                msg.orientation.z = interpolate_lookup_table(raw_data[2], self.__inertial_unit.getLookupTable())
+            self._publisher.publish(msg)
+        else:
+            self.__disable_imu()

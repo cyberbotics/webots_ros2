@@ -44,7 +44,8 @@ class SensorDevice(Device):
         self._wb_device = wb_device
         self._last_update = -1
 
-        reference_device = wb_device[0] if isinstance(wb_device, list) else wb_device
+        reference_device = [single_wb_device for single_wb_device in wb_device if single_wb_device][0] if isinstance(
+            wb_device, list) else wb_device
 
         # Determine default params
         self._params = params or {}

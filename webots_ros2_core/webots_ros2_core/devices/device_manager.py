@@ -110,7 +110,7 @@ class DeviceManager:
                 elif self.__wb_devices[wb_device_name] == Node.GYRO:
                     gyro = self.__wb_devices[wb_device_name]
 
-        return [accelerometer, inertial_unit, gyro]
+        return [accelerometer, gyro, inertial_unit]
 
     def __insert_imu_device(self):
         """Inserts Imu device only if non is configured and there is only one in the robot."""
@@ -136,15 +136,14 @@ class DeviceManager:
         # If there is only one return the key
         if len(accelerometers) <= 1 and len(inertial_units) <= 1 and len(gyros) <= 1 and \
                 (len(accelerometers) + len(inertial_units) + len(gyros)) > 0:
-            imu_wb_devices = []
-            if len(accelerometers) > 0:
-                imu_wb_devices.append(accelerometers[0])
-            if len(inertial_units) > 0:
-                imu_wb_devices.append(inertial_units[0])
-            if len(gyros) > 0:
-                imu_wb_devices.append(gyros[0])
-            device_key = '|'.join([wb_device.getName() for wb_device in imu_wb_devices])
+            imu_wb_devices = [
+                accelerometers[0] if len(accelerometers) > 0 else None,
+                gyros[0] if len(gyros) > 0 else None,
+                inertial_units[0] if len(inertial_units) > 0 else None
+            ]
+            imu_wb_device_name = [wb_device.getName() for wb_device in imu_wb_devices if wb_device]
+            device_key = '|'.join(imu_wb_device_name)
             self.__devices[device_key] = ImuDevice(self.__node, imu_wb_devices, {
                 'topic_name': '/imu',
-                'frame_id': imu_wb_devices[0].getName()
+                'frame_id': imu_wb_device_name[0]
             })

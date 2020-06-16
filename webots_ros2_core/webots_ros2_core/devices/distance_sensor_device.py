@@ -15,12 +15,11 @@
 """Webots DistanceSensor device wrapper for ROS2."""
 
 from sensor_msgs.msg import Range
-from rclpy.time import Time
 from webots_ros2_core.math_utils import interpolate_lookup_table
-from .device import Device
+from .sensor_device import SensorDevice
 
 
-class DistanceSensorDevice(Device):
+class DistanceSensorDevice(SensorDevice):
     """
     ROS2 wrapper for Webots DistanceSensor node.
 
@@ -35,31 +34,15 @@ class DistanceSensorDevice(Device):
         wb_device (DistanceSensor): Webots node of type DistanceSensor.
 
     Kwargs:
-        params (dict): Dictionary with configuration options in format of::
-
-            dict: {
-                'topic_name': str,      # ROS topic name (default will generated from the sensor name)
-                'timestep': int,        # Publish period in ms (default is equal to robot's timestep)
-                'disable': bool,        # Whether to create ROS interface for this sensor (default false)
-                'always_publish': bool, # Publish even if there are no subscribers (default false)
-            }
+        params (dict): Inherited from `SensorDevice`
 
     """
 
     def __init__(self, node, wb_device, params=None):
-        self._node = node
-        self._wb_device = wb_device
-        self._last_update = -1
+        super().__init__(node, wb_device, params)
         self._publisher = None
         self._min_range = self.__get_min_value() + self.__get_lower_std()
         self._max_range = self.__get_max_value() - self.__get_upper_std()
-
-        # Determine default params
-        params = params or {}
-        self._topic_name = params.setdefault('topic_name', self._create_topic_name(wb_device))
-        self._timestep = params.setdefault('timestep', int(node.robot.getBasicTimeStep()))
-        self._disable = params.setdefault('disable', False)
-        self._always_publish = params.setdefault('always_publish', False)
 
         # Create topics
         if not self._disable:
@@ -86,21 +69,16 @@ class DistanceSensorDevice(Device):
         return table[-1] * table[-3]
 
     def step(self):
-        if self._disable:
+        stamp = super().step()
+        if not stamp:
             return
-
-        if self._node.robot.getTime() - self._last_update < self._timestep / 1e6:
-            return
-        self._last_update = self._node.robot.getTime()
-
-        stamp = Time(seconds=self._node.robot.getTime()).to_msg()
 
         # Publish distance sensor data
         if self._publisher.get_subscription_count() > 0 or self._always_publish:
             self._wb_device.enable(self._timestep)
             msg = Range()
             msg.header.stamp = stamp
-            msg.header.frame_id = self._wb_device.getName()
+            msg.header.frame_id = self._frame_id
             msg.field_of_view = self._wb_device.getAperture()
             msg.min_range = self._min_range
             msg.max_range = self._max_range

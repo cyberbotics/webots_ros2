@@ -17,25 +17,33 @@
 from sensor_msgs.msg import Image, CameraInfo
 from rclpy.time import Time
 from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile
-from .device import Device
+from .sensor_device import SensorDevice
 
 
-class CameraDevice(Device):
-    """Webots + ROS2 camera wrapper."""
+class CameraDevice(SensorDevice):
+    """
+    ROS2 wrapper for Webots Camera node.
+
+    Creates suitable ROS2 interface based on Webots Camera node instance:
+    https://cyberbotics.com/doc/reference/camera
+
+    It allows the following functinalities:
+    - Publishes raw image of type `sensor_msgs/Image`
+    - Publishes intrinsic camera parameters of type `sensor_msgs/CameraInfo` (latched topic)
+
+    Args:
+        node (WebotsNode): The ROS2 node.
+        wb_device (Camera): Webots node of type Camera.
+
+    Kwargs:
+        params (dict): Inherited from `SensorDevice`
+
+    """
 
     def __init__(self, node, wb_device, params=None):
-        self._node = node
-        self._wb_device = wb_device
-        self._last_update = -1
+        super().__init__(node, wb_device, params)
         self._camera_info_publisher = None
         self._image_publisher = None
-
-        # Determine default params
-        params = params or {}
-        self._topic_name = params.setdefault('topic_name', self._create_topic_name(wb_device))
-        self._timestep = params.setdefault('timestep', int(node.robot.getBasicTimeStep()))
-        self._disable = params.setdefault('disable', False)
-        self._always_publish = params.setdefault('always_publish', False)
 
         # Create topics
         if not self._disable:
@@ -78,15 +86,9 @@ class CameraDevice(Device):
             self._camera_period = camera_period_param.value
 
     def step(self):
-        """Publish the camera topics with up to date value."""
-        if self._disable:
+        stamp = super().step()
+        if not stamp:
             return
-
-        if self._node.robot.getTime() - self._last_update < self._timestep / 1e6:
-            return
-        self._last_update = self._node.robot.getTime()
-
-        stamp = Time(seconds=self._node.robot.getTime()).to_msg()
 
         # Publish camera data
         if self._image_publisher.get_subscription_count() > 0 or self._always_publish:
@@ -95,6 +97,7 @@ class CameraDevice(Device):
             # Image data
             msg = Image()
             msg.header.stamp = stamp
+            msg.header.frame_id = self._frame_id
             msg.height = self._wb_device.getHeight()
             msg.width = self._wb_device.getWidth()
             msg.is_bigendian = False

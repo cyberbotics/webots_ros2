@@ -24,7 +24,7 @@ class SensorDevice(Device):
 
     Args:
         node (WebotsNode): The ROS2 node.
-        wb_device (LightSensor): Webots node of type LightSensor.
+        wb_device (Device): Webots device node.
 
     Kwargs:
         params (dict): Dictionary with configuration options in format of::

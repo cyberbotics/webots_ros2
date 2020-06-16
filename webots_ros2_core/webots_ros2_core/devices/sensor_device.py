@@ -44,13 +44,15 @@ class SensorDevice(Device):
         self._wb_device = wb_device
         self._last_update = -1
 
+        reference_device = wb_device[0] if isinstance(wb_device, list) else wb_device
+
         # Determine default params
         self._params = params or {}
-        self._topic_name = self._params.setdefault('topic_name', self._create_topic_name(wb_device))
+        self._topic_name = self._params.setdefault('topic_name', self._create_topic_name(reference_device))
         self._timestep = self._params.setdefault('timestep', int(node.robot.getBasicTimeStep()))
         self._disable = self._params.setdefault('disable', False)
         self._always_publish = self._params.setdefault('always_publish', False)
-        self._frame_id = self._params.setdefault('frame_id', wb_device.getName())
+        self._frame_id = self._params.setdefault('frame_id', reference_device.getName())
 
     def step(self):
         if self._disable:

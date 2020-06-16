@@ -51,8 +51,8 @@ class DistanceSensorDevice(Device):
         self._wb_device = wb_device
         self._last_update = -1
         self._publisher = None
-        self._min_range = self.__get_min_range() + self.__get_lower_std()
-        self._max_range = self.__get_max_range() - self.__get_upper_std()
+        self._min_range = self.__get_min_value() + self.__get_lower_std()
+        self._max_range = self.__get_max_value() - self.__get_upper_std()
 
         # Determine default params
         params = params or {}
@@ -65,11 +65,11 @@ class DistanceSensorDevice(Device):
         if not self._disable:
             self._publisher = self._node.create_publisher(Range, self._topic_name, 1)
 
-    def __get_max_range(self):
+    def __get_max_value(self):
         table = self._wb_device.getLookupTable()
         return max(table[0], table[-3])
 
-    def __get_min_range(self):
+    def __get_min_value(self):
         table = self._wb_device.getLookupTable()
         return min(table[0], table[-3])
 

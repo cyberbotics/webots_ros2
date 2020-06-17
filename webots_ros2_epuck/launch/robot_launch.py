@@ -33,7 +33,7 @@ def generate_launch_description():
         launch_arguments={
             'package': 'webots_ros2_epuck',
             'executable': 'driver',
-            'world': os.path.join(package_dir, 'worlds', 'epuck_world.wbt')
+            'world': os.path.join(package_dir, 'worlds', 'epuck_world.wbt'),
         }.items()
     )
 

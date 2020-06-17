@@ -56,7 +56,7 @@ ARGUMENTS = [
         description='Choose the startup mode (it must be either `pause`, `realtime`, `run` or `fast`).'
     ),
     DeclareLaunchArgument(
-        'tf',
+        'publish_tf',
         default_value='True',
         description='Whether to publish transforms (tf)'
     )
@@ -70,7 +70,7 @@ def generate_launch_description():
     world = LaunchConfiguration('world')
     gui = LaunchConfiguration('gui')
     mode = LaunchConfiguration('mode')
-    publish_tf = LaunchConfiguration('tf')
+    publish_tf = LaunchConfiguration('publish_tf')
 
     # Webots
     webots = WebotsLauncher(

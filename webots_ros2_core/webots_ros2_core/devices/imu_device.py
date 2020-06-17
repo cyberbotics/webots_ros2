@@ -21,7 +21,7 @@ from .sensor_device import SensorDevice
 
 class ImuDevice(SensorDevice):
     """
-    ROS2 wrapper for Webots LightSensor node.
+    ROS2 wrapper for Webots Accelerometer, Gyro and InertialUnit node.
 
     Creates suitable ROS2 interface based on Webots Accelerometer, Gyro and InertialUnit node instances:
     https://cyberbotics.com/doc/reference/accelerometer
@@ -33,7 +33,8 @@ class ImuDevice(SensorDevice):
 
     Args:
         node (WebotsNode): The ROS2 node.
-        wb_devices (array): Webots node in the following orderd, Accelerometer, Gyro and InertialUnit.
+        wb_devices (array): Webots nodes in the following orderd, Accelerometer, Gyro and InertialUnit.
+            If device is not available None should be put.
 
     Kwargs:
         params (dict): Inherited from `SensorDevice`

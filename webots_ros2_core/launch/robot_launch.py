@@ -28,6 +28,9 @@ from webots_ros2_core.utils import ControllerLauncher
 
 def generate_launch_description():
     synchronization = LaunchConfiguration('synchronization', default=False)
+    package = LaunchConfiguration('package', default='webots_ros2_core')
+    executable = LaunchConfiguration('executable', default='webots_node')
+
     params = {arg.split(':=')[0]: arg.split(':=')[1] for arg in sys.argv if ':=' in arg}
 
     if 'world' not in params:
@@ -54,8 +57,8 @@ def generate_launch_description():
 
     # Driver node
     controller = ControllerLauncher(
-        package='webots_ros2_core',
-        node_executable='webots_node',
+        package=package,
+        node_executable=executable,
         parameters=[{
             'synchronization': synchronization,
             'use_joint_state_publisher': True

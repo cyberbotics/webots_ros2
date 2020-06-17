@@ -133,7 +133,7 @@ class DeviceManager:
             elif wb_device.getNodeType() == Node.GYRO:
                 gyros.append(wb_device)
 
-        # If there is only one return the key
+        # If there is only one candiate for Imu create a device and insert it to `self.__devices`
         if len(accelerometers) <= 1 and len(inertial_units) <= 1 and len(gyros) <= 1 and \
                 (len(accelerometers) + len(inertial_units) + len(gyros)) > 0:
             imu_wb_devices = [

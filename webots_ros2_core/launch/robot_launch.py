@@ -29,12 +29,12 @@ ARGUMENTS = [
     DeclareLaunchArgument(
         'synchronization',
         default_value='False',
-        description='If `False` robot.step() will be automatically called'
+        description='If `False` robot.step() will be automatically called.'
     ),
     DeclareLaunchArgument(
         'package',
         default_value='webots_ros2_core',
-        description='Package the package in which the node executable can be found'
+        description='Package the package in which the node executable can be found.'
     ),
     DeclareLaunchArgument(
         'executable',
@@ -43,18 +43,35 @@ ARGUMENTS = [
     ),
     DeclareLaunchArgument(
         'world',
-        description='Path to Webots\' world file. Make sure `controller` field is set to `<extern>`'
+        description='Path to Webots\' world file. Make sure `controller` field is set to `<extern>`.'
+    ),
+    DeclareLaunchArgument(
+        'gui',
+        default_value='True',
+        description='Whether to start GUI or not.'
+    ),
+    DeclareLaunchArgument(
+        'mode',
+        default_value='realtime',
+        description='Choose the startup mode (it must be either pause, realtime, run or fast).'
     ),
 ]
 
 
 def generate_launch_description():
     synchronization = LaunchConfiguration('synchronization')
-    package = LaunchConfiguration('package', default='webots_ros2_core')
-    executable = LaunchConfiguration('executable', default='webots_node')
+    package = LaunchConfiguration('package')
+    executable = LaunchConfiguration('executable')
+    world = LaunchConfiguration('world')
+    gui = LaunchConfiguration('gui')
+    mode = LaunchConfiguration('mode')
 
     # Webots
-    webots = WebotsLauncher()
+    webots = WebotsLauncher(
+        world=world,
+        mode=mode,
+        gui=gui
+    )
 
     # Driver node
     controller = ControllerLauncher(

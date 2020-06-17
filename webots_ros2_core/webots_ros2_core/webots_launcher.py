@@ -19,19 +19,18 @@
 import os
 import sys
 from launch.actions import ExecuteProcess
-from launch.substitutions import LaunchConfiguration
-from launch import LaunchContext
+from launch.substitutions import TextSubstitution
+from launch.substitution import Substitution
 from webots_ros2_core.utils import get_webots_home
 
 
-class WebotsLauncher(ExecuteProcess):
-    def __init__(self, output='screen', **kwargs):
-        world = LaunchConfiguration('world')
-        no_gui = LaunchConfiguration('no_gui', default=False)
-        mode = LaunchConfiguration('mode', default='realtime')
+class _WebotsCommandSubstitution(Substitution):
+    def __init__(self, *, world, gui, mode):
+        self.__gui = gui if isinstance(gui, Substitution) else TextSubstitution(text=str(gui))
+        self.__mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
+        self.__world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
 
-        context = LaunchContext()
-
+    def perform(self, context):
         # Add `webots` executable to command
         webots_path = get_webots_home()
         if sys.platform == 'win32':
@@ -39,10 +38,10 @@ class WebotsLauncher(ExecuteProcess):
         command = [os.path.join(webots_path, 'webots')]
 
         # Add `world`
-        command += [world]
+        command += [context.perform_substitution(self.__world)]
 
         # Add parameters to hide GUI if needed
-        if no_gui.perform(context).lower() in ['true', '1']:
+        if context.perform_substitution(self.__gui).lower() in ['false', '0']:
             command += [
                 '--stdout',
                 '--stderr',
@@ -52,10 +51,22 @@ class WebotsLauncher(ExecuteProcess):
             ]
 
         # Add mode
-        command.append('--mode=' + mode.perform(context))
+        command.append('--mode=' + context.perform_substitution(self.__mode))
+        print(' '.join(command))
+        return ' '.join(command)
+
+
+class WebotsLauncher(ExecuteProcess):
+    def __init__(self, output='screen', world=None, gui=True, mode='realtime', **kwargs):
+        command = _WebotsCommandSubstitution(
+            world=world,
+            gui=gui,
+            mode=mode
+        )
 
         super().__init__(
-            cmd=command,
             output=output,
+            cmd=[command],
+            shell=True,
             **kwargs
         )

@@ -18,7 +18,7 @@ from math import pi
 import rclpy
 from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster
-from sensor_msgs.msg import Imu, LaserScan
+from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import TransformStamped
 from webots_ros2_core.math_utils import interpolate_lookup_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
@@ -74,13 +74,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             wheel_radius=DEFAULT_WHEEL_RADIUS
         )
 
-        # Initialize IMU
-        self.gyro = self.robot.getGyro('gyro')
-        if not self.gyro:
-            self.get_logger().info('Gyroscope is not present for this e-puck version')
-        self.accelerometer = self.robot.getAccelerometer('accelerometer')
-        self.imu_publisher = self.create_publisher(Imu, '/imu', 10)
-
         # Intialize distance sensors for LaserScan topic
         self.distance_sensors = {}
         for i in range(NB_INFRARED_SENSORS):
@@ -111,14 +104,10 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.static_broadcaster.sendTransform(laser_transform)
 
         # Main loop
-        self.create_timer(self.timestep / 1000, self.step_callback)
+        self.create_timer(self.timestep / 1000, self.__publish_laserscan_data)
 
-    def step_callback(self):
+    def __publish_laserscan_data(self):
         stamp = Time(seconds=self.robot.getTime()).to_msg()
-        self.publish_imu_data(stamp)
-        self.publish_laserscan_data(stamp)
-
-    def publish_laserscan_data(self, stamp):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
 
@@ -167,30 +156,6 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             laser_dists[4] + SENSOR_DIST_FROM_CENTER,   # 150
         ]
         self.laser_publisher.publish(msg)
-
-    def publish_imu_data(self, stamp):
-        if self.imu_publisher.get_subscription_count() > 0:
-            msg = Imu()
-            msg.header.stamp = stamp
-
-            self.accelerometer.enable(self.timestep)
-            accelerometer_data = self.accelerometer.getValues()
-            msg.linear_acceleration.x = accelerometer_data[1]
-            msg.linear_acceleration.y = - accelerometer_data[0]
-            msg.linear_acceleration.z = accelerometer_data[2]
-
-            if self.gyro:
-                self.gyro.enable(self.timestep)
-                gyro_data = self.gyro.getValues()
-                msg.angular_velocity.x = (gyro_data[1] / GYRO_RAW2DEG) * (pi / 180)
-                msg.angular_velocity.y = - (gyro_data[0] / GYRO_RAW2DEG) * (pi / 180)
-                msg.angular_velocity.z = (gyro_data[2] / GYRO_RAW2DEG) * (pi / 180)
-
-            self.imu_publisher.publish(msg)
-        else:
-            self.accelerometer.disable()
-            if self.gyro:
-                self.gyro.disable()
 
 
 def main(args=None):

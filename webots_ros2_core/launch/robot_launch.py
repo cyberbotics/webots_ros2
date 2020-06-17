@@ -16,8 +16,6 @@
 
 """Launch Webots and ROS2 driver."""
 
-import sys
-import os
 import launch
 from launch import LaunchDescription
 from launch.actions import RegisterEventHandler, EmitEvent

@@ -82,7 +82,7 @@ class DeviceManager:
         for device_name in self.__config.keys():
             if device_name not in ['@auto'] and device_name not in self.__devices.keys():
                 self.__node.get_logger().warn(
-                    f'Device `{device_name}` is has not considered! The device doesn\'t exist or it is not supported.')
+                    f'Device `{device_name}` is not considered! The device doesn\'t exist or it is not supported.')
 
         # Create a loop
         self.__node.create_timer(1e-3 * int(node.robot.getBasicTimeStep()), self.__callback)

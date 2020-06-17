@@ -113,7 +113,7 @@ class DeviceManager:
         return [accelerometer, gyro, inertial_unit]
 
     def __insert_imu_device(self):
-        """Insert Imu device only if non is configured and there is only one in the robot."""
+        """Insert Imu device only if there is no Imu device configured and there is only one Imu device in the robot."""
         accelerometers = []
         inertial_units = []
         gyros = []

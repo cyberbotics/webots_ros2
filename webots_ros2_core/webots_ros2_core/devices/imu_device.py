@@ -56,7 +56,7 @@ class ImuDevice(SensorDevice):
 
     def __enable_imu(self):
         for wb_device in self._wb_device:
-            if wb_device:
+            if wb_device is not None:
                 wb_device.enable(self._timestep)
 
     def __disable_imu(self):

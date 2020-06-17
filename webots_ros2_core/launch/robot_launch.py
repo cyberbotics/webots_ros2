@@ -18,15 +18,38 @@
 
 import launch
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, EmitEvent
+from launch.actions import RegisterEventHandler, EmitEvent, DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from webots_ros2_core.utils import ControllerLauncher
 from webots_ros2_core.webots_launcher import WebotsLauncher
 
 
+ARGUMENTS = [
+    DeclareLaunchArgument(
+        'synchronization',
+        default_value='False',
+        description='If `False` robot.step() will be automatically called'
+    ),
+    DeclareLaunchArgument(
+        'package',
+        default_value='webots_ros2_core',
+        description='Package the package in which the node executable can be found'
+    ),
+    DeclareLaunchArgument(
+        'executable',
+        default_value='webots_node',
+        description='The name of the executable to find if a package is provided or otherwise a path to the executable to run.'
+    ),
+    DeclareLaunchArgument(
+        'world',
+        description='Path to Webots\' world file. Make sure `controller` field is set to `<extern>`'
+    ),
+]
+
+
 def generate_launch_description():
-    synchronization = LaunchConfiguration('synchronization', default=False)
+    synchronization = LaunchConfiguration('synchronization')
     package = LaunchConfiguration('package', default='webots_ros2_core')
     executable = LaunchConfiguration('executable', default='webots_node')
 
@@ -53,7 +76,7 @@ def generate_launch_description():
         parameters=[{'robot_description': initial_robot_description}]
     )
 
-    return LaunchDescription([
+    return LaunchDescription(ARGUMENTS + [
         robot_state_publisher,
         webots,
         controller,

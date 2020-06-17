@@ -24,6 +24,7 @@ from launch.actions import RegisterEventHandler, EmitEvent
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from webots_ros2_core.utils import ControllerLauncher
+from webots_ros2_core.webots_launcher import WebotsLauncher
 
 
 def generate_launch_description():
@@ -31,29 +32,8 @@ def generate_launch_description():
     package = LaunchConfiguration('package', default='webots_ros2_core')
     executable = LaunchConfiguration('executable', default='webots_node')
 
-    params = {arg.split(':=')[0]: arg.split(':=')[1] for arg in sys.argv if ':=' in arg}
-
-    if 'world' not in params:
-        print('No world parameter has been found, please define it!')
-        sys.exit(1)
-
-    if not os.path.exists(params['world']):
-        print('World doesn\'t exist')
-        sys.exit(2)
-
-    params['mode'] = params.setdefault('mode', 'realtime')
-
     # Webots
-    arguments = [
-        '--mode=' + params['mode'],
-        '--world=' + params['world']
-    ]
-    webots = Node(
-        package='webots_ros2_core',
-        node_executable='webots_launcher',
-        arguments=arguments,
-        output='screen'
-    )
+    webots = WebotsLauncher()
 
     # Driver node
     controller = ControllerLauncher(

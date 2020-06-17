@@ -36,14 +36,14 @@ class WebotsLauncher(ExecuteProcess):
         webots_path = get_webots_home()
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')
-        webots_cmd = [os.path.join(webots_path, 'webots')]
+        command = [os.path.join(webots_path, 'webots')]
 
         # Add `world`
-        webots_cmd += [world]
+        command += [world]
 
         # Add parameters to hide GUI if needed
         if no_gui.perform(context).lower() in ['true', '1']:
-            webots_cmd += [
+            command += [
                 '--stdout',
                 '--stderr',
                 '--batch',
@@ -52,10 +52,10 @@ class WebotsLauncher(ExecuteProcess):
             ]
 
         # Add mode
-        webots_cmd += ['--mode=' + mode.perform(context)]
+        command.append('--mode=' + mode.perform(context))
 
         super().__init__(
-            cmd=webots_cmd,
+            cmd=command,
             output=output,
             **kwargs
         )

@@ -104,9 +104,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.static_broadcaster.sendTransform(laser_transform)
 
         # Main loop
-        self.create_timer(self.timestep / 1000, self.publish_laserscan_data)
+        self.create_timer(self.timestep / 1000, self.__publish_laserscan_data)
 
-    def publish_laserscan_data(self):
+    def __publish_laserscan_data(self):
         stamp = Time(seconds=self.robot.getTime()).to_msg()
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE

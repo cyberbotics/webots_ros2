@@ -69,7 +69,7 @@ class DeviceManager:
 
             # Add device to the list
             self.__wb_devices[wb_device.getName()] = wb_device
-            if device:
+            if device is not None:
                 self.__devices[wb_device.getName()] = device
 
         # Multi-Webots-device (insert if not configured + create configured)

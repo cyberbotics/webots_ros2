@@ -52,7 +52,6 @@ class _WebotsCommandSubstitution(Substitution):
 
         # Add mode
         command.append('--mode=' + context.perform_substitution(self.__mode))
-        print(' '.join(command))
         return ' '.join(command)
 
 

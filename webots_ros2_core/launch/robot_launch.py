@@ -53,8 +53,13 @@ ARGUMENTS = [
     DeclareLaunchArgument(
         'mode',
         default_value='realtime',
-        description='Choose the startup mode (it must be either pause, realtime, run or fast).'
+        description='Choose the startup mode (it must be either `pause`, `realtime`, `run` or `fast`).'
     ),
+    DeclareLaunchArgument(
+        'tf',
+        default_value='True',
+        description='Whether to publish transforms (tf)'
+    )
 ]
 
 
@@ -65,6 +70,7 @@ def generate_launch_description():
     world = LaunchConfiguration('world')
     gui = LaunchConfiguration('gui')
     mode = LaunchConfiguration('mode')
+    publish_tf = LaunchConfiguration('tf')
 
     # Webots
     webots = WebotsLauncher(
@@ -79,7 +85,7 @@ def generate_launch_description():
         node_executable=executable,
         parameters=[{
             'synchronization': synchronization,
-            'use_joint_state_publisher': True
+            'use_joint_state_publisher': publish_tf
         }],
         output='screen'
     )
@@ -90,7 +96,8 @@ def generate_launch_description():
         package='robot_state_publisher',
         node_executable='robot_state_publisher',
         output='screen',
-        parameters=[{'robot_description': initial_robot_description}]
+        parameters=[{'robot_description': initial_robot_description}],
+        condition=launch.conditions.IfCondition(publish_tf)
     )
 
     return LaunchDescription(ARGUMENTS + [

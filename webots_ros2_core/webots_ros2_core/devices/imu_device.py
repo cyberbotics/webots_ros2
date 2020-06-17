@@ -80,13 +80,13 @@ class ImuDevice(SensorDevice):
                 msg.linear_acceleration.z = - interpolate_lookup_table(raw_data[2], self.__accelerometer.getLookupTable())
             if self.__gyro:
                 raw_data = self.__gyro.getValues()
-                msg.angular_velocity.x = interpolate_lookup_table(raw_data[1], self.__gyro.getLookupTable())
-                msg.angular_velocity.y = - interpolate_lookup_table(raw_data[0], self.__gyro.getLookupTable())
+                msg.angular_velocity.x = interpolate_lookup_table(raw_data[0], self.__gyro.getLookupTable())
+                msg.angular_velocity.y = interpolate_lookup_table(raw_data[1], self.__gyro.getLookupTable())
                 msg.angular_velocity.z = interpolate_lookup_table(raw_data[2], self.__gyro.getLookupTable())
             if self.__inertial_unit:
                 raw_data = self.__inertial_unit.getValues()
-                msg.orientation.x = interpolate_lookup_table(raw_data[1], self.__inertial_unit.getLookupTable())
-                msg.orientation.y = - interpolate_lookup_table(raw_data[0], self.__inertial_unit.getLookupTable())
+                msg.orientation.x = interpolate_lookup_table(raw_data[0], self.__inertial_unit.getLookupTable())
+                msg.orientation.y = interpolate_lookup_table(raw_data[1], self.__inertial_unit.getLookupTable())
                 msg.orientation.z = interpolate_lookup_table(raw_data[2], self.__inertial_unit.getLookupTable())
             self._publisher.publish(msg)
         else:

@@ -75,9 +75,9 @@ class ImuDevice(SensorDevice):
             msg.header.frame_id = self._frame_id
             if self.__accelerometer:
                 raw_data = self.__accelerometer.getValues()
-                msg.linear_acceleration.x = interpolate_lookup_table(raw_data[1], self.__accelerometer.getLookupTable())
-                msg.linear_acceleration.y = - interpolate_lookup_table(raw_data[0], self.__accelerometer.getLookupTable())
-                msg.linear_acceleration.z = interpolate_lookup_table(raw_data[2], self.__accelerometer.getLookupTable())
+                msg.linear_acceleration.x = - interpolate_lookup_table(raw_data[0], self.__accelerometer.getLookupTable())
+                msg.linear_acceleration.y = - interpolate_lookup_table(raw_data[1], self.__accelerometer.getLookupTable())
+                msg.linear_acceleration.z = - interpolate_lookup_table(raw_data[2], self.__accelerometer.getLookupTable())
             if self.__gyro:
                 raw_data = self.__gyro.getValues()
                 msg.angular_velocity.x = interpolate_lookup_table(raw_data[1], self.__gyro.getLookupTable())

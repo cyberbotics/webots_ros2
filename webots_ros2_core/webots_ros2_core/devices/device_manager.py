@@ -43,7 +43,7 @@ class DeviceManager:
         self.__wb_devices = {}
 
         # Determine default global parameters
-        self._auto = config.setdefault('@auto', True)
+        self._auto = self.__config.setdefault('@auto', True)
 
         # Disable `DeviceManager` if needed
         if not self._auto:

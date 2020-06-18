@@ -59,6 +59,10 @@ ARGUMENTS = [
         'publish_tf',
         default_value='True',
         description='Whether to publish transforms (tf)'
+    ),
+    DeclareLaunchArgument(
+        'node_parameters',
+        description='Path to ROS parameters file that will be passed to the robot node'
     )
 ]
 
@@ -71,6 +75,7 @@ def generate_launch_description():
     gui = LaunchConfiguration('gui')
     mode = LaunchConfiguration('mode')
     publish_tf = LaunchConfiguration('publish_tf')
+    node_parameters = LaunchConfiguration('node_parameters')
 
     # Webots
     webots = WebotsLauncher(
@@ -83,10 +88,12 @@ def generate_launch_description():
     controller = ControllerLauncher(
         package=package,
         node_executable=executable,
-        parameters=[{
-            'synchronization': synchronization,
-            'use_joint_state_publisher': publish_tf
-        }],
+        parameters=[
+            node_parameters,
+            {
+                'synchronization': synchronization,
+                'use_joint_state_publisher': publish_tf
+            }],
         output='screen'
     )
 

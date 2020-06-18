@@ -42,7 +42,6 @@ class ImuDevice(SensorDevice):
     """
 
     def __init__(self, node, wb_device, params=None):
-        print(params)
         super().__init__(node, wb_device, params)
 
         self.__accelerometer = wb_device[0]

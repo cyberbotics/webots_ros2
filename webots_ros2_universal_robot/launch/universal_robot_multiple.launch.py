@@ -19,7 +19,6 @@
 import os
 
 import launch
-import launch_ros.actions
 
 from webots_ros2_core.utils import ControllerLauncher
 from webots_ros2_core.webots_launcher import WebotsLauncher

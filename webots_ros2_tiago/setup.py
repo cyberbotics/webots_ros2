@@ -12,7 +12,7 @@ data_files.append(('share/' + package_name + '/worlds', [
     'worlds/tiago++_example.wbt', 'worlds/.tiago++_example.wbproj'
 ]))
 data_files.append(('share/' + package_name + '/resource',
-                   ['resource/odometry.rviz']))
+                   ['resource/odometry.rviz', 'resource/tiago.yaml']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 

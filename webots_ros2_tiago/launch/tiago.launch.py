@@ -35,15 +35,9 @@ def generate_launch_description():
             os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
         ),
         launch_arguments={
-            'package': 'webots_ros2_epuck',
-            'executable': 'driver',
+            'executable': 'webots_differential_drive_node',
             'world': os.path.join(package_dir, 'worlds', 'ros_tiago.wbt'),
-            'wheel_distance': str(0.404),
-            'wheel_radius': str(0.1955),
-            'left_joint': 'wheel_left_joint',
-            'right_joint': 'wheel_right_joint',
-            'left_encoder': 'wheel_left_joint_sensor',
-            'right_encoder': 'wheel_right_joint_sensor'
+            'node_parameters': os.path.join(package_dir, 'resource', 'tiago.yaml'),
         }.items()
     )
 

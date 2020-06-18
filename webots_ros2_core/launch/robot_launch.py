@@ -16,6 +16,7 @@
 
 """Launch Webots and ROS2 driver."""
 
+import os
 import launch
 from launch import LaunchDescription
 from launch.actions import RegisterEventHandler, EmitEvent, DeclareLaunchArgument
@@ -62,7 +63,8 @@ ARGUMENTS = [
     ),
     DeclareLaunchArgument(
         'node_parameters',
-        description='Path to ROS parameters file that will be passed to the robot node'
+        description='Path to ROS parameters file that will be passed to the robot node',
+        default_value=os.devnull
     )
 ]
 

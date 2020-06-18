@@ -24,6 +24,7 @@ class SensorDevice(Device):
 
     Args:
         node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
         wb_device (Device): Webots device node.
 
     Kwargs:

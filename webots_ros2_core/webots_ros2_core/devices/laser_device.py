@@ -34,6 +34,7 @@ class LaserDevice(SensorDevice):
 
     Args:
         node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
         wb_device (Lidar): Webots node of type Lidar.
 
     Kwargs:

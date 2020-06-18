@@ -34,6 +34,7 @@ class RobotDevice(Device):
 
     Args:
         node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
         wb_device (Robot): Webots node of type Robot.
 
     Kwargs:

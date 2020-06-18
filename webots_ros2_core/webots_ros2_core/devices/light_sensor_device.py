@@ -35,6 +35,7 @@ class LightSensorDevice(SensorDevice):
 
     Args:
         node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
         wb_device (LightSensor): Webots node of type LightSensor.
 
     Kwargs:

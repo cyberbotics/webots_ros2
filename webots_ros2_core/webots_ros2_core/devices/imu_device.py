@@ -33,6 +33,7 @@ class ImuDevice(SensorDevice):
 
     Args:
         node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
         wb_devices (array): Webots nodes in the following orderd, Accelerometer, Gyro and InertialUnit.
             If device is not available None should be put.
 

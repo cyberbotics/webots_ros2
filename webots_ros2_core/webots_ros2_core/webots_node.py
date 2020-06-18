@@ -16,13 +16,12 @@
 
 """Base node class."""
 
-import argparse
 import os
 import sys
 from webots_ros2_core.joint_state_publisher import JointStatePublisher
 from webots_ros2_core.devices.device_manager import DeviceManager
 
-from webots_ros2_core.utils import append_webots_python_lib_to_path
+from webots_ros2_core.utils import append_webots_python_lib_to_path, get_robot_name_from_args, get_node_name_from_args
 from webots_ros2_core.tf_publisher import TfPublisher
 
 from webots_ros2_msgs.srv import SetInt
@@ -45,13 +44,9 @@ class WebotsNode(Node):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         self.declare_parameter('use_joint_state_publisher', False)
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
-                            help='Specifies the "name" field of the robot in Webots.')
-        # use 'parse_known_args' because ROS2 adds a lot of internal arguments
-        arguments, unknown = parser.parse_known_args()
-        if arguments.webotsRobotName:
-            os.environ['WEBOTS_ROBOT_NAME'] = arguments.webotsRobotName
+        webots_robot_name = get_robot_name_from_args()
+        if webots_robot_name:
+            os.environ['WEBOTS_ROBOT_NAME'] = webots_robot_name
         self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.clockPublisher = self.create_publisher(Clock, 'clock', 10)
@@ -103,11 +98,9 @@ class WebotsNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--name', default='driver', help='Name of your drive node')
-    args, _ = parser.parse_known_args()
 
-    driver = WebotsNode(args.name, args=args)
+    webots_robot_name = get_node_name_from_args()
+    driver = WebotsNode(webots_robot_name, args=args)
     rclpy.spin(driver)
     rclpy.shutdown()
 

@@ -23,7 +23,6 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_core.utils import ControllerLauncher
 
 
 def generate_launch_description():
@@ -34,9 +33,7 @@ def generate_launch_description():
             os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
         ),
         launch_arguments={
-            'package': 'webots_ros2_epuck',
-            'executable': 'driver',
-            'world': os.path.join(package_dir, 'worlds', 'epuck_world.wbt'),
+            'world': os.path.join(package_dir, 'worlds', 'universal_robot_rviz.wbt'),
         }.items()
     )
 

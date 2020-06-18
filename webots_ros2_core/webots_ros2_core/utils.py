@@ -19,6 +19,7 @@
 import os
 import re
 import sys
+import argparse
 
 from typing import List
 from typing import Optional
@@ -115,6 +116,19 @@ def get_webots_version():
     with open(versionFile, 'r') as f:
         return f.read().replace('\n', '').strip()
     return None
+
+
+def get_robot_name_from_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--webots-robot-name', dest='webots_robot_name', default='webots_robot', help='Name of your drive node')
+    args, _ = parser.parse_known_args()
+    return args.webots_robot_name
+
+
+def get_node_name_from_args():
+    robot_name = get_robot_name_from_args()
+    robot_name = robot_name.replace('-', '_').replace('+', '_')
+    return robot_name or 'webots_controller'
 
 
 class ControllerLauncher(Node):

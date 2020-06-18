@@ -65,6 +65,11 @@ ARGUMENTS = [
         'node_parameters',
         description='Path to ROS parameters file that will be passed to the robot node',
         default_value=os.devnull
+    ),
+    DeclareLaunchArgument(
+        'robot_name',
+        description='The name of the robot (has to be the same as in Webots)',
+        default_value=''
     )
 ]
 
@@ -78,6 +83,7 @@ def generate_launch_description():
     mode = LaunchConfiguration('mode')
     publish_tf = LaunchConfiguration('publish_tf')
     node_parameters = LaunchConfiguration('node_parameters')
+    robot_name = LaunchConfiguration('robot_name')
 
     # Webots
     webots = WebotsLauncher(
@@ -96,7 +102,8 @@ def generate_launch_description():
                 'synchronization': synchronization,
                 'use_joint_state_publisher': publish_tf
             }],
-        output='screen'
+        output='screen',
+        arguments=['--webots-robot-name', robot_name],
     )
 
     # Robot state publisher

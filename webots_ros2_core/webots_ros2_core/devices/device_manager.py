@@ -50,33 +50,34 @@ class DeviceManager:
             return
 
         # Find devices
-        self.__devices['@robot'] = RobotDevice(node, node.robot, self.__config.get('@robot', None))
+        self.__devices['@robot'] = RobotDevice(node, '@robot', node.robot, self.__config.get('@robot', None))
         for i in range(node.robot.getNumberOfDevices()):
             wb_device = node.robot.getDeviceByIndex(i)
+            device_key = wb_device.getName()
             device = None
 
             # Create ROS2 wrapped device
             if wb_device.getNodeType() == Node.CAMERA:
-                device = CameraDevice(node, wb_device, self.__config.get(wb_device.getName(), None))
+                device = CameraDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LED:
-                device = LEDDevice(node, wb_device, self.__config.get(wb_device.getName(), None))
+                device = LEDDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LIDAR:
-                device = LaserDevice(node, wb_device, self.__config.get(wb_device.getName(), None))
+                device = LaserDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.DISTANCE_SENSOR:
-                device = DistanceSensorDevice(node, wb_device, self.__config.get(wb_device.getName(), None))
+                device = DistanceSensorDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LIGHT_SENSOR:
-                device = LightSensorDevice(node, wb_device, self.__config.get(wb_device.getName(), None))
+                device = LightSensorDevice(node, device_key, wb_device, self.__config.get(device_key, None))
 
             # Add device to the list
-            self.__wb_devices[wb_device.getName()] = wb_device
+            self.__wb_devices[device_key] = wb_device
             if device is not None:
-                self.__devices[wb_device.getName()] = device
+                self.__devices[device_key] = device
 
         # Multi-Webots-device (insert if not configured + create configured)
         self.__insert_imu_device()
-        for config_key in self.__config.keys():
-            if self.__is_imu_device(config_key):
-                self.__devices[config_key] = ImuDevice(node, self.__get_imu_wb_devices_from_key(config_key))
+        for device_key in self.__config.keys():
+            if self.__is_imu_device(device_key):
+                self.__devices[device_key] = ImuDevice(node, device_key, self.__get_imu_wb_devices_from_key(device_key))
 
         # Verify parameters
         for device_name in self.__config.keys():
@@ -95,7 +96,7 @@ class DeviceManager:
         return any(self.__get_imu_wb_devices_from_key(device_key))
 
     def __get_imu_wb_devices_from_key(self, device_key):
-        wb_device_names = device_key.split('|')
+        wb_device_names = device_key.split('+')
 
         accelerometer = None
         inertial_unit = None
@@ -142,8 +143,8 @@ class DeviceManager:
                 inertial_units[0] if len(inertial_units) > 0 else None
             ]
             imu_wb_device_name = [wb_device.getName() for wb_device in imu_wb_devices if wb_device]
-            device_key = '|'.join(imu_wb_device_name)
-            self.__devices[device_key] = ImuDevice(self.__node, imu_wb_devices, {
+            device_key = '+'.join(imu_wb_device_name)
+            self.__devices[device_key] = ImuDevice(self.__node, device_key, imu_wb_devices, {
                 'topic_name': '/imu',
                 'frame_id': imu_wb_device_name[0]
             })

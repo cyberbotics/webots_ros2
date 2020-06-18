@@ -41,8 +41,8 @@ class LaserDevice(SensorDevice):
 
     """
 
-    def __init__(self, node, wb_device, params=None):
-        super().__init__(node, wb_device, params)
+    def __init__(self, node, device_key, wb_device, params=None):
+        super().__init__(node, device_key, wb_device, params)
         self._publishers = {}
         self._static_transforms = []
         self._static_broadcaster = None

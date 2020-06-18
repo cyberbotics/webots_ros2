@@ -42,8 +42,8 @@ class LightSensorDevice(SensorDevice):
 
     """
 
-    def __init__(self, node, wb_device, params=None):
-        super().__init__(node, wb_device, params)
+    def __init__(self, node, device_key, wb_device, params=None):
+        super().__init__(node, device_key, wb_device, params)
 
         # Create topics
         self._publisher = None

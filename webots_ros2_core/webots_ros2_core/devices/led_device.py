@@ -22,8 +22,9 @@ from .device import Device
 class LEDDevice(Device):
     """Webots + ROS2 LED wrapper."""
 
-    def __init__(self, node, wb_device, params=None):
+    def __init__(self, node, device_key, wb_device, params=None):
         self._node = node
+        self._device_key = device_key
         self._wb_device = wb_device
         self._last_update = -1
 

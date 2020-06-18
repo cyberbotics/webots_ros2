@@ -45,9 +45,10 @@ class RobotDevice(Device):
 
     """
 
-    def __init__(self, node, wb_device, params=None):
+    def __init__(self, node, device_key, wb_device, params=None):
         self._node = node
         self._wb_device = wb_device
+        self._device_key = device_key
 
         # Determine default params
         params = params or {}

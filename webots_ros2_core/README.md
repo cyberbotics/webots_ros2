@@ -120,18 +120,23 @@ Therefore, in the further text, we will explain how to create ROS2 node that tig
 
 
 ### Universal Launcher
-In `webots_ros2_core` package, we provide launcher that should automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)).
+In `webots_ros2_core` package, we provide `robot_launch.py` launcher that should automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)).
 It is enough to provide path to Webots world file with the robot inside, for example: 
 ```
 ros2 launch webots_ros2_core robot_launch.py \
     world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_rviz.wbt
 ```
-This command will run Webots with [UR5](https://www.universal-robots.com/products/ur5-robot/) and publish joint state positions, transformations and robot description.
+This command will run Webots with [UR5](https://cyberbotics.com/doc/guide/ure) and publish joint state positions, transformations and robot description.
 
 Similarly, you can try with more complex example like TIAGo++:
 ```
 ros2 launch webots_ros2_core robot_launch.py \
     world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
+```
+
+To run more exhaustive list of `robot_launch.py` arguments you can use `--show-args` argument:
+```
+ros2 launch webots_ros2_core robot_launch.py --show-arguments
 ```
 
 #### Custom Configuration
@@ -162,7 +167,7 @@ ros2 launch webots_ros2_core robot_launch.py \
 
 All parameters are named in the following format:
 - `[webots_device_name].[parameter]` for Webots devices that expose one or more topics and services (e.g. DistanceSensor).
-- `[webots_device_name_1+webots_device_name_2].[parameter]` for multiple Webots devices that are coupled to create a single topics or service (e.g. Accelerometer, Gyro and InertialUnit devices are combined to publish to `sensor_msgs/Imu` topic).
+- `[webots_device_name_1]+[webots_device_name_2]+[webots_device_name_n].[parameter]` for multiple Webots devices that are coupled to create a single topics or service (e.g. Accelerometer, Gyro and InertialUnit devices are combined to publish to `sensor_msgs/Imu` topic).
 - Robot wide parameters don't have prefix (e.g. `synchronization`) and these parameters depend on Webots node implementation (e.g. `webots_differential_drive_node`).
 
 ##### Differential Drive

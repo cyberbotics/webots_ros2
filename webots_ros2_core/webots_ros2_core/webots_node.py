@@ -48,9 +48,9 @@ class WebotsNode(Node):
         parser = argparse.ArgumentParser()
         parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
                             help='Specifies the "name" field of the robot in Webots.')
-        # use 'parse_known_args' because ROS2 adds a lot of internal arguments	
-        arguments, unknown = parser.parse_known_args()	
-        if arguments.webotsRobotName:	
+        # use 'parse_known_args' because ROS2 adds a lot of internal arguments
+        arguments, unknown = parser.parse_known_args()
+        if arguments.webotsRobotName:
             os.environ['WEBOTS_ROBOT_NAME'] = arguments.webotsRobotName
         self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())

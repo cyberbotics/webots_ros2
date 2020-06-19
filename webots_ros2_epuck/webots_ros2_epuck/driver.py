@@ -47,7 +47,6 @@ DISTANCE_SENSOR_ANGLE = [
 
 
 DEVICE_CONFIG = {
-    '@auto': True,
     'camera': {'topic_name': ''},
     'ps0': {'always_publish': True},
     'ps1': {'always_publish': True},
@@ -66,10 +65,10 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         super().__init__(
             'epuck_driver',
             args,
-            device_config=DEVICE_CONFIG,
             wheel_distance=DEFAULT_WHEEL_DISTANCE,
             wheel_radius=DEFAULT_WHEEL_RADIUS
         )
+        self.start_device_manager(DEVICE_CONFIG)
 
         # Intialize distance sensors for LaserScan topic
         self.distance_sensors = {}

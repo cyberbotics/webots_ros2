@@ -42,13 +42,6 @@ class DeviceManager:
         self.__config = config or {}
         self.__wb_devices = {}
 
-        # Determine default global parameters
-        self._auto = self.__config.setdefault('@auto', True)
-
-        # Disable `DeviceManager` if needed
-        if not self._auto:
-            return
-
         # Find devices
         self.__devices['@robot'] = RobotDevice(node, '@robot', node.robot, self.__config.get('@robot', None))
         for i in range(node.robot.getNumberOfDevices()):
@@ -81,7 +74,7 @@ class DeviceManager:
 
         # Verify parameters
         for device_name in self.__config.keys():
-            if device_name not in ['@auto'] and device_name not in self.__devices.keys():
+            if device_name not in self.__devices.keys():
                 self.__node.get_logger().warn(
                     f'Device `{device_name}` is not considered! The device doesn\'t exist or it is not supported.')
 

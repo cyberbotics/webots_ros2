@@ -23,6 +23,7 @@ from webots_ros2_core.webots_node import WebotsNode
 from webots_ros2_core.math_utils import euler_to_quaternion
 from webots_ros2_core.utils import get_node_name_from_args
 
+
 class WebotsDifferentialDriveNode(WebotsNode):
     def __init__(self,
                  name,

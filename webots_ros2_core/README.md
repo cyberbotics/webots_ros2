@@ -6,10 +6,87 @@ This package contains essential building blocks for running Webots simulation, s
 
 ###  webots_launcher
 
-The `webots_launcher` is used to start Webots from your launch file, it has the following arguments:
-- `--world`: defines the path to the simulation world file to load.
-- `--mode`: defines the simulation mode (pause, realtime, run or fast) with which Webots should be started (realtime is set by default). 
-- `--no-gui`: if set, Webots starts with a minimal graphical user interface, this is useful to use on a server for example.
+The `webots_launcher` is a custom ROS action used to start Webots from your launch file, it has the following parameters:
+- `world`: defines the path to the simulation world file to load.
+- `mode`: defines the simulation mode (pause, realtime, run or fast) with which Webots should be started (realtime is set by default). 
+- `gui`: if set, Webots starts with a minimal graphical user interface, this is useful to use on a server for example.
+
+<details><summary>`webots_launcher` usage example</summary>
+
+
+```Python
+import launch
+from launch import LaunchDescription
+from webots_ros2_core.webots_launcher import WebotsLauncher
+
+
+def generate_launch_description():
+    # Webots
+    webots = WebotsLauncher(
+        world=world,
+        mode=mode,
+        gui=gui
+    )
+
+    return LaunchDescription([
+        webots,
+        # Shutdown launch when Webots exits.
+        RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=webots,
+                on_exit=[EmitEvent(event=launch.events.Shutdown())],
+            )
+        )
+    ])
+```
+
+</details>
+
+
+### controller_launcher
+
+The `webots_launcher` is a custom ROS node launcher used to start Webots controller. It has the same API as `launch_ros.actions.Node`, but it adds necessary libraries needed for your ROS node to work with Webots.
+
+<details><summary>`controller_launcher` usage example</summary>
+
+```Python
+import launch
+from launch import LaunchDescription
+from webots_ros2_core.webots_launcher import WebotsLauncher
+
+
+def generate_launch_description():
+    # Webots
+    webots = WebotsLauncher(
+        world=world,
+        mode=mode,
+        gui=gui
+    )
+
+    controller = ControllerLauncher(
+        package=package,
+        node_executable=executable,
+        arguments=[
+            '--webots-robot-name', robot_name,
+            '--webots-node-name', node_name
+        ],
+    )
+
+    return LaunchDescription([
+        webots,
+        controller,
+
+        # Shutdown launch when Webots exits.
+        RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=webots,
+                on_exit=[EmitEvent(event=launch.events.Shutdown())],
+            )
+        )
+    ])
+```
+
+</details>
 
 ### Python Modules
 

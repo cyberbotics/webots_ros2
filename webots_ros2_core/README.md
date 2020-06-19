@@ -96,7 +96,7 @@ left_joint          # Name of Motor associated with the left wheel (default `lef
 right_joint         # Name of Motor associated with the right wheel (default `right wheel motor`)
 left_encoder        # Name of PositionSensor associated with the left wheel (default `left wheel sensor`)
 right_encoder       # Name of PositionSensor associated with the right wheel (default `right wheel sensor`)
-command_topic       # Topic name to which the node will be sibscribed to receive velocity commands (of type `geometry_msgs/Twist`, default `/cmd_vel`)
+command_topic       # Topic name to which the node will be subscribed to receive velocity commands (of type `geometry_msgs/Twist`, default `/cmd_vel`)
 odometry_topic      # Topic name to which odometry data (of type `nav_msgs/Odometry`) will be published (default `/odom`)
 odometry_frame      # Name of of the odometry frame (default `odom`)
 robot_base_frame    # Name of the robot base frame (default `base_link`)
@@ -111,7 +111,6 @@ webots_driver:
     left_joint: wheel_left_joint
     right_encoder: wheel_right_joint_sensor
     right_joint: wheel_right_joint
-    robot_base_frame: base_link
     wheel_distance: 0.404
     wheel_radius: 0.1955
 ```

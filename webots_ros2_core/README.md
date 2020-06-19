@@ -46,13 +46,15 @@ Therefore, in the further text, we will explain how to create ROS2 node that tig
 In `webots_ros2_core` package, we provide launcher that should automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)).
 It is enough to provide path to Webots world file with the robot inside, for example: 
 ```
-ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_rviz.wbt
+ros2 launch webots_ros2_core robot_launch.py \
+    world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_rviz.wbt
 ```
 This command will run Webots with [UR5](https://www.universal-robots.com/products/ur5-robot/) and publish joint state positions, transformations and robot description.
 
 Similarly, you can try with more complex example like TIAGo++:
 ```
-ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
+ros2 launch webots_ros2_core robot_launch.py \
+    world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
 ```
 
 #### Custom Configuration
@@ -83,7 +85,7 @@ ros2 launch webots_ros2_core robot_launch.py \
 
 All parameters are named in the following format:
 - `[webots_device_name].[parameter]` for Webots devices that expose one or more topics and services (e.g. DistanceSensor).
-- `[webots_device_name_1+webots_device_name_2].[parameter]` for multiple Webots devices that create (e.g. Accelerometer, Gyro and InertialUnit devices are combined to publish to `sensor_msgs/Imu` topic).
+- `[webots_device_name_1+webots_device_name_2].[parameter]` for multiple Webots devices that are coupled to create a single topics or service (e.g. Accelerometer, Gyro and InertialUnit devices are combined to publish to `sensor_msgs/Imu` topic).
 - Robot wide parameters don't have prefix (e.g. `synchronization`) and these parameters depend on Webots node implementation (e.g. `webots_differential_drive_node`).
 
 ##### Differential Drive
@@ -125,7 +127,7 @@ Now, topics `/odom` and `/cmd` should be availabe, so you can read odometry data
 
 ### Custom Launcher File and Driver
 In case a Webots device is not covered by the universal launcher or you prefer to create ROS interface differently you can build your ROS2 driver from scratch.
-First, make sure you have created a new ROS2 package and call it `my_webots_driver` (you check ROS' tutorial given [here](https://index.ros.org/doc/ros2/Tutorials/Creating-Your-First-ROS2-Package/)).
+First, make sure you have created a new ROS2 package and call it `my_webots_driver` (you can check ROS' tutorial given [here](https://index.ros.org/doc/ros2/Tutorials/Creating-Your-First-ROS2-Package/)).
 After the package is ready, you can create a driver, e.g. `/my_webots_driver/my_webots_driver/driver.py` and populate it with the following content:
 
 ```Python
@@ -209,6 +211,6 @@ class MyWebotsDriver(WebotsNode):
 This Github repository contains a few good examples that you can use as the starting point:
 - `webots_ros2_example` includes a very simple controller for Thymio (differential driver robot).
 - `webots_ros2_tiago` is another differential drive robot simulation, but here `WebotsDifferentialDriveNode` class from `webots_ros2_core` is utilized to simplify differential drive implementation.
-- `webots_ros2_epuck` is one more example with differential drive robot in which ROS services and topics are created for almost all available sensors and actuators available on the robot.
+- `webots_ros2_epuck` is one more example with differential drive robot in which ROS services and topics are created for almost all sensors and actuators available on the robot.
 This example also contains a [list of instructions](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_epuck/EPUCK_ROS2.md) that explains how the simulation can be used in combination with different ROS2 packages like RViz and Navigation2.
-Also, you will find this example useful if you plan later to control the real robot as we support [ROS2 driver for the real robot](https://github.com/cyberbotics/epuck_ros2) as well.
+Also, you will find this example useful if you plan later to control the real robot as we also support [ROS2 driver for the real robot](https://github.com/cyberbotics/epuck_ros2).

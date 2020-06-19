@@ -50,10 +50,79 @@ ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros
 ```
 This command will run Webots with [UR5](https://www.universal-robots.com/products/ur5-robot/) and publish joint state positions, transformations and robot description.
 
-Similarly, you can try with TIAGo++:
+Similarly, you can try with more complex example like TIAGo++:
 ```
 ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
 ```
+
+#### Custom Configuration
+The universal launcher allows fine tunning of the ROS interface through [ROS parameters](https://index.ros.org/doc/ros2/Tutorials/Parameters/Understanding-ROS2-Parameters/).
+It means that the user can disable a device, change topic name, change publishing period and similar by changing the parameters.
+To check all available parameters for your robot you should start your robot first, e.g. in case of TIAGO++:
+```
+ros2 launch webots_ros2_core robot_launch.py \
+    world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
+```
+and in the other terminal run:
+```
+ros2 param list /webots_driver
+```
+to see the list of available parameters.
+
+At this point you can also save all parameters to YAML file for later use:
+```
+ros2 param dump /webots_driver
+```
+which will save the configuration to `webots_driver.yaml` by default.
+You can open this file, change the configuration and load it later using `node_parameters` argument:
+```
+ros2 launch webots_ros2_core robot_launch.py \
+    node_parameters:=./webots_driver.yaml \
+    world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
+```
+
+All parameters are named in the following format:
+- `[webots_device_name].[parameter]` for Webots devices that expose one or more topics and services (e.g. DistanceSensor).
+- `[webots_device_name_1+webots_device_name_2].[parameter]` for multiple Webots devices that create (e.g. Accelerometer, Gyro and InertialUnit devices are combined to publish to `sensor_msgs/Imu` topic).
+- Robot wide parameters don't have prefix (e.g. `synchronization`) and these parameters depend on Webots node implementation (e.g. `webots_differential_drive_node`).
+
+##### Differential Drive
+TIAGo++ has differential drive which has to be explicitly described.
+For differential drive robots you should utilize `webots_differential_drive_node` which exposes the following parameters:
+```python
+wheel_distance      # Distance between the wheels (axle length) in meters
+wheel_radius        # Radius of the wheels in meters
+left_joint          # Name of Motor associated with the left wheel (default `left wheel motor`)
+right_joint         # Name of Motor associated with the right wheel (default `right wheel motor`)
+left_encoder        # Name of PositionSensor associated with the left wheel (default `left wheel sensor`)
+right_encoder       # Name of PositionSensor associated with the right wheel (default `right wheel sensor`)
+command_topic       # Topic name to which the node will be sibscribed to receive velocity commands (of type `geometry_msgs/Twist`, default `/cmd_vel`)
+odometry_topic      # Topic name to which odometry data (of type `nav_msgs/Odometry`) will be published (default `/odom`)
+odometry_frame      # Name of of the odometry frame (default `odom`)
+robot_base_frame    # Name of the robot base frame (default `base_link`)
+```
+Make sure those parameters are correctly configured otherwise the node will crash.
+Minimum `wheel_distance` and `wheel_radius` are required, but you will probably need to change `left_joint`, `right_joint`, `left_encoder` and `right_encoder` to suit your robot.
+In case of TIAGo++ configuration file should look like this:
+```yaml
+webots_driver:
+  ros__parameters:
+    left_encoder: wheel_left_joint_sensor
+    left_joint: wheel_left_joint
+    right_encoder: wheel_right_joint_sensor
+    right_joint: wheel_right_joint
+    robot_base_frame: base_link
+    wheel_distance: 0.404
+    wheel_radius: 0.1955
+```
+Then, you can start the Webots:
+```
+ros2 launch webots_ros2_core robot_launch.py \
+    executable:=webots_differential_drive_node \
+    node_parameters:=$(ros2 pkg prefix webots_ros2_tiago --share)/resource/tiago.yaml \
+    world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
+```
+Now, topics `/odom` and `/cmd` should be availabe, so you can read odometry data (e.g. visualize in RViz) and control the robot (with e.g. `teleop_twist_keyboard`).
 
 ### Custom Launcher File and Driver
 In case a Webots device is not covered by the universal launcher or you prefer to create ROS interface differently you can build your ROS2 driver from scratch.
@@ -85,43 +154,27 @@ if __name__ == '__main__':
 Notice that you have to inherit `WebotsNode` which contains basic functionality which allows interaction with a robot in Webots.
 Also, you need to create a launch file `/my_webots_driver/launch/robot_launch.py` with the minimal content as following:
 ```Python
-import launch
+import os
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, EmitEvent
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-from webots_ros2_core.utils import ControllerLauncher
+from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
-    synchronization = LaunchConfiguration('synchronization', default=False)
-
-    # Webots
-    webots = Node(
-        package='webots_ros2_core',
-        node_executable='webots_launcher',
-        arguments=arguments = [
-            '--mode=realtime',
-            '--world=' + path_to_webots_world_file
+    webots = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
+        ),
+        launch_arguments=[
+            ('package', 'my_webots_driver'),
+            ('executable', 'driver'),
+            ('world', path_to_webots_world_file),
         ]
     )
 
-    # Driver node
-    controller = ControllerLauncher(
-        package='webots_ros2_epuck',
-        node_executable='driver',
-        parameters=[{'synchronization': synchronization}]
-    )
-
     return LaunchDescription([
-        webots,
-        controller,
-        RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[EmitEvent(event=launch.events.Shutdown())],
-            )
-        )
+        webots
     ])
 ```
 The purpose of the launch file is to start Webots, your driver for Webots and to make sure everything is stopped once Webots closed.

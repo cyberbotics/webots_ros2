@@ -288,6 +288,34 @@ class MyWebotsDriver(WebotsNode):
         self.sensor_publisher.publish(msg)
 ```
 
+This example can work in conjunction automatic robot ROSification library provided by Webots.
+Therefore, you can further extend the example above with `start_device_manager(self, config)`:
+```Python
+class MyWebotsDriver(WebotsNode):
+    def __init__(self, args):
+        super().__init__('my_webots_driver', args=args)
+        self.start_device_manager({
+            'my_distance_sensor': {
+                'disable': True
+            }
+        })
+        self.sensor = self.robot.getDistanceSensor('my_distance_sensor')
+        self.sensor.enable(self.timestep)
+        self.sensor_publisher = self.create_publisher(Range, '/my_distance_sensor', 1)
+        self.create_timer(self.timestep * 1e-3, self.publish_sensor_data)
+
+    def publish_sensor_data(self)
+        msg = Range()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = 'my_distance_sensor'
+        msg.field_of_view = self.sensor.getAperture()
+        msg.min_range = self.sensor.getMinValue()
+        msg.max_range = self.sensor.getMaxValue()
+        msg.range = self.sensor.getValue()
+        msg.radiation_type = Range.INFRARED
+        self.sensor_publisher.publish(msg)
+```
+and Webots will automatically create ROS interface for other devices (other than `my_distance_sensor`) avaialble in the robot.
 
 ### Examples
 This Github repository contains a few good examples that you can use as the starting point:

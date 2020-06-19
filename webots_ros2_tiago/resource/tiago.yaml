@@ -1,4 +1,4 @@
-diff_driver:
+webots_driver:
   ros__parameters:
     left_encoder: wheel_left_joint_sensor
     left_joint: wheel_left_joint

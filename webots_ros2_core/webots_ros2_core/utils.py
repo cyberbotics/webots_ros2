@@ -118,17 +118,11 @@ def get_webots_version():
     return None
 
 
-def get_robot_name_from_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--webots-robot-name', dest='webots_robot_name', default='webots_robot', help='Name of your drive node')
-    args, _ = parser.parse_known_args()
-    return args.webots_robot_name
-
-
 def get_node_name_from_args():
-    robot_name = get_robot_name_from_args()
-    robot_name = robot_name.replace('-', '_').replace('+', '_')
-    return robot_name or 'webots_controller'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--webots-node-name', dest='webots_node_name', default='webots_driver', help='Name of your drive node')
+    args, _ = parser.parse_known_args()
+    return args.webots_node_name
 
 
 class ControllerLauncher(Node):

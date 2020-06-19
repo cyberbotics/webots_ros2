@@ -70,6 +70,11 @@ ARGUMENTS = [
         'robot_name',
         description='The name of the robot (has to be the same as in Webots)',
         default_value=''
+    ),
+    DeclareLaunchArgument(
+        'node_name',
+        description='The name of the ROS node that interacts with Webots',
+        default_value='webots_driver'
     )
 ]
 
@@ -84,6 +89,7 @@ def generate_launch_description():
     publish_tf = LaunchConfiguration('publish_tf')
     node_parameters = LaunchConfiguration('node_parameters')
     robot_name = LaunchConfiguration('robot_name')
+    node_name = LaunchConfiguration('node_name')
 
     # Webots
     webots = WebotsLauncher(
@@ -103,7 +109,10 @@ def generate_launch_description():
                 'use_joint_state_publisher': publish_tf
             }],
         output='screen',
-        arguments=['--webots-robot-name', robot_name],
+        arguments=[
+            '--webots-robot-name', robot_name,
+            '--webots-node-name', node_name
+        ],
     )
 
     # Robot state publisher

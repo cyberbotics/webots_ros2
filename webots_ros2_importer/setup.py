@@ -15,7 +15,6 @@ setup(
     data_files=data_files,
     install_requires=[
         'setuptools',
-        'urdf2webots',
         'pycollada'
     ],
     zip_safe=True,

@@ -1,0 +1,3 @@
+[submodule "tests/sources/motoman"]
+	path = tests/sources/motoman
+	url = https://github.com/ros-industrial/motoman.git

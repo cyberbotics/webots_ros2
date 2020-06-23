@@ -14,8 +14,7 @@ setup(
     packages=[package_name],
     data_files=data_files,
     install_requires=[
-        'setuptools',
-        'pycollada'
+        'setuptools'
     ],
     zip_safe=True,
     author='Cyberbotics',

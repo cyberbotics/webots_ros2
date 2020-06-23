@@ -23,7 +23,7 @@ from sensor_msgs.msg import LaserScan
 from rclpy.time import Time
 from geometry_msgs.msg import TransformStamped
 
-from math.quaternions import axangle2quat, qmult
+from webots_ros2_core.math.quaternions import axangle2quat, qmult
 
 try:
     append_webots_python_lib_to_path()

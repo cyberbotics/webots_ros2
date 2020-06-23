@@ -21,5 +21,5 @@ import pytest
 @pytest.mark.flake8
 @pytest.mark.linter
 def test_flake8():
-    rc = main(argv=['--linelength', '128'])
+    rc = main(argv=['--linelength', '128', '--exclude', 'webots_ros2_core/math/quaternions.py'])
     assert rc == 0, 'Found errors'

@@ -21,5 +21,19 @@ import pytest
 @pytest.mark.copyright
 @pytest.mark.linter
 def test_copyright():
-    rc = main(argv=['.', '--verbose', '--exclude', 'webots_ros2_importer/urdf2webots/'])
+    rc = main(argv=[
+        '.',
+        '--verbose',
+        '--exclude',
+        'CONTRIBUTING.md',
+        'demo.py',
+        'setup.py',
+        'test_export.py',
+        'test_pep8.py',
+        'gazebo_materials.py',
+        'importer.py',
+        'math_utils.py',
+        'parserURDF.py',
+        'writeProto.py'
+    ])
     assert rc == 0, 'Found errors'

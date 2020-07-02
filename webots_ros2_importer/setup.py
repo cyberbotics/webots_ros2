@@ -30,7 +30,7 @@ setup(
     ],
     description='This package allows to convert URDF and XACRO files into Webots PROTO files.',
     license='Apache License, Version 2.0',
-    tests_require=['pytest', 'pep8'],
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'urdf2proto = webots_ros2_importer.urdf2proto:main',

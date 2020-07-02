@@ -35,7 +35,7 @@ ARGUMENTS = [
     DeclareLaunchArgument(
         'package',
         default_value='webots_ros2_core',
-        description='Package the package in which the node executable can be found.'
+        description='The Package in which the node executable can be found.'
     ),
     DeclareLaunchArgument(
         'executable',

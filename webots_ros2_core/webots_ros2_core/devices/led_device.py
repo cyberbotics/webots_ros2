@@ -20,26 +20,44 @@ from .device import Device
 
 
 class LEDDevice(Device):
-    """Webots + ROS2 LED wrapper."""
+    """
+    ROS2 wrapper for Webots LED node.
 
-    def __init__(self, node, wb_device, params=None):
-        self._node = node
-        self._wb_device = wb_device
-        self._last_update = -1
+    Creates suitable ROS2 interface based on Webots LED node instance:
+    https://cyberbotics.com/doc/reference/led
+
+    It allows the following functinalities:
+    - Subscribes to `std_msgs/Int32` and controls LEDs on the robot
+
+    Args:
+        node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
+        wb_device (LED): Webots node of type LED.
+
+    Kwargs:
+        params (dict): Dictionary with configuration options in format of::
+
+            dict: {
+                'topic_name': str,  # ROS topic name (default will generated from the sensor name)
+            }
+
+    """
+
+    def __init__(self, node, device_key, wb_device, params=None):
+        super().__init__(node, device_key, wb_device, params)
 
         # Determine default params
-        params = params or {}
-        self._topic_name = params.setdefault('topic_name', self._create_topic_name(wb_device))
+        self._topic_name = self._get_param('topic_name', self._create_topic_name(wb_device))
 
-        # Create publishers
-        self._led_subscriber = node.create_subscription(
+        # Create subscribers
+        self.__led_subscriber = self._node.create_subscription(
             Int32,
             self._topic_name,
-            self._callback,
+            self.__callback,
             qos_profile_sensor_data
         )
 
-    def _callback(self, msg):
+    def __callback(self, msg):
         self._wb_device.set(msg.data)
 
     def step(self):

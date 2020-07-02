@@ -31,6 +31,7 @@ class DistanceSensorDevice(SensorDevice):
 
     Args:
         node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
         wb_device (DistanceSensor): Webots node of type DistanceSensor.
 
     Kwargs:
@@ -38,8 +39,8 @@ class DistanceSensorDevice(SensorDevice):
 
     """
 
-    def __init__(self, node, wb_device, params=None):
-        super().__init__(node, wb_device, params)
+    def __init__(self, node, device_key, wb_device, params=None):
+        super().__init__(node, device_key, wb_device, params)
         self._publisher = None
         self._min_range = self.__get_min_value() + self.__get_lower_std()
         self._max_range = self.__get_max_value() - self.__get_upper_std()

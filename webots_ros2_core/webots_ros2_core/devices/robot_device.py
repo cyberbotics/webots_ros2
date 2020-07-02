@@ -34,6 +34,7 @@ class RobotDevice(Device):
 
     Args:
         node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
         wb_device (Robot): Webots node of type Robot.
 
     Kwargs:
@@ -45,9 +46,10 @@ class RobotDevice(Device):
 
     """
 
-    def __init__(self, node, wb_device, params=None):
+    def __init__(self, node, device_key, wb_device, params=None):
         self._node = node
         self._wb_device = wb_device
+        self._device_key = device_key
 
         # Determine default params
         params = params or {}

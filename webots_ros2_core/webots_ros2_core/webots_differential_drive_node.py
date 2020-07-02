@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
 from math import cos, sin
 import rclpy
 from rclpy.time import Time
@@ -22,6 +21,7 @@ from geometry_msgs.msg import Twist, TransformStamped
 from tf2_ros import TransformBroadcaster
 from webots_ros2_core.webots_node import WebotsNode
 from webots_ros2_core.math_utils import euler_to_quaternion
+from webots_ros2_core.utils import get_node_name_from_args
 
 
 class WebotsDifferentialDriveNode(WebotsNode):
@@ -30,7 +30,6 @@ class WebotsDifferentialDriveNode(WebotsNode):
                  args,
                  wheel_distance=0,
                  wheel_radius=0,
-                 device_config=None,
                  left_joint='left wheel motor',
                  right_joint='right wheel motor',
                  left_encoder='left wheel sensor',
@@ -40,7 +39,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
                  odometry_frame='odom',
                  robot_base_frame='base_link'
                  ):
-        super().__init__(name, args, device_config=device_config)
+        super().__init__(name, args)
 
         # Parametrise
         wheel_distance_param = self.declare_parameter('wheel_distance', wheel_distance)
@@ -193,11 +192,9 @@ class WebotsDifferentialDriveNode(WebotsNode):
 def main(args=None):
     rclpy.init(args=args)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--name', default='diff_driver', help='Name of your diff drive node')
-    args, _ = parser.parse_known_args()
-
-    differential_drive = WebotsDifferentialDriveNode(args.name, args=args)
+    webots_robot_name = get_node_name_from_args()
+    differential_drive = WebotsDifferentialDriveNode(webots_robot_name, args=args)
+    differential_drive.start_device_manager()
     rclpy.spin(differential_drive)
     rclpy.shutdown()
 

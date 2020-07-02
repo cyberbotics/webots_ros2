@@ -18,46 +18,23 @@
 
 import os
 
-import launch
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, EmitEvent
-from launch.substitutions import LaunchConfiguration
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_core.utils import ControllerLauncher
 
 
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_universal_robot')
-    synchronization = LaunchConfiguration('synchronization', default=False)
 
-    # Webots
-    arguments = [
-        '--mode=realtime',
-        '--world=' + os.path.join(package_dir, 'worlds', 'universal_robot_rviz.wbt')
-    ]
-    webots = Node(
-        package='webots_ros2_core',
-        node_executable='webots_launcher',
-        arguments=arguments,
-        output='screen'
-    )
-
-    # Controller nodes
-    controller = ControllerLauncher(
-        package='webots_ros2_universal_robot',
-        node_executable='universal_robot',
-        parameters=[{'synchronization': synchronization}],
-        output='screen'
-    )
-
-    # Robot state publisher
-    initial_robot_description = '<?xml version="1.0"?><robot name="dummy"><link name="base_link"></link></robot>'
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        node_executable='robot_state_publisher',
-        output='screen',
-        parameters=[{'robot_description': initial_robot_description}]
+    webots = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
+        ),
+        launch_arguments={
+            'world': os.path.join(package_dir, 'worlds', 'universal_robot_rviz.wbt'),
+        }.items()
     )
 
     # Rviz node
@@ -71,15 +48,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         rviz,
-        webots,
-        controller,
-        robot_state_publisher,
-
-        # Shutdown launch when Webots exits.
-        RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[EmitEvent(event=launch.events.Shutdown())],
-            )
-        )
+        webots
     ])

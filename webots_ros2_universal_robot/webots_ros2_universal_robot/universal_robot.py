@@ -26,7 +26,7 @@ from rclpy.parameter import Parameter
 class ActionServerNode(WebotsNode):
 
     def __init__(self, args):
-        super().__init__('ur_driver', args=args)
+        super().__init__('ur_driver', args=args, enableTfPublisher=True)
         prefix = self.get_parameter_or('prefix',
                                        Parameter('prefix', Parameter.Type.STRING, '')).value
         self.jointStatePublisher = JointStatePublisher(self.robot, prefix, self)

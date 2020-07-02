@@ -22,7 +22,7 @@ import sys
 from webots_ros2_core.joint_state_publisher import JointStatePublisher
 from webots_ros2_core.devices.device_manager import DeviceManager
 
-from webots_ros2_core.utils import append_webots_python_lib_to_path
+from webots_ros2_core.utils import append_webots_python_lib_to_path, get_node_name_from_args
 from webots_ros2_core.tf_publisher import TfPublisher
 
 from webots_ros2_msgs.srv import SetInt
@@ -41,7 +41,7 @@ except Exception as e:
 
 
 class WebotsNode(Node):
-    def __init__(self, name, args=None, device_config=None, enableTfPublisher=False):
+    def __init__(self, name, args=None, enableTfPublisher=False):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         self.declare_parameter('use_joint_state_publisher', False)
@@ -60,14 +60,13 @@ class WebotsNode(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.sec = 0
         self.nanosec = 0
+        self.__device_manager = None
         if enableTfPublisher:
             if self.robot.getSupervisor():
                 self.tfPublisher = TfPublisher(self.robot, self)
             else:
                 self.get_logger().warn('Impossible to publish transforms because the "supervisor"'
                                        ' field is false.')
-
-        self.device_manager = DeviceManager(self, device_config)
         if self.get_parameter('use_joint_state_publisher').value:
             self.jointStatePublisher = JointStatePublisher(self.robot, '', self)
 
@@ -100,14 +99,29 @@ class WebotsNode(Node):
         response.success = True
         return response
 
+    def start_device_manager(self, config=None):
+        """
+        Start automatic ROSification of available Webots devices available in the robot.
+
+        Kwargs:
+            config (dict): Dictionary of properties in format::
+
+                {
+                    [device_name]: {
+                        [property_name]: [property_value]
+                    }
+                }
+
+        """
+        self.__device_manager = DeviceManager(self, config)
+
 
 def main(args=None):
     rclpy.init(args=args)
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--name', default='driver', help='Name of your drive node')
-    args, _ = parser.parse_known_args()
 
-    driver = WebotsNode(args.name, args=args)
+    webots_robot_name = get_node_name_from_args()
+    driver = WebotsNode(webots_robot_name, args=args)
+    driver.start_device_manager()
     rclpy.spin(driver)
     rclpy.shutdown()
 

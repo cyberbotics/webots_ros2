@@ -16,51 +16,103 @@
 
 """Launch Webots and ROS2 driver."""
 
-import sys
 import os
 import launch
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, EmitEvent
+from launch.actions import RegisterEventHandler, EmitEvent, DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from webots_ros2_core.utils import ControllerLauncher
+from webots_ros2_core.webots_launcher import WebotsLauncher
+
+
+ARGUMENTS = [
+    DeclareLaunchArgument(
+        'synchronization',
+        default_value='False',
+        description='If `False` robot.step() will be automatically called.'
+    ),
+    DeclareLaunchArgument(
+        'package',
+        default_value='webots_ros2_core',
+        description='The Package in which the node executable can be found.'
+    ),
+    DeclareLaunchArgument(
+        'executable',
+        default_value='webots_node',
+        description='The name of the executable to find if a package is provided or otherwise a path to the executable to run.'
+    ),
+    DeclareLaunchArgument(
+        'world',
+        description='Path to Webots\' world file. Make sure `controller` field is set to `<extern>`.'
+    ),
+    DeclareLaunchArgument(
+        'gui',
+        default_value='True',
+        description='Whether to start GUI or not.'
+    ),
+    DeclareLaunchArgument(
+        'mode',
+        default_value='realtime',
+        description='Choose the startup mode (it must be either `pause`, `realtime`, `run` or `fast`).'
+    ),
+    DeclareLaunchArgument(
+        'publish_tf',
+        default_value='True',
+        description='Whether to publish transforms (tf)'
+    ),
+    DeclareLaunchArgument(
+        'node_parameters',
+        description='Path to ROS parameters file that will be passed to the robot node',
+        default_value=os.devnull
+    ),
+    DeclareLaunchArgument(
+        'robot_name',
+        description='The name of the robot (has to be the same as in Webots)',
+        default_value=''
+    ),
+    DeclareLaunchArgument(
+        'node_name',
+        description='The name of the ROS node that interacts with Webots',
+        default_value='webots_driver'
+    )
+]
 
 
 def generate_launch_description():
-    synchronization = LaunchConfiguration('synchronization', default=False)
-    params = {arg.split(':=')[0]: arg.split(':=')[1] for arg in sys.argv if ':=' in arg}
-
-    if 'world' not in params:
-        print('No world parameter has been found, please define it!')
-        sys.exit(1)
-
-    if not os.path.exists(params['world']):
-        print('World doesn\'t exist')
-        sys.exit(2)
-
-    params['mode'] = params.setdefault('mode', 'realtime')
+    synchronization = LaunchConfiguration('synchronization')
+    package = LaunchConfiguration('package')
+    executable = LaunchConfiguration('executable')
+    world = LaunchConfiguration('world')
+    gui = LaunchConfiguration('gui')
+    mode = LaunchConfiguration('mode')
+    publish_tf = LaunchConfiguration('publish_tf')
+    node_parameters = LaunchConfiguration('node_parameters')
+    robot_name = LaunchConfiguration('robot_name')
+    node_name = LaunchConfiguration('node_name')
 
     # Webots
-    arguments = [
-        '--mode=' + params['mode'],
-        '--world=' + params['world']
-    ]
-    webots = Node(
-        package='webots_ros2_core',
-        node_executable='webots_launcher',
-        arguments=arguments,
-        output='screen'
+    webots = WebotsLauncher(
+        world=world,
+        mode=mode,
+        gui=gui
     )
 
     # Driver node
     controller = ControllerLauncher(
-        package='webots_ros2_core',
-        node_executable='webots_node',
-        parameters=[{
-            'synchronization': synchronization,
-            'use_joint_state_publisher': True
-        }],
-        output='screen'
+        package=package,
+        node_executable=executable,
+        parameters=[
+            node_parameters,
+            {
+                'synchronization': synchronization,
+                'use_joint_state_publisher': publish_tf
+            }],
+        output='screen',
+        arguments=[
+            '--webots-robot-name', robot_name,
+            '--webots-node-name', node_name
+        ],
     )
 
     # Robot state publisher
@@ -69,10 +121,11 @@ def generate_launch_description():
         package='robot_state_publisher',
         node_executable='robot_state_publisher',
         output='screen',
-        parameters=[{'robot_description': initial_robot_description}]
+        parameters=[{'robot_description': initial_robot_description}],
+        condition=launch.conditions.IfCondition(publish_tf)
     )
 
-    return LaunchDescription([
+    return LaunchDescription(ARGUMENTS + [
         robot_state_publisher,
         webots,
         controller,

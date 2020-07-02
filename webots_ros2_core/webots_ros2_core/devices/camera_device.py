@@ -33,6 +33,7 @@ class CameraDevice(SensorDevice):
 
     Args:
         node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
         wb_device (Camera): Webots node of type Camera.
 
     Kwargs:
@@ -40,8 +41,8 @@ class CameraDevice(SensorDevice):
 
     """
 
-    def __init__(self, node, wb_device, params=None):
-        super().__init__(node, wb_device, params)
+    def __init__(self, node, device_key, wb_device, params=None):
+        super().__init__(node, device_key, wb_device, params)
         self._camera_info_publisher = None
         self._image_publisher = None
 

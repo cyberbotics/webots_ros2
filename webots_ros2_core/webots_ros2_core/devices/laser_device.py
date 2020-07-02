@@ -34,6 +34,7 @@ class LaserDevice(SensorDevice):
 
     Args:
         node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
         wb_device (Lidar): Webots node of type Lidar.
 
     Kwargs:
@@ -41,8 +42,8 @@ class LaserDevice(SensorDevice):
 
     """
 
-    def __init__(self, node, wb_device, params=None):
-        super().__init__(node, wb_device, params)
+    def __init__(self, node, device_key, wb_device, params=None):
+        super().__init__(node, device_key, wb_device, params)
         self._publishers = {}
         self._static_transforms = []
         self._static_broadcaster = None

@@ -24,15 +24,12 @@ from webots_ros2_core.math_utils import interpolate_lookup_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
-GYRO_RAW2DEG = 32768.0 / 250.0
 OUT_OF_RANGE = 0.0
 INFRARED_MAX_RANGE = 0.04
 INFRARED_MIN_RANGE = 0.009
 TOF_MAX_RANGE = 1.0
 DEFAULT_WHEEL_RADIUS = 0.02
 DEFAULT_WHEEL_DISTANCE = 0.05685
-NB_LIGHT_SENSORS = 8
-NB_GROUND_SENSORS = 3
 NB_INFRARED_SENSORS = 8
 SENSOR_DIST_FROM_CENTER = 0.035
 
@@ -50,7 +47,6 @@ DISTANCE_SENSOR_ANGLE = [
 
 
 DEVICE_CONFIG = {
-    '@auto': True,
     'camera': {'topic_name': ''},
     'ps0': {'always_publish': True},
     'ps1': {'always_publish': True},
@@ -69,10 +65,10 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         super().__init__(
             'epuck_driver',
             args,
-            device_config=DEVICE_CONFIG,
             wheel_distance=DEFAULT_WHEEL_DISTANCE,
             wheel_radius=DEFAULT_WHEEL_RADIUS
         )
+        self.start_device_manager(DEVICE_CONFIG)
 
         # Intialize distance sensors for LaserScan topic
         self.distance_sensors = {}

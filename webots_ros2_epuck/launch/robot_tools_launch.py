@@ -19,7 +19,7 @@
 import os
 import launch
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, LogInfo
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
@@ -63,7 +63,7 @@ def generate_launch_description():
             )
         )
     else:
-        print('Navigation2 is not installed, navigation functionality is disabled')
+        launch_description_nodes.append(LogInfo(msg='Navigation2 is not installed, navigation functionality is disabled'))
 
     # Mapping
     launch_description_nodes.append(

@@ -6,10 +6,87 @@ This package contains essential building blocks for running Webots simulation, s
 
 ###  webots_launcher
 
-The `webots_launcher` is used to start Webots from your launch file, it has the following arguments:
-- `--world`: defines the path to the simulation world file to load.
-- `--mode`: defines the simulation mode (pause, realtime, run or fast) with which Webots should be started (realtime is set by default). 
-- `--no-gui`: if set, Webots starts with a minimal graphical user interface, this is useful to use on a server for example.
+The `webots_launcher` is a custom ROS action used to start Webots from your launch file, it has the following parameters:
+- `world`: defines the path to the simulation world file to load.
+- `mode`: defines the simulation mode (pause, realtime, run or fast) with which Webots should be started (realtime is set by default). 
+- `gui`: if set, Webots starts with a minimal graphical user interface, this is useful to use on a server for example.
+
+<details><summary>`webots_launcher` usage example</summary>
+
+
+```Python
+import launch
+from launch import LaunchDescription
+from webots_ros2_core.webots_launcher import WebotsLauncher
+
+
+def generate_launch_description():
+    # Webots
+    webots = WebotsLauncher(
+        world=world,
+        mode=mode,
+        gui=gui
+    )
+
+    return LaunchDescription([
+        webots,
+        # Shutdown launch when Webots exits.
+        RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=webots,
+                on_exit=[EmitEvent(event=launch.events.Shutdown())],
+            )
+        )
+    ])
+```
+
+</details>
+
+
+### controller_launcher
+
+The `webots_launcher` is a custom ROS node launcher used to start Webots controller. It has the same API as `launch_ros.actions.Node`, but it adds necessary libraries needed for your ROS node to work with Webots.
+
+<details><summary>`controller_launcher` usage example</summary>
+
+```Python
+import launch
+from launch import LaunchDescription
+from webots_ros2_core.webots_launcher import WebotsLauncher
+
+
+def generate_launch_description():
+    # Webots
+    webots = WebotsLauncher(
+        world=world,
+        mode=mode,
+        gui=gui
+    )
+
+    controller = ControllerLauncher(
+        package=package,
+        node_executable=executable,
+        arguments=[
+            '--webots-robot-name', robot_name,
+            '--webots-node-name', node_name
+        ],
+    )
+
+    return LaunchDescription([
+        webots,
+        controller,
+
+        # Shutdown launch when Webots exits.
+        RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=webots,
+                on_exit=[EmitEvent(event=launch.events.Shutdown())],
+            )
+        )
+    ])
+```
+
+</details>
 
 ### Python Modules
 
@@ -43,21 +120,96 @@ Therefore, in the further text, we will explain how to create ROS2 node that tig
 
 
 ### Universal Launcher
-In `webots_ros2_core` package, we provide launcher that should automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)).
+In `webots_ros2_core` package, we provide `robot_launch.py` launcher that should automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)).
 It is enough to provide path to Webots world file with the robot inside, for example: 
 ```
-ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_rviz.wbt
+ros2 launch webots_ros2_core robot_launch.py \
+    world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_rviz.wbt
 ```
-This command will run Webots with [UR5](https://www.universal-robots.com/products/ur5-robot/) and publish joint state positions, transformations and robot description.
+This command will run Webots with [UR5](https://cyberbotics.com/doc/guide/ure) and publish joint state positions, transformations and robot description.
 
-Similarly, you can try with TIAGo++:
+Similarly, you can try with more complex example like TIAGo++:
 ```
-ros2 launch webots_ros2_core robot_launch.py world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
+ros2 launch webots_ros2_core robot_launch.py \
+    world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
 ```
+
+To run more exhaustive list of `robot_launch.py` arguments you can use `--show-args` argument:
+```
+ros2 launch webots_ros2_core robot_launch.py --show-arguments
+```
+
+#### Custom Configuration
+The universal launcher allows fine tunning of the ROS interface through [ROS parameters](https://index.ros.org/doc/ros2/Tutorials/Parameters/Understanding-ROS2-Parameters/).
+It means that the user can disable a device, change topic name, change publishing period and similar by changing the parameters.
+To check all available parameters for your robot you should start your robot first, e.g. in case of TIAGO++:
+```
+ros2 launch webots_ros2_core robot_launch.py \
+    world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
+```
+and in the other terminal run:
+```
+ros2 param list /webots_driver
+```
+to see the list of available parameters.
+
+At this point you can also save all parameters to YAML file for later use:
+```
+ros2 param dump /webots_driver
+```
+which will save the configuration to `webots_driver.yaml` by default.
+You can open this file, change the configuration and load it later using `node_parameters` argument:
+```
+ros2 launch webots_ros2_core robot_launch.py \
+    node_parameters:=./webots_driver.yaml \
+    world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
+```
+
+All parameters are named in the following format:
+- `[webots_device_name].[parameter]` for Webots devices that expose one or more topics and services (e.g. DistanceSensor).
+- `[webots_device_name_1]+[webots_device_name_2]+[webots_device_name_n].[parameter]` for multiple Webots devices that are coupled to create a single topics or service (e.g. Accelerometer, Gyro and InertialUnit devices are combined to publish to `sensor_msgs/Imu` topic).
+- Robot wide parameters don't have prefix (e.g. `synchronization`) and these parameters depend on Webots node implementation (e.g. `webots_differential_drive_node`).
+
+##### Differential Drive
+TIAGo++ has differential drive which has to be explicitly described.
+For differential drive robots you should utilize `webots_differential_drive_node` which exposes the following parameters:
+```python
+wheel_distance      # Distance between the wheels (axle length) in meters
+wheel_radius        # Radius of the wheels in meters
+left_joint          # Name of Motor associated with the left wheel (default `left wheel motor`)
+right_joint         # Name of Motor associated with the right wheel (default `right wheel motor`)
+left_encoder        # Name of PositionSensor associated with the left wheel (default `left wheel sensor`)
+right_encoder       # Name of PositionSensor associated with the right wheel (default `right wheel sensor`)
+command_topic       # Topic name to which the node will be subscribed to receive velocity commands (of type `geometry_msgs/Twist`, default `/cmd_vel`)
+odometry_topic      # Topic name to which odometry data (of type `nav_msgs/Odometry`) will be published (default `/odom`)
+odometry_frame      # Name of of the odometry frame (default `odom`)
+robot_base_frame    # Name of the robot base frame (default `base_link`)
+```
+Make sure those parameters are correctly configured otherwise the node will crash.
+Minimum `wheel_distance` and `wheel_radius` are required, but you will probably need to change `left_joint`, `right_joint`, `left_encoder` and `right_encoder` to suit your robot.
+In case of TIAGo++ configuration file should look like this:
+```yaml
+webots_driver:
+  ros__parameters:
+    left_encoder: wheel_left_joint_sensor
+    left_joint: wheel_left_joint
+    right_encoder: wheel_right_joint_sensor
+    right_joint: wheel_right_joint
+    wheel_distance: 0.404
+    wheel_radius: 0.1955
+```
+Then, you can start the Webots:
+```
+ros2 launch webots_ros2_core robot_launch.py \
+    executable:=webots_differential_drive_node \
+    node_parameters:=$(ros2 pkg prefix webots_ros2_tiago --share)/resource/tiago.yaml \
+    world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
+```
+Now, topics `/odom` and `/cmd` should be availabe, so you can read odometry data (e.g. visualize in RViz) and control the robot (with e.g. `teleop_twist_keyboard`).
 
 ### Custom Launcher File and Driver
 In case a Webots device is not covered by the universal launcher or you prefer to create ROS interface differently you can build your ROS2 driver from scratch.
-First, make sure you have created a new ROS2 package and call it `my_webots_driver` (you check ROS' tutorial given [here](https://index.ros.org/doc/ros2/Tutorials/Creating-Your-First-ROS2-Package/)).
+First, make sure you have created a new ROS2 package and call it `my_webots_driver` (you can check ROS' tutorial given [here](https://index.ros.org/doc/ros2/Tutorials/Creating-Your-First-ROS2-Package/)).
 After the package is ready, you can create a driver, e.g. `/my_webots_driver/my_webots_driver/driver.py` and populate it with the following content:
 
 ```Python
@@ -85,43 +237,27 @@ if __name__ == '__main__':
 Notice that you have to inherit `WebotsNode` which contains basic functionality which allows interaction with a robot in Webots.
 Also, you need to create a launch file `/my_webots_driver/launch/robot_launch.py` with the minimal content as following:
 ```Python
-import launch
+import os
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, EmitEvent
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-from webots_ros2_core.utils import ControllerLauncher
+from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
-    synchronization = LaunchConfiguration('synchronization', default=False)
-
-    # Webots
-    webots = Node(
-        package='webots_ros2_core',
-        node_executable='webots_launcher',
-        arguments=arguments = [
-            '--mode=realtime',
-            '--world=' + path_to_webots_world_file
+    webots = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
+        ),
+        launch_arguments=[
+            ('package', 'my_webots_driver'),
+            ('executable', 'driver'),
+            ('world', path_to_webots_world_file),
         ]
     )
 
-    # Driver node
-    controller = ControllerLauncher(
-        package='webots_ros2_epuck',
-        node_executable='driver',
-        parameters=[{'synchronization': synchronization}]
-    )
-
     return LaunchDescription([
-        webots,
-        controller,
-        RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[EmitEvent(event=launch.events.Shutdown())],
-            )
-        )
+        webots
     ])
 ```
 The purpose of the launch file is to start Webots, your driver for Webots and to make sure everything is stopped once Webots closed.
@@ -152,11 +288,39 @@ class MyWebotsDriver(WebotsNode):
         self.sensor_publisher.publish(msg)
 ```
 
+This example can work in conjunction automatic robot ROSification library provided by Webots.
+Therefore, you can further extend the example above with `start_device_manager(self, config)`:
+```Python
+class MyWebotsDriver(WebotsNode):
+    def __init__(self, args):
+        super().__init__('my_webots_driver', args=args)
+        self.start_device_manager({
+            'my_distance_sensor': {
+                'disable': True
+            }
+        })
+        self.sensor = self.robot.getDistanceSensor('my_distance_sensor')
+        self.sensor.enable(self.timestep)
+        self.sensor_publisher = self.create_publisher(Range, '/my_distance_sensor', 1)
+        self.create_timer(self.timestep * 1e-3, self.publish_sensor_data)
+
+    def publish_sensor_data(self)
+        msg = Range()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = 'my_distance_sensor'
+        msg.field_of_view = self.sensor.getAperture()
+        msg.min_range = self.sensor.getMinValue()
+        msg.max_range = self.sensor.getMaxValue()
+        msg.range = self.sensor.getValue()
+        msg.radiation_type = Range.INFRARED
+        self.sensor_publisher.publish(msg)
+```
+and Webots will automatically create ROS interface for other devices (other than `my_distance_sensor`) avaialble in the robot.
 
 ### Examples
 This Github repository contains a few good examples that you can use as the starting point:
 - `webots_ros2_example` includes a very simple controller for Thymio (differential driver robot).
 - `webots_ros2_tiago` is another differential drive robot simulation, but here `WebotsDifferentialDriveNode` class from `webots_ros2_core` is utilized to simplify differential drive implementation.
-- `webots_ros2_epuck` is one more example with differential drive robot in which ROS services and topics are created for almost all available sensors and actuators available on the robot.
+- `webots_ros2_epuck` is one more example with differential drive robot in which ROS services and topics are created for almost all sensors and actuators available on the robot.
 This example also contains a [list of instructions](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_epuck/EPUCK_ROS2.md) that explains how the simulation can be used in combination with different ROS2 packages like RViz and Navigation2.
-Also, you will find this example useful if you plan later to control the real robot as we support [ROS2 driver for the real robot](https://github.com/cyberbotics/epuck_ros2) as well.
+Also, you will find this example useful if you plan later to control the real robot as we also support [ROS2 driver for the real robot](https://github.com/cyberbotics/epuck_ros2).

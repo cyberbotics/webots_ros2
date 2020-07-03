@@ -176,10 +176,6 @@ CardboardBox {
   name "cardboard box(3)"
 }
 Fridge {
-  hidden position_0_0 -6.770317604506433e-08
-  hidden position_0_1 2.246335100809434e-07
-  hidden rotation_1 0 -1 0 6.664001874625056e-08
-  hidden rotation_2 0 1 0 2.2500259981366257e-07
   translation 5.7 0 -4.64
   rotation 0 -1 0 1.5708
 }

@@ -21,5 +21,5 @@ import pytest
 @pytest.mark.flake8
 @pytest.mark.linter
 def test_flake8():
-    rc = main(argv=[])
+    rc = main(argv=['--exclude', 'webots_ros2_importer/urdf2webots/'])
     assert rc == 0, 'Found errors'

@@ -1,0 +1,32 @@
+#VRML_SIM R2020a utf8
+WorldInfo {
+  info [
+    "Simple TurtleBot3 Burger simulation controlled by a ROS node written in Python."
+  ]
+  title "ROS Python"
+  basicTimeStep 20
+  contactProperties [
+    ContactProperties {
+      material2 "thymio body"
+      coulombFriction [
+        0.7
+      ]
+    }
+  ]
+}
+Viewpoint {
+  orientation 0.3650235088419984 -0.9018337571390201 -0.2312005892665386 5.0279702
+  position 1.7394331331157347 1.1044120251317944 0.9341023960014497
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+CircleArena {
+  wallThickness 0.05
+}
+DEF TURTLEBOT TurtleBot3Burger_enu {
+  controller "<extern>"
+  controllerArgs ""
+  supervisor TRUE
+}

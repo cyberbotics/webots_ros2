@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: bloom release
-        uses: at-wat/bloom-release-action@v0
+        uses: DavidMansolino/bloom-release-action@v0.0.10
         with:
           ros_distro: eloquent foxy
           github_token_bloom: ${{ secrets.BLOOM_TOKEN }}
@@ -17,4 +17,5 @@ jobs:
           git_user: DavidMansolino
           git_email: David.Mansolino@cyberbotics.com
           release_repository_push_url: https://github.com/${{ github.repository }}-release.git
+          version_branch: true 
           # open_pr: true

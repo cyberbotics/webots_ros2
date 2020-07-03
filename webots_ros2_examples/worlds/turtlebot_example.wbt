@@ -113,7 +113,6 @@ Radiator {
   rotation 0 1 0 -1.5707996938995747
 }
 Door {
-  hidden translation_5 8.38900060529113e-11 0 0.001000000267434742
   translation 5 0 1.5
   rotation 0 1 0 -1.5707953071795862
   position -1.5000000005630203

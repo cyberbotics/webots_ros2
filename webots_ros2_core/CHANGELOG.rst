@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.4 (2020-07-03)
+------------------
+* Fixed dependencies issue.
+
 0.0.3 (2020-06-15)
 ------------------
 * Added support for multi robots.

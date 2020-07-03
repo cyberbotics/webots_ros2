@@ -36,7 +36,7 @@ ros2 topic echo /sensor
 
 #### Troubleshooting
 
-If you see import failures or indications WEBOTS_HOME is incorrectly set, make sure your environment variables are [configured for extern controllers](https://www.cyberbotics.com/doc/guide/running-extern-robot-controllers?version=master#environment-variables).
+If you see import failures or some indications saying that `WEBOTS_HOME` is incorrectly set, make sure your environment variables are [configured for extern controllers](https://www.cyberbotics.com/doc/guide/running-extern-robot-controllers?version=master#environment-variables).
 
 
 ## TurtleBot3 Burger

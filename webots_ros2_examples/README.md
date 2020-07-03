@@ -39,7 +39,7 @@ If you see import failures or indications WEBOTS_HOME is incorrectly set, make s
 
 ## TurtleBot3 Burger
 
-![TurtleBot3 Burgerin Webots](./assets/turtlebot3_burger.png)
+![TurtleBot3 Burger in Webots](./assets/turtlebot3_burger.png)
 
 To run TurtleBot3 Burger simulation you can use the universal launcher:
 ```bash
@@ -60,6 +60,55 @@ $ ros2 topic list -t
 /odom [nav_msgs/msg/Odometry]
 /parameter_events [rcl_interfaces/msg/ParameterEvent]
 /robot_description [std_msgs/msg/String]
+/tf [tf2_msgs/msg/TFMessage]
+/tf_static [tf2_msgs/msg/TFMessage]
+```
+
+## Khepera IV
+
+![Khepera IV in Webots](./assets/khepera4.png)
+
+Similarly to TurtleBot3 Burger you can start Khepera IV robot as well:
+```bash
+ros2 launch webots_ros2_core robot_launch.py \
+    executable:=webots_differential_drive_node \
+    node_parameters:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/khepera4.yaml \
+    world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/khepera4_example.wbt
+```
+
+For this robot you should expect the following topics:
+```bash
+$ ros2 topic list -t
+/camera/camera_info [sensor_msgs/msg/CameraInfo]
+/camera/image_raw [sensor_msgs/msg/Image]
+/clock [rosgraph_msgs/msg/Clock]
+/cmd_vel [geometry_msgs/msg/Twist]
+/front_infrared_sensor [sensor_msgs/msg/Range]
+/front_left_infrared_sensor [sensor_msgs/msg/Range]
+/front_left_led [std_msgs/msg/Int32]
+/front_left_ultrasonic_sensor [sensor_msgs/msg/Range]
+/front_right_infrared_sensor [sensor_msgs/msg/Range]
+/front_right_led [std_msgs/msg/Int32]
+/front_right_ultrasonic_sensor [sensor_msgs/msg/Range]
+/front_ultrasonic_sensor [sensor_msgs/msg/Range]
+/ground_front_left_infrared_sensor [sensor_msgs/msg/Range]
+/ground_front_right_infrared_sensor [sensor_msgs/msg/Range]
+/ground_left_infrared_sensor [sensor_msgs/msg/Range]
+/ground_right_infrared_sensor [sensor_msgs/msg/Range]
+/imu [sensor_msgs/msg/Imu]
+/joint_states [sensor_msgs/msg/JointState]
+/left_infrared_sensor [sensor_msgs/msg/Range]
+/left_ultrasonic_sensor [sensor_msgs/msg/Range]
+/odom [nav_msgs/msg/Odometry]
+/parameter_events [rcl_interfaces/msg/ParameterEvent]
+/rear_infrared_sensor [sensor_msgs/msg/Range]
+/rear_led [std_msgs/msg/Int32]
+/rear_left_infrared_sensor [sensor_msgs/msg/Range]
+/rear_right_infrared_sensor [sensor_msgs/msg/Range]
+/right_infrared_sensor [sensor_msgs/msg/Range]
+/right_ultrasonic_sensor [sensor_msgs/msg/Range]
+/robot_description [std_msgs/msg/String]
+/rosout [rcl_interfaces/msg/Log]
 /tf [tf2_msgs/msg/TFMessage]
 /tf_static [tf2_msgs/msg/TFMessage]
 ```

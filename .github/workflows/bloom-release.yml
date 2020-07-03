@@ -1,6 +1,8 @@
 name: Bloom Release
 
 on:
+  pull_request:  # test
+    types: [opened, synchronize, reopened, ready_for_review]
   release:
     types: [created]
 

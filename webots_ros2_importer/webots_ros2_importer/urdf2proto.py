@@ -20,7 +20,7 @@ import re
 import sys
 import tempfile
 
-from urdf2webots.importer import convert2urdf
+from webots_ros2_importer.urdf2webots.urdf2webots.importer import convert2urdf
 
 from ament_index_python.packages import get_package_share_directory
 

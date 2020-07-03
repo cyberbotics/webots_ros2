@@ -23,8 +23,7 @@ from sensor_msgs.msg import LaserScan
 from rclpy.time import Time
 from geometry_msgs.msg import TransformStamped
 
-
-import transforms3d
+from webots_ros2_core.math.quaternions import axangle2quat, qmult
 
 try:
     append_webots_python_lib_to_path()
@@ -99,14 +98,14 @@ class LaserPublisher():
             transformStamped.header.stamp = stamp
             transformStamped.header.frame_id = self.prefix + lidar.getName()
             transformStamped.child_frame_id = name
-            q1 = transforms3d.quaternions.axangle2quat([0, 1, 0], -1.5708)
-            q2 = transforms3d.quaternions.axangle2quat([1, 0, 0], 1.5708)
-            result = transforms3d.quaternions.qmult(q1, q2)
+            q1 = axangle2quat([0, 1, 0], -1.5708)
+            q2 = axangle2quat([1, 0, 0], 1.5708)
+            result = qmult(q1, q2)
             if lidar.getNumberOfLayers() > 1:
                 angleStep = lidar.getVerticalFov() / (lidar.getNumberOfLayers() - 1)
                 angle = -0.5 * lidar.getVerticalFov() + i * angleStep
-                q3 = transforms3d.quaternions.axangle2quat([0, 0, 1], angle)
-                result = transforms3d.quaternions.qmult(result, q3)
+                q3 = axangle2quat([0, 0, 1], angle)
+                result = qmult(result, q3)
             transformStamped.transform.rotation.x = result[0]
             transformStamped.transform.rotation.y = result[1]
             transformStamped.transform.rotation.z = result[2]

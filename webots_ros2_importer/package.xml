@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2_importer</name>
-  <version>0.0.3</version>
+  <version>0.0.4</version>
   <description>This package allows to convert URDF and XACRO files into Webots PROTO files.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -12,8 +12,6 @@
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
   <exec_depend>builtin_interfaces</exec_depend>
-  <exec_depend>urdf2webots-pip</exec_depend>
-  <exec_depend>python3-collada-pip</exec_depend>
   <exec_depend>xacro</exec_depend>
 
   <!-- These test dependencies are optional

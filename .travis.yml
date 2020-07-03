@@ -3,8 +3,6 @@ services:
   - docker
 env:
   matrix:
-    - ROS_DISTRO="eloquent" DOCKER_RUN_OPTS='-e TRAVIS'
-    - ROS_DISTRO="eloquent" DOCKER_RUN_OPTS='-e TRAVIS' ROS_REPO=testing
     - ROS_DISTRO="foxy" DOCKER_RUN_OPTS='-e TRAVIS'
     - ROS_DISTRO="foxy" DOCKER_RUN_OPTS='-e TRAVIS' ROS_REPO=testing
 install:

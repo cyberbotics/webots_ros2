@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: bloom release
-        uses: DavidMansolino/bloom-release-action@v0.0.11
+        uses: DavidMansolino/bloom-release-action@v0.0.12
         with:
           ros_distro: eloquent foxy
           github_token_bloom: ${{ secrets.BLOOM_TOKEN }}

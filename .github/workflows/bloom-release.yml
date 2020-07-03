@@ -17,4 +17,5 @@ jobs:
           git_user: DavidMansolino
           git_email: David.Mansolino@cyberbotics.com
           release_repository_push_url: https://github.com/${{ github.repository }}-release.git
+          repository: webots_ros2_desktop
           # open_pr: true

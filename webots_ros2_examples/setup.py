@@ -8,7 +8,7 @@ package_name = 'webots_ros2_examples'
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['launch/example.launch.py']))
-data_files.append(('share/' + package_name + '/resource', ['resource/turtlebot.yaml', 'resource/khepera4.yaml']))
+data_files.append(('share/' + package_name + '/resource', ['resource/turtlebot3_burger.yaml', 'resource/khepera4.yaml']))
 data_files.append(('share/' + package_name + '/protos', [
     'protos/TurtleBot3Burger_enu.proto',
     'protos/Khepera4_enu.proto'
@@ -16,7 +16,7 @@ data_files.append(('share/' + package_name + '/protos', [
 data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/ros_example.wbt', 'worlds/.ros_example.wbproj',
-    'worlds/turtlebot_example.wbt', 'worlds/.turtlebot_example.wbproj',
+    'worlds/turtlebot3_burger_example.wbt', 'worlds/.turtlebot3_burger_example.wbproj',
     'worlds/khepera4_example.wbt', 'worlds/.khepera4_example.wbproj'
 ]))
 data_files.append(('share/' + package_name, ['package.xml']))

@@ -47,8 +47,8 @@ To run TurtleBot3 Burger simulation you can use the universal launcher:
 ```bash
 ros2 launch webots_ros2_core robot_launch.py \
     executable:=webots_differential_drive_node \
-    node_parameters:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/turtlebot.yaml \
-    world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/turtlebot_example.wbt
+    node_parameters:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/turtlebot3_burger.yaml \
+    world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/turtlebot3_burger_example.wbt
 ```
 
 This will expose necessary topics:

@@ -11,7 +11,7 @@ jobs:
       - name: bloom release
         uses: at-wat/bloom-release-action@v0.0.8
         with:
-          ros_distro: eloquent foxy
+          ros_distro: foxy
           github_token_bloom: ${{ secrets.BLOOM_TOKEN }}
           github_user: DavidMansolino
           git_user: DavidMansolino

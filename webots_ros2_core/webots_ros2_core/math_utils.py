@@ -43,6 +43,9 @@ def interpolate_function(value, start_x, start_y, end_x, end_y, ascending=None):
 
 
 def interpolate_lookup_table(value, table):
+    if not table:
+        return value
+
     # Interpolate
     for i in range(int(len(table) / 3) - 1):
         if (value < table[i * 3 + 1] and value >= table[(i + 1) * 3 + 1]) or \

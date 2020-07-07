@@ -88,7 +88,6 @@ class WebotsDifferentialDriveNode(WebotsNode):
 
         # Initialize timer
         self._last_odometry_sample_time = self.robot.getTime()
-        self.create_timer(self.timestep / 1000, self._publish_odometry_data)
 
     def _cmd_vel_callback(self, twist):
         self.get_logger().info('Message received')
@@ -99,7 +98,9 @@ class WebotsDifferentialDriveNode(WebotsNode):
         self.left_motor.setVelocity(left_omega)
         self.right_motor.setVelocity(right_omega)
 
-    def _publish_odometry_data(self):
+    def step(self, ms):
+        super().step(ms)
+
         stamp = Time(seconds=self.robot.getTime()).to_msg()
 
         time_diff_s = self.robot.getTime() - self._last_odometry_sample_time

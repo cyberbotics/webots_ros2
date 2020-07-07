@@ -78,10 +78,7 @@ class DeviceManager:
                 self.__node.get_logger().warn(
                     f'Device `{device_name}` is not considered! The device doesn\'t exist or it is not supported.')
 
-        # Create a loop
-        self.__node.create_timer(1e-3 * int(node.robot.getBasicTimeStep()), self.__callback)
-
-    def __callback(self):
+    def step(self):
         for device in self.__devices.values():
             device.step()
 

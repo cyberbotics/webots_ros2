@@ -19,6 +19,7 @@
 import argparse
 import os
 import sys
+from rclpy.time import Time
 from webots_ros2_core.joint_state_publisher import JointStatePublisher
 from webots_ros2_core.devices.device_manager import DeviceManager
 
@@ -71,6 +72,10 @@ class WebotsNode(Node):
             self.jointStatePublisher = JointStatePublisher(self.robot, '', self)
 
     def step(self, ms):
+        if self.get_parameter('use_joint_state_publisher').value:
+            self.jointStatePublisher.publish()
+        if self.__device_manager:
+            self.__device_manager.step()
         if self.robot is None or self.get_parameter('synchronization').value:
             return
         # Robot step
@@ -79,20 +84,12 @@ class WebotsNode(Node):
             self.robot = None
             sys.exit(0)
         # Update time
-        time = self.robot.getTime()
-        self.sec = int(time)
-        # rounding prevents precision issues that can cause problems with ROS timers
-        self.nanosec = int(round(1000 * (time - self.sec)) * 1.0e+6)
-        # Publish clock
         msg = Clock()
-        msg.clock.sec = self.sec
-        msg.clock.nanosec = self.nanosec
+        msg.clock = Time(seconds=self.robot.getTime()).to_msg()
         self.clockPublisher.publish(msg)
 
     def timer_callback(self):
         self.step(self.timestep)
-        if self.get_parameter('use_joint_state_publisher').value:
-            self.jointStatePublisher.publish()
 
     def step_callback(self, request, response):
         self.step(request.value)
@@ -101,7 +98,7 @@ class WebotsNode(Node):
 
     def start_device_manager(self, config=None):
         """
-        Start automatic ROSification of available Webots devices available in the robot.
+        Start automatic ROSification of Webots devices available in the robot.
 
         Kwargs:
             config (dict): Dictionary of properties in format::

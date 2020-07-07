@@ -185,7 +185,7 @@ Drive the robot around (with e.g. `teleop_twist_keyboard`) to discover as much o
 
 Once you are sattisfied with the result you can save the map as:
 ```
-ros2 run nav2_map_server map_saver -f $HOME/Pictures/map
+ros2 run nav2_map_server map_saver_cli -f $HOME/Pictures/map
 ```
 and load it later to use it with e.g. navigation (`t1` and `t2` represent 2 different terminals):
 ```

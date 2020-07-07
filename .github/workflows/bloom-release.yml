@@ -1,6 +1,8 @@
 name: Bloom Release
 
 on:
+  pull_request:  # test 
+    types: [opened, synchronize, reopened, ready_for_review]
   release:
     types: [created]
 
@@ -8,6 +10,11 @@ jobs:
   bloom-release:
     runs-on: ubuntu-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: recursive
       - name: bloom release
         uses: at-wat/bloom-release-action@v0.0.8
         with:
@@ -17,4 +24,6 @@ jobs:
           git_user: DavidMansolino
           git_email: David.Mansolino@cyberbotics.com
           release_repository_push_url: https://github.com/${{ github.repository }}-release.git
+          repository: webots_ros2_desktop
+          tag_and_release: true
           # open_pr: true

@@ -81,13 +81,11 @@ ros2 topic pub --once /initialpose geometry_msgs/msg/PoseWithCovarianceStamped '
 This will expose necessary topics:
 ```bash
 $ ros2 topic list -t
-/LDS_01 [sensor_msgs/msg/LaserScan]
-/clock [rosgraph_msgs/msg/Clock]
+/scan [sensor_msgs/msg/LaserScan]
 /cmd_vel [geometry_msgs/msg/Twist]
 /imu [sensor_msgs/msg/Imu]
 /joint_states [sensor_msgs/msg/JointState]
 /odom [nav_msgs/msg/Odometry]
-/parameter_events [rcl_interfaces/msg/ParameterEvent]
 /robot_description [std_msgs/msg/String]
 /tf [tf2_msgs/msg/TFMessage]
 /tf_static [tf2_msgs/msg/TFMessage]
@@ -110,7 +108,6 @@ For this robot you should expect the following topics:
 $ ros2 topic list -t
 /camera/camera_info [sensor_msgs/msg/CameraInfo]
 /camera/image_raw [sensor_msgs/msg/Image]
-/clock [rosgraph_msgs/msg/Clock]
 /cmd_vel [geometry_msgs/msg/Twist]
 /front_infrared_sensor [sensor_msgs/msg/Range]
 /front_left_infrared_sensor [sensor_msgs/msg/Range]
@@ -129,7 +126,6 @@ $ ros2 topic list -t
 /left_infrared_sensor [sensor_msgs/msg/Range]
 /left_ultrasonic_sensor [sensor_msgs/msg/Range]
 /odom [nav_msgs/msg/Odometry]
-/parameter_events [rcl_interfaces/msg/ParameterEvent]
 /rear_infrared_sensor [sensor_msgs/msg/Range]
 /rear_led [std_msgs/msg/Int32]
 /rear_left_infrared_sensor [sensor_msgs/msg/Range]
@@ -137,7 +133,6 @@ $ ros2 topic list -t
 /right_infrared_sensor [sensor_msgs/msg/Range]
 /right_ultrasonic_sensor [sensor_msgs/msg/Range]
 /robot_description [std_msgs/msg/String]
-/rosout [rcl_interfaces/msg/Log]
 /tf [tf2_msgs/msg/TFMessage]
 /tf_static [tf2_msgs/msg/TFMessage]
 ```

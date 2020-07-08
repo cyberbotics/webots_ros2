@@ -53,7 +53,8 @@ ros2 launch webots_ros2_core robot_launch.py \
 
 If you have [`turtlebot3`](https://github.com/ROBOTIS-GIT/turtlebot3) package installed you can start `cartographer` as:
 ```bash
-ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=true
+ros2 launch turtlebot3_cartographer cartographer.launch.py \
+    use_sim_time:=true
 ```
 
 Also, you can start `navigation2` using a custom map:
@@ -70,7 +71,7 @@ ros2 topic pub --once /initialpose geometry_msgs/msg/PoseWithCovarianceStamped '
     "pose": {
         "pose": {
             "position": { "x": 0.0, "y": 0.0, "z": 0.0 },
-            "orientation": { "x": 0.0, "y": 0.0, "z": 1.0, "w": 0.0 }
+            "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
         }
     }
 }'

@@ -51,6 +51,33 @@ ros2 launch webots_ros2_core robot_launch.py \
     world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/turtlebot3_burger_example.wbt
 ```
 
+If you have [`turtlebot3`](https://github.com/ROBOTIS-GIT/turtlebot3) package installed you can start `cartographer` as:
+```bash
+ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=true
+```
+
+Also, you can start `navigation2` using a custom map:
+```bash
+ros2 launch turtlebot3_navigation2 navigation2.launch.py \
+    use_sim_time:=true \
+    map:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/turtlebot3_burger_example_map.yaml
+```
+
+Make sure you set initial pose by clicking `2D Pose Estimate` button in RViz or by executing the following command:
+```bash
+ros2 topic pub --once /initialpose geometry_msgs/msg/PoseWithCovarianceStamped '{
+    "header": { "frame_id": "map" },
+    "pose": {
+        "pose": {
+            "position": { "x": 0.0, "y": 0.0, "z": 0.0 },
+            "orientation": { "x": 0.0, "y": 0.0, "z": 1.0, "w": 0.0 }
+        }
+    }
+}'
+```
+
+> On the [official Turtlebot3 website](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/#turtlebot3) you can find more information about [SLAM]((https://emanual.robotis.com/docs/en/platform/turtlebot3/ros2_slam/)) and [navigation](https://emanual.robotis.com/docs/en/platform/turtlebot3/ros2_navigation2/) configuration.
+
 This will expose necessary topics:
 ```bash
 $ ros2 topic list -t
@@ -76,17 +103,6 @@ ros2 launch webots_ros2_core robot_launch.py \
     executable:=webots_differential_drive_node \
     node_parameters:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/khepera4.yaml \
     world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/khepera4_example.wbt
-```
-
-If you have [`turtlebot3`](https://github.com/ROBOTIS-GIT/turtlebot3) package installed you can start `cartographer` as:
-```bash
-ros2 launch turtlebot3_cartographer cartographer.launch.py
-```
-
-or `navigation2` using a custom map:
-```bash
-ros2 launch turtlebot3_navigation2 navigation2.launch.py \
-    map:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/turtlebot3_burger_example_map.yaml
 ```
 
 For this robot you should expect the following topics:

@@ -76,7 +76,7 @@ ros2 topic pub --once /initialpose geometry_msgs/msg/PoseWithCovarianceStamped '
 }'
 ```
 
-> On the [official Turtlebot3 website](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/#turtlebot3) you can find more information about [SLAM]((https://emanual.robotis.com/docs/en/platform/turtlebot3/ros2_slam/) and [navigation](https://emanual.robotis.com/docs/en/platform/turtlebot3/ros2_navigation2/) configuration.
+> On the [official Turtlebot3 website](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/#turtlebot3) you can find more information about [SLAM](https://emanual.robotis.com/docs/en/platform/turtlebot3/ros2_slam/) and [navigation](https://emanual.robotis.com/docs/en/platform/turtlebot3/ros2_navigation2/) configuration.
 
 This will expose necessary topics:
 ```bash

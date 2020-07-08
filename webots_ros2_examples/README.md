@@ -78,6 +78,17 @@ ros2 launch webots_ros2_core robot_launch.py \
     world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/khepera4_example.wbt
 ```
 
+If you have [`turtlebot3`](https://github.com/ROBOTIS-GIT/turtlebot3) package installed you can start `cartographer` as:
+```bash
+ros2 launch turtlebot3_cartographer cartographer.launch.py
+```
+
+or `navigation2` using a custom map:
+```bash
+ros2 launch turtlebot3_navigation2 navigation2.launch.py \
+    map:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/turtlebot3_burger_example_map.yaml
+```
+
 For this robot you should expect the following topics:
 ```bash
 $ ros2 topic list -t

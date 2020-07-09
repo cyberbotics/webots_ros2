@@ -96,7 +96,7 @@ $ ros2 topic list -t
 
 ![Khepera IV in Webots](./assets/khepera4.png)
 
-Similarly to TurtleBot3 Burger you can start Khepera IV robot as well:
+Similarly to the TurtleBot3 Burger you can start the Khepera IV robot as well:
 ```bash
 ros2 launch webots_ros2_core robot_launch.py \
     executable:=webots_differential_drive_node \

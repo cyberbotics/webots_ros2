@@ -43,7 +43,7 @@ If you see import failures or some indications saying that `WEBOTS_HOME` is inco
 
 ![TurtleBot3 Burger in Webots](./assets/turtlebot3_burger.png)
 
-To run TurtleBot3 Burger simulation you can use the universal launcher:
+To run the TurtleBot3 Burger simulation you can use the universal launcher:
 ```bash
 ros2 launch webots_ros2_core robot_launch.py \
     executable:=webots_differential_drive_node \

@@ -13,7 +13,7 @@ The package includes a launch file that will start Webots and the node that inte
 ros2 launch webots_ros2_examples example.launch.py
 ```
 ![Thymio II in Webots](assets/ros_example.png)
-Webots will start with the Thymio II differential wheel robot and the ''webots_ros2_examples'' node will start.
+Webots will start with the Thymio II differential wheel robot and the `example_controller` node will start.
 This node acts as a Webots robot controller and publishes the value of the front distance-sensors of the robot on the `/sensor` topic and provides the `/motor` topic which can be used to change the speed of each wheel of the robot.
 
 To quit the simulation and stop the launch file, you simply need to close Webots.

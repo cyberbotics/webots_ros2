@@ -64,7 +64,7 @@ ros2 launch turtlebot3_navigation2 navigation2.launch.py \
     map:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/turtlebot3_burger_example_map.yaml
 ```
 
-Make sure you set initial pose by clicking `2D Pose Estimate` button in RViz or by executing the following command:
+Make sure you set the initial pose by clicking `2D Pose Estimate` button in RViz or by executing the following command:
 ```bash
 ros2 topic pub --once /initialpose geometry_msgs/msg/PoseWithCovarianceStamped '{
     "header": { "frame_id": "map" },

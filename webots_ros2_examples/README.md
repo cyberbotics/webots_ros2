@@ -51,7 +51,7 @@ ros2 launch webots_ros2_core robot_launch.py \
     world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/turtlebot3_burger_example.wbt
 ```
 
-If you have [`turtlebot3`](https://github.com/ROBOTIS-GIT/turtlebot3) package installed you can start `cartographer` as:
+If you have [`turtlebot3`](https://github.com/ROBOTIS-GIT/turtlebot3) package installed you can start `cartographer` as (you may need to run the command twice if it fails the first time):
 ```bash
 ros2 launch turtlebot3_cartographer cartographer.launch.py \
     use_sim_time:=true

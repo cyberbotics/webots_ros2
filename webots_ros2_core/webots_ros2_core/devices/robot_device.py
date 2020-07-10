@@ -19,6 +19,8 @@ import tempfile
 from rcl_interfaces.srv import SetParameters
 from rcl_interfaces.msg._parameter import Parameter
 from rclpy.parameter import ParameterType, ParameterValue
+from tf2_ros import StaticTransformBroadcaster
+from geometry_msgs.msg import TransformStamped
 from .device import Device
 
 
@@ -42,24 +44,33 @@ class RobotDevice(Device):
 
             dict: {
                 'publish_robot_description': bool,  # Whether to publish robot description (default True)
+                'publish_base_footprint': bool,     # Whether to publish `base_footprint` link (default False)
             }
 
     """
 
     def __init__(self, node, device_key, wb_device, params=None):
-        self._node = node
-        self._wb_device = wb_device
-        self._device_key = device_key
+        super().__init__(node, device_key, wb_device, params)
+        self.__base_footprint_broadcaster = None
 
         # Determine default params
         params = params or {}
-        self._publish_robot_description = params.setdefault('publish_robot_description', True)
+        self.__publish_robot_description = self._get_param('publish_robot_description', True)
+        self.__publish_base_footprint = self._get_param('publish_base_footprint', False)
 
         # Create robot_description publishers if needed
-        if self._publish_robot_description:
+        if self.__publish_robot_description:
             urdf = self._wb_device.getUrdf(self.__get_urdf_prefix())
             self.__save_urdf_to_file(urdf)
             self.__set_string_param('robot_state_publisher', 'robot_description', urdf)
+
+        if self.__publish_base_footprint:
+            self.__base_footprint_broadcaster = StaticTransformBroadcaster(self._node)
+            transform_stamped = TransformStamped()
+            transform_stamped.header.frame_id = self.__get_urdf_prefix() + 'base_link'
+            transform_stamped.child_frame_id = self.__get_urdf_prefix() + 'base_footprint'
+            transform_stamped.transform.rotation.w = 1.0
+            self.__base_footprint_broadcaster.sendTransform(transform_stamped)
 
     def __save_urdf_to_file(self, urdf):
         """Write URDF to a file for debugging purposes."""

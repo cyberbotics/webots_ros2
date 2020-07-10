@@ -11,3 +11,4 @@ webots_driver:
     wheel_radius: 0.033
     LDS-01.topic_name: /scan
     accelerometer+gyro.frame_id: imu_link
+    robot.publish_base_footprint: true

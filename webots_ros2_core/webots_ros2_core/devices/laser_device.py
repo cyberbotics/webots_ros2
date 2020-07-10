@@ -135,15 +135,16 @@ class LaserDevice(SensorDevice):
         topic_name = self.__get_indexed_topic_name(layer_i)
 
         # Publish the actual laser scan
-        msg = LaserScan()
-        msg.header.stamp = stamp
-        msg.header.frame_id = self.__get_indexed_frame_id(layer_i)
-        msg.angle_min = -0.5 * self._wb_device.getFov()
-        msg.angle_max = 0.5 * self._wb_device.getFov()
-        msg.angle_increment = self._wb_device.getFov() / (self._wb_device.getHorizontalResolution() - 1)
-        msg.scan_time = self._wb_device.getSamplingPeriod() / 1000.0
-        msg.range_min = self._wb_device.getMinRange() + self.__noise
-        msg.range_max = self._wb_device.getMaxRange() - self.__noise
-        msg.ranges = self._wb_device.getLayerRangeImage(layer_i)
-
-        self.__publishers[topic_name].publish(msg)
+        ranges = self._wb_device.getLayerRangeImage(layer_i)
+        if ranges:
+            msg = LaserScan()
+            msg.header.stamp = stamp
+            msg.header.frame_id = self.__get_indexed_frame_id(layer_i)
+            msg.angle_min = -0.5 * self._wb_device.getFov()
+            msg.angle_max = 0.5 * self._wb_device.getFov()
+            msg.angle_increment = self._wb_device.getFov() / (self._wb_device.getHorizontalResolution() - 1)
+            msg.scan_time = self._wb_device.getSamplingPeriod() / 1000.0
+            msg.range_min = self._wb_device.getMinRange() + self.__noise
+            msg.range_max = self._wb_device.getMaxRange() - self.__noise
+            msg.ranges = ranges
+            self.__publishers[topic_name].publish(msg)

@@ -1,7 +1,7 @@
 #VRML_SIM R2020b utf8
 WorldInfo {
   info [
-    "Simple TurtleBot3 Burger simulation controlled by a ROS node written in Python."
+    "Simple TurtleBot3 Burger simulation that can be controlled by a ROS."
   ]
   title "ROS2 simulation of the TurtleBot3 Burger robot"
 }

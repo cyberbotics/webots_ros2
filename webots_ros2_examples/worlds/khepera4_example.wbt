@@ -1,9 +1,9 @@
 #VRML_SIM R2020b utf8
 WorldInfo {
   info [
-    "The model of the Khepera robot"
+    "Simple Khepera IV simulation that can be controlled by a ROS."
   ]
-  title "Khepera"
+  title "ROS2 simulation of the Khepera IV robot"
 }
 Viewpoint {
   orientation 0.09220443157816254 0.9749953339162836 0.2021940692474003 3.93561

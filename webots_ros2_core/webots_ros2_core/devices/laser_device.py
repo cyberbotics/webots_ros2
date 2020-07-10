@@ -38,7 +38,11 @@ class LaserDevice(SensorDevice):
         wb_device (Lidar): Webots node of type Lidar.
 
     Kwargs:
-        params (dict): Inherited from `SensorDevice`
+        params (dict): Inherited from `SensorDevice` + the following::
+
+            dict: {
+                'noise': int,   # Maximum noise that the sensor can produce, used to compensate the maximum range (default 0.01)
+            }
 
     """
 

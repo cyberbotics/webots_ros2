@@ -128,6 +128,8 @@ ros2 launch webots_ros2_core robot_launch.py \
 ```
 This command will run Webots with [UR5](https://cyberbotics.com/doc/guide/ure) and publish joint state positions, transformations and robot description.
 
+> Do not get confused by `$(ros2 pkg prefix webots_ros2_universal_robot --share)` as it will simply return path to share directory of `webots_ros2_universal_robot` package. Alternatively, you can specify absolute path to `universal_robot_rviz.wbt` file.
+
 Similarly, you can try with more complex example like TIAGo++:
 ```
 ros2 launch webots_ros2_core robot_launch.py \

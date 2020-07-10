@@ -88,7 +88,6 @@ class WebotsDifferentialDriveNode(WebotsNode):
 
         # Initialize timer
         self._last_odometry_sample_time = self.robot.getTime()
-        self.create_timer(self.timestep / 1000, self._publish_odometry_data)
 
     def _cmd_vel_callback(self, twist):
         self.get_logger().info('Message received')
@@ -99,16 +98,21 @@ class WebotsDifferentialDriveNode(WebotsNode):
         self.left_motor.setVelocity(left_omega)
         self.right_motor.setVelocity(right_omega)
 
-    def _publish_odometry_data(self):
+    def step(self, ms):
+        super().step(ms)
+
         stamp = Time(seconds=self.robot.getTime()).to_msg()
 
         time_diff_s = self.robot.getTime() - self._last_odometry_sample_time
         left_wheel_ticks = self.left_wheel_sensor.getValue()
         right_wheel_ticks = self.right_wheel_sensor.getValue()
 
+        if time_diff_s == 0.0:
+            return
+
         # Calculate velocities
-        v_left_rad = (left_wheel_ticks - self._prev_left_wheel_ticks) / time_diff_s if time_diff_s > 0.0 else 0.0
-        v_right_rad = (right_wheel_ticks - self._prev_right_wheel_ticks) / time_diff_s if time_diff_s > 0.0 else 0.0
+        v_left_rad = (left_wheel_ticks - self._prev_left_wheel_ticks) / time_diff_s
+        v_right_rad = (right_wheel_ticks - self._prev_right_wheel_ticks) / time_diff_s
         v_left = v_left_rad * self._wheel_radius
         v_right = v_right_rad * self._wheel_radius
         v = (v_left + v_right) / 2

@@ -59,7 +59,7 @@ class SensorDevice(Device):
         if self._disable:
             return None
 
-        if self._node.robot.getTime() - self._last_update < self._timestep / 1e6:
+        if self._node.robot.getTime() - self._last_update < self._timestep / 1e3:
             return None
         self._last_update = self._node.robot.getTime()
 

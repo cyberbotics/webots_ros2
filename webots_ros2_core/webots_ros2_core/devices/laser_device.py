@@ -38,15 +38,20 @@ class LaserDevice(SensorDevice):
         wb_device (Lidar): Webots node of type Lidar.
 
     Kwargs:
-        params (dict): Inherited from `SensorDevice`
+        params (dict): Inherited from `SensorDevice` + the following::
+
+            dict: {
+                'noise': int,   # Maximum noise that the sensor can produce, used to compensate the maximum range (default 0.01)
+            }
 
     """
 
     def __init__(self, node, device_key, wb_device, params=None):
         super().__init__(node, device_key, wb_device, params)
-        self._publishers = {}
-        self._static_transforms = []
-        self._static_broadcaster = None
+        self.__publishers = {}
+        self.__static_transforms = []
+        self.__static_broadcaster = None
+        self.__noise = self._get_param('noise', 1e-2)
 
         # Exit if disabled
         if self._disable:
@@ -55,21 +60,21 @@ class LaserDevice(SensorDevice):
         # Create topics
         if wb_device.getNumberOfLayers() > 1:
             for layer_i in range(wb_device.getNumberOfLayers()):
-                self._publishers[self.__get_indexed_topic_name(layer_i)] = node.create_publisher(
+                self.__publishers[self.__get_indexed_topic_name(layer_i)] = node.create_publisher(
                     LaserScan,
                     self.__get_indexed_topic_name(layer_i),
                     1
                 )
         else:
-            self._publishers[self._topic_name] = node.create_publisher(LaserScan, self._topic_name, 1)
+            self.__publishers[self._topic_name] = node.create_publisher(LaserScan, self._topic_name, 1)
 
         # Publish transforms
-        self._static_broadcaster = StaticTransformBroadcaster(node)
+        self.__static_broadcaster = StaticTransformBroadcaster(node)
         stamp = Time(seconds=self._node.robot.getTime()).to_msg()
         for layer_i in range(wb_device.getNumberOfLayers()):
             static_transform = self.__create_transform(stamp, layer_i)
-            self._static_transforms.append(static_transform)
-        self._static_broadcaster.sendTransform(self._static_transforms)
+            self.__static_transforms.append(static_transform)
+        self.__static_broadcaster.sendTransform(self.__static_transforms)
 
     def step(self):
         stamp = super().step()
@@ -80,7 +85,7 @@ class LaserDevice(SensorDevice):
         should_publish = self._always_publish
         if not should_publish:
             n_subscribers = 0
-            for publisher in self._publishers.values():
+            for publisher in self.__publishers.values():
                 if publisher.get_subscription_count() > 0:
                     n_subscribers += 1
             if n_subscribers > 0:
@@ -130,15 +135,16 @@ class LaserDevice(SensorDevice):
         topic_name = self.__get_indexed_topic_name(layer_i)
 
         # Publish the actual laser scan
-        msg = LaserScan()
-        msg.header.stamp = stamp
-        msg.header.frame_id = self.__get_indexed_frame_id(layer_i)
-        msg.angle_min = -0.5 * self._wb_device.getFov()
-        msg.angle_max = 0.5 * self._wb_device.getFov()
-        msg.angle_increment = self._wb_device.getFov() / (self._wb_device.getHorizontalResolution() - 1)
-        msg.scan_time = self._wb_device.getSamplingPeriod() / 1000.0
-        msg.range_min = self._wb_device.getMinRange()
-        msg.range_max = self._wb_device.getMaxRange()
-        msg.ranges = self._wb_device.getLayerRangeImage(layer_i)
-
-        self._publishers[topic_name].publish(msg)
+        ranges = self._wb_device.getLayerRangeImage(layer_i)
+        if ranges:
+            msg = LaserScan()
+            msg.header.stamp = stamp
+            msg.header.frame_id = self.__get_indexed_frame_id(layer_i)
+            msg.angle_min = -0.5 * self._wb_device.getFov()
+            msg.angle_max = 0.5 * self._wb_device.getFov()
+            msg.angle_increment = self._wb_device.getFov() / (self._wb_device.getHorizontalResolution() - 1)
+            msg.scan_time = self._wb_device.getSamplingPeriod() / 1000.0
+            msg.range_min = self._wb_device.getMinRange() + self.__noise
+            msg.range_max = self._wb_device.getMaxRange() - self.__noise
+            msg.ranges = ranges
+            self.__publishers[topic_name].publish(msg)

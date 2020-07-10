@@ -121,7 +121,10 @@ def generate_launch_description():
         package='robot_state_publisher',
         node_executable='robot_state_publisher',
         output='screen',
-        parameters=[{'robot_description': initial_robot_description}],
+        parameters=[{
+            'robot_description': initial_robot_description,
+            'use_sim_time': True
+        }],
         condition=launch.conditions.IfCondition(publish_tf)
     )
 

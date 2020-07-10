@@ -43,7 +43,7 @@ class DeviceManager:
         self.__wb_devices = {}
 
         # Find devices
-        self.__devices['@robot'] = RobotDevice(node, '@robot', node.robot, self.__config.get('@robot', None))
+        self.__devices['robot'] = RobotDevice(node, 'robot', node.robot, self.__config.get('robot', None))
         for i in range(node.robot.getNumberOfDevices()):
             wb_device = node.robot.getDeviceByIndex(i)
             device_key = wb_device.getName()

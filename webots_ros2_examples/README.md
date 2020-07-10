@@ -59,6 +59,7 @@ ros2 launch turtlebot3_cartographer cartographer.launch.py \
 
 Also, you can start `navigation2` using a custom map:
 ```bash
+export TURTLEBOT3_MODEL='burger'
 ros2 launch turtlebot3_navigation2 navigation2.launch.py \
     use_sim_time:=true \
     map:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/turtlebot3_burger_example_map.yaml

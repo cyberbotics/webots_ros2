@@ -90,6 +90,7 @@ controller_server_rclcpp_node:
 local_costmap:
   local_costmap:
     ros__parameters:
+      unknown_cost_value: 0
       update_frequency: 15.0
       publish_frequency: 10.0
       global_frame: odom
@@ -127,6 +128,7 @@ local_costmap:
 global_costmap:
   global_costmap:
     ros__parameters:
+      unknown_cost_value: 0
       update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map

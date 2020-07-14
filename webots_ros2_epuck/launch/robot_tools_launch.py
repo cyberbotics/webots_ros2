@@ -44,6 +44,7 @@ def generate_launch_description():
             node_executable='rviz2',
             output='log',
             arguments=['--display-config=' + rviz_config],
+            parameters=[{'use_sim_time': use_sim_time}],
             condition=launch.conditions.IfCondition(use_rviz)
         )
     )

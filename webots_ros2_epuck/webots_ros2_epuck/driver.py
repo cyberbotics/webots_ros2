@@ -94,7 +94,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         laser_transform.transform.rotation.w = 1.0
         laser_transform.transform.translation.x = 0.0
         laser_transform.transform.translation.y = 0.0
-        laser_transform.transform.translation.z = 0.0
+        laser_transform.transform.translation.z = 0.033
 
         self.static_broadcaster = StaticTransformBroadcaster(self)
         self.static_broadcaster.sendTransform(laser_transform)

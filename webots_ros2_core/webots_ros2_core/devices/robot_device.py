@@ -80,7 +80,7 @@ class RobotDevice(Device):
 
     def __set_string_param(self, node, name, value):
         self.cli = self._node.create_client(SetParameters, self._node.get_namespace() + node + '/set_parameters')
-        self.cli.wait_for_service(timeout_sec=5)
+        self.cli.wait_for_service(timeout_sec=20)
         req = SetParameters.Request()
         param_value = ParameterValue(string_value=value, type=ParameterType.PARAMETER_STRING)
         param = Parameter(name=name, value=param_value)

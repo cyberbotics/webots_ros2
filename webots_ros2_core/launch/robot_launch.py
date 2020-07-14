@@ -128,7 +128,8 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'robot_description': '<robot name=""><link name=""/></robot>',
-            'use_sim_time': use_sim_time
+            'use_sim_time': use_sim_time,
+            'publish_frequency': 20.0
         }],
         condition=launch.conditions.IfCondition(publish_tf)
     )

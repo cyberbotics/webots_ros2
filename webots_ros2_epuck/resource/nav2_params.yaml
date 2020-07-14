@@ -93,14 +93,14 @@ local_costmap:
   local_costmap:
     ros__parameters:
       unknown_cost_value: 0
-      update_frequency: 15.0
-      publish_frequency: 10.0
+      update_frequency: 5.0
+      publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_link
       use_sim_time: True
       rolling_window: true
-      width: 1
-      height: 1
+      width: 3
+      height: 3
       resolution: 0.01
       robot_radius: 0.04
       plugins: ["obstacle_layer", "inflation_layer"]

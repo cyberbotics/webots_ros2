@@ -19,7 +19,7 @@ from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile
 from nav_msgs.msg import OccupancyGrid
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import TransformStamped
-from tf2_ros import StaticTransformBroadcaster, TransformListener, Buffer
+from tf2_ros import TransformBroadcaster, TransformListener, Buffer
 from tf2_ros import LookupException, ConnectivityException, ExtrapolationException
 from builtin_interfaces.msg import Time
 from webots_ros2_core.math_utils import quaternion_to_euler
@@ -52,7 +52,7 @@ class SimpleMapper(Node):
                 history=HistoryPolicy.KEEP_LAST,
             )
         )
-        self.tf_publisher = StaticTransformBroadcaster(self)
+        self.tf_publisher = TransformBroadcaster(self)
 
         # Init laser related elements
         if fill_map_param.value:

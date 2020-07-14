@@ -38,6 +38,8 @@ controller_server:
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
+    movement_time_allowance: 20.0
+    required_movement_radius: 0.1
     controller_plugins: ["FollowPath"]
 
     # DWB parameters

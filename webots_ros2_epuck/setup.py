@@ -16,7 +16,9 @@ data_files.append(('share/' + package_name, [
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/epuck_world.wbt',
-    'worlds/.epuck_world.wbproj'
+    'worlds/.epuck_world.wbproj',
+    'worlds/rats_life_benchmark.wbt',
+    'worlds/.rats_life_benchmark.wbproj'
 ]))
 data_files.append(('share/' + package_name + '/protos', [
     'protos/E-puck_enu.proto',

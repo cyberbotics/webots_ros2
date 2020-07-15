@@ -92,7 +92,6 @@ controller_server_rclcpp_node:
 local_costmap:
   local_costmap:
     ros__parameters:
-      unknown_cost_value: 0
       update_frequency: 5.0
       publish_frequency: 2.0
       global_frame: odom
@@ -130,8 +129,8 @@ local_costmap:
 global_costmap:
   global_costmap:
     ros__parameters:
-      update_frequency: 10.0
-      publish_frequency: 10.0
+      update_frequency: 5.0
+      publish_frequency: 5.0
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: True
@@ -168,7 +167,7 @@ planner_server:
     planner_plugins: ["GridBased"]
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
-      tolerance: 0.05
+      tolerance: 0.1
       use_astar: true
       allow_unknown: true
 

@@ -7,8 +7,8 @@ WorldInfo {
 }
 DEF VIEWPOINT Viewpoint {
   fieldOfView 0.755398
-  orientation 1 0 0 4.71238898038469
-  position -0.0017889975810269877 2.1232536250648035 0.03630472791755642
+  orientation 0.8842131228868465 -0.41635272789140376 -0.211701580750067 5.239441352724921
+  position 0.29036932345990035 1.061139273653049 0.7003535007080708
   near 0.01
 }
 TexturedBackground {
@@ -86,6 +86,12 @@ DEF W008 LegoWall {
   translation -0.054 0.024 -0.028
   rotation 0 1 0 1.5708
   name "LEGO wall(21)"
+  textureUrl []
+}
+DEF W008 LegoWall {
+  translation 0.185 0.024 -0.027
+  rotation 0 1 0 1.5708
+  name "LEGO wall(27)"
   textureUrl []
 }
 DEF W008 LegoWall {

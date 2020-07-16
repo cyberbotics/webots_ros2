@@ -12,7 +12,8 @@ data_files.append(('share/ament_index/resource_index/packages', [
 data_files.append(('share/' + package_name, [
     'launch/robot_launch.py',
     'launch/robot_tools_launch.py',
-    'launch/robot_with_tools_launch.py'
+    'launch/robot_with_tools_launch.py',
+    'launch/rats_life_launch.py'
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/epuck_world.wbt',
@@ -28,7 +29,10 @@ data_files.append(('share/' + package_name + '/protos/icons', glob('protos/icons
 data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 data_files.append(('share/' + package_name + '/resource', [
     'resource/all.rviz',
-    'resource/nav2_params.yaml'
+    'resource/nav2_params.yaml',
+    'resource/map_rats_life.pgm',
+    'resource/map_rats_life.yaml',
+    'resource/nav2_rats_life.yaml'
 ]))
 data_files.append(('share/' + package_name, [
     'package.xml'

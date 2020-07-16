@@ -1,4 +1,4 @@
-image: rats_life_benchmark.pgm
+image: map_rats_life.pgm
 mode: trinary
 resolution: 0.01
 origin: [-1.5, -1.5, 0]

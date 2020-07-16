@@ -48,6 +48,7 @@ DISTANCE_SENSOR_ANGLE = [
 
 DEVICE_CONFIG = {
     'camera': {'topic_name': ''},
+    'robot': {'publish_base_footprint': True},
     'ps0': {'always_publish': True},
     'ps1': {'always_publish': True},
     'ps2': {'always_publish': True},

@@ -49,7 +49,7 @@ def generate_launch_description():
         launch_arguments=[
             ('map', map),
             ('use_sim_time', use_sim_time),
-            ('params', os.path.join(package_dir, 'resource', 'nav2_rats_life.yaml'))
+            ('params_file', os.path.join(package_dir, 'resource', 'nav2_rats_life.yaml'))
         ]
     )
 

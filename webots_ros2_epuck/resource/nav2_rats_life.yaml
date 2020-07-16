@@ -83,7 +83,7 @@ controller_server:
     use_sim_time: True
     controller_frequency: 20.0
     min_x_velocity_threshold: 0.0001
-    min_y_velocity_threshold: 0.5
+    min_y_velocity_threshold: 0.0001
     min_theta_velocity_threshold: 0.001
     movement_time_allowance: 20.0
     required_movement_radius: 0.1
@@ -111,19 +111,19 @@ controller_server:
       vy_samples: 5
       vtheta_samples: 20
       sim_time: 1.7
-      linear_granularity: 0.05
+      linear_granularity: 0.01
       angular_granularity: 0.025
       transform_tolerance: 1.5
       xy_goal_tolerance: 0.03
-      trans_stopped_velocity: 0.25
+      trans_stopped_velocity: 0.04
       short_circuit_trajectory_evaluation: True
       stateful: True
       critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      BaseObstacle.scale: 0.02
+      BaseObstacle.scale: 0.001
       PathAlign.scale: 32.0
-      PathAlign.forward_point_distance: 0.1
+      PathAlign.forward_point_distance: 0.0025
       GoalAlign.scale: 24.0
-      GoalAlign.forward_point_distance: 0.1
+      GoalAlign.forward_point_distance: 0.0025
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
       RotateToGoal.scale: 32.0
@@ -142,10 +142,10 @@ local_costmap:
       width: 1
       height: 1
       resolution: 0.01
-      robot_radius: 0.04
+      robot_radius: 0.035
       inflation_layer:
         cost_scaling_factor: 3.0
-        inflation_radius: 0.08
+        inflation_radius: 0.05
       obstacle_layer:
         enabled: True
       always_send_full_costmap: True
@@ -166,10 +166,10 @@ global_costmap:
   global_costmap:
     ros__parameters:
       use_sim_time: True
-      robot_radius: 0.04
+      robot_radius: 0.035
       inflation_layer:
         plugin: nav2_costmap_2d::InflationLayer
-        inflation_radius: 0.15
+        inflation_radius: 0.20
       obstacle_layer:
         enabled: True
       always_send_full_costmap: True

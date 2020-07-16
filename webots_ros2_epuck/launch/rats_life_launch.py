@@ -24,6 +24,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
+from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
@@ -62,10 +63,29 @@ def generate_launch_description():
         output='screen'
     )
 
+    initial_position = ExecuteProcess(
+        cmd=[
+            'ros2',
+            'topic',
+            'pub',
+            '--once',
+            '/initialpose',
+            'geometry_msgs/msg/PoseWithCovarianceStamped',
+            '{\
+                "header": { "frame_id": "map" },\
+                "pose": { "pose": {\
+                    "position": { "x": 0.005, "y": 0.0, "z": 0.0 },\
+                    "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }}\
+                }\
+            }'
+        ]
+    )
+
     return LaunchDescription([
         webots,
         nav2,
         rviz,
+        initial_position,
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='true',

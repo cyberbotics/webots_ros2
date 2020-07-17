@@ -119,7 +119,7 @@ poses:
     frame_id: odom
   pose:
     position:
-      x: 0.26
+      x: 0.23
       y: -0.2
       z: 0
     orientation:
@@ -133,22 +133,36 @@ poses:
     frame_id: odom
   pose:
     position:
-      x: 0.26
+      x: 0.23
       y: -0.2
       z: 0
     orientation:
       x: 0
       y: 0
-      z: 0
-      w: 1
+      z: 0.500
+      w: 0.866
 
 # Explore BLUE, rotate
 - header:
     frame_id: odom
   pose:
     position:
-      x: 0.26
-      y: -0.23
+      x: 0.23
+      y: -0.2
+      z: 0
+    orientation:
+      x: 0
+      y: 0
+      z: -0.707
+      w: 0.707
+
+# Explore BLUE, rotate
+- header:
+    frame_id: odom
+  pose:
+    position:
+      x: 0.23
+      y: -0.2
       z: 0
     orientation:
       x: 0
@@ -161,8 +175,8 @@ poses:
     frame_id: odom
   pose:
     position:
-      x: 0.26
-      y: -0.23
+      x: 0.23
+      y: -0.2
       z: 0
     orientation:
       x: 0
@@ -209,8 +223,36 @@ poses:
     orientation:
       x: 0
       y: 0
+      z: 1
+      w: 0
+
+# Explore, rotate
+- header:
+    frame_id: odom
+  pose:
+    position:
+      x: -0.1
+      y: -0.2
       z: 0
-      w: -1
+    orientation:
+      x: 0
+      y: 0
+      z: 0.500
+      w: 0.866
+
+# Explore, rotate
+- header:
+    frame_id: odom
+  pose:
+    position:
+      x: -0.1
+      y: 0
+      z: 0
+    orientation:
+      x: 0
+      y: 0
+      z: 1
+      w: 0
 
 # Rotate towards GREEN
 - header:
@@ -218,7 +260,7 @@ poses:
   pose:
     position:
       x: -0.1
-      y: 0.2
+      y: -0.2
       z: 0
     orientation:
       x: 0
@@ -251,8 +293,8 @@ poses:
     orientation:
       x: 0
       y: 0
-      z: 0
-      w: 1
+      z: 0.500
+      w: 0.866
 
 # Explore GREEN, rotate
 - header:
@@ -260,7 +302,35 @@ poses:
   pose:
     position:
       x: -0.1
-      y: -0.23
+      y: -0.2
+      z: 0
+    orientation:
+      x: 0
+      y: 0
+      z: 0.707
+      w: 0.707
+
+# Explore GREEN, rotate
+- header:
+    frame_id: odom
+  pose:
+    position:
+      x: -0.1
+      y: -0.2
+      z: 0
+    orientation:
+      x: 0
+      y: 0
+      z: 0.500
+      w: 0.866
+
+# Explore GREEN, rotate
+- header:
+    frame_id: odom
+  pose:
+    position:
+      x: -0.1
+      y: -0.2
       z: 0
     orientation:
       x: 0

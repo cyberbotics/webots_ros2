@@ -13,7 +13,8 @@ data_files.append(('share/' + package_name, [
     'launch/robot_launch.py',
     'launch/robot_tools_launch.py',
     'launch/robot_with_tools_launch.py',
-    'launch/rats_life_launch.py'
+    'launch/rats_life_launch.py',
+    'launch/rats_life_waypoints_launch.py'
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/epuck_world.wbt',

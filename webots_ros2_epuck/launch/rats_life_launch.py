@@ -17,6 +17,7 @@
 """Launch Rat's Life world with navigation."""
 
 import os
+import launch
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
@@ -42,7 +43,8 @@ def generate_launch_description():
             ('package', 'webots_ros2_epuck'),
             ('executable', 'driver'),
             ('world', os.path.join(package_dir, 'worlds', 'rats_life_benchmark.wbt')),
-        ]
+        ],
+        condition=launch.conditions.IfCondition(use_sim_time)
     )
 
     nav2 = IncludeLaunchDescription(
@@ -89,5 +91,6 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='true',
-            description='Use simulation (Webots) clock if true')
+            description='Use simulation (Webots) clock if true'
+        )
     ])

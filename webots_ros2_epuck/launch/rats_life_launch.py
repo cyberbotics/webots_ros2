@@ -33,7 +33,7 @@ def generate_launch_description():
 
     package_dir = get_package_share_directory('webots_ros2_epuck')
     nav2_launch_file_dir = os.path.join(get_package_share_directory('nav2_bringup'), 'launch')
-    map = os.path.join(package_dir, 'resource', 'map_rats_life.yaml')
+    nav2_map = os.path.join(package_dir, 'resource', 'map_rats_life.yaml')
 
     webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -50,7 +50,7 @@ def generate_launch_description():
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([nav2_launch_file_dir, '/bringup_launch.py']),
         launch_arguments=[
-            ('map', map),
+            ('map', nav2_map),
             ('use_sim_time', use_sim_time),
             ('params_file', os.path.join(package_dir, 'resource', 'nav2_rats_life.yaml'))
         ]

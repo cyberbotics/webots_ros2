@@ -18,6 +18,8 @@
 
 import os
 import launch
+import json
+from math import pi
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
@@ -26,318 +28,66 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from launch.actions import ExecuteProcess
+from webots_ros2_core.math_utils import euler_to_quaternion
 
 
-WAYPOINTS = '''
-poses:
-# Move near RED entrance
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.26
-      y: 0
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0
-      w: 1
+class WaypointCollection:
+    def __init__(self, frame_id='odom'):
+        self.__waypoints = {'poses': []}
+        self.__frame_id = frame_id
 
-# Rotate towards RED
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.26
-      y: 0
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0.707
-      w: 0.707
+    def add(self, position=None, orientation=None):
+        if orientation is not None:
+            quaternion = euler_to_quaternion(0, 0, orientation)
+            orientation = {'x': quaternion.x, 'y': quaternion.y, 'z': quaternion.z, 'w': quaternion.w}
+        if position is not None:
+            position = {'x': position[0], 'y': position[1], 'z': 0}
+        if position is None:
+            position = self.__waypoints['poses'][-1]['pose']['position']
+        if orientation is None:
+            orientation = self.__waypoints['poses'][-1]['pose']['orientation']
 
-# Move inside RED
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.26
-      y: 0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0.707
-      w: 0.707
+        self.__waypoints['poses'].append({
+            'header': {'frame_id': self.__frame_id},
+            'pose': {
+                'orientation': orientation,
+                'position': position
+            }
+        })
 
-# Explore RED, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.26
-      y: 0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0
-      w: 1
+    def export(self):
+        return json.dumps(self.__waypoints)
 
-# Explore RED, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.26
-      y: 0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 1
-      w: 0
 
-# Rotate towards BLUE
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.26
-      y: 0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: -0.707
-      w: 0.707
+def get_waypoints():
+    collection = WaypointCollection()
 
-# Move inside BLUE
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.23
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: -0.707
-      w: 0.707
+    collection.add(position=[0.26, 0], orientation=0)   # Move near RED entrance
+    collection.add(orientation=pi/2)                    # Rotate towards RED
+    collection.add(position=[0.26, 0.2])                # Move inside RED
+    collection.add(orientation=0)                       # Explore RED, rotate
+    collection.add(orientation=-pi)                     # Explore RED, rotate
+    collection.add(orientation=-pi/2)                   # Rotate towards BLUE
+    collection.add(position=[0.23, -0.2])               # Move inside BLUE
+    collection.add(orientation=0)                       # Explore BLUE, rotate
+    collection.add(orientation=pi/3)                    # Explore BLUE, rotate
+    collection.add(orientation=-pi/2)                   # Explore BLUE, rotate
+    collection.add(orientation=-2.7*pi)                 # Explore BLUE, rotate
+    collection.add(orientation=pi/2)                    # Rotate towards the hall
+    collection.add(position=[0.26, 0])                  # Go to the hall
+    collection.add(orientation=pi)                      # Rotate towards back
+    collection.add(position=[-0.1, 0])                  # Go to the GREEN entrance
+    collection.add(orientation=pi/2)                    # Explore hall, rotate
+    collection.add(orientation=pi/4)                    # Explore hall, rotate
+    collection.add(orientation=2/3*pi)                  # Explore hall, rotate
+    collection.add(orientation=-pi/2)                   # Rotate towards the GREEN
+    collection.add(position=[-0.1, -0.2])               # Move inside GREEN
+    collection.add(orientation=0)                       # Explore GREEN, rotate
+    collection.add(orientation=pi/4)                    # Explore GREEN, rotate
+    collection.add(orientation=-pi/2)                   # Explore GREEN, rotate
+    collection.add(orientation=3/4*pi)                  # Explore GREEN, rotate
 
-# Explore BLUE, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.23
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0.500
-      w: 0.866
-
-# Explore BLUE, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.23
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: -0.707
-      w: 0.707
-
-# Explore BLUE, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.23
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 1
-      w: 0
-
-# Rotate towards the hall
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.23
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0.707
-      w: 0.707
-
-# Go to the hall
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.26
-      y: 0
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0.707
-      w: 0.707
-
-# Rotate towards back
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: 0.26
-      y: 0
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 1
-      w: 0
-
-# Go to the GREEN entrance
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: -0.1
-      y: 0
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 1
-      w: 0
-
-# Explore, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: -0.1
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0.500
-      w: 0.866
-
-# Explore, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: -0.1
-      y: 0
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 1
-      w: 0
-
-# Rotate towards GREEN
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: -0.1
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: -0.707
-      w: 0.707
-
-# Move inside GREEN
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: -0.1
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: -0.707
-      w: 0.707
-
-# Explore GREEN, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: -0.1
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0.500
-      w: 0.866
-
-# Explore GREEN, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: -0.1
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0.707
-      w: 0.707
-
-# Explore GREEN, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: -0.1
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 0.500
-      w: 0.866
-
-# Explore GREEN, rotate
-- header:
-    frame_id: odom
-  pose:
-    position:
-      x: -0.1
-      y: -0.2
-      z: 0
-    orientation:
-      x: 0
-      y: 0
-      z: 1
-      w: 0
-'''
+    return collection.export()
 
 
 def generate_launch_description():
@@ -384,7 +134,7 @@ def generate_launch_description():
     )
 
     send_waypoints = ExecuteProcess(
-        cmd=[f'sleep 6 && ros2 action send_goal /FollowWaypoints nav2_msgs/action/FollowWaypoints "{WAYPOINTS}"'],
+        cmd=[f'sleep 6 && ros2 action send_goal /FollowWaypoints nav2_msgs/action/FollowWaypoints \'{get_waypoints()}\''],
         shell=True
     )
 

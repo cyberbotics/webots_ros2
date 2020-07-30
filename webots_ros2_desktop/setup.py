@@ -25,7 +25,7 @@ if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platfo
     if os.path.exists('webots') and os.path.isdir('webots'):
         shutil.rmtree('webots')
     # Get Webots archive
-    url = 'https://github.com/omichel/webots/releases/download/%s/' % webotsVersion
+    url = 'https://github.com/cyberbotics/webots/releases/download/%s/' % webotsVersion
     urllib.request.urlretrieve(url + archiveName,
                                os.path.join(os.path.dirname(__file__), archiveName))
     # Extract Webots archive
@@ -51,7 +51,7 @@ data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
     name=package_name,
-    version='0.0.2',
+    version='0.0.4',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.0 (2019-XX-YY)
+0.0.3 (2020-06-15)
 ------------------
 * Added an 'universal_robot_multiple' simulation and launch file.
 * Added an 'universal_robot_rviz' simulation and launch file.

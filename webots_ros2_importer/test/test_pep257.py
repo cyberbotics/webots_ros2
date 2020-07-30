@@ -21,5 +21,5 @@ import pytest
 @pytest.mark.linter
 @pytest.mark.pep257
 def test_pep257():
-    rc = main(argv=['.'])
+    rc = main(argv=['.', '--exclude', 'webots_ros2_importer/urdf2webots/'])
     assert rc == 0, 'Found code style errors / warnings'

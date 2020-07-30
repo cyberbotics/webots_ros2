@@ -2,17 +2,18 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.8221990659068354 0.5255900046094033 0.2185036454538335 0.9075969189617081
-  position 0.9294932020561176 1.6430336872756675 1.5416090793497057
+  orientation 0.9257832671737655 0.1541557482189013 0.34519754853147383 0.8988931244937147
+  position 0.6559513392402766 -1.7608228658453813 1.6440166130975518
 }
 TexturedBackground {
 }
 RectangleArena {
+  rotation 1 0 0 1.5708
   floorTileSize 0.25 0.25
   wallHeight 0.05
 }
 WoodenBox {
-  translation 0.243691 0.05 0.227558
+  translation 0.243691 0.05 0.057558
   name "wooden box 1"
   size 0.1 0.1 0.1
 }
@@ -22,14 +23,14 @@ WoodenBox {
   size 0.1 0.1 0.1
 }
 WoodenBox {
-  translation -0.0237151 0.05 -0.244088
+  translation -0.0237151 -0.27 0.055912
   name "wooden box 3"
   size 0.1 0.1 0.1
 }
 E-puck_enu {
-  translation -6.416711473723099e-08 -5.5993314385226894e-05 0.03662574800222727
-  rotation 1.6045138681486257e-05 0.7071072217063487 0.7071063404844298 3.141558813888621
-  controller "<extern>"
+  translation 0.0530459 0.00806403 0.0066257
+  rotation 1.99184e-07 -6.99915e-07 -1 -3.141545307179586
+  controller "void"
   version "2"
   camera_width 640
   camera_height 480
@@ -39,8 +40,4 @@ E-puck_enu {
   ]
 }
 DirectionalLight {
-  direction 0.5 -1 0.5
-  intensity 1.8
-  castShadows TRUE
-  castLensFlares TRUE
 }

@@ -113,8 +113,8 @@ class WebotsDifferentialDriveNode(WebotsNode):
             return
 
         # Calculate velocities
-        v_left_rad = (left_wheel_ticks - self._prev_left_wheel_ticks) / time_diff_s if time_diff_s > 0.0 else 0.0
-        v_right_rad = (right_wheel_ticks - self._prev_right_wheel_ticks) / time_diff_s if time_diff_s > 0.0 else 0.0
+        v_left_rad = (left_wheel_ticks - self._prev_left_wheel_ticks) / time_diff_s
+        v_right_rad = (right_wheel_ticks - self._prev_right_wheel_ticks) / time_diff_s
         v_left = v_left_rad * self._wheel_radius
         v_right = v_right_rad * self._wheel_radius
         v = (v_left + v_right) / 2

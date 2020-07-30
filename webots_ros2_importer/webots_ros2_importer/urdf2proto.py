@@ -20,7 +20,7 @@ import re
 import sys
 import tempfile
 
-from urdf2webots.importer import convert2urdf
+from webots_ros2_importer.urdf2webots.urdf2webots.importer import convert2urdf
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -54,7 +54,7 @@ def main(args=None, input=None):
     # look for package-relative file path and replace them
     urdfFile = file
     generatedFile = False
-    packages = re.findall('filename="package:\/\/([^\/]*)', content)
+    packages = re.findall(r'filename="package:\/\/([^\/]*)', content)
     for package in set(packages):  # do the replacement
         packagePath = ''
         try:

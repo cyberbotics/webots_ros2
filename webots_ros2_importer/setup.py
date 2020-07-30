@@ -10,13 +10,11 @@ data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
     name=package_name,
-    version='0.0.2',
-    packages=[package_name],
+    version='0.0.4',
+    packages=[package_name, package_name + '.urdf2webots.urdf2webots'],
     data_files=data_files,
     install_requires=[
-        'setuptools',
-        'urdf2webots',
-        'pycollada'
+        'setuptools'
     ],
     zip_safe=True,
     author='Cyberbotics',

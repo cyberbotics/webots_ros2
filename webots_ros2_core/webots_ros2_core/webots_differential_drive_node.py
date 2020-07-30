@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+
 from math import cos, sin
 import rclpy
 from rclpy.time import Time
@@ -58,7 +60,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
         if self._wheel_radius == 0 or self._wheel_distance == 0:
             self.get_logger().error('Parameters `wheel_distance` and `wheel_radius` have to greater than 0')
             self.destroy_node()
-            exit(1)
+            sys.exit(1)
         self.get_logger().info(
             f'Initializing differential drive node with wheel_distance = {self._wheel_distance} and ' +
             f'wheel_radius = {self._wheel_radius}'
@@ -111,8 +113,8 @@ class WebotsDifferentialDriveNode(WebotsNode):
             return
 
         # Calculate velocities
-        v_left_rad = (left_wheel_ticks - self._prev_left_wheel_ticks) / time_diff_s
-        v_right_rad = (right_wheel_ticks - self._prev_right_wheel_ticks) / time_diff_s
+        v_left_rad = (left_wheel_ticks - self._prev_left_wheel_ticks) / time_diff_s if time_diff_s > 0.0 else 0.0
+        v_right_rad = (right_wheel_ticks - self._prev_right_wheel_ticks) / time_diff_s if time_diff_s > 0.0 else 0.0
         v_left = v_left_rad * self._wheel_radius
         v_right = v_right_rad * self._wheel_radius
         v = (v_left + v_right) / 2

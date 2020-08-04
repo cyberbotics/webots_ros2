@@ -144,6 +144,7 @@ UR5e {
   translation 0 0.6 0
   rotation -0.5773502691896258 -0.5773502691896258 -0.5773502691896258 2.094395
   controller "<extern>"
+  supervisor TRUE
   selfCollision FALSE
   toolSlot [
     Robotiq3fGripper {
@@ -166,6 +167,7 @@ Robot {
       rotation 0 0.7071062811861719 0.7071072811865696 3.14159
       name "abbirb4600"
       controller "<extern>"
+      supervisor TRUE
       handSlot [
         Robotiq3fGripper {
           translation 0 0 -0.0100001

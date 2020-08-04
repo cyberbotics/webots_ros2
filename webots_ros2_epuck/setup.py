@@ -1,6 +1,7 @@
 """webots_ros2_epuck package setup file."""
 
 from setuptools import setup
+from glob import glob
 
 
 package_name = 'webots_ros2_epuck'
@@ -17,6 +18,12 @@ data_files.append(('share/' + package_name + '/worlds', [
     'worlds/epuck_world.wbt',
     'worlds/.epuck_world.wbproj'
 ]))
+data_files.append(('share/' + package_name + '/protos', [
+    'protos/E-puck_enu.proto',
+    'protos/E-puckDistanceSensor_enu.proto'
+]))
+data_files.append(('share/' + package_name + '/protos/icons', glob('protos/icons/*')))
+data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 data_files.append(('share/' + package_name + '/resource', [
     'resource/all.rviz',
     'resource/nav2_params.yaml'

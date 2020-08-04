@@ -17,36 +17,26 @@
 """Launch Webots and the controller."""
 
 import os
-
-import launch
-import launch_ros.actions
-
-from webots_ros2_core.utils import ControllerLauncher
-
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
-    # Webots
-    arguments = ['--mode=realtime', '--world=' +
-                 os.path.join(get_package_share_directory('webots_ros2_abb'),
-                              'worlds', 'abb_irb4600.wbt')]
-    webots = launch_ros.actions.Node(package='webots_ros2_core', node_executable='webots_launcher',
-                                     arguments=arguments, output='screen')
-    # Controller node
-    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
-    controller = ControllerLauncher(package='webots_ros2_abb',
-                                    node_executable='abb_driver',
-                                    parameters=[{'synchronization': synchronization}],
-                                    output='screen')
-    return launch.LaunchDescription([
-        webots,
-        controller,
-        # Shutdown launch when Webots exits.
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
-            )
+    package_dir = get_package_share_directory('webots_ros2_abb')
+
+    webots = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
         ),
+        launch_arguments=[
+            ('package', 'webots_ros2_abb'),
+            ('executable', 'abb_driver'),
+            ('world', os.path.join(package_dir, 'worlds', 'abb_irb4600.wbt')),
+        ]
+    )
+
+    return LaunchDescription([
+        webots
     ])

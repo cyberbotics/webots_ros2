@@ -22,7 +22,8 @@ for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
 launchers = [
     'launch/universal_robot.launch.py',
     'launch/universal_robot_multiple.launch.py',
-    'launch/universal_robot_rviz.launch.py'
+    'launch/universal_robot_rviz.launch.py',
+    'launch/universal_robot_rviz_dynamic.launch.py'
 ]
 
 data_files = []
@@ -31,7 +32,7 @@ data_files.append(('share/' + package_name, launchers))
 data_files.append(('share/' + package_name + '/worlds', worlds))
 data_files.append(('share/' + package_name + '/worlds/textures', textures))
 data_files.append(('share/' + package_name, ['package.xml']))
-
+data_files.append(('share/' + package_name + '/resource', ['resource/view_robot_dynamic.rviz']))
 
 setup(
     name=package_name,

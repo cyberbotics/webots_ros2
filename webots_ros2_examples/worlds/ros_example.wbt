@@ -30,4 +30,5 @@ DEF THYMIO2 Thymio2 {
   rotation 1 0 0 0
   controller "<extern>"
   controllerArgs ""
+  supervisor TRUE
 }

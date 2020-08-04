@@ -1,0 +1,14 @@
+webots_driver:
+  ros__parameters:
+    left_encoder: left wheel sensor
+    left_joint: left wheel motor
+    right_encoder: right wheel sensor
+    right_joint: right wheel motor
+    robot_base_frame: base_link
+    synchronization: false
+    use_joint_state_publisher: true
+    wheel_distance: 0.160
+    wheel_radius: 0.033
+    LDS-01.topic_name: /scan
+    accelerometer+gyro.frame_id: imu_link
+    robot.publish_base_footprint: true

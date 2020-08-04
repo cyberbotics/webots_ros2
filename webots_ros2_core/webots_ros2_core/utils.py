@@ -19,6 +19,7 @@
 import os
 import re
 import sys
+import argparse
 
 from typing import List
 from typing import Optional
@@ -115,6 +116,13 @@ def get_webots_version():
     with open(versionFile, 'r') as f:
         return f.read().replace('\n', '').strip()
     return None
+
+
+def get_node_name_from_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--webots-node-name', dest='webots_node_name', default='webots_driver', help='Name of your drive node')
+    args, _ = parser.parse_known_args()
+    return args.webots_node_name
 
 
 class ControllerLauncher(Node):

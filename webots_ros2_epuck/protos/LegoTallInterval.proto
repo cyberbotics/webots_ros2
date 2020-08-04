@@ -22,14 +22,14 @@ PROTO LegoTallInterval [
           roughness 0.3
         }
         geometry Box {
-            size 0.016 0.1 0.016
+            size 0.016 0.15 0.016
         }
       }
     ]
     name IS name
     model "LEGO interval"
     boundingObject Box {
-      size 0.016 0.1 0.016
+      size 0.016 0.15 0.016
     }
   }
 }

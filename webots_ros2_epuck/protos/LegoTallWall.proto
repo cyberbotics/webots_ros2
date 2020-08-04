@@ -22,7 +22,7 @@ PROTO LegoTallWall [
           roughness 0.3
         }
         geometry Box {
-            size 0.016 0.1 0.096
+            size 0.016 0.15 0.096
         }
       }
     ]
@@ -31,7 +31,7 @@ PROTO LegoTallWall [
     boundingObject Shape {
       appearance USE LEGO_WALL_APPERANCE
       geometry Box {
-        size 0.016 0.1 0.096
+        size 0.016 0.15 0.096
       }
     }
   }

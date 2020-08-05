@@ -24,6 +24,7 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
@@ -54,16 +55,33 @@ def generate_launch_description():
         launch_description_nodes.append(
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
-                    os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
+                    os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')
                 ),
-                launch_arguments={
-                    'map_subscribe_transient_local': 'true',
-                    'params_file': os.path.join(package_dir, 'resource', 'nav2_params.yaml'),
-                    'use_sim_time': use_sim_time
-                }.items(),
+                launch_arguments=[
+                    ('map', os.path.join(package_dir, 'resource', 'epuck_world_map.yaml')),
+                    ('use_sim_time', use_sim_time),
+                    ('params_file', os.path.join(package_dir, 'resource', 'nav2_rats_life.yaml'))
+                ],
                 condition=launch.conditions.IfCondition(use_nav)
             )
         )
+        launch_description_nodes.append(ExecuteProcess(
+            cmd=[
+                'ros2',
+                'topic',
+                'pub',
+                '--once',
+                '/initialpose',
+                'geometry_msgs/msg/PoseWithCovarianceStamped',
+                '{\
+                "header": { "frame_id": "map" },\
+                "pose": { "pose": {\
+                    "position": { "x": 0.005, "y": 0.0, "z": 0.0 },\
+                    "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }}\
+                }\
+            }'
+            ]
+        ))
     else:
         launch_description_nodes.append(LogInfo(msg='Navigation2 is not installed, navigation functionality is disabled'))
 

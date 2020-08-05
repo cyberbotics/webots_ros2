@@ -35,7 +35,9 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/nav2_params.yaml',
     'resource/map_rats_life.pgm',
     'resource/map_rats_life.yaml',
-    'resource/nav2_rats_life.yaml'
+    'resource/nav2_rats_life.yaml',
+    'resource/epuck_world_map.pgm',
+    'resource/epuck_world_map.yaml'
 ]))
 data_files.append(('share/' + package_name, [
     'package.xml'

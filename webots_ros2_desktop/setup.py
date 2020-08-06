@@ -35,6 +35,10 @@ if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platfo
     os.environ['WEBOTS_HOME'] = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                              'webots'))
 
+# If 'WEBOTS_HOME' not set check if it is installed
+if 'WEBOTS_HOME' not in os.environ and sys.platform == 'darwin' and os.path.isdir('/Applications/Webots.app'):
+    os.environ['WEBOTS_HOME'] = '/Applications/Webots.app'
+
 # Add Webots in the package
 if 'WEBOTS_HOME' in os.environ:
     for root, directories, files in os.walk(os.environ['WEBOTS_HOME']):

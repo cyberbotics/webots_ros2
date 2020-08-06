@@ -49,6 +49,8 @@ def get_webots_home():
         webotsHome = '/usr/local/webots'
     elif os.path.isdir('/snap/webots/current/usr/share/webots'):  # Linux snap install
         webotsHome = '/snap/webots/current/usr/share/webots'
+    elif os.path.isdir('/Applications/Webots.app'):  # macOS default install
+        webotsHome = '/Applications/Webots.app'
     elif os.path.isdir('C:\\Program Files\\Webots'):  # Windows default install
         webotsHome = 'C:\\Program Files\\Webots'
     elif os.path.isdir(os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'):  # Windows user install

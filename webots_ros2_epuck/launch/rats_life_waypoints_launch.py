@@ -98,7 +98,6 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     package_dir = get_package_share_directory('webots_ros2_epuck')
-    nav2_launch_file_dir = os.path.join(get_package_share_directory('nav2_bringup'), 'launch')
 
     webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -113,7 +112,9 @@ def generate_launch_description():
     )
 
     nav2 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([nav2_launch_file_dir, '/navigation_launch.py']),
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
+        ),
         launch_arguments=[
             ('map_subscribe_transient_local', 'true'),
             ('use_sim_time', use_sim_time),

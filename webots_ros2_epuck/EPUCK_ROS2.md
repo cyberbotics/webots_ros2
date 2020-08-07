@@ -85,11 +85,7 @@ In case you are not interested in covariance matrices, you can use `--no-arr` pa
 ros2 topic echo --no-arr /odom
 ```
 
-> Note that ROS uses [REP](https://www.ros.org/reps/rep-0103.html) convention (x-forward, y-left and z-up) while Webots inherited convention from [VRML](https://en.wikipedia.org/wiki/VRML) (x-right, y-up, z-backward).
-> Therefore, you will see translations in Webots as following <img src ="https://render.githubusercontent.com/render/math?math=x_{Webots} = -y_{ROS}" />, <img src ="https://render.githubusercontent.com/render/math?math=y_{Webots} = z_{ROS}" /> and <img src ="https://render.githubusercontent.com/render/math?math=z_{Webots} = -x_{ROS}" />.
-
-You can also visualise odometry in `rviz` :
-
+You can also visualise odometry in `rviz`:
 ``` 
 ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true
 ```

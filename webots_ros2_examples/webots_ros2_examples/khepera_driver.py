@@ -24,15 +24,6 @@ from webots_ros2_core.math_utils import interpolate_lookup_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
-"""
-ros2 launch webots_ros2_core robot_launch.py \
-    executable:=khepera_driver \
-    package:=webots_ros2_examples \
-    node_parameters:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/khepera4.yaml \
-    world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/khepera4_example.wbt
-"""
-
-
 SENSOR_DIST_FROM_CENTER = 0.1054
 
 

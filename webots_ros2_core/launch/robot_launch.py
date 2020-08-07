@@ -78,7 +78,7 @@ ARGUMENTS = [
     ),
     DeclareLaunchArgument(
         'use_sim_time',
-        description='Whether to the simulation time',
+        description='Whether to use the simulation (Webots) time',
         default_value='True'
     )
 ]
@@ -128,8 +128,7 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'robot_description': '<robot name=""><link name=""/></robot>',
-            'use_sim_time': use_sim_time,
-            'publish_frequency': 20.0
+            'use_sim_time': use_sim_time
         }],
         condition=launch.conditions.IfCondition(publish_tf)
     )

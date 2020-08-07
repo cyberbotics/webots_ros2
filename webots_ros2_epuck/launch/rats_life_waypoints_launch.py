@@ -32,9 +32,8 @@ from webots_ros2_core.math_utils import euler_to_quaternion
 
 
 class WaypointCollection:
-    """
-    Creates a list of Navigation2 compatibile waypoints out of [x, y, theta] parameters defined for the each point.
-    """
+    """Creates a list of Navigation2 compatibile waypoints out of [x, y, theta] parameters defined for the each point."""
+
     def __init__(self, frame_id='odom'):
         self.__waypoints = {'poses': []}
         self.__frame_id = frame_id
@@ -63,9 +62,7 @@ class WaypointCollection:
 
 
 def get_waypoints():
-    """
-    Add a list of waypoints to `WaypointCollection` and return Navigation2 compatible JSON string.
-    """
+    """Add a list of waypoints to `WaypointCollection` and return Navigation2 compatible JSON string."""
     collection = WaypointCollection()
 
     collection.add(position=[0, 0], orientation=0)      # Initial pose

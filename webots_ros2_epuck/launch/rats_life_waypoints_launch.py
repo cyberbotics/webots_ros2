@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch Rat's Life world with navigation."""
+"""Launch the Rat's Life world and move the robot autonomously through the world to map the environment."""
 
 import os
 import json

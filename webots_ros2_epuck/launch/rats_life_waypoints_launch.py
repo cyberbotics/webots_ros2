@@ -139,7 +139,8 @@ def generate_launch_description():
     )
 
     send_waypoints = ExecuteProcess(
-        cmd=[f'sleep 6 && ros2 action send_goal /FollowWaypoints nav2_msgs/action/FollowWaypoints \'{get_waypoints()}\''],
+        # The goal has to be sent once the simulation is up and running, therefore we wait 10s first
+        cmd=[f'sleep 10 && ros2 action send_goal /FollowWaypoints nav2_msgs/action/FollowWaypoints \'{get_waypoints()}\''],
         shell=True
     )
 

@@ -3,7 +3,7 @@ WorldInfo {
   info [
     "Simple e-puck simulation that can be controlled with ROS2."
   ]
-  title "ROS2 simulation of the Khepera IV robot"
+  title "ROS2 simulation of the e-puck robot"
 }
 Viewpoint {
   orientation 0.6855367379017815 -0.23290009931686192 -0.6897803452731746 0.9152992115107464

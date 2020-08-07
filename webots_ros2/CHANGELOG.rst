@@ -2,7 +2,7 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.0 (2019-XX-YY)
+0.0.3 (2020-06-15)
 ------------------
 * Updated to Webots R2020a
 

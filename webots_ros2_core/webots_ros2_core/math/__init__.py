@@ -1,4 +1,4 @@
-# Copyright 2015 Open Source Robotics Foundation, Inc.
+# Copyright 1996-2019 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,15 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""Test licenses in files."""
-
-from ament_copyright.main import main
-import pytest
-
-
-@pytest.mark.copyright
-@pytest.mark.linter
-def test_copyright():
-    rc = main(argv=['.', '--verbose'])
-    assert rc == 0, 'Found errors'

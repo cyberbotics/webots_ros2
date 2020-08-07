@@ -2,6 +2,6 @@
 Changelog for package webots_ros2_tiago
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.0 (2020-XX-YY)
+0.0.3 (2020-06-15)
 ------------------
 * Initial version

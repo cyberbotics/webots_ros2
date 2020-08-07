@@ -157,7 +157,7 @@ pose:
 ```
 
 By default, the navigation will use available in `/webots_ros2_epuck/resource/epuck_world_map.yaml`.
-To change the map you have to use `map` argument:
+To change the map you have to use the `map` argument:
 ```bash
 ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true nav:=true map:=/path/to/your/map.yaml
 ```

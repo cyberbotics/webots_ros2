@@ -32,6 +32,9 @@ from webots_ros2_core.math_utils import euler_to_quaternion
 
 
 class WaypointCollection:
+    """
+    Creates a list of Navigation2 compatibile waypoints out of [x, y, theta] parameters defined for the each point.
+    """
     def __init__(self, frame_id='odom'):
         self.__waypoints = {'poses': []}
         self.__frame_id = frame_id
@@ -60,6 +63,9 @@ class WaypointCollection:
 
 
 def get_waypoints():
+    """
+    Add a list of waypoints to `WaypointCollection` and return Navigation2 compatible JSON string.
+    """
     collection = WaypointCollection()
 
     collection.add(position=[0, 0], orientation=0)      # Initial pose
@@ -111,6 +117,7 @@ def generate_launch_description():
         condition=launch.conditions.IfCondition(use_sim_time)
     )
 
+    # Launch Navigation2 without a localization and without costmaps
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
@@ -137,6 +144,7 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time, 'fill_map': True}],
     )
 
+    # Send the waypoints to Navigation2 package once the corresponding node is ready.
     send_waypoints = ExecuteProcess(
         # The goal has to be sent once the simulation is up and running.
         # Therefore, we keep sending the goal until it is accepted.

@@ -46,6 +46,7 @@ def generate_launch_description():
         condition=launch.conditions.IfCondition(use_sim_time)
     )
 
+    # Launch complete Navigation2 with `amcl` (particle filter to track the pose of a robot)
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
         launch_arguments=[
@@ -64,6 +65,8 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Set initial position of the robot within the provided map.
+    # The initial position can be also be set in RViz2 menu `2D Pose Estimate`.
     initial_position = ExecuteProcess(
         cmd=[
             'ros2',

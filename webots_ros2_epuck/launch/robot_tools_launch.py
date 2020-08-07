@@ -36,6 +36,7 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('rviz', default=True)
     use_mapper = LaunchConfiguration('mapper', default=False)
     fill_map = LaunchConfiguration('fill_map', default=True)
+    map_filename = LaunchConfiguration('fill_map', default=os.path.join(package_dir, 'resource', 'epuck_world_map.yaml'))
 
     # Rviz node
     rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
@@ -58,9 +59,9 @@ def generate_launch_description():
                     os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')
                 ),
                 launch_arguments=[
-                    ('map', os.path.join(package_dir, 'resource', 'epuck_world_map.yaml')),
+                    ('map', map_filename),
                     ('use_sim_time', use_sim_time),
-                    ('params_file', os.path.join(package_dir, 'resource', 'nav2_rats_life.yaml'))
+                    ('params_file', os.path.join(package_dir, 'resource', 'nav2_params.yaml'))
                 ],
                 condition=launch.conditions.IfCondition(use_nav)
             )

@@ -15,7 +15,7 @@ ros2 launch webots_ros2_epuck rats_life_waypoints_launch.py use_sim_time:=true
 ```
 
 ## Navigation
-Navigation utilizes `navigation2` package and pre-built map.
+Navigation utilizes the `navigation2` package and pre-built map.
 To run the navigation, use the following command:
 ```bash
 ros2 launch webots_ros2_epuck rats_life_launch.py use_sim_time:=true

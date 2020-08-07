@@ -164,7 +164,7 @@ ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true nav:=true map:=/p
 
 ![Demo](./assets/nav2.gif)
 
-> This example will work properly only for [ROS2 Foxy Fitzroy](https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/).
+> This example will work properly only for [ROS2 Foxy Fitzroy](https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/) and later.
 
 
 ### Mapping

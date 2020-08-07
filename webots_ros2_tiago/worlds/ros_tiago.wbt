@@ -1,13 +1,14 @@
-#VRML_SIM R2020a utf8
+#VRML_SIM R2020b utf8
 WorldInfo {
   info [
     "Simple TIAGo Base simulation controlled by a ROS node written in Python."
   ]
   title "ROS2 simulation of the Tiago robot"
+  coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.7259861099678916 -0.6590060161538492 -0.19660935584737757 5.362622153709845
-  position 13.160963850734786 14.284547654468774 13.683900144385449
+  orientation 0.8774454875045773 -0.4622471420193795 -0.12812882639269818 5.671222802843113
+  position 6.738053321521064 12.147945440916212 16.540289271526188
 }
 TexturedBackground {
   texture "empty_office"
@@ -16,7 +17,9 @@ TexturedBackground {
 TiagoBase {
   rotation 0.5773509358554485 0.5773509358554485 0.5773489358556708 -2.094395307179586
   controller "<extern>"
-  controllerArgs ""
+  controllerArgs [
+    ""
+  ]
 }
 PottedTree {
   translation 0.53 0 4
@@ -237,8 +240,6 @@ Cabinet {
     "Shelf (1, 2, 3, 0)"
   ]
   handle NULL
-  primaryAppearance DarkParquetry {
-  }
 }
 Table {
   translation -3.2 0 2

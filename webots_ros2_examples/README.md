@@ -105,36 +105,11 @@ ros2 launch webots_ros2_core robot_launch.py \
     world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/khepera4_example.wbt
 ```
 
-For this robot you should expect the following topics:
+Or, if you want to have [`sensor_msgs/LaserScan`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/LaserScan.msg) topic you have to use a custom driver:
 ```bash
-$ ros2 topic list -t
-/camera/camera_info [sensor_msgs/msg/CameraInfo]
-/camera/image_raw [sensor_msgs/msg/Image]
-/cmd_vel [geometry_msgs/msg/Twist]
-/front_infrared_sensor [sensor_msgs/msg/Range]
-/front_left_infrared_sensor [sensor_msgs/msg/Range]
-/front_left_led [std_msgs/msg/Int32]
-/front_left_ultrasonic_sensor [sensor_msgs/msg/Range]
-/front_right_infrared_sensor [sensor_msgs/msg/Range]
-/front_right_led [std_msgs/msg/Int32]
-/front_right_ultrasonic_sensor [sensor_msgs/msg/Range]
-/front_ultrasonic_sensor [sensor_msgs/msg/Range]
-/ground_front_left_infrared_sensor [sensor_msgs/msg/Range]
-/ground_front_right_infrared_sensor [sensor_msgs/msg/Range]
-/ground_left_infrared_sensor [sensor_msgs/msg/Range]
-/ground_right_infrared_sensor [sensor_msgs/msg/Range]
-/imu [sensor_msgs/msg/Imu]
-/joint_states [sensor_msgs/msg/JointState]
-/left_infrared_sensor [sensor_msgs/msg/Range]
-/left_ultrasonic_sensor [sensor_msgs/msg/Range]
-/odom [nav_msgs/msg/Odometry]
-/rear_infrared_sensor [sensor_msgs/msg/Range]
-/rear_led [std_msgs/msg/Int32]
-/rear_left_infrared_sensor [sensor_msgs/msg/Range]
-/rear_right_infrared_sensor [sensor_msgs/msg/Range]
-/right_infrared_sensor [sensor_msgs/msg/Range]
-/right_ultrasonic_sensor [sensor_msgs/msg/Range]
-/robot_description [std_msgs/msg/String]
-/tf [tf2_msgs/msg/TFMessage]
-/tf_static [tf2_msgs/msg/TFMessage]
+ros2 launch webots_ros2_core robot_launch.py \
+    executable:=khepera_driver \
+    package:=webots_ros2_examples \
+    node_parameters:=$(ros2 pkg prefix webots_ros2_examples --share)/resource/khepera4.yaml \
+    world:=$(ros2 pkg prefix webots_ros2_examples --share)/worlds/khepera4_example.wbt
 ```

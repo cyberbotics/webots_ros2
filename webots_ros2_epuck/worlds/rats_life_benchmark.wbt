@@ -1,0 +1,362 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  info [
+    "Rat's life pattern"
+  ]
+  basicTimeStep 16
+}
+DEF VIEWPOINT Viewpoint {
+  fieldOfView 0.755398
+  orientation 0 1 0 0
+  position 0.04888615968422466 -0.06513819475041821 2.315488551212319
+  near 0.01
+}
+TexturedBackground {
+  texture "empty_office"
+}
+TexturedBackgroundLight {
+}
+DEF W008 LegoTallWall {
+  translation -0.198 -0.34 0.0699
+  rotation 0.5771752558508811 0.5774372559670209 0.5774382559674641 2.09426
+  name "LEGO wall(4)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.294 -0.34 0.0699
+  rotation 0.5771752558508811 0.5774372559670209 0.5774382559674641 2.09426
+  name "LEGO wall(3)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.215 0.268 0.0699
+  rotation -0.5774392558154635 0.5774372558145774 0.5771742556980638 -2.094265307179586
+  name "LEGO wall(6)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.119 0.268 0.0699
+  rotation 0.5771742556980638 0.5774372558145774 0.5774392558154635 2.09426
+  name "LEGO wall(14)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.023 0.268 0.0699
+  rotation -0.5774382559674643 0.577437255967021 0.5771752558508814 -2.094265307179586
+  name "LEGO wall(15)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation 0.073 0.268 0.0699
+  rotation -0.5774382559674643 0.577437255967021 0.5771752558508814 -2.094265307179586
+  name "LEGO wall(16)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation 0.169 0.268 0.0699
+  rotation 0.5771742556980638 0.5774372558145774 0.5774392558154635 2.09426
+  name "LEGO wall(17)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.31 0.268 0.0699
+  rotation 0.5771752558508811 0.5774372559670209 0.5774382559674641 2.09426
+  name "LEGO wall(13)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.07 -0.132 0.0699
+  rotation 0.5771752558508811 0.5774372559670209 0.5774382559674641 2.09426
+  name "LEGO wall(12)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation 0.026 -0.132 0.0699
+  rotation 0.5771752558508811 0.5774372559670209 0.5774382559674641 2.09426
+  name "LEGO wall(22)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation 0.121 -0.132 0.0699
+  rotation 0.5771752558508811 0.5774372559670209 0.5774382559674641 2.09426
+  name "LEGO wall(23)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.054 0.028 0.0699
+  rotation -0.5774382559674643 0.577437255967021 0.5771752558508814 -2.094265307179586
+  name "LEGO wall(21)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation 0.185 0.027 0.0699
+  rotation 0.5771749225682377 0.5774379225329546 0.5774379225329546 2.09426
+  name "LEGO wall(27)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.35 -0.3 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(2)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.35 -0.204 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(7)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.35 -0.108 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(8)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.35 -0.012 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(9)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.35 0.084 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(10)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation 0.241 0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(18)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation 0.241 0.036 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(25)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation 0.241 -0.06 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(26)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation 0.241 0.228 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(24)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.11 0.212 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(19)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.11 0.116 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(20)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.35 0.18 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(11)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.11 -0.3 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(1)"
+  textureUrl []
+}
+DEF W008 LegoTallWall {
+  translation -0.11 -0.204 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO wall(5)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.142 -0.34 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(1)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.126 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(4)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.142 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(5)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.158 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(6)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.174 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(7)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.19 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(8)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.334 0.028 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(9)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.35 0.236 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(11)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.35 0.252 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(15)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.318 0.028 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(10)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation 0.177 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(21)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation 0.193 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(23)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation 0.209 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(24)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation 0.225 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(25)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation 0.241 -0.132 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(26)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation 0.241 -0.116 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(27)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.318 0.028 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(22)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.11 0.044 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(14)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.11 0.028 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(16)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.126 0.028 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(17)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.142 0.028 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(18)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.158 0.028 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(19)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.174 0.028 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(20)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.11 0.06 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(13)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation 0.225 0.268 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(12)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.11 -0.148 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(3)"
+  textureUrl []
+}
+DEF I000 LegoTallInterval {
+  translation -0.126 -0.34 0.0699
+  rotation 1 0 0 1.571
+  name "LEGO interval(2)"
+  textureUrl []
+}
+Floor {
+  rotation 1 0 0 1.571
+  size 0.8 0.8
+  appearance Parquetry {
+    type "light strip"
+  }
+}
+E-puck_enu {
+  translation 0 -0.05 0.0066
+  rotation 0 0 1 3.14159
+  controller "<extern>"
+  version "2"
+  camera_width 640
+  camera_height 480
+  turretSlot [
+    Pi-puck {
+    }
+  ]
+  distance_sensor_numberOfRays 7
+}

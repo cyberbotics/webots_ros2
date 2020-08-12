@@ -75,6 +75,11 @@ ARGUMENTS = [
         'node_name',
         description='The name of the ROS node that interacts with Webots',
         default_value='webots_driver'
+    ),
+    DeclareLaunchArgument(
+        'use_sim_time',
+        description='Whether to use the simulation (Webots) time',
+        default_value='True'
     )
 ]
 
@@ -90,6 +95,7 @@ def generate_launch_description():
     node_parameters = LaunchConfiguration('node_parameters')
     robot_name = LaunchConfiguration('robot_name')
     node_name = LaunchConfiguration('node_name')
+    use_sim_time = LaunchConfiguration('use_sim_time')
 
     # Webots
     webots = WebotsLauncher(
@@ -116,14 +122,13 @@ def generate_launch_description():
     )
 
     # Robot state publisher
-    initial_robot_description = '<?xml version="1.0"?><robot name="dummy"><link name="base_link"></link></robot>'
     robot_state_publisher = Node(
         package='robot_state_publisher',
         node_executable='robot_state_publisher',
         output='screen',
         parameters=[{
-            'robot_description': initial_robot_description,
-            'use_sim_time': True
+            'robot_description': '<robot name=""><link name=""/></robot>',
+            'use_sim_time': use_sim_time
         }],
         condition=launch.conditions.IfCondition(publish_tf)
     )

@@ -48,6 +48,7 @@ DISTANCE_SENSOR_ANGLE = [
 
 DEVICE_CONFIG = {
     'camera': {'topic_name': ''},
+    'robot': {'publish_base_footprint': True},
     'ps0': {'always_publish': True},
     'ps1': {'always_publish': True},
     'ps2': {'always_publish': True},
@@ -94,7 +95,7 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         laser_transform.transform.rotation.w = 1.0
         laser_transform.transform.translation.x = 0.0
         laser_transform.transform.translation.y = 0.0
-        laser_transform.transform.translation.z = 0.0
+        laser_transform.transform.translation.z = 0.033
 
         self.static_broadcaster = StaticTransformBroadcaster(self)
         self.static_broadcaster.sendTransform(laser_transform)

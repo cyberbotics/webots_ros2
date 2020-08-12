@@ -1,0 +1,35 @@
+#VRML_SIM R2020b utf8
+# license: Copyright Cyberbotics Ltd. Licensed for use only with Webots.
+# license url: https://cyberbotics.com/webots_assets_license
+PROTO LegoTallInterval [
+  field SFVec3f translation 0 0.025 0
+  field SFRotation rotation 0 1 0 0
+  field SFString name "LEGO interval"
+  field MFString textureUrl "textures/lego_wall_template.png"
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    children [
+      DEF INTERVAL_SHAPE Shape {
+        appearance DEF LEGO_WALL_APPERANCE PBRAppearance {
+          baseColorMap ImageTexture {
+            url IS textureUrl
+            filtering 0
+          }
+          metalness 0
+          roughness 0.3
+        }
+        geometry Box {
+            size 0.016 0.15 0.016
+        }
+      }
+    ]
+    name IS name
+    model "LEGO interval"
+    boundingObject Box {
+      size 0.016 0.15 0.016
+    }
+  }
+}

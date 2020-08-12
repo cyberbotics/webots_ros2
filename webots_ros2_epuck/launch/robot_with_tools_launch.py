@@ -30,8 +30,8 @@ def generate_launch_description():
     use_nav = LaunchConfiguration('nav', default=False)
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_mapper = LaunchConfiguration('mapper', default=False)
-    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     synchronization = LaunchConfiguration('synchronization', default=False)
+    world = LaunchConfiguration('world', default='epuck_world.wbt')
 
     # Webots
     webots_launch = IncludeLaunchDescription(
@@ -39,7 +39,8 @@ def generate_launch_description():
             os.path.join(package_dir, 'robot_launch.py')
         ),
         launch_arguments={
-            'synchronization': synchronization
+            'synchronization': synchronization,
+            'use_sim_time': 'true'
         }.items()
     )
 
@@ -52,7 +53,8 @@ def generate_launch_description():
             'nav': use_nav,
             'rviz': use_rviz,
             'mapper': use_mapper,
-            'use_sim_time': use_sim_time
+            'use_sim_time': 'true',
+            'world': world
         }.items()
     )
 

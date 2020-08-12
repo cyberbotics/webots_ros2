@@ -6,6 +6,7 @@ WorldInfo {
   title "Universal Robot"
   basicTimeStep 16
   physicsDisableAngularThreshold 0.1
+  coordinateSystem "NUE"
   contactProperties [
     ContactProperties {
       bounce 0.1
@@ -19,8 +20,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.04630294711409016 0.9322711316823598 0.3587848577075709 3.2590686609455344
-  position -0.2670060041060901 3.1741085439061996 -2.804728849795446
+  orientation 0.7705300927920561 0.6226740963550141 0.13623636016252058 5.729848857580359
+  position -0.7767379794948933 1.9465947112734945 2.9609054715593004
   exposure 1.7
 }
 TexturedBackground {

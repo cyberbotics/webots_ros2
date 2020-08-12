@@ -12,21 +12,32 @@ data_files.append(('share/ament_index/resource_index/packages', [
 data_files.append(('share/' + package_name, [
     'launch/robot_launch.py',
     'launch/robot_tools_launch.py',
-    'launch/robot_with_tools_launch.py'
+    'launch/robot_with_tools_launch.py',
+    'launch/rats_life_launch.py',
+    'launch/rats_life_waypoints_launch.py'
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/epuck_world.wbt',
-    'worlds/.epuck_world.wbproj'
+    'worlds/.epuck_world.wbproj',
+    'worlds/rats_life_benchmark.wbt',
+    'worlds/.rats_life_benchmark.wbproj'
 ]))
 data_files.append(('share/' + package_name + '/protos', [
     'protos/E-puck_enu.proto',
-    'protos/E-puckDistanceSensor_enu.proto'
+    'protos/E-puckDistanceSensor_enu.proto',
+    'protos/LegoTallInterval.proto',
+    'protos/LegoTallWall.proto'
 ]))
 data_files.append(('share/' + package_name + '/protos/icons', glob('protos/icons/*')))
 data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 data_files.append(('share/' + package_name + '/resource', [
     'resource/all.rviz',
-    'resource/nav2_params.yaml'
+    'resource/nav2_params.yaml',
+    'resource/map_rats_life.pgm',
+    'resource/map_rats_life.yaml',
+    'resource/nav2_rats_life_waypoints.yaml',
+    'resource/epuck_world_map.pgm',
+    'resource/epuck_world_map.yaml'
 ]))
 data_files.append(('share/' + package_name, [
     'package.xml'

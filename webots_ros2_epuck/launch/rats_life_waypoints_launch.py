@@ -114,7 +114,10 @@ def generate_launch_description():
         condition=launch.conditions.IfCondition(use_sim_time)
     )
 
-    # Launch Navigation2 without a localization and without costmaps
+    # Launch Navigation2 without localization and without costmaps.
+    # As the launch file is intended for mapping comparison only (real vs. physical) we want strictly to follow the waypoints
+    # (without obstacle avoidance).
+    # This way, mapping quality is not compromised by different paths.
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')

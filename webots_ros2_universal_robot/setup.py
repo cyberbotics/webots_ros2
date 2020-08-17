@@ -37,7 +37,7 @@ data_files.append(('share/' + package_name + '/resource', ['resource/view_robot_
 setup(
     name=package_name,
     version='0.0.4',
-    packages=[package_name],
+    packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],
     zip_safe=True,

@@ -36,12 +36,11 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
         ),
-        launch_arguments=[
-            ('package', 'webots_ros2_universal_robot'),
-            ('executable', 'universal_robot'),
-            ('world', os.path.join(package_dir, 'worlds', 'universal_robot_rviz.wbt')),
-            ('publish_tf', 'false')
-        ]
+        launch_arguments={
+            'executable': 'webots_robotic_arm_node',
+            'world': os.path.join(package_dir, 'worlds', 'universal_robot.wbt'),
+            'publish_tf': 'false'
+        }.items()
     )
 
     # Copy .rviz config file and update path ro URDF file.

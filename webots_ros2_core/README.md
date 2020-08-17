@@ -210,7 +210,12 @@ ros2 launch webots_ros2_core robot_launch.py \
 Now, topics `/odom` and `/cmd` should be availabe, so you can read odometry data (e.g. visualize in RViz) and control the robot (with e.g. `teleop_twist_keyboard`).
 
 ##### Robotic Arm
-TODO...
+For robotic arm robots you should utilize `webots_robotic_arm_node` which exposes the following parameters:
+```python
+prefix  # prefix to be used for joints
+```
+
+This node will automatically publish the joint state and create an action server to perform trajectory following.
 
 ### Custom Launcher File and Driver
 In case a Webots device is not covered by the universal launcher or you prefer to create ROS interface differently you can build your ROS2 driver from scratch.

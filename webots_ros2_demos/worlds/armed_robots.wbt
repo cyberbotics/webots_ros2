@@ -148,14 +148,26 @@ UR5e {
   translation 0 0 0.6
   rotation -2.39745e-09 5.67193e-08 -1 1.5708
   controller "<extern>"
-  supervisor TRUE
   selfCollision FALSE
   toolSlot [
     Robotiq3fGripper {
     }
   ]
 }
-Robot {
+Irb4600-40 {
+  translation 1.48 0.58 -0.02
+  rotation 0 0 1 3.14159
+  name "abbirb4600"
+  controller "<extern>"
+  handSlot [
+    Robotiq3fGripper {
+      translation 0 0 -0.0100001
+      rotation 0 0.70710528118436 0.707108281185553 3.14159
+    }
+  ]
+  staticBase TRUE
+}
+Solid {
   translation 1.48 0.58 0.005
   rotation 1 0 0 1.5708
   children [
@@ -166,24 +178,10 @@ Robot {
         size 0.6 0.01 0.6
       }
     }
-    Irb4600-40 {
-      translation 0 -0.0250046 0
-      rotation 0 0.7071062811861719 0.7071072811865696 3.14159
-      name "abbirb4600"
-      controller "<extern>"
-      supervisor TRUE
-      handSlot [
-        Robotiq3fGripper {
-          translation 0 0 -0.0100001
-          rotation 0 0.70710528118436 0.707108281185553 3.14159
-        }
-      ]
-    }
   ]
   name "box(1)"
   model "box"
   boundingObject USE BOX
-  controller ""
 }
 ConveyorBelt {
   translation 1.37 -0.82 0

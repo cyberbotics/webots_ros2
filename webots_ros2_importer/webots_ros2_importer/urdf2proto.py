@@ -39,6 +39,14 @@ def main(args=None, input=None):
     parser.add_argument('--disable-mesh-optimization', dest='disableMeshOptimization',
                         action='store_true', default=False,
                         help='If set, the duplicated vertices are not removed from the meshes.')
+    parser.add_option('--multi-file', dest='enableMultiFile', action='store_true', default=False,
+                      help='If set, the mesh files are exported as separated PROTO files')
+    parser.add_option('--static-base', dest='staticBase', action='store_true', default=False,
+                      help='If set, the base link will have the option to be static (disable physics)')
+    parser.add_option('--tool-slot', dest='toolSlot', default=None,
+                      help='Specify the link that you want to add a tool slot to (exact link name from urdf)')
+    parser.add_option('--rotation', dest='initRotation', default='0 1 0 0',
+                      help='Set the rotation field of your PROTO file.)')
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
     arguments, unknown = parser.parse_known_args()
     file = os.path.abspath(input) if input is not None else os.path.abspath(arguments.inFile)
@@ -73,7 +81,11 @@ def main(args=None, input=None):
                  outFile=arguments.outFile,
                  normal=arguments.normal,
                  boxCollision=arguments.boxCollision,
-                 disableMeshOptimization=arguments.disableMeshOptimization)
+                 disableMeshOptimization=arguments.disableMeshOptimization,
+                 enableMultiFile=arguments.enableMultiFile,
+                 staticBase=arguments.staticBase,
+                 toolSlot=arguments.toolSlot,
+                 initRotation=arguments.initRotation)
     # remove temporary file
     if generatedFile:
         os.remove(urdfFile)

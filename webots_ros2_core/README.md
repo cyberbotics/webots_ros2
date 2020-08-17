@@ -8,7 +8,7 @@ This package contains essential building blocks for running Webots simulation, s
 
 The `webots_launcher` is a custom ROS action used to start Webots from your launch file, it has the following parameters:
 - `world`: defines the path to the simulation world file to load.
-- `mode`: defines the simulation mode (pause, realtime, run or fast) with which Webots should be started (realtime is set by default). 
+- `mode`: defines the simulation mode (pause, realtime, run or fast) with which Webots should be started (realtime is set by default).
 - `gui`: if set, Webots starts with a minimal graphical user interface, this is useful to use on a server for example.
 
 <details><summary>`webots_launcher` usage example</summary>
@@ -100,8 +100,8 @@ It creates the interface between Webots and ROS and publishes the clock topic.
 ### utils
 
 This module provides the following utility functions:
-- `get_webots_home`: returns the path to the Webots installation directory. None is returned if Webots is not found. 
-- `get_webots_version`: returns the version of Webots as a string. 
+- `get_webots_home`: returns the path to the Webots installation directory. None is returned if Webots is not found.
+- `get_webots_version`: returns the version of Webots as a string.
 - `append_webots_lib_to_path`: adds the Webots `lib` folder to the library path.
 - `append_webots_python_lib_to_path`: adds the Webots Python API to the Python path.
 
@@ -121,7 +121,7 @@ Therefore, in the further text, we will explain how to create ROS2 node that tig
 
 ### Universal Launcher
 In `webots_ros2_core` package, we provide `robot_launch.py` launcher that should automatically create ROS2 services and topics based on Webots' robot description (popularly called [ROSification](https://roscon.ros.org/2013/wp-content/uploads/2013/06/ROSCon2013_rosify_robot.pdf)).
-It is enough to provide path to Webots world file with the robot inside, for example: 
+It is enough to provide path to Webots world file with the robot inside, for example:
 ```
 ros2 launch webots_ros2_core robot_launch.py \
     world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_rviz.wbt
@@ -208,6 +208,9 @@ ros2 launch webots_ros2_core robot_launch.py \
     world:=$(ros2 pkg prefix webots_ros2_tiago --share)/worlds/tiago++_example.wbt
 ```
 Now, topics `/odom` and `/cmd` should be availabe, so you can read odometry data (e.g. visualize in RViz) and control the robot (with e.g. `teleop_twist_keyboard`).
+
+##### Robotic Arm
+TODO...
 
 ### Custom Launcher File and Driver
 In case a Webots device is not covered by the universal launcher or you prefer to create ROS interface differently you can build your ROS2 driver from scratch.

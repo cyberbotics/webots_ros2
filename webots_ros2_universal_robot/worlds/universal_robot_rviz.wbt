@@ -6,7 +6,6 @@ WorldInfo {
   title "Universal Robot"
   basicTimeStep 16
   physicsDisableAngularThreshold 0.1
-  coordinateSystem "NUE"
   contactProperties [
     ContactProperties {
       bounce 0.1
@@ -20,27 +19,29 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.7705300927920561 0.6226740963550141 0.13623636016252058 5.729848857580359
-  position -0.7767379794948933 1.9465947112734945 2.9609054715593004
+  orientation -0.10559499156093832 0.5428940210455356 0.8331361111308614 3.265844913858162
+  position -0.5465436934084787 3.445363062523589 2.17791591307574
   exposure 1.7
 }
 TexturedBackground {
   texture "factory"
 }
 Floor {
+  rotation 1 0 0 1.5707963267948966
   size 20 20
   appearance ThreadMetalPlate {
   }
 }
 UR5e {
-  translation 0 0.6 0
-  rotation -0.9831056944488314 -0.1294279597735375 -0.1294279597735375 1.58783
+  translation 0 0 0.6
+  rotation 0 0 -1 0.2617981309082
   name "base_link"
   controller "<extern>"
   supervisor TRUE
 }
 DEF world SolidBox {
-  translation 0 0.3 0
+  translation 0 0 0.3
+  rotation 1 0 0 1.5707963267948966
   size 0.3 0.6 0.3
   appearance GalvanizedMetal {
     textureTransform TextureTransform {

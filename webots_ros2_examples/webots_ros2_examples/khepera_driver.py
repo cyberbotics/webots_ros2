@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""ROS2 e-puck driver."""
+"""ROS2 khepera driver."""
 
 from math import pi
 import rclpy
@@ -66,7 +66,7 @@ DEVICE_CONFIG = {
 }
 
 
-class EPuckDriver(WebotsDifferentialDriveNode):
+class KheperaDriver(WebotsDifferentialDriveNode):
     def __init__(self, args):
         super().__init__(
             'khepera_iv_driver',
@@ -144,9 +144,9 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 def main(args=None):
     rclpy.init(args=args)
 
-    epuck_controller = EPuckDriver(args=args)
+    khepera_controller = KheperaDriver(args=args)
 
-    rclpy.spin(epuck_controller)
+    rclpy.spin(khepera_controller)
     rclpy.shutdown()
 
 

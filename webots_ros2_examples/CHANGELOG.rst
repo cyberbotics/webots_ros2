@@ -4,7 +4,7 @@ Changelog for package webots_ros2_examples
 
 1.0.0 (2020-XX-YY)
 ------------------
-* TODO
+* Added a khepera_driver node
 
 0.0.3 (2020-06-15)
 ------------------

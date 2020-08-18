@@ -15,24 +15,17 @@
 
 import rclpy
 from webots_ros2_core.webots_node import WebotsNode
-from webots_ros2_core.joint_state_publisher import JointStatePublisher
 from webots_ros2_core.trajectory_follower import TrajectoryFollower
 from webots_ros2_core.utils import get_node_name_from_args
 
 
 class WebotsRoboticArmNode(WebotsNode):
     def __init__(self, name, args, prefix=''):
-        super().__init__(name, args)
+        super().__init__(name, args, enableJointState=True)
         self.prefix_param = self.declare_parameter('prefix', prefix)
-        self.jointStatePublisher = JointStatePublisher(self.robot, self.prefix_param.value, self)
         self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=self.prefix_param.value)
 
         self.get_logger().info('Initializing robotic arm node with prefix = "%s"' % self.prefix_param.value)
-
-    def step(self, ms):
-        super().step(ms)
-        # update joint state and trajectory follower
-        self.jointStatePublisher.publish()
 
 
 def main(args=None):

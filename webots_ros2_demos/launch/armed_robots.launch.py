@@ -40,8 +40,8 @@ def generate_launch_description():
                                        node_namespace='abb',
                                        parameters=[{'synchronization': synchronization}],
                                        output='screen')
-    Ure5controller = ControllerLauncher(package='webots_ros2_universal_robot',
-                                        node_executable='universal_robot',
+    Ure5controller = ControllerLauncher(package='webots_ros2_core',
+                                        node_executable='webots_robotic_arm_node',
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
                                         arguments=['--webots-robot-name=UR5e'],

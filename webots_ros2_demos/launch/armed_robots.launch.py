@@ -32,8 +32,8 @@ def generate_launch_description():
 
     # Controller nodes
     synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
-    AbbController = ControllerLauncher(package='webots_ros2_abb',
-                                       node_executable='abb_driver',
+    AbbController = ControllerLauncher(package='webots_ros2_core',
+                                       node_executable='webots_robotic_arm_node',
                                        # this argument should match the 'name' field
                                        # of the robot in Webots
                                        arguments=['--webots-robot-name=abbirb4600'],

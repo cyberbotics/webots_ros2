@@ -23,11 +23,9 @@ from webots_ros2_core.utils import get_node_name_from_args
 class WebotsRoboticArmNode(WebotsNode):
     def __init__(self, name, args, prefix=''):
         super().__init__(name, args)
-        super().__init__('abb_driver', args=args)
-        prefix_param = self.declare_parameter('prefix', prefix)
-        self.jointStatePublisher = JointStatePublisher(self.robot, prefix_param.value, self)
-        self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=prefix_param.value)
-        self.jointStateTimer = self.create_timer(0.001 * self.timestep, self.joint_state_callback)
+        self.prefix_param = self.declare_parameter('prefix', prefix)
+        self.jointStatePublisher = JointStatePublisher(self.robot, self.prefix_param.value, self)
+        self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=self.prefix_param.value)
 
         self.get_logger().info('Initializing robotic arm node with prefix = "%s"' % self.prefix_param.value)
 

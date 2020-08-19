@@ -6,7 +6,6 @@ import sys
 import tarfile
 import urllib.request
 
-from shutil import copyfile
 from setuptools import setup
 
 package_name = 'webots_ros2_desktop'

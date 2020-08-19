@@ -39,7 +39,6 @@ def generate_launch_description():
         launch_arguments={
             'executable': 'webots_robotic_arm_node',
             'world': os.path.join(package_dir, 'worlds', 'universal_robot.wbt'),
-            'publish_tf': 'false'
         }.items()
     )
 

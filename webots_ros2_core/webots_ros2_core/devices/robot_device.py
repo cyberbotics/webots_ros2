@@ -74,7 +74,7 @@ class RobotDevice(Device):
 
     def __save_urdf_to_file(self, urdf):
         """Write URDF to a file for debugging purposes."""
-        filename = 'webots_robot_{}.urdf'.format(self._node.robot.getName())
+        filename = 'webots_robot_{}.urdf'.format(self._node.robot.getName().replace(' ', '_').replace('/', '_'))
         with open(os.path.join(tempfile.gettempdir(), filename), 'w') as urdf_file:
             urdf_file.write(urdf)
 

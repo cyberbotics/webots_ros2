@@ -34,7 +34,11 @@ def main(args=None):
     webots_robot_name = get_node_name_from_args()
     robotic_arm = WebotsRoboticArmNode(webots_robot_name, args=args)
     robotic_arm.start_device_manager()
-    rclpy.spin(robotic_arm)
+
+    # Use a MultiThreadedExecutor to enable processing goals concurrently
+    executor = rclpy.executors.MultiThreadedExecutor()
+
+    rclpy.spin(robotic_arm, executor=executor)
     rclpy.shutdown()
 
 

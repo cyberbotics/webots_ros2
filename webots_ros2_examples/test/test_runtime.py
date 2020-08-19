@@ -18,6 +18,7 @@ import time
 import rclpy
 import unittest
 import launch
+import launch_testing.actions
 from webots_ros2_core.utils import ControllerLauncher
 from webots_ros2_core.webots_launcher import WebotsLauncher
 from ament_index_python.packages import get_package_share_directory
@@ -106,6 +107,7 @@ def generate_test_description():
                 on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
             )
         ),
+        launch_testing.actions.ReadyToTest()
     ])
 
 

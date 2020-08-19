@@ -215,7 +215,7 @@ For robotic arm robots you should utilize `webots_robotic_arm_node` which expose
 prefix  # prefix to be used for joints
 ```
 
-This node will automatically publish the joint state and create an action server to perform trajectory following.
+This node will automatically publish the joints state and create an action server to perform trajectory following.
 
 ### Custom Launcher File and Driver
 In case a Webots device is not covered by the universal launcher or you prefer to create ROS interface differently you can build your ROS2 driver from scratch.

@@ -77,7 +77,7 @@ def generate_test_description():
     """
     Launch decription configuration.
     To run the tests you can use either `launch_test` directly as:
-    $ launch_test webots_ros2_examples/test/test_runtime.py
+    $ launch_test src/webots_ros2/webots_ros2_examples/test/test_runtime.py
     or `colcon`:
     $ colcon test --packages-select webots_ros2_examples
     The testing procedure is based on `launch_test`:

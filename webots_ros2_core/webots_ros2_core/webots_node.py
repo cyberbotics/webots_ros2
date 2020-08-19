@@ -42,7 +42,7 @@ except Exception as e:
 
 
 class WebotsNode(Node):
-    def __init__(self, name, args=None, enableTfPublisher=False):
+    def __init__(self, name, args=None, enableTfPublisher=False, enableJointState=False):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         self.declare_parameter('use_joint_state_publisher', False)
@@ -68,7 +68,7 @@ class WebotsNode(Node):
             else:
                 self.get_logger().warn('Impossible to publish transforms because the "supervisor"'
                                        ' field is false.')
-        if self.get_parameter('use_joint_state_publisher').value:
+        if self.get_parameter('use_joint_state_publisher').value or enableJointState:
             self.jointStatePublisher = JointStatePublisher(self.robot, '', self)
 
     def step(self, ms):

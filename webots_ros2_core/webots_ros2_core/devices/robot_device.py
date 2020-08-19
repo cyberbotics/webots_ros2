@@ -74,13 +74,13 @@ class RobotDevice(Device):
 
     def __save_urdf_to_file(self, urdf):
         """Write URDF to a file for debugging purposes."""
-        filename = 'webots_robot_{}.urdf'.format(self._node.robot.getName())
+        filename = 'webots_robot_{}.urdf'.format(self._node.robot.getName().replace(' ', '_').replace('/', '_'))
         with open(os.path.join(tempfile.gettempdir(), filename), 'w') as urdf_file:
             urdf_file.write(urdf)
 
     def __set_string_param(self, node, name, value):
         self.cli = self._node.create_client(SetParameters, self._node.get_namespace() + node + '/set_parameters')
-        self.cli.wait_for_service(timeout_sec=20)
+        self.cli.wait_for_service(timeout_sec=1)
         req = SetParameters.Request()
         param_value = ParameterValue(string_value=value, type=ParameterType.PARAMETER_STRING)
         param = Parameter(name=name, value=param_value)

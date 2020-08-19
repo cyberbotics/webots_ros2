@@ -35,6 +35,7 @@ setup(
             'webots_launcher = webots_ros2_core.webots_launcher:main',
             'tf_publisher = webots_ros2_core.tf_publisher:main',
             'webots_differential_drive_node = webots_ros2_core.webots_differential_drive_node:main',
+            'webots_robotic_arm_node = webots_ros2_core.webots_robotic_arm_node:main',
             'webots_node = webots_ros2_core.webots_node:main'
         ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']

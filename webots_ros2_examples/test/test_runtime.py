@@ -138,6 +138,6 @@ class TestController(unittest.TestCase):
             Float64,
             'sensor',
             lambda msg: abs(msg.data) < 1E-3,
-            60)
+            300)
         self.assertTrue(
             condition, 'The node hasn\'t published any distance measurement')

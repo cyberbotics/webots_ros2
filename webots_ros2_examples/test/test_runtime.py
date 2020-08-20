@@ -90,7 +90,8 @@ def generate_test_description():
     """
     # Webots
     webots = WebotsLauncher(
-        world=os.path.join(get_package_share_directory('webots_ros2_examples'), 'worlds', 'ros_example.wbt')
+        world=os.path.join(get_package_share_directory('webots_ros2_examples'), 'worlds', 'ros_example.wbt'),
+        gui=False
     )
 
     # Controller node

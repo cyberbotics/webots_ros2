@@ -14,17 +14,18 @@
 
 """Unit tests for the examples driver."""
 
+import os
 import time
 import rclpy
 import unittest
 import launch
 import launch_testing.actions
+
 from webots_ros2_core.utils import ControllerLauncher
 from webots_ros2_core.webots_launcher import WebotsLauncher
 from ament_index_python.packages import get_package_share_directory
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Range
-import os
 
 
 MESSAGE_SEND_RETRY_COUNT = 10
@@ -127,10 +128,10 @@ class TestController(unittest.TestCase):
     def tearDown(self):
         self.node.destroy_node()
 
-    def test_forward_velocity(self, launch_service, proc_output):
+    def test_forward_velocity(self):
         publish_twist(self.node, linear_x=0.02)
 
-    def test_distance_sensors(self, launch_service, proc_output):
+    def test_distance_sensors(self):
         condition = check_topic_condition(
             self.node,
             Range,

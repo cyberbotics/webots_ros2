@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Unit tests for the examples driver"""
+"""Unit tests for the examples driver."""
 
 import time
 import rclpy
@@ -77,6 +77,7 @@ def publish_twist(node, linear_x=0.0, linear_y=0.0, angular_z=0.0):
 def generate_test_description():
     """
     Launch decription configuration.
+
     To run the tests you can use either `launch_test` directly as:
     $ launch_test src/webots_ros2/webots_ros2_examples/test/test_runtime.py
     or `colcon`:

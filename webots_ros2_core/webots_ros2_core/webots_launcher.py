@@ -35,7 +35,10 @@ class _WebotsCommandSubstitution(Substitution):
         webots_path = get_webots_home()
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')
-        command = [os.path.join(webots_path, 'webots')]
+        if 'TRAVIS' in os.environ:
+            command = ['xvfb-run', '--auto-servernum', os.path.join(webots_path, 'webots')]
+        else:
+            command = [os.path.join(webots_path, 'webots')]
 
         # Add `world`
         command += [context.perform_substitution(self.__world)]

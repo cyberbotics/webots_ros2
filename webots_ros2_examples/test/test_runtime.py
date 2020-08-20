@@ -25,7 +25,7 @@ from webots_ros2_core.utils import ControllerLauncher
 from webots_ros2_core.webots_launcher import WebotsLauncher
 from ament_index_python.packages import get_package_share_directory
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import Range
+from std_msgs.msg import Float64
 
 
 MESSAGE_SEND_RETRY_COUNT = 10
@@ -134,8 +134,9 @@ class TestController(unittest.TestCase):
     def test_distance_sensors(self):
         condition = check_topic_condition(
             self.node,
-            Range,
+            Float64,
             'sensor',
-            lambda msg: abs(msg.range - 0.05) < 1E-3)
+            lambda msg: abs(msg.data) < 1E-3,
+            60)
         self.assertTrue(
             condition, 'The node hasn\'t published any distance measurement')

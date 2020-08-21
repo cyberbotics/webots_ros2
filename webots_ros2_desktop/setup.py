@@ -12,7 +12,7 @@ from setuptools import setup
 package_name = 'webots_ros2_desktop'
 data_files = []
 # If 'WEBOTS_HOME' not set try to download latest package (only on linux)
-if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platform == 'linux':
+if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and 'CI' not in os.environ and sys.platform == 'linux':
     # Get Webots version
     webotsVersion = None
     with open('webots_version.txt') as f:

@@ -90,6 +90,7 @@ def generate_test_description():
     and the following example:
     https://github.com/ros2/launch_ros/blob/master/launch_testing_ros/test/examples/talker_listener_launch_test.py.
     """
+    print('Starting Webots.')
     # Webots
     webots = WebotsLauncher(
         world=os.path.join(get_package_share_directory('webots_ros2_examples'), 'worlds', 'ros_example.wbt'),

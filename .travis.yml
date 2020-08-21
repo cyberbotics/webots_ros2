@@ -1,16 +1,13 @@
 language: generic
 services:
   - docker
+  - xvfb
 env:
   matrix:
     - ROS_DISTRO="eloquent" DOCKER_RUN_OPTS='-e TRAVIS'
     - ROS_DISTRO="eloquent" DOCKER_RUN_OPTS='-e TRAVIS' ROS_REPO=testing
     - ROS_DISTRO="foxy" DOCKER_RUN_OPTS='-e TRAVIS'
     - ROS_DISTRO="foxy" DOCKER_RUN_OPTS='-e TRAVIS' ROS_REPO=testing
-addons: &apt_packages
-  apt:
-    packages:
-      - xvfb
 install:
   - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 script:

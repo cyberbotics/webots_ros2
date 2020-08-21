@@ -1,9 +1,12 @@
 name: CI
 
-on: [push, pull_request]
+on: 
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
   industrial_ci:
+    if: github.event.pull_request.draft == false
     strategy:
       matrix:
         env:

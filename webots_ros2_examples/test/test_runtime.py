@@ -134,7 +134,7 @@ class TestController(unittest.TestCase):
 
     def test_distance_sensors(self):
         print(subprocess.check_output(['ps', '-e']))
-        print('---------------)
+        print('---------------')
         condition = check_topic_condition(
             self.node,
             Float64,

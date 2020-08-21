@@ -133,11 +133,14 @@ class TestController(unittest.TestCase):
         publish_twist(self.node, linear_x=0.02)
 
     def test_distance_sensors(self):
+        print(subprocess.check_output(['ps', '-e']))
+        print('---------------)
         condition = check_topic_condition(
             self.node,
             Float64,
             'sensor',
             lambda msg: abs(msg.data) < 1E-3,
             300)
+        print(subprocess.check_output(['ps', '-e']))
         self.assertTrue(
             condition, 'The node hasn\'t published any distance measurement')

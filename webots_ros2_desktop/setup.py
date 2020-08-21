@@ -6,7 +6,6 @@ import sys
 import tarfile
 import urllib.request
 
-from shutil import copyfile
 from setuptools import setup
 
 package_name = 'webots_ros2_desktop'
@@ -34,6 +33,8 @@ if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and 'CI' not i
     tar.close()
     os.environ['WEBOTS_HOME'] = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                              'webots'))
+    # removed unwanted and problematic files
+    shutil.rmtree(os.path.join(os.environ['WEBOTS_HOME'], 'projects', 'default', 'resources', 'sumo'))
 
 # If 'WEBOTS_HOME' not set check if it is installed
 if 'WEBOTS_HOME' not in os.environ and sys.platform == 'darwin' and os.path.isdir('/Applications/Webots.app'):

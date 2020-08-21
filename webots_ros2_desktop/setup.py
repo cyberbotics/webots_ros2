@@ -33,8 +33,10 @@ if 'WEBOTS_HOME' not in os.environ and sys.platform == 'linux':
     tar.close()
     os.environ['WEBOTS_HOME'] = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                              'webots'))
+    # removed unwanted and problematic files
+    shutil.rmtree(os.path.join(os.environ['WEBOTS_HOME'], 'projects', 'default', 'resources', 'sumo'))
 
-# If 'WEBOTS_HOME' not set check if it is installed
+# If 'WEBOTS_HOME' not set, check if it is installed
 if 'WEBOTS_HOME' not in os.environ and sys.platform == 'darwin' and os.path.isdir('/Applications/Webots.app'):
     os.environ['WEBOTS_HOME'] = '/Applications/Webots.app'
 

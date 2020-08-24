@@ -137,7 +137,8 @@ class TestController(unittest.TestCase):
 
     def test_distance_sensors(self):
         print(subprocess.check_output(['ps', '-e']))
-        print(subprocess.check_output(['cat', '../../../../log/latest_test/webots_ros2_examples/*.log']))
+        print(subprocess.check_output(['echo', '$PWD']))
+        print(subprocess.check_output(['cat', '../../../../log/latest_test/*/*.log']))
         print('---------------')
         condition = check_topic_condition(
             self.node,

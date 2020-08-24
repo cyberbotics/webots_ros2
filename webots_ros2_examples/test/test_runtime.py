@@ -137,10 +137,7 @@ class TestController(unittest.TestCase):
 
     def test_distance_sensors(self):
         print(subprocess.check_output(['ps', '-e']))
-        print(subprocess.check_output(['ls']))
-        print(subprocess.check_output(['ls', '../../../..']))
-        print(subprocess.check_output(['ls', '../../../../logs']))
-        print(subprocess.check_output(['ls', '../../../../logs/latest']))
+        print(subprocess.check_output(['cat', '../../../../log/latest_test/webots_ros2_examples/*.log']))
         print('---------------')
         condition = check_topic_condition(
             self.node,

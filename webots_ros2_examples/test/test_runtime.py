@@ -142,11 +142,10 @@ class TestController(unittest.TestCase):
         print(subprocess.check_output(['ls', '..']))
         print(subprocess.check_output(['ls', '../..']))
         print(subprocess.check_output(['ls', '../../..']))
-        print(subprocess.check_output(['ls', '../../../..']))
-        print(subprocess.check_output(['ls', '../../../../log']))
-        print(subprocess.check_output(['ls', '../../../../log/latest_test']))
-        print(subprocess.check_output(['ls', '../../../../log/latest_test/*']))
-        print(subprocess.check_output(['cat', '../../../../log/latest_test/*/*.log']))
+        print(subprocess.check_output(['ls', '../../../log']))
+        print(subprocess.check_output(['ls', '../../../log/latest_test']))
+        print(subprocess.check_output(['ls', '../../../log/latest_test/*']))
+        print(subprocess.check_output(['cat', '../../../log/latest_test/*/*.log']))
         print('---------------')
         condition = check_topic_condition(
             self.node,

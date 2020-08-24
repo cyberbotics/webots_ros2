@@ -138,6 +138,14 @@ class TestController(unittest.TestCase):
     def test_distance_sensors(self):
         print(subprocess.check_output(['ps', '-e']))
         print(subprocess.check_output(['echo', '$PWD']))
+        print(subprocess.check_output(['ls', '.']))
+        print(subprocess.check_output(['ls', '..']))
+        print(subprocess.check_output(['ls', '../..']))
+        print(subprocess.check_output(['ls', '../../..']))
+        print(subprocess.check_output(['ls', '../../../..']))
+        print(subprocess.check_output(['ls', '../../../../log']))
+        print(subprocess.check_output(['ls', '../../../../log/latest_test']))
+        print(subprocess.check_output(['ls', '../../../../log/latest_test/*']))
         print(subprocess.check_output(['cat', '../../../../log/latest_test/*/*.log']))
         print('---------------')
         condition = check_topic_condition(

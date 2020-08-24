@@ -21,5 +21,12 @@ jobs:
          submodules: true
       - name: Remove Unwanted Tests
         run: rm -rf webots_ros2_importer/webots_ros2_importer/urdf2webots/tests/  # we don't want to run the tests of the urdf2webots repo
+      - name: Install Dependencies
+        run: |
+          sudo apt install xvfb
+          wget https://raw.githubusercontent.com/cyberbotics/webots/master/scripts/install/linux_runtime_dependencies.sh
+          chmod +x linux_runtime_dependencies.sh
+          ./linux_runtime_dependencies.sh
+          rm linux_runtime_dependencies.sh
       - uses: 'ros-industrial/industrial_ci@master'
         env: ${{matrix.env}}

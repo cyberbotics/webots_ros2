@@ -138,7 +138,9 @@ class TestController(unittest.TestCase):
     def test_distance_sensors(self):
         print(subprocess.check_output(['ps', '-e']))
         print(subprocess.check_output(['ls']))
-        print(subprocess.check_output(['ls', '../..']))
+        print(subprocess.check_output(['ls', '../../../..']))
+        print(subprocess.check_output(['ls', '../../../../logs']))
+        print(subprocess.check_output(['ls', '../../../../logs/latest']))
         print('---------------')
         condition = check_topic_condition(
             self.node,

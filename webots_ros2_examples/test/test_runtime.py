@@ -145,7 +145,11 @@ class TestController(unittest.TestCase):
         print(subprocess.check_output(['ls', '../../../log']))
         print(subprocess.check_output(['ls', '../../../log/latest_test']))
         print(subprocess.check_output(['ls', '../../../log/latest_test/webots_ros2_examples']))
-        print(subprocess.check_output(['cat', '../../../log/latest_test/webots_ros2_examples/*.log']))
+        print(subprocess.check_output(['cat', '../../../log/latest_test/webots_ros2_examples/command.log']))
+        print(subprocess.check_output(['cat', '../../../log/latest_test/webots_ros2_examples/stderr.log']))
+        print(subprocess.check_output(['cat', '../../../log/latest_test/webots_ros2_examples/stdout.log']))
+        print(subprocess.check_output(['cat', '../../../log/latest_test/webots_ros2_examples/stdout_stderr.log']))
+        print(subprocess.check_output(['cat', '../../../log/latest_test/webots_ros2_examples/streams.log']))
         print('---------------')
         condition = check_topic_condition(
             self.node,

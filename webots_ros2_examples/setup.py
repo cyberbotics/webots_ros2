@@ -29,7 +29,7 @@ data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
     name=package_name,
-    version='0.0.4',
+    version='1.0.0',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],
@@ -49,7 +49,10 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['example_controller = webots_ros2_examples.example_controller:main'],
+        'console_scripts': [
+            'example_controller = webots_ros2_examples.example_controller:main',
+            'khepera_driver = webots_ros2_examples.khepera_driver:main'
+        ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

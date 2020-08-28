@@ -1,4 +1,4 @@
-#VRML_SIM R2020a utf8
+#VRML_SIM R2020b utf8
 WorldInfo {
   info [
     "Simple TIAGo Base simulation controlled by a ROS node written in Python."
@@ -6,39 +6,47 @@ WorldInfo {
   title "ROS2 simulation of the Tiago robot"
 }
 Viewpoint {
-  orientation 0.7259861099678916 -0.6590060161538492 -0.19660935584737757 5.362622153709845
-  position 13.160963850734786 14.284547654468774 13.683900144385449
+  orientation -0.9845284222081442 0.14190451216640515 0.10279540500993727 5.530933613713754
+  position -0.3592486856845678 -13.669422463992172 15.868818071484043
 }
 TexturedBackground {
   texture "empty_office"
   skybox FALSE
 }
 TiagoBase {
-  rotation 0.5773509358554485 0.5773509358554485 0.5773489358556708 -2.094395307179586
+  rotation 0 0 1 1.570795290328971
   controller "<extern>"
-  controllerArgs ""
+  controllerArgs [
+    ""
+  ]
 }
 PottedTree {
-  translation 0.53 0 4
+  translation 0.53 -4 0
+  rotation 1 0 0 1.5707963267948966
   name "potted tree(4)"
 }
 PottedTree {
-  translation 7 0 4
+  translation 7 -4 0
+  rotation 1 0 0 1.5707963267948966
   name "potted tree(5)"
 }
 PottedTree {
-  translation -2.63 0 -2.84
+  translation -2.63 2.84 0
+  rotation 1 0 0 1.5707963267948966
   name "potted tree(6)"
 }
 PottedTree {
-  translation 4 0 -3
+  translation 4 3 0
+  rotation 1 0 0 1.5707963267948966
   name "potted tree(7)"
 }
 PottedTree {
-  translation 5.8 0 -3.3
+  translation 5.8 3.3 0
+  rotation 1 0 0 1.5707963267948966
   name "potted tree(8)"
 }
 Floor {
+  rotation 1 0 0 1.5707963267948966
   tileSize 2 2
   appearance MattePaint {
     baseColor 0.605936 0.609995 0.601862
@@ -46,6 +54,7 @@ Floor {
 }
 Floor {
   translation 7.5 0 0
+  rotation 1 0 0 1.5707963267948966
   name "floor(1)"
   size 5 10
   tileSize 2 2
@@ -56,19 +65,23 @@ Floor {
   }
 }
 Bench {
-  translation 1.5 0 -4.465
+  translation 1.5 4.465 0
+  rotation 1 0 0 1.5707963267948966
 }
 Window {
-  translation 3.5 0 -5.1
+  translation 3.5 5.1 0
+  rotation 1 0 0 1.5707963267948966
   size 1 2.4 0.2
 }
 Window {
-  translation 6.5 0 5.1
+  translation 6.5 -5.1 0
+  rotation 1 0 0 1.5707963267948966
   name "window(1)"
   size 1 2.4 0.2
 }
 Wall {
-  translation 4.5 0 -5.1
+  translation 4.5 5.1 0
+  rotation 1 0 0 1.5707963267948966
   appearance Roughcast {
     textureTransform TextureTransform {
       scale 7 2.4
@@ -76,7 +89,8 @@ Wall {
   }
 }
 Wall {
-  translation -1 0 -5.1
+  translation -1 5.1 0
+  rotation 1 0 0 1.5707963267948966
   name "wall(8)"
   size 8 2.4 0.2
   appearance Roughcast {
@@ -87,7 +101,7 @@ Wall {
 }
 Wall {
   translation -5.1 0 0
-  rotation 0 1 0 1.5707996938995747
+  rotation 0.577348973190431 0.577350917188132 0.577350917188132 2.094397046393079
   name "wall(3)"
   size 10.4 2.4 0.2
   appearance Roughcast {
@@ -97,7 +111,8 @@ Wall {
   }
 }
 Wall {
-  translation 3.5 0 5.1
+  translation 3.5 -5.1 0
+  rotation 1 0 0 1.5707963267948966
   name "wall(4)"
   size 3 2.4 0.2
   appearance Roughcast {
@@ -107,7 +122,8 @@ Wall {
   }
 }
 Wall {
-  translation -2 0 5.1
+  translation -2 -5.1 0
+  rotation 1 0 0 1.5707963267948966
   name "wall(9)"
   size 6 2.4 0.2
   appearance Roughcast {
@@ -117,7 +133,8 @@ Wall {
   }
 }
 Wall {
-  translation 7.5 0 -5.1
+  translation 7.5 5.1 0
+  rotation 1 0 0 1.5707963267948966
   name "wall(5)"
   size 5 2.4 0.2
   appearance Roughcast {
@@ -127,7 +144,8 @@ Wall {
   }
 }
 Wall {
-  translation 5.5 0 5.1
+  translation 5.5 -5.1 0
+  rotation 1 0 0 1.5707963267948966
   name "wall(7)"
   appearance Roughcast {
     textureTransform TextureTransform {
@@ -136,7 +154,8 @@ Wall {
   }
 }
 Wall {
-  translation 8.5 0 5.1
+  translation 8.5 -5.1 0
+  rotation 1 0 0 1.5707963267948966
   name "wall(10)"
   size 3 2.4 0.2
   appearance Roughcast {
@@ -147,7 +166,7 @@ Wall {
 }
 Wall {
   translation 10.1 0 0
-  rotation 0 1 0 1.5707996938995747
+  rotation 0.577348973190431 0.577350917188132 0.577350917188132 2.094397046393079
   name "wall(6)"
   size 10.4 2.4 0.2
   appearance Roughcast {
@@ -157,8 +176,8 @@ Wall {
   }
 }
 Wall {
-  translation 5 0 -2
-  rotation 0 1 0 1.5707996938995747
+  translation 5 2 0
+  rotation 0.577348973190431 0.577350917188132 0.577350917188132 2.094397046393079
   name "wall(2)"
   size 6 2.4 0.2
   appearance Roughcast {
@@ -168,8 +187,8 @@ Wall {
   }
 }
 Wall {
-  translation 5 0 3.5
-  rotation 0 1 0 1.5707996938995745
+  translation 5 -3.5 0
+  rotation 0.577348973190431 0.577350917188132 0.577350917188132 2.094397046393079
   name "wall(1)"
   size 3 2.4 0.2
   appearance Roughcast {
@@ -179,17 +198,17 @@ Wall {
   }
 }
 Radiator {
-  translation 7.5 0.33 -4.87
-  rotation 0 1 0 -1.5707996938995747
+  translation 7.5 4.87 0.33
+  rotation 0.577348973190431 -0.577350917188132 -0.577350917188132 2.094397046393079
 }
 Radiator {
-  translation 3.25 0.33 4.87
-  rotation 0 1 0 1.5707996938995747
+  translation 3.25 -4.87 0.33
+  rotation 0.577348973190431 0.577350917188132 0.577350917188132 2.094397046393079
   name "radiator(1)"
 }
 Door {
-  translation 5 0 1.5
-  rotation 0 1 0 -1.5707953071795862
+  translation 5 -1.5 0
+  rotation 0.577350661639742 -0.577350072964468 -0.577350072964468 2.094394513718122
   position -1.5
   wallAppearance Roughcast {
     textureTransform TextureTransform {
@@ -203,8 +222,8 @@ Door {
   }
 }
 Door {
-  translation 1.5 0 5.1
-  rotation 0 1 0 3.141592653589793
+  translation 1.5 -5.1 0
+  rotation 0 0.707106781186548 0.707106781186547 3.141592653589793
   name "door(1)"
   wallAppearance Roughcast {
     textureTransform TextureTransform {
@@ -218,12 +237,12 @@ Door {
   }
 }
 Cabinet {
-  translation 9.5 0 2.5
-  rotation 0 1 0 -1.5708003061004252
+  translation 9.5 -2.5 0
+  rotation 0.577348737554214 -0.577351035005808 -0.577351035005808 2.094397399847837
 }
 Cabinet {
-  translation -5 0 -3.7
-  rotation 0 1 0 1.5708
+  translation -5 3.7 0
+  rotation 0.577348855372322 0.577350976096979 0.577350976096979 2.094397223120449
   name "cabinet(2)"
   depth 0.2
   outerThickness 0.02
@@ -237,63 +256,68 @@ Cabinet {
     "Shelf (1, 2, 3, 0)"
   ]
   handle NULL
-  primaryAppearance DarkParquetry {
-  }
 }
 Table {
-  translation -3.2 0 2
+  translation -3.2 -2 0
+  rotation 1 0 0 1.5707963267948966
   name "table(1)"
   size 1 0.74 1
 }
 Chair {
-  translation -4.5 0 2.5
+  translation -4.5 -2.5 0
+  rotation 1 0 0 1.5707963267948966
 }
 Chair {
-  translation -3.2 0 1.5
-  rotation 0 1 0 -1.5708003061004252
+  translation -3.2 -1.5 0
+  rotation 0.577348737554214 -0.577351035005808 -0.577351035005808 2.094397399847837
   name "chair(1)"
 }
 Can {
-  translation -2.84 0.802 2.34
+  translation -2.84 -2.34 0.802
+  rotation 1 0 0 1.5707963267948966
 }
 WaterBottle {
-  translation -3 0.738 1.65
+  translation -3 -1.65 0.738
+  rotation 1 0 0 1.5707963267948966
 }
 BiscuitBox {
-  translation -3.44 0.741 2.2
-  rotation 0 1 0 2.3562003061004253
+  translation -3.44 -2.2 0.741
+  rotation 0.281082508472302 0.678598785524598 0.678598785524598 2.593568192636358
 }
 CardboardBox {
-  translation 9.7 0.3 -4.7
+  translation 9.7 4.7 0.3
+  rotation 1 0 0 1.5707963267948966
 }
 CardboardBox {
-  translation 9 0.3 -4.6
-  rotation 0 1 0 -0.1308996938995747
+  translation 9 4.6 0.3
+  rotation 0.99573154047691 -0.065263693197208 -0.065263693197208 1.575073909152973
   name "cardboard box(1)"
 }
 CardboardBox {
-  translation 9.6 0.3 -4
-  rotation 0 1 0 0.1308996938995747
+  translation 9.6 4 0.3
+  rotation 0.99573154047691 0.065263693197208 0.065263693197208 1.575073909152973
   name "cardboard box(2)"
 }
 CardboardBox {
-  translation 9.4 0.9 -4.5
-  rotation 0 1 0 0.6544996938995746
+  translation 9.4 4.5 0.9
+  rotation 0.901501328073774 0.306019080680618 0.306019080680618 1.674304761840238
   name "cardboard box(3)"
 }
 Fridge {
-  translation 5.7 0 -4.64
-  rotation 0 -1 0 1.5708
+  translation 5.7 4.64 0
+  rotation 0.577348855372322 -0.577350976096979 -0.577350976096979 2.094397223120449
 }
 FloorLight {
-  translation 4 0 4
+  translation 4 -4 0
+  rotation 1 0 0 1.5707963267948966
   bulbColor 0.360784 0.207843 0.4
   pointLightColor 0.678431 0.498039 0.658824
   pointLightIntensity 1.5
   pointLightCastShadows TRUE
 }
 FloorLight {
-  translation 8.84 0 -1
+  translation 8.84 1 0
+  rotation 1 0 0 1.5707963267948966
   name "floor light(1)"
   bulbColor 0.26331 0.374105 0.963333
   pointLightColor 0.0350805 0.179232 0.956664
@@ -301,7 +325,8 @@ FloorLight {
   pointLightCastShadows TRUE
 }
 FloorLight {
-  translation -4.5 0 -4.5
+  translation -4.5 4.5 0
+  rotation 1 0 0 1.5707963267948966
   name "floor light(2)"
   bulbColor 0.643137 0 0
   pointLightColor 0.937255 0.160784 0.160784
@@ -309,73 +334,81 @@ FloorLight {
   pointLightCastShadows TRUE
 }
 FloorLight {
-  translation 4.5 0 -4.5
+  translation 4.5 4.5 0
+  rotation 1 0 0 1.5707963267948966
   name "floor light(3)"
   pointLightIntensity 1.5
   pointLightCastShadows TRUE
 }
 CeilingLight {
-  translation -3.15 2.4 1.89
+  translation -3.15 -1.89 2.4
+  rotation 1 0 0 1.5707963267948966
   bulbColor 0.560784 0.34902 0.00784314
   pointLightColor 0.913725 0.72549 0.431373
   pointLightIntensity 2.5
   pointLightCastShadows TRUE
 }
 Sofa {
-  translation 9 0 0.518
-  rotation 0 1 0 3.141592653589793
+  translation 9 -0.518 0
+  rotation 0 0.707106781186548 0.707106781186547 3.141592653589793
 }
 Armchair {
-  translation 7.62 0 -1.03
-  rotation 0 1 0 -1.5707996938995747
+  translation 7.62 1.03 0
+  rotation 0.577348973190431 -0.577350917188132 -0.577350917188132 2.094397046393079
 }
 LandscapePainting {
-  translation 8.5 1.2 4.98
-  rotation 0 1 0 3.141592653589793
+  translation 8.5 -4.98 1.2
+  rotation 0 0.707106781186548 0.707106781186547 3.141592653589793
 }
 PottedTree {
-  translation 9.17 0 1.7
+  translation 9.17 -1.7 0
+  rotation 1 0 0 1.5707963267948966
 }
 PottedTree {
-  translation -4.5 0 1
+  translation -4.5 -1 0
+  rotation 1 0 0 1.5707963267948966
   name "potted tree(1)"
 }
 PottedTree {
-  translation 4.4 0 -1.9
+  translation 4.4 1.9 0
+  rotation 1 0 0 1.5707963267948966
   name "potted tree(2)"
 }
 PottedTree {
-  translation 5.6 0 4.5
+  translation 5.6 -4.5 0
+  rotation 1 0 0 1.5707963267948966
   name "potted tree(3)"
 }
 Blackboard {
-  translation -4.98 1.3 -1
-  rotation 0 1 0 1.5707996938995747
+  translation -4.98 1 1.3
+  rotation 0.577348973190431 0.577350917188132 0.577350917188132 2.094397046393079
 }
 Table {
-  translation 7.7 0 0.52
-  rotation 0 1 0 1.5707996938995747
+  translation 7.7 -0.52 0
+  rotation 0.577348973190431 0.577350917188132 0.577350917188132 2.094397046393079
   size 1.3 0.5 0.8
 }
 AdvertisingBoard {
-  translation -1.97 1.21 -4.96
+  translation -1.97 4.96 1.21
+  rotation 1 0 0 1.5707963267948966
   displayWidth 2
   displayHeight 2
   frameThickness 0.1
   frameColor 0 0 0
 }
 RectangularPanel {
-  translation 4.88 1.5 2.45
-  rotation 0 1 0 1.5707903061004251
+  translation 4.88 -2.45 1.5
+  rotation 0.577352586556008 0.577349110502947 0.577349110502946 2.09439162634711
 }
 DirectionPanel {
-  translation 8 1.5 -5
-  rotation 0 1 0 -6.283185307179586
+  translation 8 5 1.5
+  rotation -1 0 0 4.71238898038469
   textSize 0.175
   text "Fresh beer :)"
   right FALSE
   left TRUE
 }
 BunchOfSunFlowers {
-  translation 7.68 0.5 0.52
+  translation 7.68 -0.52 0.5
+  rotation 1 0 0 1.5707963267948966
 }

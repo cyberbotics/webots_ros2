@@ -26,7 +26,16 @@ from webots_ros2_importer import urdf2proto
 def main(args=None):
     # remvove arguments specific to the urdf2proto converter
     savedArgv = copy.copy(sys.argv)
-    argsToRemove = ['--normal', '--box-collision', '--disable-mesh-optimization', '--output']
+    argsToRemove = [
+        '--normal',
+        '--box-collision',
+        '--disable-mesh-optimization',
+        '--output',
+        '--multi-file',
+        '--static-base',
+        '--tool-slot',
+        '--rotation'
+    ]
     for arg in savedArgv:
         for argToRemove in argsToRemove:
             if arg.startswith(argToRemove):

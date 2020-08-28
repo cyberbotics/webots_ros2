@@ -1,0 +1,25 @@
+name: CI
+
+on: 
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  industrial_ci:
+    if: github.event.pull_request.draft == false
+    strategy:
+      matrix:
+        env:
+          - {ROS_DISTRO: eloquent, ROS_REPO: testing}
+          - {ROS_DISTRO: eloquent, ROS_REPO: main}
+          - {ROS_DISTRO: foxy, ROS_REPO: testing}
+          - {ROS_DISTRO: foxy, ROS_REPO: main}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+         submodules: true
+      - name: Remove Unwanted Tests
+        run: rm -rf webots_ros2_importer/webots_ros2_importer/urdf2webots/tests/  # we don't want to run the tests of the urdf2webots repo
+      - uses: 'ros-industrial/industrial_ci@master'
+        env: ${{matrix.env}}

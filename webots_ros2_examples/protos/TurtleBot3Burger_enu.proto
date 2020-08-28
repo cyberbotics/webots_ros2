@@ -485,14 +485,17 @@ PROTO TurtleBot3Burger_enu [
       }
       Solid {
         translation 0 0.078 0.032
+        name "imu_link"
         children [
-          Accelerometer {
-          }
-          Gyro {
-            rotation -0.5773489358556708 0.5773509358554485 0.5773509358554485 2.0944
+          Solid {
           }
         ]
-        name "imu_link"
+      }
+      Accelerometer {
+        translation 0 0.078 0.032
+      }
+      Gyro {
+        translation 0 0.078 0.032
       }
       Compass {
         translation -0.032 0 0.078

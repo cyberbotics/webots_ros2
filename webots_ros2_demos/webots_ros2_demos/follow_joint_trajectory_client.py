@@ -35,16 +35,16 @@ class followJointTrajectoryClient(Node):
     def goal_response_callback(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
-            self.get_logger().info('Goal rejected.')
+            self.get_logger().info('Goal rejected by action server.')
             return
 
-        self.get_logger().info('Goal accepted.')
+        self.get_logger().info('Goal accepted by action server.')
 
         self._get_result_future = goal_handle.get_result_async()
         self._get_result_future.add_done_callback(self.get_result_callback)
 
     def feedback_callback(self, feedback):
-        self.get_logger().info('Received feedback.')
+        self.get_logger().info('Received feedback from action server.')
 
     def get_result_callback(self, future):
         status = future.result().status

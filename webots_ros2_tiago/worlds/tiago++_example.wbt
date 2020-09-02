@@ -1,0 +1,38 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  info [
+    "This simulation shows a TIAGo++ robot interfaced with ROS2 controller."
+  ]
+  title "ROS2 Simulation of PAL Robotics' TIAGo++ robot"
+}
+Viewpoint {
+  orientation 0.6077806358555546 0.43850427230534206 0.662054908484923 1.656652969259469
+  position 6.756597129081955 -2.585786347071602 4.95851315242728
+  follow "TIAGo++"
+}
+TexturedBackground {
+  texture "factory"
+  skybox FALSE
+}
+TexturedBackgroundLight {
+  texture "factory"
+}
+RectangleArena {
+  rotation 1 0 0 1.5707996938995747
+  floorSize 15 15
+  floorTileSize 1 1
+  floorAppearance ThreadMetalPlate {
+  }
+  wallHeight 2.5
+  wallAppearance Roughcast {
+    colorOverride 0.533333 0.541176 0.521569
+    textureTransform TextureTransform {
+      scale 5 1.75
+    }
+  }
+}
+Tiago++ {
+  translation -4.416 0.84 0.097
+  rotation 1 0 0 0
+  controller "<extern>"
+}

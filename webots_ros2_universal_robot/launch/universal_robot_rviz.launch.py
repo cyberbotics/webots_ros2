@@ -23,34 +23,25 @@ from pathlib import Path
 import launch
 import launch_ros.actions
 
-from webots_ros2_core.utils import ControllerLauncher
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
     # Webots
-    arguments = ['--mode=realtime', '--world=' +
-                 os.path.join(get_package_share_directory('webots_ros2_universal_robot'),
-                              'worlds', 'universal_robot_rviz.wbt')]
-    webots = launch_ros.actions.Node(package='webots_ros2_core', executable='webots_launcher',
-                                     arguments=arguments, output='screen')
-    # Controller nodes
-    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
-    URe5Controller = ControllerLauncher(package='webots_ros2_universal_robot',
-                                        executable='universal_robot',
-                                        # this argument should match the 'name' field
-                                        # of the robot in Webots
-                                        arguments=['--webots-robot-name=UR5e'],
-                                        parameters=[{'synchronization': synchronization}],
-                                        output='screen')
-    tfController = ControllerLauncher(package='webots_ros2_core',
-                                      executable='tf_publisher',
-                                      # this argument should match the 'name' field
-                                      # of the robot in Webots
-                                      arguments=['--webots-robot-name=tf_supervisor'],
-                                      parameters=[{'synchronization': synchronization}],
-                                      output='screen')
+    package_dir = get_package_share_directory('webots_ros2_universal_robot')
+    webots = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
+        ),
+        launch_arguments={
+            'executable': 'webots_robotic_arm_node',
+            'world': os.path.join(package_dir, 'worlds', 'universal_robot.wbt'),
+        }.items()
+    )
+
     # Copy .rviz config file and update path ro URDF file.
     templateRvizFile = os.path.join(get_package_share_directory('webots_ros2_ur_e_description'),
                                     'rviz', 'view_robot') + '.rviz'
@@ -70,14 +61,5 @@ def generate_launch_description():
                                    output='screen')
     return launch.LaunchDescription([
         rviz,
-        webots,
-        URe5Controller,
-        tfController,
-        # Shutdown launch when Webots exits.
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
-            )
-        )
+        webots
     ])

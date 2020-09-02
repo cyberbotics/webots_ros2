@@ -85,11 +85,7 @@ In case you are not interested in covariance matrices, you can use `--no-arr` pa
 ros2 topic echo --no-arr /odom
 ```
 
-> Note that ROS uses [REP](https://www.ros.org/reps/rep-0103.html) convention (x-forward, y-left and z-up) while Webots inherited convention from [VRML](https://en.wikipedia.org/wiki/VRML) (x-right, y-up, z-backward).
-> Therefore, you will see translations in Webots as following <img src ="https://render.githubusercontent.com/render/math?math=x_{Webots} = -y_{ROS}" />, <img src ="https://render.githubusercontent.com/render/math?math=y_{Webots} = z_{ROS}" /> and <img src ="https://render.githubusercontent.com/render/math?math=z_{Webots} = -x_{ROS}" />.
-
-You can also visualise odometry in `rviz` :
-
+You can also visualise odometry in `rviz`:
 ``` 
 ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true
 ```
@@ -142,7 +138,7 @@ ROS2 Navigation2 stack (see [this figure](https://raw.githubusercontent.com/ros-
 It is integrated into e-puck example and you can run it by including `nav` parameter:
 
 ```
-ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true nav:=true mapper:=true fill_map:=false
+ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true nav:=true
 ```
 or without RViz2 you can just publish a desired pose:
 ```
@@ -160,17 +156,15 @@ pose:
 "
 ```
 
-In case the navigation fails, you can restart `bt_navigator`:
-```
-ros2 service call /bt_navigator/change_state lifecycle_msgs/ChangeState "{transition: {id: 4}}"
-ros2 service call /bt_navigator/change_state lifecycle_msgs/ChangeState "{transition: {id: 3}}"
+By default, the navigation will use a `epuck_world_map.yaml` map available in `/webots_ros2_epuck/resource`.
+To change the map, you have to use the `map` argument:
+```bash
+ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true nav:=true map:=/path/to/your/map.yaml
 ```
 
 ![Demo](./assets/nav2.gif)
 
-This example will work properly only for [ROS2 Foxy](https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/) (the first ROS2 release that has a long support - 3+ years):
-- Navigation2 stack is tested with version `e3469486675beb3` that includes [fix of progress checker parameters](https://answers.ros.org/question/344004/configuring-the-progress-checker-in-navigation2/) and [namespaced plugins for servers](https://github.com/ros-planning/navigation2/pull/1468).
-- RViz2 for Eloquent has a bug and [cannot show a local cost map](https://github.com/ros-planning/navigation2/issues/921), therefore, `ff8fcf9a2411` (or up) version of RViz2 is desired.
+> This example will work properly only for [ROS2 Foxy Fitzroy](https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/) and later.
 
 
 ### Mapping
@@ -185,14 +179,7 @@ Drive the robot around (with e.g. `teleop_twist_keyboard`) to discover as much o
 
 Once you are sattisfied with the result you can save the map as:
 ```
-ros2 run nav2_map_server map_saver -f $HOME/Pictures/map
-```
-and load it later to use it with e.g. navigation (`t1` and `t2` represent 2 different terminals):
-```
-t1$ ros2 run nav2_map_server map_server --ros-args -p yaml_filename:=$HOME/Pictures/map.yaml -p use_sim_time:=true
-t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{transition: {id: 1}}"
-t2$ ros2 service call /map_server/change_state lifecycle_msgs/ChangeState "{transition: {id: 3}}"
-t2$ ros2 launch webots_ros2_epuck robot_tools_launch.py rviz:=true nav:=true
+ros2 run nav2_map_server map_saver_cli -f $HOME/Pictures/map
 ```
 
 ### Differential Drive Calibration

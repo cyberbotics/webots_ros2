@@ -1,4 +1,4 @@
-#VRML_SIM R2020a utf8
+#VRML_SIM R2020b utf8
 WorldInfo {
   info [
     "ABB IRB4600 Robot simulation."
@@ -17,21 +17,22 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.10599214277400969 0.9845351317106285 0.13948562684989974 4.143611755960376
-  position -9.091926910248022 3.578482489557736 -4.205335851644433
+  orientation -0.6590169928332233 0.48577801667943554 0.5742093012726712 4.532535966136624
+  position -9.557540520536033 -2.5235619746148794 2.997115955749404
   exposure 1.7
 }
 TexturedBackground {
   texture "factory"
 }
 Floor {
+  rotation 1 0 0 1.5708003061004252
   size 68 10
   appearance ThreadMetalPlate {
   }
 }
 DEF ROOF Floor {
-  translation 0 5 0
-  rotation 1 0 0 3.141592653589793
+  translation 0 0 5
+  rotation 1 0 0 -1.5707950010791611
   name "roof"
   size 68 10
   appearance Roughcast {
@@ -41,7 +42,8 @@ DEF ROOF Floor {
   }
 }
 Wall {
-  translation 0.02503 0 5.03882
+  translation 0.02503 5.03882 0
+  rotation 1 0 0 1.5708
   name "wall0"
   size 68 5 0.2
   appearance Roughcast {
@@ -51,7 +53,8 @@ Wall {
   }
 }
 Wall {
-  translation 0.02503 0 -4.94118
+  translation 0.02503 -4.94118 0
+  rotation 1 0 0 1.5708
   name "wall1"
   size 68 5 0.2
   appearance Roughcast {
@@ -62,7 +65,7 @@ Wall {
 }
 Wall {
   translation 34.095 0 -0.041179
-  rotation 0 1 0 -1.5707953071795862
+  rotation -0.577349935856137 0.577349935856137 0.5773509358560258 -2.094395307179586
   name "wall2"
   size 10 5 0.2
   appearance Roughcast {
@@ -73,7 +76,7 @@ Wall {
 }
 Wall {
   translation -34.055 0 0.0388906
-  rotation 0 1 0 -1.5707953071795862
+  rotation -0.577349935856137 0.577349935856137 0.5773509358560258 -2.094395307179586
   name "wall3"
   size 10 5 0.2
   appearance Roughcast {
@@ -83,8 +86,8 @@ Wall {
   }
 }
 ConveyorBelt {
-  translation 8.7256 0 1.99898
-  rotation 0 1 0 3.14159
+  translation 8.7256 2 0
+  rotation 0 -0.7071067811862364 -0.7071067811862364 3.14159
   name "car conveyor belt"
   size 40 1.2 1
   appearance CorrugatedMetal {
@@ -94,11 +97,10 @@ ConveyorBelt {
   }
   borderHeight -0.08
   timer 30
-  textureAnimation 0.01
 }
 ConveyorBelt {
-  translation 3.35777 0 -1.34959
-  rotation 0 1 0 -5.307179586466759e-06
+  translation 3.35777 -1.34959 0
+  rotation 1 0 0 1.5708
   name "wheel conveyor belt"
   size 40 0.6 0.8
   appearance CorrugatedMetal {
@@ -109,11 +111,10 @@ ConveyorBelt {
   borderHeight -0.03
   speed 0.1
   timer 30
-  textureAnimation 0.009
 }
 DEF CAR Solid {
-  translation 4.1232 1.37 2.01218
-  rotation 0 -1 0 1.5708
+  translation 4.1232 2.01218 1.37
+  rotation -0.5773509358554485 0.5773509358554485 0.5773489358556708 -2.094395307179586
   children [
     Transform {
       translation 0 -0.36 1.39
@@ -159,8 +160,8 @@ DEF CAR Solid {
   }
 }
 DEF CAR Solid {
-  translation 10.3932 1.37 2.01218
-  rotation 0 -1 0 1.5708
+  translation 10.3932 2.01218 1.37
+  rotation -0.5773509358554485 0.5773509358554485 0.5773489358556708 -2.094395307179586
   children [
     Transform {
       translation 0 -0.36 1.39
@@ -184,8 +185,8 @@ DEF CAR Solid {
   physics USE TESLA_PHYSICS
 }
 DEF CAR Solid {
-  translation 17.8332 1.37 2.01218
-  rotation 0 -1 0 1.5708
+  translation 17.8332 2.01218 1.37
+  rotation -0.5773509358554485 0.5773509358554485 0.5773489358556708 -2.094395307179586
   children [
     Transform {
       translation 0 -0.36 1.39
@@ -207,15 +208,16 @@ DEF CAR Solid {
   boundingObject USE TESLA_BO
   physics USE TESLA_PHYSICS
 }
-Robot {
-  translation 0.1 0.3 0.1
-  rotation 0 0 1 0
+Irb4600-40 {
+  translation 0 0 0.6
+  rotation 0 0 1 -1.5707953071795862
+  controller "<extern>"
+  staticBase TRUE
+}
+Solid {
+  translation 0.1 0.1 0.3
+  rotation 1 0 0 1.5708
   children [
-    Irb4600-40 {
-      translation 0 0.3 0
-      rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-      controller "<extern>"
-    }
     Shape {
       appearance GalvanizedMetal {
         textureTransform TextureTransform {
@@ -230,11 +232,9 @@ Robot {
   name "box"
   model "box"
   boundingObject USE BOX
-  controller ""
 }
 DEF WHEEL Solid {
-  translation -1.9 0.77 -1.35
-  rotation 1 0 0 -1.5707953071795862
+  translation -1.9 -1.35 0.77
   children [
     DEF WHEEL_SHAPE Slot {
       type "vehicle wheel"
@@ -260,8 +260,7 @@ DEF WHEEL Solid {
   }
 }
 DEF WHEEL Solid {
-  translation 0.61 0.77 -1.35
-  rotation 1 0 0 -1.5707953071795862
+  translation 0.61 -1.35 0.77
   children [
     DEF WHEEL_SHAPE Slot {
       type "vehicle wheel"
@@ -278,8 +277,7 @@ DEF WHEEL Solid {
   }
 }
 DEF WHEEL Solid {
-  translation -4.9 0.77 -1.35
-  rotation 1 0 0 -1.5707953071795862
+  translation -4.9 -1.35 0.77
   children [
     DEF WHEEL_SHAPE Slot {
       type "vehicle wheel"
@@ -296,8 +294,7 @@ DEF WHEEL Solid {
   }
 }
 DEF WHEEL Solid {
-  translation 3.21 0.77 -1.35
-  rotation 1 0 0 -1.5707953071795862
+  translation 3.21 -1.35 0.77
   children [
     DEF WHEEL_SHAPE Slot {
       type "vehicle wheel"
@@ -314,8 +311,7 @@ DEF WHEEL Solid {
   }
 }
 DEF WHEEL Solid {
-  translation -7.9 0.77 -1.35
-  rotation 1 0 0 -1.5707953071795862
+  translation -7.9 -1.35 0.77
   children [
     DEF WHEEL_SHAPE Slot {
       type "vehicle wheel"
@@ -332,8 +328,7 @@ DEF WHEEL Solid {
   }
 }
 DEF WHEEL Solid {
-  translation -10.9 0.77 -1.35
-  rotation 1 0 0 -1.5707953071795862
+  translation -10.9 -1.35 0.77
   children [
     DEF WHEEL_SHAPE Slot {
       type "vehicle wheel"

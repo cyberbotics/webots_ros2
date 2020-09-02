@@ -6,12 +6,13 @@ package_name = 'webots_ros2_core'
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['package.xml']))
+data_files.append(('share/' + package_name + '/launch', ['launch/robot_launch.py']))
 
 
 setup(
     name=package_name,
-    version='0.0.4',
-    packages=[package_name, package_name + '.math'],
+    version='1.0.0',
+    packages=[package_name, package_name + '.devices', package_name + '.math'],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],
     zip_safe=True,
@@ -33,7 +34,9 @@ setup(
         'console_scripts': [
             'webots_launcher = webots_ros2_core.webots_launcher:main',
             'tf_publisher = webots_ros2_core.tf_publisher:main',
-            'webots_differential_drive_node = webots_ros2_core.webots_differential_drive_node:main'
+            'webots_differential_drive_node = webots_ros2_core.webots_differential_drive_node:main',
+            'webots_robotic_arm_node = webots_ros2_core.webots_robotic_arm_node:main',
+            'webots_node = webots_ros2_core.webots_node:main'
         ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }

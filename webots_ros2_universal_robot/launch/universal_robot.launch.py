@@ -17,36 +17,25 @@
 """Launch Webots and the controller."""
 
 import os
-
-import launch
-import launch_ros.actions
-
-from webots_ros2_core.utils import ControllerLauncher
-
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
-    # Webots
-    arguments = ['--mode=realtime', '--world=' +
-                 os.path.join(get_package_share_directory('webots_ros2_universal_robot'),
-                              'worlds', 'universal_robot.wbt')]
-    webots = launch_ros.actions.Node(package='webots_ros2_core', executable='webots_launcher',
-                                     arguments=arguments, output='screen')
-    # Controller node
-    synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
-    controller = ControllerLauncher(package='webots_ros2_universal_robot',
-                                    executable='universal_robot',
-                                    parameters=[{'synchronization': synchronization}],
-                                    output='screen')
-    return launch.LaunchDescription([
-        webots,
-        controller,
-        # Shutdown launch when Webots exits.
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
-            )
+    package_dir = get_package_share_directory('webots_ros2_universal_robot')
+
+    webots = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
         ),
+        launch_arguments={
+            'executable': 'webots_robotic_arm_node',
+            'world': os.path.join(package_dir, 'worlds', 'universal_robot.wbt')
+        }.items()
+    )
+
+    return LaunchDescription([
+        webots
     ])

@@ -17,48 +17,35 @@
 """Launch Webots e-puck driver."""
 
 import os
-import launch
-from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, EmitEvent
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions.path_join_substitution import PathJoinSubstitution
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_core.utils import ControllerLauncher
 
 
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_epuck')
-    synchronization = LaunchConfiguration('synchronization', default=False)
+    world = LaunchConfiguration('world')
 
-    # Webots
-    arguments = [
-        '--mode=realtime',
-        '--world=' + os.path.join(package_dir, 'worlds', 'epuck_world.wbt')
-    ]
-    webots = Node(
-        package='webots_ros2_core',
-        executable='webots_launcher',
-        arguments=arguments,
-        output='screen'
-    )
-
-    # Driver node
-    controller = ControllerLauncher(
-        package='webots_ros2_epuck',
-        executable='driver',
-        parameters=[{'synchronization': synchronization}],
-        output='screen'
+    webots = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
+        ),
+        launch_arguments=[
+            ('package', 'webots_ros2_epuck'),
+            ('executable', 'driver'),
+            ('world', PathJoinSubstitution([package_dir, 'worlds', world])),
+        ]
     )
 
     return LaunchDescription([
-        webots,
-        controller,
-
-        # Shutdown launch when Webots exits.
-        RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[EmitEvent(event=launch.events.Shutdown())],
-            )
-        )
+        DeclareLaunchArgument(
+            'world',
+            default_value='epuck_world.wbt',
+            description='Choose one of the world files from `/webots_ros2_epuck/world` directory'
+        ),
+        webots
     ])

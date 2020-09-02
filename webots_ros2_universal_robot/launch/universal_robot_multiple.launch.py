@@ -19,32 +19,35 @@
 import os
 
 import launch
-import launch_ros.actions
 
 from webots_ros2_core.utils import ControllerLauncher
+from webots_ros2_core.webots_launcher import WebotsLauncher
 
 from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
     # Webots
-    arguments = ['--mode=realtime', '--world=' +
-                 os.path.join(get_package_share_directory('webots_ros2_universal_robot'),
-                              'worlds', 'universal_robot_multiple.wbt')]
-    webots = launch_ros.actions.Node(package='webots_ros2_core', executable='webots_launcher',
-                                     arguments=arguments, output='screen')
+    webots = WebotsLauncher(
+        world=os.path.join(
+            get_package_share_directory('webots_ros2_universal_robot'),
+            'worlds',
+            'universal_robot_multiple.wbt'
+        )
+    )
+
     # Controller nodes
     synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
-    Ure3controller = ControllerLauncher(package='webots_ros2_universal_robot',
-                                        executable='universal_robot',
+    Ure3controller = ControllerLauncher(package='webots_ros2_core',
+                                        executable='webots_robotic_arm_node',
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
                                         arguments=['--webots-robot-name=UR3e'],
                                         node_namespace='UR3e',
                                         parameters=[{'synchronization': synchronization}],
                                         output='screen')
-    Ure5controller = ControllerLauncher(package='webots_ros2_universal_robot',
-                                        executable='universal_robot',
+    Ure5controller = ControllerLauncher(package='webots_ros2_core',
+                                        executable='webots_robotic_arm_node',
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
                                         arguments=['--webots-robot-name=UR5e'],

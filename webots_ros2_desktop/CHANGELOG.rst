@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_desktop
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.0 (2020-09-01)
+------------------
+* Update to Webots R2020b-rev1.
+
 0.0.3 (2020-06-15)
 ------------------
 * Fixed missing Webots package when installing with APT.

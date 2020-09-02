@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.0 (2020-XX-YY)
+1.0.0 (2020-09-01)
 ------------------
 * Added a universal 'webots_differential_drive_node' node
 

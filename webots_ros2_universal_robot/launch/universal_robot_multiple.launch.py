@@ -43,7 +43,7 @@ def generate_launch_description():
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
                                         arguments=['--webots-robot-name=UR3e'],
-                                        node_namespace='UR3e',
+                                        namespace='UR3e',
                                         parameters=[{'synchronization': synchronization}],
                                         output='screen')
     Ure5controller = ControllerLauncher(package='webots_ros2_core',
@@ -51,7 +51,7 @@ def generate_launch_description():
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
                                         arguments=['--webots-robot-name=UR5e'],
-                                        node_namespace='UR5e',
+                                        namespace='UR5e',
                                         parameters=[{'synchronization': synchronization}],
                                         output='screen')
     return launch.LaunchDescription([

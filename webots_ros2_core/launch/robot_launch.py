@@ -107,7 +107,7 @@ def generate_launch_description():
     # Driver node
     controller = ControllerLauncher(
         package=package,
-        node_executable=executable,
+        executable=executable,
         parameters=[
             node_parameters,
             {
@@ -124,7 +124,7 @@ def generate_launch_description():
     # Robot state publisher
     robot_state_publisher = Node(
         package='robot_state_publisher',
-        node_executable='robot_state_publisher',
+        executable='robot_state_publisher',
         output='screen',
         parameters=[{
             'robot_description': '<robot name=""><link name=""/></robot>',

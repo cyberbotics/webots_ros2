@@ -37,7 +37,7 @@ def generate_launch_description():
                                        # this argument should match the 'name' field
                                        # of the robot in Webots
                                        arguments=['--webots-robot-name=abbirb4600'],
-                                       node_namespace='abb',
+                                       namespace='abb',
                                        parameters=[{'synchronization': synchronization}],
                                        output='screen')
     Ure5controller = ControllerLauncher(package='webots_ros2_core',
@@ -45,7 +45,7 @@ def generate_launch_description():
                                         # this argument should match the 'name' field
                                         # of the robot in Webots
                                         arguments=['--webots-robot-name=UR5e'],
-                                        node_namespace='ur',
+                                        namespace='ur',
                                         parameters=[{'synchronization': synchronization}],
                                         output='screen')
     # Control nodes

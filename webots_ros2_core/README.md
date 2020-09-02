@@ -65,7 +65,7 @@ def generate_launch_description():
 
     controller = ControllerLauncher(
         package=package,
-        node_executable=executable,
+        executable=executable,
         arguments=[
             '--webots-robot-name', robot_name,
             '--webots-node-name', node_name

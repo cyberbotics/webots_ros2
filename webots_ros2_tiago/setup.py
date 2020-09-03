@@ -7,16 +7,18 @@ data_files = []
 data_files.append(
     ('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['launch/tiago.launch.py']))
-data_files.append(('share/' + package_name + '/worlds',
-                   ['worlds/ros_tiago.wbt', 'worlds/.ros_tiago.wbproj']))
+data_files.append(('share/' + package_name + '/worlds', [
+    'worlds/ros_tiago.wbt', 'worlds/.ros_tiago.wbproj',
+    'worlds/tiago++_example.wbt', 'worlds/.tiago++_example.wbproj'
+]))
 data_files.append(('share/' + package_name + '/resource',
-                   ['resource/odometry.rviz']))
+                   ['resource/odometry.rviz', 'resource/tiago.yaml']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 
 setup(
     name=package_name,
-    version='0.0.4',
+    version='1.0.0',
     packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

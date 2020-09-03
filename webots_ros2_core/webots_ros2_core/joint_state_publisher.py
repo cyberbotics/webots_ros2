@@ -46,9 +46,8 @@ class JointStatePublisher():
         for i in range(robot.getNumberOfDevices()):
             device = robot.getDeviceByIndex(i)
             if device.getNodeType() == Node.POSITION_SENSOR:
-                name = device.getName()
-                if name.endswith('_sensor'):
-                    name = name[:-7]
+                motor = device.getMotor()
+                name = motor.getName() if motor is not None else device.getName()
                 self.jointNames.append(name)
                 self.sensors.append(device)
                 self.previousPosition.append(0)

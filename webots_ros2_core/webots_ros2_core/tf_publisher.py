@@ -15,31 +15,48 @@
 """ROS2 TF publisher."""
 
 import math
-import rclpy
-
-from webots_ros2_core.webots_node import WebotsNode
 
 from tf2_msgs.msg import TFMessage
 from geometry_msgs.msg import TransformStamped
 from rclpy.time import Time
 
+from rclpy.parameter import Parameter
 
-class TfPublisher(WebotsNode):
 
-    def __init__(self, args):
-        super().__init__('tf_publisher', args)
-        self.publisherTimer = self.create_timer(0.001 * self.timestep, self.tf_publisher_callback)
-        self.tfPublisher = self.create_publisher(TFMessage, 'tf', 10)
+class TfPublisher():
+    """This class publishes the transforms of all the Solid nodes of the robots."""
+
+    def __init__(self, robot, node):
+        """Initialize the publisher and parse the robot."""
+        self.robot = robot
+        self.prefix = node.get_parameter_or('prefix',
+                                            Parameter('prefix', Parameter.Type.STRING, '')).value
+        self.timestep = int(self.robot.getBasicTimeStep())
+        self.publisherTimer = node.create_timer(0.001 * self.timestep, self.tf_publisher_callback)
+        self.tfPublisher = node.create_publisher(TFMessage, 'tf', 10)
         self.nodes = {}
-        # get the node from the DEF names defined in the customData field
-        for name in self.robot.getCustomData().split():
-            node = self.robot.getFromDef(name)
-            if node is not None:
-                self.nodes[name] = node
+        # parse the robot structure to detect interesting nodes to publish transforms
+        self.parseNode(self.robot.getSelf(), node)
+
+    def parseNode(self, node, rosNode):
+        """Recusrive function to parse a node."""
+        nameField = node.getProtoField('name')
+        endPointField = node.getProtoField('endPoint')
+        childrenField = node.getProtoField('children')
+        if nameField and nameField.getSFString():
+            name = nameField.getSFString()
+            if name in self.nodes:
+                rosNode.get_logger().warn('Two Solids have the same "%s" name.' % name)
             else:
-                self.get_logger().warn('No node with the "%s" DEF name found.' % name)
+                self.nodes[name] = node
+        if endPointField and endPointField.getSFNode():
+            self.parseNode(endPointField.getSFNode(), rosNode)
+        if childrenField:
+            for i in range(childrenField.getCount()):
+                self.parseNode(childrenField.getMFNode(i), rosNode)
 
     def tf_publisher_callback(self):
+        """Publish the current transforms."""
         # Publish TF for the next step
         # we use one step in advance to make sure no sensor data are published before
         stamp = Time(seconds=self.robot.getTime() + 0.001 * self.timestep).to_msg()
@@ -50,7 +67,7 @@ class TfPublisher(WebotsNode):
             transformStamped = TransformStamped()
             transformStamped.header.stamp = stamp
             transformStamped.header.frame_id = 'map'
-            transformStamped.child_frame_id = name
+            transformStamped.child_frame_id = self.prefix + name
             transformStamped.transform.translation.x = position[0]
             transformStamped.transform.translation.y = position[1]
             transformStamped.transform.translation.z = position[2]
@@ -64,16 +81,3 @@ class TfPublisher(WebotsNode):
             transformStamped.transform.rotation.w = qw
             tFMessage.transforms.append(transformStamped)
         self.tfPublisher.publish(tFMessage)
-
-
-def main(args=None):
-    rclpy.init(args=args)
-
-    tfPublisher = TfPublisher(args=args)
-
-    rclpy.spin(tfPublisher)
-    rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()

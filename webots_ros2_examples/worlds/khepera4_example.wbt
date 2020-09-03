@@ -1,0 +1,50 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  info [
+    "Simple Khepera IV simulation that can be controlled with ROS2."
+  ]
+  title "ROS2 simulation of the Khepera IV robot"
+}
+Viewpoint {
+  orientation 0.6855367379017815 -0.23290009931686192 -0.6897803452731746 0.9152992115107464
+  position -1.4670162072354138 -2.3888456989525992 3.4003647484965547
+  follow "khepera"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  rotation 1 0 0 1.5707996938995747
+  floorSize 1.5 1.5
+}
+WoodenBox {
+  translation -0.265062 0.13 0.05
+  name "wooden box(1)"
+  size 0.1 0.1 0.1
+}
+WoodenBox {
+  translation -0.115895 -0.36 0.05
+  name "wooden box(2)"
+  size 0.1 0.1 0.1
+}
+WoodenBox {
+  translation 0.44 0.12 0.05
+  name "wooden box(3)"
+  size 0.1 0.1 0.1
+}
+WoodenBox {
+  translation 0.29726 -0.29 0.05
+  name "wooden box(4)"
+  size 0.1 0.1 0.1
+}
+WoodenBox {
+  translation -0.158467 0.26 0.05
+  size 0.1 0.1 0.1
+}
+Khepera4_enu {
+  rotation 0 0 1 3.14159
+  translation -0.05 -0.05 0
+  name "khepera"
+  controller "<extern>"
+}

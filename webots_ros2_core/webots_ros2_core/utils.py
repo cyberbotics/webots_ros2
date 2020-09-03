@@ -19,6 +19,7 @@
 import os
 import re
 import sys
+import argparse
 
 from typing import List
 from typing import Optional
@@ -48,6 +49,8 @@ def get_webots_home():
         webotsHome = '/usr/local/webots'
     elif os.path.isdir('/snap/webots/current/usr/share/webots'):  # Linux snap install
         webotsHome = '/snap/webots/current/usr/share/webots'
+    elif os.path.isdir('/Applications/Webots.app'):  # macOS default install
+        webotsHome = '/Applications/Webots.app'
     elif os.path.isdir('C:\\Program Files\\Webots'):  # Windows default install
         webotsHome = 'C:\\Program Files\\Webots'
     elif os.path.isdir(os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'):  # Windows user install
@@ -91,6 +94,11 @@ def append_webots_python_lib_to_path():
     if get_webots_version_major_number() <= 2019:
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
                         (sys.version_info[0], sys.version_info[1])))
+    elif sys.platform == 'darwin':
+        sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],
+                                     'lib',
+                                     'controller',
+                                     'python%d%d_brew' % (sys.version_info[0], sys.version_info[1])))
     else:
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],
                                      'lib',
@@ -115,6 +123,13 @@ def get_webots_version():
     with open(versionFile, 'r') as f:
         return f.read().replace('\n', '').strip()
     return None
+
+
+def get_node_name_from_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--webots-node-name', dest='webots_node_name', default='webots_driver', help='Name of your drive node')
+    args, _ = parser.parse_known_args()
+    return args.webots_node_name
 
 
 class ControllerLauncher(Node):

@@ -30,41 +30,53 @@ def euler_to_quaternion(roll, pitch, yaw):
     return q
 
 
-def interpolate_function(value, start_x, start_y, end_x, end_y):
+def interpolate_function(value, start_x, start_y, end_x, end_y, ascending=None):
+    if end_x - start_x == 0:
+        if (ascending and value < start_x) or (not ascending and value > start_x):
+            return start_y
+        elif (ascending and value > start_x) or (not ascending and value < start_x):
+            return end_y
+        else:
+            return start_y + (end_y - start_y) / 2
     slope = (end_y - start_y) / (end_x - start_x)
     return slope * (value - start_x) + start_y
 
 
-def interpolate_table(value, table):
-    for i in range(len(table) - 1):
-        if (value < table[i][1] and value >= table[i + 1][1]) or \
-                (value > table[i][1] and value <= table[i + 1][1]):
+def interpolate_lookup_table(value, table):
+    if not table:
+        return value
+
+    # Interpolate
+    for i in range(int(len(table) / 3) - 1):
+        if (value < table[i * 3 + 1] and value >= table[(i + 1) * 3 + 1]) or \
+                (value >= table[i * 3 + 1] and value < table[(i + 1) * 3 + 1]):
             return interpolate_function(
                 value,
-                table[i][1],
-                table[i][0],
-                table[i + 1][1],
-                table[i + 1][0]
+                table[i * 3 + 1],
+                table[i * 3],
+                table[(i + 1) * 3 + 1],
+                table[(i + 1) * 3]
             )
-    # Edge case, search outside of two points.
-    # This code assumes that the table is sorted in descending order
-    if value > table[0][1]:
-        # Interpolate as first
+
+    # Extrapolate (we assume that the table is sorted, order is irrelevant)
+    ascending = (table[1] < table[len(table) - 1*3 + 1])
+    if (ascending and value >= table[1]) or (not ascending and value < table[1]):
         return interpolate_function(
             value,
-            table[0][1],
-            table[0][0],
-            table[1][1],
-            table[1][0]
+            table[len(table) - 2 * 3 + 1],
+            table[len(table) - 2 * 3 + 0],
+            table[len(table) - 1 * 3 + 1],
+            table[len(table) - 1 * 3 + 0],
+            ascending
         )
     else:
-        # Interpolate as last
         return interpolate_function(
             value,
-            table[len(table) - 2][1],
-            table[len(table) - 2][0],
-            table[len(table) - 1][1],
-            table[len(table) - 1][0]
+            table[1],
+            table[0],
+            table[3 + 1],
+            table[3],
+            ascending
         )
 
 

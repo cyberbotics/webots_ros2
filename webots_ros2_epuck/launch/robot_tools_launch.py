@@ -19,11 +19,12 @@
 import os
 import launch
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, LogInfo
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
@@ -35,6 +36,7 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('rviz', default=True)
     use_mapper = LaunchConfiguration('mapper', default=False)
     fill_map = LaunchConfiguration('fill_map', default=True)
+    map_filename = LaunchConfiguration('fill_map', default=os.path.join(package_dir, 'resource', 'epuck_world_map.yaml'))
 
     # Rviz node
     rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
@@ -44,6 +46,7 @@ def generate_launch_description():
             executable='rviz2',
             output='log',
             arguments=['--display-config=' + rviz_config],
+            parameters=[{'use_sim_time': use_sim_time}],
             condition=launch.conditions.IfCondition(use_rviz)
         )
     )
@@ -53,17 +56,35 @@ def generate_launch_description():
         launch_description_nodes.append(
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
-                    os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
+                    os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')
                 ),
-                launch_arguments={
-                    'params_file': os.path.join(package_dir, 'resource', 'nav2_params.yaml'),
-                    'use_sim_time': use_sim_time
-                }.items(),
+                launch_arguments=[
+                    ('map', map_filename),
+                    ('use_sim_time', use_sim_time),
+                    ('params_file', os.path.join(package_dir, 'resource', 'nav2_params.yaml'))
+                ],
                 condition=launch.conditions.IfCondition(use_nav)
             )
         )
+        launch_description_nodes.append(ExecuteProcess(
+            cmd=[
+                'ros2',
+                'topic',
+                'pub',
+                '--once',
+                '/initialpose',
+                'geometry_msgs/msg/PoseWithCovarianceStamped',
+                '{\
+                "header": { "frame_id": "map" },\
+                "pose": { "pose": {\
+                    "position": { "x": 0.005, "y": 0.0, "z": 0.0 },\
+                    "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }}\
+                }\
+            }'
+            ]
+        ))
     else:
-        print('Navigation2 is not installed, navigation functionality is disabled')
+        launch_description_nodes.append(LogInfo(msg='Navigation2 is not installed, navigation functionality is disabled'))
 
     # Mapping
     launch_description_nodes.append(

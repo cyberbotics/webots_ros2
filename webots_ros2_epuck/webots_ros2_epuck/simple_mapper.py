@@ -53,6 +53,14 @@ class SimpleMapper(Node):
             )
         )
         self.tf_publisher = StaticTransformBroadcaster(self)
+        tf = TransformStamped()
+        tf.header.stamp = self.get_clock().now().to_msg()
+        tf.header.frame_id = 'map'
+        tf.child_frame_id = 'odom'
+        tf.transform.translation.x = 0.0
+        tf.transform.translation.y = 0.0
+        tf.transform.translation.z = 0.0
+        self.tf_publisher.sendTransform(tf)
 
         # Init laser related elements
         if fill_map_param.value:
@@ -66,15 +74,6 @@ class SimpleMapper(Node):
 
     def publish_map(self):
         now = self.get_clock().now()
-
-        tf = TransformStamped()
-        tf.header.stamp = now.to_msg()
-        tf.header.frame_id = 'map'
-        tf.child_frame_id = 'odom'
-        tf.transform.translation.x = 0.0
-        tf.transform.translation.y = 0.0
-        tf.transform.translation.z = 0.0
-        self.tf_publisher.sendTransform(tf)
 
         msg = OccupancyGrid()
         msg.header.stamp = now.to_msg()

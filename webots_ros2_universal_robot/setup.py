@@ -22,7 +22,8 @@ for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
 launchers = [
     'launch/universal_robot.launch.py',
     'launch/universal_robot_multiple.launch.py',
-    'launch/universal_robot_rviz.launch.py'
+    'launch/universal_robot_rviz.launch.py',
+    'launch/universal_robot_rviz_dynamic.launch.py'
 ]
 
 data_files = []
@@ -31,12 +32,12 @@ data_files.append(('share/' + package_name, launchers))
 data_files.append(('share/' + package_name + '/worlds', worlds))
 data_files.append(('share/' + package_name + '/worlds/textures', textures))
 data_files.append(('share/' + package_name, ['package.xml']))
-
+data_files.append(('share/' + package_name + '/resource', ['resource/view_robot_dynamic.rviz']))
 
 setup(
     name=package_name,
-    version='0.0.4',
-    packages=[package_name],
+    version='1.0.0',
+    packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],
     zip_safe=True,
@@ -55,7 +56,6 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ['universal_robot = webots_ros2_universal_robot.universal_robot:main'],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

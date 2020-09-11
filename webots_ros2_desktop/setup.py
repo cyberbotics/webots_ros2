@@ -4,7 +4,6 @@ import os
 import shutil
 import sys
 import tarfile
-import urllib.request
 
 from setuptools import setup
 
@@ -25,8 +24,7 @@ if 'WEBOTS_HOME' not in os.environ and 'TRAVIS' not in os.environ and sys.platfo
         shutil.rmtree('webots')
     # Get Webots archive
     url = 'https://github.com/cyberbotics/webots/releases/download/%s/' % webotsVersion
-    urllib.request.urlretrieve(url + archiveName,
-                               os.path.join(os.path.dirname(__file__), archiveName))
+    os.system('wget ' + url + archiveName + ' -O ' + os.path.join(os.path.dirname(__file__), archiveName))
     # Extract Webots archive
     tar = tarfile.open(archiveName, 'r:bz2')
     tar.extractall()

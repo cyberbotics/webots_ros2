@@ -29,10 +29,22 @@ from launch.action import Action
 from launch.launch_context import LaunchContext
 
 
+def get_required_webots_version():
+    """Return the Webots version compatible with this version of the package."""
+    return 'R2020b revision 1'
+
+
+def get_required_webots_version_short():
+    """Return the Webots short version compatible with this version of the package."""
+    return get_required_webots_version().replace('revision ', 'rev').replace(' ', '-')
+
+
 def get_webots_home():
     """Path to the Webots installation directory."""
     webotsHome = None
-    if 'ROS2_WEBOTS_HOME' in os.environ:
+    if os.path.isdir(os.path.join(os.environ['HOME'], '.ros', 'webots' + get_required_webots_version_short())):
+        webotsHome = os.path.join(os.environ['HOME'], '.ros', 'webots' + get_required_webots_version_short())
+    elif 'ROS2_WEBOTS_HOME' in os.environ:
         webotsHome = os.environ['ROS2_WEBOTS_HOME']
     elif 'WEBOTS_HOME' in os.environ:
         webotsHome = os.environ['WEBOTS_HOME']

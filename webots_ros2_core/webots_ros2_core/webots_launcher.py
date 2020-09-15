@@ -25,8 +25,7 @@ from launch.actions import ExecuteProcess
 from launch.substitutions import TextSubstitution
 from launch.substitution import Substitution
 from webots_ros2_core.utils import get_webots_home, get_webots_version
-
-WEBOTS_VERSION = 'R2020b revision 1'
+from webots_ros2_core.utils import get_required_webots_version, get_required_webots_version_short
 
 
 class _WebotsCommandSubstitution(Substitution):
@@ -37,10 +36,9 @@ class _WebotsCommandSubstitution(Substitution):
 
     def install_webots(self):
         # Remove previous archive
-        webotsShortVersion = WEBOTS_VERSION.replace('revision ', 'rev').replace(' ', '-')
         installationDirectory = os.path.join(os.environ['HOME'], '.ros')
         installationPath = os.path.abspath(os.path.join(installationDirectory, 'webots'))
-        archiveName = 'webots-%s-x86-64.tar.bz2' % webotsShortVersion
+        archiveName = 'webots-%s-x86-64.tar.bz2' % get_required_webots_version_short()
         archivePath = os.path.join(installationDirectory, archiveName)
         if os.path.exists(archivePath):
             os.remove(archivePath)
@@ -48,20 +46,21 @@ class _WebotsCommandSubstitution(Substitution):
         if os.path.exists(installationPath):
             shutil.rmtree(installationPath)
         # Get Webots archive
-        print('\033[33mInstalling Webots (%s), this might take some time.\033[0m' % WEBOTS_VERSION)
-        url = 'https://github.com/cyberbotics/webots/releases/download/%s/' % webotsShortVersion
+        print('\033[33mInstalling Webots (%s), this might take some time.\033[0m' % get_required_webots_version())
+        url = 'https://github.com/cyberbotics/webots/releases/download/%s/' % get_required_webots_version_short()
         urllib.request.urlretrieve(url + archiveName, archivePath)
         # Extract Webots archive
-        tar = tarfile.open(archiveName, 'r:bz2')
-        tar.extractall()
+        tar = tarfile.open(archivePath, 'r:bz2')
+        tar.extractall(os.path.join(installationDirectory, 'webots' + get_required_webots_version_short()))
         tar.close()
+        os.remove(archivePath)
         os.environ['WEBOTS_HOME'] = installationPath
 
     def perform(self, context):
         webots_path = get_webots_home()
         # check Webots version
         version = get_webots_version(webots_path)
-        if version != WEBOTS_VERSION:
+        if version != get_required_webots_version():
             self.install_webots()
         # Add `webots` executable to command
         if sys.platform == 'win32':

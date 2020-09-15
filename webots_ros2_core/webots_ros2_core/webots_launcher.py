@@ -54,7 +54,7 @@ class _WebotsCommandSubstitution(Substitution):
         tar.extractall(os.path.join(installationDirectory, 'webots' + get_required_webots_version_short()))
         tar.close()
         os.remove(archivePath)
-        os.environ['WEBOTS_HOME'] = installationPath
+        os.environ['WEBOTS_HOME'] = os.path.join(installationPath, 'webots')
 
     def perform(self, context):
         webots_path = get_webots_home()

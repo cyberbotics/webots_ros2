@@ -42,8 +42,8 @@ def get_required_webots_version_short():
 def get_webots_home():
     """Path to the Webots installation directory."""
     webotsHome = None
-    if os.path.isdir(os.path.join(os.environ['HOME'], '.ros', 'webots' + get_required_webots_version_short())):
-        webotsHome = os.path.join(os.environ['HOME'], '.ros', 'webots' + get_required_webots_version_short())
+    if os.path.isdir(os.path.join(os.environ['HOME'], '.ros', 'webots' + get_required_webots_version_short(), 'webots')):
+        webotsHome = os.path.join(os.environ['HOME'], '.ros', 'webots' + get_required_webots_version_short(), 'webots')
     elif 'ROS2_WEBOTS_HOME' in os.environ:
         webotsHome = os.environ['ROS2_WEBOTS_HOME']
     elif 'WEBOTS_HOME' in os.environ:

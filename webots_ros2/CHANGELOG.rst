@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.1 (2020-XX-YY)
+------------------
+* Removed the 'webots_ros2_desktop' package.
+
 1.0.0 (2020-09-01)
 ------------------
 * Improved support for macOS

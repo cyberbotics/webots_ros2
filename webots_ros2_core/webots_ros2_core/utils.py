@@ -107,9 +107,10 @@ def get_webots_version_major_number():
     return 0
 
 
-def get_webots_version():
+def get_webots_version(path):
     """Webots version as a string."""
-    versionFile = os.path.join(get_webots_home(), 'resources', 'version.txt')
+    versionFile = os.path.join(path if path is not None else get_webots_home(),
+                               'resources', 'version.txt')
     with open(versionFile, 'r') as f:
         return f.read().replace('\n', '').strip()
     return None

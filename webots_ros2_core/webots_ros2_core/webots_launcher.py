@@ -21,7 +21,9 @@ import sys
 from launch.actions import ExecuteProcess
 from launch.substitutions import TextSubstitution
 from launch.substitution import Substitution
-from webots_ros2_core.utils import get_webots_home
+from webots_ros2_core.utils import get_webots_home, get_webots_version
+
+WEBOTS_VERSION = 'R2020b revision 1'
 
 
 class _WebotsCommandSubstitution(Substitution):
@@ -31,8 +33,13 @@ class _WebotsCommandSubstitution(Substitution):
         self.__world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
 
     def perform(self, context):
-        # Add `webots` executable to command
         webots_path = get_webots_home()
+        # check Webots version
+        version = get_webots_version(webots_path)
+        if version != WEBOTS_VERSION:
+            sys.exit("Wrong Webots version: '%s' is installed instead of '%s'"
+                     % (version, WEBOTS_VERSION))
+        # Add `webots` executable to command
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')
         command = [os.path.join(webots_path, 'webots')]

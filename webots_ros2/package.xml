@@ -16,8 +16,11 @@
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>webots_ros2_abb</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>
+  <exec_depend>webots_ros2_demos</exec_depend>
+  <exec_depend>webots_ros2_epuck</exec_depend>
   <exec_depend>webots_ros2_examples</exec_depend>
   <exec_depend>webots_ros2_importer</exec_depend>
+  <exec_depend>webots_ros2_msgs</exec_depend>
   <exec_depend>webots_ros2_tiago</exec_depend>
   <exec_depend>webots_ros2_universal_robot</exec_depend>
 

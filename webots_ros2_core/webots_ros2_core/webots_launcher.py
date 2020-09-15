@@ -17,7 +17,10 @@
 """This launcher simply start Webots."""
 
 import os
+import shutil
 import sys
+import tarfile
+import urllib.request
 from launch.actions import ExecuteProcess
 from launch.substitutions import TextSubstitution
 from launch.substitution import Substitution
@@ -32,13 +35,34 @@ class _WebotsCommandSubstitution(Substitution):
         self.__mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
         self.__world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
 
+    def install_webots(self):
+        # Remove previous archive
+        webotsShortVersion = WEBOTS_VERSION.replace('revision ', 'rev').replace(' ', '-')
+        installationDirectory = os.path.join(os.environ['HOME'], '.ros')
+        installationPath = os.path.abspath(os.path.join(installationDirectory, 'webots'))
+        archiveName = 'webots-%s-x86-64.tar.bz2' % webotsShortVersion
+        archivePath = os.path.join(installationDirectory, archiveName)
+        if os.path.exists(archivePath):
+            os.remove(archivePath)
+        # Remove previous webots folder
+        if os.path.exists(installationPath):
+            shutil.rmtree(installationPath)
+        # Get Webots archive
+        print('\033[33mInstalling Webots (%s), this might take some time.\033[0m' % WEBOTS_VERSION)
+        url = 'https://github.com/cyberbotics/webots/releases/download/%s/' % webotsShortVersion
+        urllib.request.urlretrieve(url + archiveName, archivePath)
+        # Extract Webots archive
+        tar = tarfile.open(archiveName, 'r:bz2')
+        tar.extractall()
+        tar.close()
+        os.environ['WEBOTS_HOME'] = installationPath
+
     def perform(self, context):
         webots_path = get_webots_home()
         # check Webots version
         version = get_webots_version(webots_path)
         if version != WEBOTS_VERSION:
-            sys.exit("Wrong Webots version: '%s' is installed instead of '%s'"
-                     % (version, WEBOTS_VERSION))
+            self.install_webots()
         # Add `webots` executable to command
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')

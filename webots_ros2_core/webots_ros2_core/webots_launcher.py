@@ -21,11 +21,14 @@ import shutil
 import sys
 import tarfile
 import urllib.request
+
+from tkinter import filedialog, messagebox
+
 from launch.actions import ExecuteProcess
-from launch.substitutions import TextSubstitution
 from launch.substitution import Substitution
-from webots_ros2_core.utils import get_webots_home, get_webots_version
-from webots_ros2_core.utils import get_required_webots_version, get_required_webots_version_short
+from launch.substitutions import TextSubstitution
+
+from webots_ros2_core.utils import get_webots_home, get_required_webots_version, get_required_webots_version_short
 
 
 class _WebotsCommandSubstitution(Substitution):
@@ -59,7 +62,21 @@ class _WebotsCommandSubstitution(Substitution):
     def perform(self, context):
         webots_path = get_webots_home()
         if webots_path is None:
-            self.install_webots()
+            answer = messagebox.askyesno('Webots is missing.',
+                                         'Webots "%s" is missing, would you like to install it?' %
+                                         get_required_webots_version())
+            if answer:
+                self.install_webots()
+            else:
+                answer = filedialog.askdirectory(
+                    initialdir=os.getcwd(),
+                    title="If Webots is already installed, please select its home installation folder:"
+                )
+                if isinstance(answer, str):
+                    os.environ['WEBOTS_HOME'] == answer
+                    webots_path = get_webots_home()
+                if webots_path is None:
+                    sys.exit('Missing Webots version "%s"' % get_required_webots_version())
         # Add `webots` executable to command
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')

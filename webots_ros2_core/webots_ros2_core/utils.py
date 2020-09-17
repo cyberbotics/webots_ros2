@@ -52,7 +52,7 @@ def get_webots_home(version=get_required_webots_version()):
         '/snap/webots/current/usr/share/webots',  # Linux snap install
         '/Applications/Webots.app',  # macOS default install
         'C:\\Program Files\\Webots',  # Windows default install
-        os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'  # Windows user install
+        os.environ['LOCALAPPDATA'] if 'LOCALAPPDATA' in os.environ else '' + '\\Programs\\Webots'  # Windows user install
     ]
     for path in pathes:
         if os.path.isdir(path) and get_webots_version(path) == version:

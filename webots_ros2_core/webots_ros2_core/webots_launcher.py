@@ -58,9 +58,7 @@ class _WebotsCommandSubstitution(Substitution):
 
     def perform(self, context):
         webots_path = get_webots_home()
-        # check Webots version
-        version = get_webots_version(webots_path)
-        if version != get_required_webots_version():
+        if webots_path is None:
             self.install_webots()
         # Add `webots` executable to command
         if sys.platform == 'win32':

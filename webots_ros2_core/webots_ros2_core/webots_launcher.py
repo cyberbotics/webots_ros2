@@ -69,6 +69,9 @@ class _WebotsCommandSubstitution(Substitution):
                                          get_required_webots_version())
             if answer:
                 self.install_webots()
+                webots_path = get_webots_home()
+                if webots_path is None:
+                    sys.exit('Failed to install Webots "%s"' % get_required_webots_version())
             else:
                 answer = filedialog.askdirectory(
                     initialdir=os.getcwd(),

@@ -39,29 +39,26 @@ def get_required_webots_version_short():
     return get_required_webots_version().replace('revision ', 'rev').replace(' ', '-')
 
 
-def get_webots_home():
+def get_webots_home(version=get_required_webots_version()):
     """Path to the Webots installation directory."""
-    webotsHome = None
-    if os.path.isdir(os.path.join(os.environ['HOME'], '.ros', 'webots' + get_required_webots_version_short(), 'webots')):
-        webotsHome = os.path.join(os.environ['HOME'], '.ros', 'webots' + get_required_webots_version_short(), 'webots')
-    elif 'ROS2_WEBOTS_HOME' in os.environ:
-        webotsHome = os.environ['ROS2_WEBOTS_HOME']
-    elif 'WEBOTS_HOME' in os.environ:
-        webotsHome = os.environ['WEBOTS_HOME']
-    elif os.path.isdir('/usr/local/webots'):  # Linux default install
-        webotsHome = '/usr/local/webots'
-    elif os.path.isdir('/snap/webots/current/usr/share/webots'):  # Linux snap install
-        webotsHome = '/snap/webots/current/usr/share/webots'
-    elif os.path.isdir('/Applications/Webots.app'):  # macOS default install
-        webotsHome = '/Applications/Webots.app'
-    elif os.path.isdir('C:\\Program Files\\Webots'):  # Windows default install
-        webotsHome = 'C:\\Program Files\\Webots'
-    elif os.path.isdir(os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'):  # Windows user install
-        webotsHome = os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'
-    else:
-        sys.exit('Webots not found, you should install it and define "ROS2_WEBOTS_HOME" or "WEBOTS_HOME".')
-    os.environ['WEBOTS_HOME'] = webotsHome
-    return webotsHome
+    environVariables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
+    for variable in environVariables:
+        if variable in os.environ and os.path.isdir(variable) and get_webots_version(os.environ[variable]) == version:
+            os.environ['WEBOTS_HOME'] = os.environ[variable]
+            return os.environ[variable]
+    pathes = [
+        os.path.join(os.environ['HOME'], '.ros', 'webots' + version, 'webots'),
+        '/usr/local/webots',  # Linux default install
+        '/snap/webots/current/usr/share/webots',  # Linux snap install
+        '/Applications/Webots.app',  # macOS default install
+        'C:\\Program Files\\Webots',  # Windows default install
+        os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'  # Windows user install
+    ]
+    for path in pathes:
+        if os.path.isdir(path) and get_webots_version(path) == version:
+            os.environ['WEBOTS_HOME'] = path
+            return path
+    return None
 
 
 def append_webots_lib_to_path():

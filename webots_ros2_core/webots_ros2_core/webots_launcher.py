@@ -117,7 +117,7 @@ class _WebotsCommandSubstitution(Substitution):
                 from tkinter import filedialog
                 answer = filedialog.askdirectory(
                     initialdir=os.getcwd(),
-                    title='Please select the folder where Webots is installed:'
+                    title='Please select the folder where Webots %s is installed:' % get_required_webots_version()
                 )
                 if isinstance(answer, str):
                     os.environ['WEBOTS_HOME'] == answer

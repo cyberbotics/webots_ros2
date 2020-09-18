@@ -84,7 +84,7 @@ class _WebotsCommandSubstitution(Substitution):
         if os.path.exists(installationPath):
             shutil.rmtree(installationPath)
         # Get Webots archive
-        print('\033[33mInstalling Webots (%s), this might take some time.\033[0m' % get_required_webots_version())
+        print('\033[33mInstalling Webots %s, this might take some time.\033[0m' % get_required_webots_version())
         url = 'https://github.com/cyberbotics/webots/releases/download/%s/' % get_required_webots_version_short()
         urllib.request.urlretrieve(url + archiveName, archivePath)
         # Extract Webots archive
@@ -98,7 +98,7 @@ class _WebotsCommandSubstitution(Substitution):
         webots_path = get_webots_home()
         if webots_path is None:
             if context.perform_substitution(self.__gui).lower() in ['false', '0']:
-                sys.exit('Missing Webots version "%s"' % get_required_webots_version())
+                sys.exit('Missing Webots version %s' % get_required_webots_version())
             root = tk.Tk()
             root.update()
             dialog = WebotsInstallationDialog(root)
@@ -108,7 +108,7 @@ class _WebotsCommandSubstitution(Substitution):
                 self.install_webots()
                 webots_path = get_webots_home()
                 if webots_path is None:
-                    sys.exit('Failed to install Webots "%s"' % get_required_webots_version())
+                    sys.exit('Failed to install Webots %s' % get_required_webots_version())
             elif dialog.installationMode == InstallationMode.manual:
                 import webbrowser
                 webbrowser.open('https://github.com/cyberbotics/webots/releases/tag/%s' % get_required_webots_version_short())
@@ -123,9 +123,9 @@ class _WebotsCommandSubstitution(Substitution):
                     os.environ['WEBOTS_HOME'] == answer
                     webots_path = get_webots_home()
                 if webots_path is None:
-                    sys.exit('Missing Webots version "%s"' % get_required_webots_version())
+                    sys.exit('Missing Webots version %s' % get_required_webots_version())
             elif dialog.installationMode is None:
-                sys.exit('Missing Webots version "%s"' % get_required_webots_version())
+                sys.exit('Missing Webots version %s' % get_required_webots_version())
         # Add `webots` executable to command
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')

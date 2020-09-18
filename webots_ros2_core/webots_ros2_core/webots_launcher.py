@@ -49,7 +49,7 @@ class _WebotsCommandSubstitution(Substitution):
         if os.path.exists(installationPath):
             shutil.rmtree(installationPath)
         # Get Webots archive
-        print('\033[33mInstalling Webots (%s), this might take some time.\033[0m' % get_required_webots_version())
+        print('\033[33mInstalling Webots %s, this might take some time.\033[0m' % get_required_webots_version())
         url = 'https://github.com/cyberbotics/webots/releases/download/%s/' % get_required_webots_version_short()
         urllib.request.urlretrieve(url + archiveName, archivePath)
         # Extract Webots archive

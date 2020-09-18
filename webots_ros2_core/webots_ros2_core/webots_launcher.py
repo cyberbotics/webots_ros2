@@ -81,7 +81,7 @@ class _WebotsCommandSubstitution(Substitution):
                     os.environ['WEBOTS_HOME'] == answer
                     webots_path = get_webots_home()
                 if webots_path is None:
-                    sys.exit('Missing Webots version "%s"' % get_required_webots_version())
+                    sys.exit('Could not find Webots version %s' % get_required_webots_version())
         # Add `webots` executable to command
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')

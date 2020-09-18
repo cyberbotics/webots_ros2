@@ -22,13 +22,48 @@ import sys
 import tarfile
 import urllib.request
 
-from tkinter import filedialog, messagebox
+from enum import Enum
+
+import tkinter as tk
 
 from launch.actions import ExecuteProcess
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
 
 from webots_ros2_core.utils import get_webots_home, get_required_webots_version, get_required_webots_version_short
+
+InstallationMode = Enum('InstallationMode', 'automatic manual path none')
+
+
+class WebotsInstallationDialog:
+    """This custom dialog is displayed when Webots is not installed."""
+
+    def __init__(self, parent):
+        top = self.top = tk.Toplevel(parent)
+        tk.Label(top, anchor='e', justify=tk.LEFT,
+                 text='Webots %s was not found in your system.\n'
+                      'Would you like to proceed with:\n'
+                      ' - Automatic installation in ~/.ros\n'
+                      ' - Manual installation.\n'
+                      ' - Specify path of already installed version.'
+                      % get_required_webots_version()
+                 ).grid(row=0, columnspan=3)
+        tk.Button(top, text='Automatic', command=self.automatic).grid(row=1, column=0)
+        tk.Button(top, text='Manual', command=self.manual).grid(row=1, column=1)
+        tk.Button(top, text='Specify path', command=self.path).grid(row=1, column=2)
+        self.installationMode = InstallationMode.none
+
+    def automatic(self):
+        self.installationMode = InstallationMode.automatic
+        self.top.destroy()
+
+    def manual(self):
+        self.installationMode = InstallationMode.manual
+        self.top.destroy()
+
+    def path(self):
+        self.installationMode = InstallationMode.path
+        self.top.destroy()
 
 
 class _WebotsCommandSubstitution(Substitution):
@@ -64,24 +99,33 @@ class _WebotsCommandSubstitution(Substitution):
         if webots_path is None:
             if context.perform_substitution(self.__gui).lower() in ['false', '0']:
                 sys.exit('Missing Webots version "%s"' % get_required_webots_version())
-            answer = messagebox.askyesno('Webots is missing.',
-                                         'Webots "%s" is missing, would you like to install it?' %
-                                         get_required_webots_version())
-            if answer:
+            root = tk.Tk()
+            root.update()
+            dialog = WebotsInstallationDialog(root)
+            root.wait_window(dialog.top)
+            root.destroy()
+            if dialog.installationMode == InstallationMode.automatic:
                 self.install_webots()
                 webots_path = get_webots_home()
                 if webots_path is None:
                     sys.exit('Failed to install Webots "%s"' % get_required_webots_version())
-            else:
+            elif dialog.installationMode == InstallationMode.manual:
+                import webbrowser
+                webbrowser.open('https://github.com/cyberbotics/webots/releases/tag/%s' % get_required_webots_version_short())
+                sys.exit()
+            elif dialog.installationMode == InstallationMode.path:
+                from tkinter import filedialog
                 answer = filedialog.askdirectory(
                     initialdir=os.getcwd(),
-                    title="If Webots is already installed, please select its home installation folder:"
+                    title='Please select the folder where Webots is installed:'
                 )
                 if isinstance(answer, str):
                     os.environ['WEBOTS_HOME'] == answer
                     webots_path = get_webots_home()
                 if webots_path is None:
                     sys.exit('Missing Webots version "%s"' % get_required_webots_version())
+            elif dialog.installationMode is None:
+                sys.exit('Missing Webots version "%s"' % get_required_webots_version())
         # Add `webots` executable to command
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')

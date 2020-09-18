@@ -63,7 +63,7 @@ class _WebotsCommandSubstitution(Substitution):
         webots_path = get_webots_home()
         if webots_path is None:
             if context.perform_substitution(self.__gui).lower() in ['false', '0']:
-                sys.exit('Missing Webots version "%s"' % get_required_webots_version())
+                sys.exit('Missing Webots %s' % get_required_webots_version())
             answer = messagebox.askyesno('Webots is missing.',
                                          'Webots %s is not installed on your system, would you like to install it?' %
                                          get_required_webots_version())

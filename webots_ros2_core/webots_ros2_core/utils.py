@@ -20,6 +20,7 @@ import os
 import re
 import sys
 import argparse
+import subprocess
 
 from typing import List
 from typing import Optional
@@ -46,11 +47,21 @@ def get_required_webots_version_short():
 
 def get_webots_home(version=get_required_webots_version()):
     """Path to the Webots installation directory."""
+    # search first with the environment variables
     environVariables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
     for variable in environVariables:
         if variable in os.environ and os.path.isdir(variable) and get_webots_version(os.environ[variable]) == version:
             os.environ['WEBOTS_HOME'] = os.environ[variable]
             return os.environ[variable]
+    # then using the 'which' command
+    try:
+        path = os.path.split(os.path.abspath(subprocess.check_output(['which', 'webots'])))[0]
+        if os.path.isdir(path) and get_webots_version(path) == version:
+            os.environ['WEBOTS_HOME'] = path
+            return path
+    except subprocess.CalledProcessError:
+        pass  # which not available or Webots not found
+    # finally, look at standard installation pathes
     pathes = [
         os.path.join(os.environ['HOME'], '.ros', 'webots' + make_short_version(version), 'webots'),
         '/usr/local/webots',  # Linux default install

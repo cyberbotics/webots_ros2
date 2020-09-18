@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2</name>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <description>Interface between Webots and ROS2</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -16,8 +16,11 @@
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>webots_ros2_abb</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>
+  <exec_depend>webots_ros2_demos</exec_depend>
+  <exec_depend>webots_ros2_epuck</exec_depend>
   <exec_depend>webots_ros2_examples</exec_depend>
   <exec_depend>webots_ros2_importer</exec_depend>
+  <exec_depend>webots_ros2_msgs</exec_depend>
   <exec_depend>webots_ros2_tiago</exec_depend>
   <exec_depend>webots_ros2_universal_robot</exec_depend>
 

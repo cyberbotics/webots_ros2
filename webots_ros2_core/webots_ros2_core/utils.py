@@ -20,6 +20,7 @@ import os
 import re
 import sys
 import argparse
+import subprocess
 
 from typing import List
 from typing import Optional
@@ -28,62 +29,79 @@ from launch_ros.actions import Node
 from launch.action import Action
 from launch.launch_context import LaunchContext
 
-try:
-    import webots_ros2_desktop.webots_path  # this module might not be installed
-except ImportError:
-    pass
+
+def get_required_webots_version():
+    """Return the Webots version compatible with this version of the package."""
+    return 'R2020b revision 1'
 
 
-def get_webots_home():
+def make_short_version(version):
+    """Transform a long Webots version in a short one."""
+    return version.replace('revision ', 'rev').replace(' ', '-')
+
+
+def get_required_webots_version_short():
+    """Return the Webots short version compatible with this version of the package."""
+    return make_short_version(get_required_webots_version())
+
+
+def get_webots_home(version=get_required_webots_version()):
     """Path to the Webots installation directory."""
-    webotsHome = None
-    if 'ROS2_WEBOTS_HOME' in os.environ:
-        webotsHome = os.environ['ROS2_WEBOTS_HOME']
-    elif ('webots_ros2_desktop' in sys.modules and
-          webots_ros2_desktop.webots_path and
-          webots_ros2_desktop.webots_path.get_webots_home()):
-        webotsHome = webots_ros2_desktop.webots_path.get_webots_home()
-    elif 'WEBOTS_HOME' in os.environ:
-        webotsHome = os.environ['WEBOTS_HOME']
-    elif os.path.isdir('/usr/local/webots'):  # Linux default install
-        webotsHome = '/usr/local/webots'
-    elif os.path.isdir('/snap/webots/current/usr/share/webots'):  # Linux snap install
-        webotsHome = '/snap/webots/current/usr/share/webots'
-    elif os.path.isdir('/Applications/Webots.app'):  # macOS default install
-        webotsHome = '/Applications/Webots.app'
-    elif os.path.isdir('C:\\Program Files\\Webots'):  # Windows default install
-        webotsHome = 'C:\\Program Files\\Webots'
-    elif os.path.isdir(os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'):  # Windows user install
-        webotsHome = os.getenv('LOCALAPPDATA') + '\\Programs\\Webots'
-    else:
-        sys.exit('Webots not found, you should either define "ROS2_WEBOTS_HOME", "WEBOTS_HOME" ' +
-                 'or install the "webots_ros2_desktop" package.')
-    os.environ['WEBOTS_HOME'] = webotsHome
-    return webotsHome
+    # search first with the environment variables
+    environVariables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
+    for variable in environVariables:
+        if variable in os.environ and os.path.isdir(variable) and get_webots_version(os.environ[variable]) == version:
+            os.environ['WEBOTS_HOME'] = os.environ[variable]
+            return os.environ[variable]
+    # then using the 'which' command
+    try:
+        path = os.path.split(os.path.abspath(subprocess.check_output(['which', 'webots'])))[0]
+        if os.path.isdir(path) and get_webots_version(path) == version:
+            os.environ['WEBOTS_HOME'] = path
+            return path
+    except subprocess.CalledProcessError:
+        pass  # which not available or Webots not found
+    # finally, look at standard installation pathes
+    pathes = [
+        os.path.join(os.environ['HOME'], '.ros', 'webots' + make_short_version(version), 'webots'),
+        '/usr/local/webots',  # Linux default install
+        '/snap/webots/current/usr/share/webots',  # Linux snap install
+        '/Applications/Webots.app',  # macOS default install
+        'C:\\Program Files\\Webots',  # Windows default install
+        os.getenv('LOCALAPPDATA', '') + '\\Programs\\Webots'  # Windows user install
+    ]
+    for path in pathes:
+        if os.path.isdir(path) and get_webots_version(path) == version:
+            os.environ['WEBOTS_HOME'] = path
+            return path
+    return None
 
 
 def append_webots_lib_to_path():
     """Add the Webots 'lib' folder to the library path."""
+    webotsHome = get_webots_home()
+    if webotsHome is None:
+        sys.exit('Can\'t load Webots Python API, because Webots is not found.')
     if sys.platform == 'linux':
         if get_webots_version_major_number() <= 2019:
-            os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':'
+            os.environ['LD_LIBRARY_PATH'] = (os.path.join(webotsHome, 'lib') + ':'
                                              + os.environ.get('LD_LIBRARY_PATH'))
         else:
-            os.environ['LD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller')
+            os.environ['LD_LIBRARY_PATH'] = (os.path.join(webotsHome, 'lib', 'controller')
                                              + ':' + os.environ.get('LD_LIBRARY_PATH'))
     elif sys.platform == 'darwin':
         if get_webots_version_major_number() <= 2019:
-            os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib') + ':' +
+            os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(webotsHome, 'lib') + ':' +
                                                os.environ.get('DYLD_LIBRARY_PATH'))
         else:
-            os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller')
+            os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(webotsHome, 'lib', 'controller')
                                                + ':' + os.environ.get('DYLD_LIBRARY_PATH'))
     elif sys.platform == 'win32':
         if get_webots_version_major_number() <= 2019:
-            os.environ['PATH'] = (os.path.join(get_webots_home(), 'msys64', 'mingw64', 'bin')
+            os.environ['PATH'] = (os.path.join(webotsHome, 'msys64', 'mingw64', 'bin')
                                   + ';' + os.environ.get('PATH'))
         else:
-            os.environ['PATH'] = (os.path.join(get_webots_home(), 'lib', 'controller') + ';' +
+            os.environ['PATH'] = (os.path.join(webotsHome, 'lib', 'controller') + ';' +
                                   os.environ.get('PATH'))
     else:
         sys.exit('Unsupported Platform!')
@@ -117,9 +135,12 @@ def get_webots_version_major_number():
     return 0
 
 
-def get_webots_version():
+def get_webots_version(path=None):
     """Webots version as a string."""
-    versionFile = os.path.join(get_webots_home(), 'resources', 'version.txt')
+    versionFile = os.path.join(path if path is not None else get_webots_home(),
+                               'resources', 'version.txt')
+    if not os.path.isfile(versionFile):
+        return None
     with open(versionFile, 'r') as f:
         return f.read().replace('\n', '').strip()
     return None

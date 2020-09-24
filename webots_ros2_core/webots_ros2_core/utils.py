@@ -45,11 +45,9 @@ def get_required_webots_version_short():
     return make_short_version(get_required_webots_version())
 
 
-def get_webots_home(version=None):
+def get_webots_home(version=get_required_webots_version()):
     """Path to the Webots installation directory."""
     # search first with the environment variables
-    if version is None:
-        version = get_required_webots_version()
     environVariables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
     for variable in environVariables:
         if variable in os.environ and os.path.isdir(variable) and get_webots_version(os.environ[variable]) == version:

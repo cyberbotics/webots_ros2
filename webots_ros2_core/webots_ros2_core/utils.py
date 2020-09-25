@@ -50,7 +50,8 @@ def get_webots_home(version=get_required_webots_version()):
     # search first with the environment variables
     environVariables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
     for variable in environVariables:
-        if variable in os.environ and os.path.isdir(os.environ[variable]) and get_webots_version(os.environ[variable]) == version:
+        if variable in os.environ and os.path.isdir(os.environ[variable]) and \
+            get_webots_version(os.environ[variable]) == version:
             os.environ['WEBOTS_HOME'] = os.environ[variable]
             return os.environ[variable]
     # then using the 'which' command
@@ -127,8 +128,7 @@ def append_webots_python_lib_to_path():
 
 def get_webots_version_major_number():
     """Webots major version as an integer."""
-    webots_home = get_webots_home()
-    versionString = get_webots_version(webots_home)
+    versionString = get_webots_version()
     if versionString is None:
         return 0
     match = re.match(r'R(\d*).*', versionString)
@@ -137,9 +137,10 @@ def get_webots_version_major_number():
     return 0
 
 
-def get_webots_version(path):
+def get_webots_version(path=None):
     """Webots version as a string."""
-    versionFile = os.path.join(path, 'resources', 'version.txt')
+    versionFile = os.path.join(path if path is not None else get_webots_home(), 
+                               'resources', 'version.txt')
     if not os.path.isfile(versionFile):
         return None
     with open(versionFile, 'r') as f:

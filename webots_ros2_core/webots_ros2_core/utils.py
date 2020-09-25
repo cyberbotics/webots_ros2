@@ -50,7 +50,7 @@ def get_webots_home(version=get_required_webots_version()):
     # search first with the environment variables
     environVariables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
     for variable in environVariables:
-        if variable in os.environ and os.path.isdir(variable) and get_webots_version(os.environ[variable]) == version:
+        if variable in os.environ and os.path.isdir(os.environ[variable]) and get_webots_version(os.environ[variable]) == version:
             os.environ['WEBOTS_HOME'] = os.environ[variable]
             return os.environ[variable]
     # then using the 'which' command

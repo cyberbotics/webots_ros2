@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""LiDAR device."""
+"""Lidar device."""
 
 from sensor_msgs.msg import LaserScan, PointCloud
 from geometry_msgs.msg import Point32

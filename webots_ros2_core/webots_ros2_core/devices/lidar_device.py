@@ -39,7 +39,7 @@ class LidarDevice(SensorDevice):
         params (dict): Inherited from `SensorDevice` + the following::
 
             dict: {
-                'noise': int,       # Maximum noise that the sensor can produce, used to compensate the maximum range (default 0.01)
+                'noise': int,       # Maximum sensor noise used to compensate the maximum range (default 0.01)
                 'timestep': int,    # Publish period in ms (default 128ms)
             }
 

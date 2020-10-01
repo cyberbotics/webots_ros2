@@ -29,8 +29,8 @@ class LidarDevice(SensorDevice):
     https://cyberbotics.com/doc/reference/lidar
 
     It allows the following functinalities:
-    - Publishes range measurements of type `sensor_msgs/LaserScan` if 2D LiDAR is present
-    - Publishes range measurements of type `sensor_msgs/PointCloud` if 3D LiDAR is present
+    - Publishes range measurements of type `sensor_msgs/LaserScan` if 2D Lidar is present
+    - Publishes range measurements of type `sensor_msgs/PointCloud` if 3D Lidar is present
 
     Args:
         node (WebotsNode): The ROS2 node.

@@ -16,6 +16,8 @@
 
 from sensor_msgs.msg import LaserScan, PointCloud
 from geometry_msgs.msg import Point32
+from tf2_ros import StaticTransformBroadcaster
+from geometry_msgs.msg import TransformStamped
 from .sensor_device import SensorDevice
 
 
@@ -65,6 +67,15 @@ class LidarDevice(SensorDevice):
             self.__publisher = node.create_publisher(PointCloud, self._topic_name, 1)
         else:
             self.__publisher = node.create_publisher(LaserScan, self._topic_name, 1)
+            self.__static_broadcaster = StaticTransformBroadcaster(node)
+            transform_stamped = TransformStamped()
+            transform_stamped.header.frame_id = self._frame_id
+            transform_stamped.child_frame_id = self._frame_id + '_rotated'
+            transform_stamped.transform.rotation.x = 0.5
+            transform_stamped.transform.rotation.y = 0.5
+            transform_stamped.transform.rotation.z = -0.5
+            transform_stamped.transform.rotation.w = 0.5
+            self.__static_broadcaster.sendTransform(transform_stamped)
 
     def step(self):
         stamp = super().step()
@@ -95,7 +106,7 @@ class LidarDevice(SensorDevice):
         if ranges:
             msg = LaserScan()
             msg.header.stamp = stamp
-            msg.header.frame_id = self._frame_id
+            msg.header.frame_id = self._frame_id + '_rotated'
             msg.angle_min = -0.5 * self._wb_device.getFov()
             msg.angle_max = 0.5 * self._wb_device.getFov()
             msg.angle_increment = self._wb_device.getFov() / (self._wb_device.getHorizontalResolution() - 1)

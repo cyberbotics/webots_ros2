@@ -19,7 +19,7 @@
 import sys
 from .camera_device import CameraDevice
 from .led_device import LEDDevice
-from .laser_device import LaserDevice
+from .lidar_device import LidarDevice
 from .distance_sensor_device import DistanceSensorDevice
 from .light_sensor_device import LightSensorDevice
 from .robot_device import RobotDevice
@@ -55,7 +55,7 @@ class DeviceManager:
             elif wb_device.getNodeType() == Node.LED:
                 device = LEDDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LIDAR:
-                device = LaserDevice(node, device_key, wb_device, self.__config.get(device_key, None))
+                device = LidarDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.DISTANCE_SENSOR:
                 device = DistanceSensorDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LIGHT_SENSOR:

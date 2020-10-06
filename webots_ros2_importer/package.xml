@@ -21,7 +21,6 @@
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pep8</test_depend>
   <test_depend>python-numpy</test_depend>
-  <test_depend>python-dev</test_depend>
   <test_depend>python-imaging</test_depend>
   <test_depend>python3-pytest</test_depend>
 

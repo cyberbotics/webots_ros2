@@ -91,7 +91,7 @@ def main(args=None, input=None):
                  staticBase=arguments.staticBase,
                  toolSlot=arguments.toolSlot,
                  initRotation=arguments.initRotation,
-                 initPos=options.initPos)
+                 initPos=arguments.initPos)
     # remove temporary file
     if generatedFile:
         os.remove(urdfFile)

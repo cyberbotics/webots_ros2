@@ -47,6 +47,11 @@ def main(args=None, input=None):
                       help='Specify the link that you want to add a tool slot to (exact link name from urdf)')
     parser.add_option('--rotation', dest='initRotation', default='0 1 0 0',
                       help='Set the rotation field of your PROTO file.)')
+    parser.add_option('--init-pos', dest='initPos', default=None,
+                      help='Set the initial positions of your robot joints. '
+                      'Example: --init-pos="[1.2, 0.5, -1.5]" would set '
+                      'the first 3 joints of your robot to the specified values, '
+                      'and leave the rest with their default value.')
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
     arguments, unknown = parser.parse_known_args()
     file = os.path.abspath(input) if input is not None else os.path.abspath(arguments.inFile)
@@ -85,7 +90,8 @@ def main(args=None, input=None):
                  enableMultiFile=arguments.enableMultiFile,
                  staticBase=arguments.staticBase,
                  toolSlot=arguments.toolSlot,
-                 initRotation=arguments.initRotation)
+                 initRotation=arguments.initRotation,
+                 initPos=arguments.initPos)
     # remove temporary file
     if generatedFile:
         os.remove(urdfFile)

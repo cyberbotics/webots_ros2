@@ -20,6 +20,13 @@ This simulation can be started with the following launch file:
 ros2 launch webots_ros2_universal_robot universal_robot.launch.py
 ```
 
+### universal_robot_moveit2
+
+This simulation can be started with the following launch file:
+```bash
+ros2 launch webots_ros2_universal_robot universal_robot_moveit2.launch.py
+```
+
 ![Universal Robot Image](./assets/universal_robot.png)
 This simulation contains one UR5e robot in a very simple environment.
 

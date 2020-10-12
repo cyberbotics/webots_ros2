@@ -14,7 +14,7 @@
 
 """Lidar device."""
 
-from sensor_msgs.msg import LaserScan, PointCloud
+from sensor_msgs.msg import LaserScan, PointCloud2, PointField
 from geometry_msgs.msg import Point32
 from tf2_ros import StaticTransformBroadcaster
 from geometry_msgs.msg import TransformStamped
@@ -30,7 +30,7 @@ class LidarDevice(SensorDevice):
 
     It allows the following functinalities:
     - Publishes range measurements of type `sensor_msgs/LaserScan` if 2D Lidar is present
-    - Publishes range measurements of type `sensor_msgs/PointCloud` if 3D Lidar is present
+    - Publishes range measurements of type `sensor_msgs/PointCloud2` if 3D Lidar is present
 
     Args:
         node (WebotsNode): The ROS2 node.
@@ -64,7 +64,7 @@ class LidarDevice(SensorDevice):
         # Create topics
         if wb_device.getNumberOfLayers() > 1:
             wb_device.enablePointCloud()
-            self.__publisher = node.create_publisher(PointCloud, self._topic_name, 1)
+            self.__publisher = node.create_publisher(PointCloud2, self._topic_name, 1)
         else:
             self.__publisher = node.create_publisher(LaserScan, self._topic_name, 1)
             self.__static_broadcaster = StaticTransformBroadcaster(node)
@@ -92,12 +92,23 @@ class LidarDevice(SensorDevice):
             self._wb_device.disable()
 
     def __publish_point_cloud_data(self, stamp):
-        points = self._wb_device.getPointCloud()
-        if points:
-            msg = PointCloud()
+        data = self._wb_device.getPointCloud(dtype='buffer')
+        if data:
+            msg = PointCloud2()
             msg.header.stamp = stamp
             msg.header.frame_id = self._frame_id
-            msg.points = [Point32(x=point.x, y=point.y, z=point.z) for point in points]
+            msg.height = 1
+            msg.width = self._wb_device.getNumberOfPoints()
+            msg.point_step = 20
+            msg.row_step = 20 * self._wb_device.getNumberOfPoints()
+            msg.is_dense = False
+            msg.fields = [
+                PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
+                PointField(name='y', offset=4, datatype=PointField.FLOAT32, count=1),
+                PointField(name='z', offset=8, datatype=PointField.FLOAT32, count=1)
+            ]
+            msg.is_bigendian = False
+            msg.data = data
             self.__publisher.publish(msg)
 
     def __publish_laser_scan_data(self, stamp):

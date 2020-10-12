@@ -32,7 +32,7 @@ from launch.launch_context import LaunchContext
 
 def get_required_webots_version():
     """Return the Webots version compatible with this version of the package."""
-    return 'R2020b revision 1'
+    return 'R2021a'
 
 
 def make_short_version(version):

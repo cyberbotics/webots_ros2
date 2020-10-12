@@ -11,7 +11,7 @@ data_files.append(('share/' + package_name + '/launch', ['launch/robot_launch.py
 
 setup(
     name=package_name,
-    version='1.0.1',
+    version='1.0.2',
     packages=[package_name, package_name + '.devices', package_name + '.math'],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

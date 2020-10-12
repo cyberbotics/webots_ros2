@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_demos
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.0 (2020-XX-YY)
+1.0.0 (2020-09-01)
 ------------------
 * Use the webots_ros2_core.webots_robotic_arm_node node
 

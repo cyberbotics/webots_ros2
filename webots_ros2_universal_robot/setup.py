@@ -10,9 +10,11 @@ worlds = [
     'worlds/universal_robot_multiple.wbt',
     'worlds/universal_robot_rviz.wbt',
     'worlds/universal_robot.wbt',
+    'worlds/universal_robot_lidar.wbt',
     'worlds/.universal_robot_multiple.wbproj',
     'worlds/.universal_robot_rviz.wbproj',
-    'worlds/.universal_robot.wbproj'
+    'worlds/.universal_robot.wbproj',
+    'worlds/.universal_robot_lidar.wbproj'
 ]
 textures = []
 for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
@@ -36,7 +38,7 @@ data_files.append(('share/' + package_name + '/resource', ['resource/view_robot_
 
 setup(
     name=package_name,
-    version='1.0.0',
+    version='1.0.2',
     packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

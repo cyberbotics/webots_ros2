@@ -1,0 +1,54 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  info [
+    "Universal Robot UR5e with mounted VelodyneVLP-16 3D Lidar."
+  ]
+  title "Universal Robot"
+  basicTimeStep 16
+  physicsDisableAngularThreshold 0.1
+  contactProperties [
+    ContactProperties {
+      bounce 0.1
+    }
+    ContactProperties {
+      material1 "slope"
+      coulombFriction [
+        0.5
+      ]
+    }
+  ]
+}
+Viewpoint {
+  orientation 0.6007259624787566 0.422180144462972 0.6788904503859188 1.4902683548238722
+  position 1.9346076378408426 -0.9878834987492378 1.589861981101837
+  exposure 1.7
+}
+TexturedBackground {
+  texture "factory"
+}
+Floor {
+  rotation 1 0 0 1.5707963267948966
+  size 20 20
+  appearance ThreadMetalPlate {
+  }
+}
+UR5e {
+  translation 0 0 0.6
+  rotation 0 0 -1 1.570796267678159
+  controller "<extern>"
+  selfCollision FALSE
+  toolSlot [
+    VelodyneVLP-16 {
+    }
+  ]
+}
+SolidBox {
+  translation 0 0 0.3
+  rotation 1 0 0 1.5707963267948966
+  size 0.3 0.6 0.3
+  appearance GalvanizedMetal {
+    textureTransform TextureTransform {
+      scale 2 2
+    }
+  }
+}

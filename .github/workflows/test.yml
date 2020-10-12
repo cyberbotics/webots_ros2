@@ -18,8 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
         with:
-         submodules: true
-      - name: Remove Unwanted Tests
-        run: rm -rf webots_ros2_importer/webots_ros2_importer/urdf2webots/tests/  # we don't want to run the tests of the urdf2webots repo
+         submodules: recursive
       - uses: 'ros-industrial/industrial_ci@master'
         env: ${{matrix.env}}

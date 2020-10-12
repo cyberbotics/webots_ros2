@@ -2,9 +2,14 @@
 Changelog for package webots_ros2_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.0 (2020-XX-YY)
+1.0.2 (2020-10-12)
 ------------------
-* Added a universal 'webots_differential_drive_node' node
+* Fixed support for 3D Lidars
+* Fixed Webots executable discovery
+
+1.0.0 (2020-09-01)
+------------------
+* Added a universal 'webots_differential_drive_node' node.
 
 0.0.4 (2020-07-03)
 ------------------

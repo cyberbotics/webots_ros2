@@ -10,5 +10,4 @@ env:
 install:
   - git clone --quiet --depth 1 https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 script:
-  - rm -rf webots_ros2_importer/webots_ros2_importer/urdf2webots/tests/  # we don't want to run the tests of the urdf2webots repo
   - .industrial_ci/travis.sh

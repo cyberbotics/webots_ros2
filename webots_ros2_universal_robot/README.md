@@ -45,6 +45,17 @@ ros2 launch webots_ros2_universal_robot universal_robot_multiple.launch.py
 This simulation contains a UR3e and a UR5e robot in a simple factory environment.
 This is a very good example showcasing how to use the multi-robots support with the Webots-ROS2 interface.
 
+
+### universal_robot_lidar
+
+This world contains UR5e robot with 3D LiDAR.
+
+```bash
+ros2 launch webots_ros2_core robot_launch.py \
+    executable:=webots_robotic_arm_node \
+    world:=$(ros2 pkg prefix webots_ros2_universal_robot --share)/worlds/universal_robot_lidar.wbt
+```
+
 ## Interact with the Robot
 ### Move the Robot
 The `/follow_joint_trajectory` action server can be tested directly using the [ROS2 action CLI](https://index.ros.org/doc/ros2/Tutorials/Introspection-with-command-line-tools) interface to move the robot (if more than one robot is present in the simulation, the action name should be changed, e.g. `/UR3e/follow_joint_trajectory`):

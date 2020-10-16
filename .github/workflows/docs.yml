@@ -14,7 +14,8 @@ jobs:
       - name: Generate documentation
         run: |
           # Install dependencies
-          sudo apt-get install git python3-setuptools
+          sudo apt-get install git python3-setuptools python3-sphinx
+          pip3 install wheel
           pip3 install sphinx-markdown-builder
 
           # Generate docs

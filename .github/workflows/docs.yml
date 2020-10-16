@@ -14,7 +14,7 @@ jobs:
       - name: Generate documentation
         run: |
           # Install dependencies
-          apt-get install git python3-setuptools
+          sudo apt-get install git python3-setuptools
           pip3 install sphinx-markdown-builder
 
           # Generate docs
@@ -34,5 +34,5 @@ jobs:
 
           cd webots_ros2_wiki
           git add -A
-          git commit -m "Updated animation"
+          git commit -m "API docs updated"
           git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/cyberbotics/webots_ros2.wiki.git"

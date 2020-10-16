@@ -17,6 +17,7 @@ jobs:
           sudo apt-get install git python3-setuptools
           pip3 install wheel
           pip3 install sphinx-markdown-builder
+          export PATH=${PATH}:${HOME}/.local/bin
 
           # Generate docs
           cd docs

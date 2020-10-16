@@ -1,14 +1,7 @@
-API `for webots_ros2`
-=====================
+API
+===
 
 .. toctree::
    :maxdepth: 2
    
-   devices
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   API-Devices

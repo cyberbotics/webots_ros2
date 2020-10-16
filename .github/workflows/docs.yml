@@ -14,8 +14,8 @@ jobs:
       - name: Generate documentation
         run: |
           # Install dependencies
-          pip3 install sphinx-markdown-builder
           apt-get install git python3-setuptools
+          pip3 install sphinx-markdown-builder
 
           # Generate docs
           cd docs

@@ -15,7 +15,7 @@ jobs:
         run: |
           # Install dependencies
           pip3 install sphinx-markdown-builder
-          apt-get install git
+          apt-get install git python3-setuptools
 
           # Generate docs
           cd docs

@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Generate documentation
-        runs: |
+        run: |
           # Install dependencies
           pip3 install sphinx-markdown-builder
           apt-get install git

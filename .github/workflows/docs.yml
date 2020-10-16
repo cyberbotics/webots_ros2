@@ -13,26 +13,26 @@ jobs:
       - uses: actions/checkout@v1
       - name: Generate documentation
         runs: |
-        # Install dependencies
-        pip3 install sphinx-markdown-builder
-        apt-get install git
+          # Install dependencies
+          pip3 install sphinx-markdown-builder
+          apt-get install git
 
-        # Generate docs
-        cd docs
-        make markdown
+          # Generate docs
+          cd docs
+          make markdown
 
-        # Publish docs to GitHub Wiki
-        NAME=$(curl https://api.github.com/users/${GITHUB_ACTOR} | jq -r .name)
-        ID=$(curl https://api.github.com/users/${GITHUB_ACTOR} | jq -r .id)
-        git config --global user.name "${NAME}"
-        git config --global user.email "${ID}+${GITHUB_ACTOR}@users.noreply.github.com"
-        git reset --hard
-        git fetch
+          # Publish docs to GitHub Wiki
+          NAME=$(curl https://api.github.com/users/${GITHUB_ACTOR} | jq -r .name)
+          ID=$(curl https://api.github.com/users/${GITHUB_ACTOR} | jq -r .id)
+          git config --global user.name "${NAME}"
+          git config --global user.email "${ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git reset --hard
+          git fetch
 
-        git clone https://github.com/cyberbotics/webots_ros2.wiki.git webots_ros2_wiki
-        cp -r build/markdown/*  webots_ros2_wiki
+          git clone https://github.com/cyberbotics/webots_ros2.wiki.git webots_ros2_wiki
+          cp -r build/markdown/*  webots_ros2_wiki
 
-        cd webots_ros2_wiki
-        git add -A
-        git commit -m "Updated animation"
-        git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/cyberbotics/webots_ros2.wiki.git"
+          cd webots_ros2_wiki
+          git add -A
+          git commit -m "Updated animation"
+          git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/cyberbotics/webots_ros2.wiki.git"

@@ -24,7 +24,11 @@ sys.path.insert(0, os.path.abspath('../../webots_ros2_core'))
 autodoc_mock_imports = [
   'rclpy',
   'sensor_msgs',
-  'webots_ros2_core.'
+  'webots_ros2_core.',
+  'rcl_interfaces',
+  'tf2_ros',
+  'geometry_msgs',
+  'std_msgs'
 ]
 
 project = 'webots_ros2'

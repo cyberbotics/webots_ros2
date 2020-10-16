@@ -2,21 +2,14 @@ Devices
 =======
 
 
-## Device
-
-.. automodule:: webots_ros2_core.devices.device
-   :members:
-   :show-inheritance:
-
-
-# Robot Device
+## Robot Device
 
 .. automodule:: webots_ros2_core.devices.robot_device
    :members:
    :show-inheritance:
 
 
-# LED Device
+## LED Device
 
 .. automodule:: webots_ros2_core.devices.led_device
    :members:
@@ -30,35 +23,35 @@ Devices
    :show-inheritance:
 
 
-## Lidar Device
+### Lidar Device
 
 .. automodule:: webots_ros2_core.devices.lidar_device
    :members:
    :show-inheritance:
 
 
-# Camera Device
+### Camera Device
 
 .. automodule:: webots_ros2_core.devices.camera_device
    :members:
    :show-inheritance:
 
 
-# Distance Sensor Device
+### Distance Sensor Device
 
 .. automodule:: webots_ros2_core.devices.distance_sensor_device
    :members:
    :show-inheritance:
 
 
-# IMU Device
+### IMU Device
 
 .. automodule:: webots_ros2_core.devices.imu_device
    :members:
    :show-inheritance:
 
 
-# Light Sensor Device
+### Light Sensor Device
 
 .. automodule:: webots_ros2_core.devices.light_sensor_device
    :members:

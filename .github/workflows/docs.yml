@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - master
+      - documentation-refactoring
 
 jobs:
   docs_generator:

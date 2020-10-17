@@ -34,7 +34,8 @@ jobs:
           git fetch
 
           git clone https://github.com/cyberbotics/webots_ros2.wiki.git webots_ros2_wiki
-          cp -r build/markdown/*  webots_ros2_wiki
+          [ ! -z 'webots_ros2_wiki/api' ] && mkdir webots_ros2_wiki/api
+          cp -r build/markdown/*  webots_ros2_wiki/api
 
           cd webots_ros2_wiki
           git add -A

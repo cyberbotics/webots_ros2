@@ -113,7 +113,7 @@ def append_webots_python_lib_to_path():
     """Add the Webots 'lib/pythonXY' folder to sys.path."""
     if get_webots_version_major_number() <= 2019:
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
-                        (sys.version_info[0], sys.version_info[1])))
+                                     (sys.version_info[0], sys.version_info[1])))
     elif sys.platform == 'darwin':
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],
                                      'lib',
@@ -139,8 +139,11 @@ def get_webots_version_major_number():
 
 def get_webots_version(path=None):
     """Webots version as a string."""
-    versionFile = os.path.join(path if path is not None else get_webots_home(),
-                               'resources', 'version.txt')
+    if path is None:
+        path = get_webots_home()
+    if path is None:
+        return None
+    versionFile = os.path.join(path, 'resources', 'version.txt')
     if not os.path.isfile(versionFile):
         return None
     with open(versionFile, 'r') as f:

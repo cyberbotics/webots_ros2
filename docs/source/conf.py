@@ -33,7 +33,8 @@ for mod in [
     'std_msgs',
     'controller',
     'rosgraph_msgs',
-    'nav_msgs'
+    'nav_msgs',
+    'launch_ros'
 ]:
     try:
         importlib.import_module(mod)

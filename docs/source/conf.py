@@ -42,6 +42,7 @@ for mod in [
     'std_msgs',
     'tf2_msgs',
     'tf2_ros',
+    'trajectory_msgs',
     'tkinter',
     'webots_ros2_core',
     'webots_ros2_msgs'

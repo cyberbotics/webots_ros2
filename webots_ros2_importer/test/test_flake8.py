@@ -14,6 +14,7 @@
 
 """Test that python files respect flake8."""
 
+import os
 from ament_flake8.main import main
 import pytest
 
@@ -21,9 +22,6 @@ import pytest
 @pytest.mark.flake8
 @pytest.mark.linter
 def test_flake8():
-    rc = main(argv=[
-        '--linelength', '128',
-        '--ignore', 'E402',
-        '--exclude', 'webots_ros2_importer/urdf2webots/'
-    ])
+    config_file = os.path.join(os.path.dirname(__file__), 'ament_flake8.ini')
+    rc = main(argv=['--config', config_file, '--exclude', 'webots_ros2_importer/urdf2webots/'])
     assert rc == 0, 'Found errors'

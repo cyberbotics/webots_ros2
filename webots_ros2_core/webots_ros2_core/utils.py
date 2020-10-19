@@ -83,7 +83,8 @@ def append_webots_lib_to_path():
     """Add the Webots 'lib' folder to the library path."""
     webotsHome = get_webots_home()
     if webotsHome is None:
-        sys.exit('Can\'t load Webots Python API, because Webots is not found.')
+        print('Can\'t load Webots Python API, because Webots is not found.', file=sys.stderr)
+        return False
     if sys.platform == 'linux':
         if get_webots_version_major_number() <= 2019:
             os.environ['LD_LIBRARY_PATH'] = (os.path.join(webotsHome, 'lib') + ':'
@@ -91,6 +92,7 @@ def append_webots_lib_to_path():
         else:
             os.environ['LD_LIBRARY_PATH'] = (os.path.join(webotsHome, 'lib', 'controller')
                                              + ':' + os.environ.get('LD_LIBRARY_PATH'))
+        return True
     elif sys.platform == 'darwin':
         if get_webots_version_major_number() <= 2019:
             os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(webotsHome, 'lib') + ':' +
@@ -98,6 +100,7 @@ def append_webots_lib_to_path():
         else:
             os.environ['DYLD_LIBRARY_PATH'] = (os.path.join(webotsHome, 'lib', 'controller')
                                                + ':' + os.environ.get('DYLD_LIBRARY_PATH'))
+        return True
     elif sys.platform == 'win32':
         if get_webots_version_major_number() <= 2019:
             os.environ['PATH'] = (os.path.join(webotsHome, 'msys64', 'mingw64', 'bin')
@@ -105,8 +108,10 @@ def append_webots_lib_to_path():
         else:
             os.environ['PATH'] = (os.path.join(webotsHome, 'lib', 'controller') + ';' +
                                   os.environ.get('PATH'))
+        return True
     else:
-        sys.exit('Unsupported Platform!')
+        print('Unsupported Platform!', file=sys.stderr)
+        return False
 
 
 def append_webots_python_lib_to_path():
@@ -114,16 +119,22 @@ def append_webots_python_lib_to_path():
     if get_webots_version_major_number() <= 2019:
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
                                      (sys.version_info[0], sys.version_info[1])))
+        return True
     elif sys.platform == 'darwin':
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],
                                      'lib',
                                      'controller',
                                      'python%d%d_brew' % (sys.version_info[0], sys.version_info[1])))
-    else:
+        return True
+    elif 'WEBOTS_HOME' in os.environ:
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],
                                      'lib',
                                      'controller',
                                      'python%d%d' % (sys.version_info[0], sys.version_info[1])))
+        return True
+    else:
+        print('No Webots installation has been found!', file=sys.stderr)
+        return False
 
 
 def get_webots_version_major_number():

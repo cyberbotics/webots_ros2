@@ -35,6 +35,7 @@ for mod in [
     'launch.substitutions',
     'launch_ros',
     'nav_msgs',
+    'rclpy',
     'rcl_interfaces',
     'rosgraph_msgs',
     'sensor_msgs',
@@ -48,9 +49,8 @@ for mod in [
 ]:
     try:
         importlib.import_module(mod)
-    except ImportError:
+    except Exception:
         autodoc_mock_imports.append(mod)
-autodoc_mock_imports.append('rclpy')
 
 
 project = 'webots_ros2'

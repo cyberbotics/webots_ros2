@@ -116,6 +116,9 @@ def append_webots_lib_to_path():
 
 def append_webots_python_lib_to_path():
     """Add the Webots 'lib/pythonXY' folder to sys.path."""
+    if 'WEBOTS_HOME' not in os.environ:
+        print('Can\'t load Webots Python API, because Webots is not found.', file=sys.stderr)
+        return False
     if get_webots_version_major_number() <= 2019:
         sys.path.append(os.path.join(os.environ['WEBOTS_HOME'], 'lib', 'python%d%d' %
                                      (sys.version_info[0], sys.version_info[1])))

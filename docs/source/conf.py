@@ -34,7 +34,8 @@ for mod in [
     'controller',
     'rosgraph_msgs',
     'nav_msgs',
-    'launch_ros'
+    'launch_ros',
+    'tkinter'
 ]:
     try:
         importlib.import_module(mod)

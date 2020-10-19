@@ -39,7 +39,9 @@ for mod in [
     'launch',
     'launch.action',
     'launch.actions',
-    'launch.launch_context'
+    'launch.launch_context',
+    'launch.substitution',
+    'tf2_msgs'
 ]:
     try:
         importlib.import_module(mod)

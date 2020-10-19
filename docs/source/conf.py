@@ -38,6 +38,7 @@ for mod in [
     'tkinter',
     'launch',
     'launch.action',
+    'launch.actions',
     'launch.launch_context'
 ]:
     try:

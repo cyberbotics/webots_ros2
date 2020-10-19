@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.abspath('../../webots_ros2_core'))
 autodoc_mock_imports = []
 for mod in [
     'controller',
+    'control_msgs',
     'geometry_msgs',
     'launch',
     'launch.action',

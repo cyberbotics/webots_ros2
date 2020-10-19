@@ -37,7 +37,8 @@ for mod in [
     'launch_ros',
     'tkinter',
     'launch',
-    'launch.action'
+    'launch.action',
+    'launch.launch_context'
 ]:
     try:
         importlib.import_module(mod)

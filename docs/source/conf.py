@@ -31,6 +31,7 @@ for mod in [
     'launch.actions',
     'launch.launch_context',
     'launch.substitution',
+    'launch.substitutions',
     'launch_ros',
     'nav_msgs',
     'rcl_interfaces',
@@ -41,7 +42,8 @@ for mod in [
     'tf2_msgs',
     'tf2_ros',
     'tkinter',
-    'webots_ros2_core'
+    'webots_ros2_core',
+    'webots_ros2_msgs'
 ]:
     try:
         importlib.import_module(mod)

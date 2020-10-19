@@ -16,30 +16,39 @@
 
 import os
 import sys
+import importlib
 
 
 sys.path.insert(0, os.path.abspath('../../webots_ros2_core'))
 
 
-autodoc_mock_imports = [
-  'rclpy',
-  'sensor_msgs',
-  'webots_ros2_core.',
-  'rcl_interfaces',
-  'tf2_ros',
-  'geometry_msgs',
-  'std_msgs',
-  'controller',
-  'rosgraph_msgs',
-  'nav_msgs'
-]
+autodoc_mock_imports = []
+for mod in [
+    'rclpy',
+    'sensor_msgs',
+    'webots_ros2_core',
+    'rcl_interfaces',
+    'tf2_ros',
+    'geometry_msgs',
+    'std_msgs',
+    'controller',
+    'rosgraph_msgs',
+    'nav_msgs'
+]:
+    try:
+        importlib.import_module(mod)
+    except ImportError:
+        autodoc_mock_imports.append(mod)
+
 
 project = 'webots_ros2'
 copyright = '2020, Cyberbotics'
 author = 'Cyberbotics'
 
 extensions = [
-  'sphinx_markdown_builder',
-  'sphinx.ext.autodoc',
-  'sphinx.ext.napoleon'
+    'sphinx_markdown_builder',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon'
 ]
+
+master_doc = '_index'

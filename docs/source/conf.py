@@ -24,24 +24,24 @@ sys.path.insert(0, os.path.abspath('../../webots_ros2_core'))
 
 autodoc_mock_imports = []
 for mod in [
-    'rclpy',
-    'sensor_msgs',
-    'webots_ros2_core',
-    'rcl_interfaces',
-    'tf2_ros',
-    'geometry_msgs',
-    'std_msgs',
     'controller',
-    'rosgraph_msgs',
-    'nav_msgs',
-    'launch_ros',
-    'tkinter',
+    'geometry_msgs',
     'launch',
     'launch.action',
     'launch.actions',
     'launch.launch_context',
     'launch.substitution',
-    'tf2_msgs'
+    'launch_ros',
+    'nav_msgs',
+    'rcl_interfaces',
+    'rclpy',
+    'rosgraph_msgs',
+    'sensor_msgs',
+    'std_msgs',
+    'tf2_msgs',
+    'tf2_ros',
+    'tkinter',
+    'webots_ros2_core'
 ]:
     try:
         importlib.import_module(mod)

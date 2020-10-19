@@ -36,7 +36,8 @@ for mod in [
     'nav_msgs',
     'launch_ros',
     'tkinter',
-    'launch'
+    'launch',
+    'launch.action'
 ]:
     try:
         importlib.import_module(mod)

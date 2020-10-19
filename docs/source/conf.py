@@ -31,7 +31,7 @@ autodoc_mock_imports = [
   'std_msgs',
   'controller',
   'rosgraph_msgs',
-  'webots_ros2_msgs'
+  'nav_msgs'
 ]
 
 project = 'webots_ros2'

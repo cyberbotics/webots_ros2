@@ -21,5 +21,9 @@ import pytest
 @pytest.mark.flake8
 @pytest.mark.linter
 def test_flake8():
-    rc = main(argv=['--linelength', '128', '--exclude', 'webots_ros2_importer/urdf2webots/'])
+    rc = main(argv=[
+        '--linelength', '128',
+        '--ignore', 'E402',
+        '--exclude', 'webots_ros2_importer/urdf2webots/'
+    ])
     assert rc == 0, 'Found errors'

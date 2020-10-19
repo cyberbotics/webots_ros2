@@ -35,7 +35,7 @@ jobs:
 
           # Clone GitHub Wiki
           git clone https://github.com/cyberbotics/webots_ros2.wiki.git webots_ros2_wiki
-          [ -z 'webots_ros2_wiki/API' ] && rm -rf webots_ros2_wiki/API
+          [ -d 'webots_ros2_wiki/API' ] && rm -rf webots_ros2_wiki/API
           mkdir webots_ros2_wiki/API
           cp -r build/markdown/*  webots_ros2_wiki/API
 

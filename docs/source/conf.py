@@ -28,7 +28,10 @@ autodoc_mock_imports = [
   'rcl_interfaces',
   'tf2_ros',
   'geometry_msgs',
-  'std_msgs'
+  'std_msgs',
+  'controller',
+  'rosgraph_msgs',
+  'webots_ros2_msgs'
 ]
 
 project = 'webots_ros2'

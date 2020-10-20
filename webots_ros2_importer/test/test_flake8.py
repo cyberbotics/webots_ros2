@@ -14,7 +14,6 @@
 
 """Test that python files respect flake8."""
 
-import os
 from ament_flake8.main import main
 import pytest
 

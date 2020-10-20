@@ -22,6 +22,5 @@ import pytest
 @pytest.mark.flake8
 @pytest.mark.linter
 def test_flake8():
-    config_file = os.path.join(os.path.dirname(__file__), 'ament_flake8.ini')
-    rc = main(argv=['--config', config_file, '--exclude', 'webots_ros2_importer/urdf2webots/'])
+    rc = main(argv=['--linelength', '128', '--exclude', 'webots_ros2_importer/urdf2webots/'])
     assert rc == 0, 'Found errors'

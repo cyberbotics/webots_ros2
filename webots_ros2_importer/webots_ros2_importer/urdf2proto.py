@@ -19,11 +19,10 @@ import os
 import re
 import sys
 import tempfile
+from ament_index_python.packages import get_package_share_directory
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'urdf2webots'))
-from urdf2webots.importer import convert2urdf
-
-from ament_index_python.packages import get_package_share_directory
+from urdf2webots.importer import convert2urdf   # noqa: E402
 
 
 def main(args=None, input=None):

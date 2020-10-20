@@ -31,8 +31,10 @@ except Exception as e:
 
 class JointStatePublisher():
     """
+    Publishes joint states.
+
     Discovers all joints with positional sensors and publishes corresponding ROS2 messages of type
-        [`sensor_msgs/JointState`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/JointState.msg).
+    [`sensor_msgs/JointState`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/JointState.msg).
 
     Args:
         robot (WebotsNode): Webots Robot node.

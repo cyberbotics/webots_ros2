@@ -19,10 +19,10 @@ import os
 import re
 import sys
 import tempfile
-
-from webots_ros2_importer.urdf2webots.urdf2webots.importer import convert2urdf
-
 from ament_index_python.packages import get_package_share_directory
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'urdf2webots'))
+from urdf2webots.importer import convert2urdf   # noqa: E402
 
 
 def main(args=None, input=None):
@@ -39,19 +39,19 @@ def main(args=None, input=None):
     parser.add_argument('--disable-mesh-optimization', dest='disableMeshOptimization',
                         action='store_true', default=False,
                         help='If set, the duplicated vertices are not removed from the meshes.')
-    parser.add_option('--multi-file', dest='enableMultiFile', action='store_true', default=False,
-                      help='If set, the mesh files are exported as separated PROTO files')
-    parser.add_option('--static-base', dest='staticBase', action='store_true', default=False,
-                      help='If set, the base link will have the option to be static (disable physics)')
-    parser.add_option('--tool-slot', dest='toolSlot', default=None,
-                      help='Specify the link that you want to add a tool slot to (exact link name from urdf)')
-    parser.add_option('--rotation', dest='initRotation', default='0 1 0 0',
-                      help='Set the rotation field of your PROTO file.)')
-    parser.add_option('--init-pos', dest='initPos', default=None,
-                      help='Set the initial positions of your robot joints. '
-                      'Example: --init-pos="[1.2, 0.5, -1.5]" would set '
-                      'the first 3 joints of your robot to the specified values, '
-                      'and leave the rest with their default value.')
+    parser.add_argument('--multi-file', dest='enableMultiFile', action='store_true', default=False,
+                        help='If set, the mesh files are exported as separated PROTO files')
+    parser.add_argument('--static-base', dest='staticBase', action='store_true', default=False,
+                        help='If set, the base link will have the option to be static (disable physics)')
+    parser.add_argument('--tool-slot', dest='toolSlot', default=None,
+                        help='Specify the link that you want to add a tool slot to (exact link name from urdf)')
+    parser.add_argument('--rotation', dest='initRotation', default='0 1 0 0',
+                        help='Set the rotation field of your PROTO file.)')
+    parser.add_argument('--init-pos', dest='initPos', default=None,
+                        help='Set the initial positions of your robot joints. '
+                        'Example: --init-pos="[1.2, 0.5, -1.5]" would set '
+                        'the first 3 joints of your robot to the specified values, '
+                        'and leave the rest with their default value.')
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
     arguments, unknown = parser.parse_known_args()
     file = os.path.abspath(input) if input is not None else os.path.abspath(arguments.inFile)

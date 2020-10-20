@@ -44,5 +44,5 @@ jobs:
           if [ ! -z "$(git diff)" ]; then
             git add -A
             git commit -m "API docs updated"
-            git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/cyberbotics/webots_ros2.wiki.git"
+            git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/${GITHUB_REPOSITORY}.wiki.git"
           fi

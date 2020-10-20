@@ -31,7 +31,7 @@ except Exception as e:
 
 class JointStatePublisher():
     """
-    Discovers all joints with positional sensors and publishes corresponding ROS2 messages of type
+    Discovers all joints with positional sensors and publishes corresponding ROS2 messages of type \
     [`sensor_msgs/JointState`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/JointState.msg).
 
     Args:

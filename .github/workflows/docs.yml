@@ -43,4 +43,4 @@ jobs:
           cd webots_ros2_wiki
           git add -A
           git commit -m "API docs updated"
-          git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/cyberbotics/webots_ros2.wiki.git"
+          [ ! -z "$(git diff)" ] && git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/cyberbotics/webots_ros2.wiki.git"

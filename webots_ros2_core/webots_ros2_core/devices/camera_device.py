@@ -24,7 +24,7 @@ class CameraDevice(SensorDevice):
     """
     ROS2 wrapper for Webots Camera node.
 
-    Creates suitable ROS2 interface based on Webots [Camera](https://cyberbotics.com/doc/reference/camera) node instance:  
+    Creates suitable ROS2 interface based on Webots [Camera](https://cyberbotics.com/doc/reference/camera) node instance:
 
     It allows the following functinalities:
     - Publishes raw image of type `sensor_msgs/Image`

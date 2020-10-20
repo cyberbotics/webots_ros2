@@ -7,7 +7,7 @@ on:
       - documentation-refactoring
 
 jobs:
-  docs_generator:
+  generate_references:
     runs-on: ubuntu-20.04
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -41,6 +41,8 @@ jobs:
 
           # Publish docs to GitHub Wiki
           cd webots_ros2_wiki
-          git add -A
-          git commit -m "API docs updated"
-          [ ! -z "$(git diff)" ] && git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/cyberbotics/webots_ros2.wiki.git"
+          if [ ! -z "$(git diff)" ]; then
+            git add -A
+            git commit -m "API docs updated"
+            git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/cyberbotics/webots_ros2.wiki.git"
+          fi

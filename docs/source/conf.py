@@ -17,11 +17,13 @@
 import os
 import sys
 import importlib
+from unittest.mock import MagicMock
 
 
 sys.path.insert(0, os.path.abspath('../../webots_ros2_core'))
 
 
+# Mock imports
 autodoc_mock_imports = []
 for mod in [
     'controller',
@@ -52,14 +54,39 @@ for mod in [
     except ImportError:
         autodoc_mock_imports.append(mod)
 
+
+# Mock inherited classes
+MOCK_MODULES = [
+    'rclpy.node',
+]
+
+MOCK_CLASSES = [
+    'Node',
+]
+
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        if name in MOCK_CLASSES:
+            return object
+        return MagicMock()
+
+
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+
+# Meta data
 project = 'webots_ros2'
 copyright = '2020, Cyberbotics'
 author = 'Cyberbotics'
 
+# Extensions
 extensions = [
     'sphinx_markdown_builder',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon'
 ]
 
+# Misc
 master_doc = '_index'

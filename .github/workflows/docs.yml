@@ -2,14 +2,13 @@ name: Documentation
 
 on:
   push:
-    branches: 
+    branches:
       - master
       - documentation-refactoring
 
 jobs:
   docs_generator:
     runs-on: ubuntu-20.04
-    container: osrf/ros:foxy-desktop
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
@@ -17,8 +16,8 @@ jobs:
       - name: Generate documentation
         run: |
           # Install dependencies
-          apt-get update
-          apt-get install git python3-setuptools python3-pip
+          sudo apt-get install git python3-setuptools
+          pip3 install wheel
           pip3 install sphinx-markdown-builder sphinx
           export PATH=${PATH}:${HOME}/.local/bin
 

@@ -1,6 +1,6 @@
 # E-Puck
 
-This package provides a ROS2 interface example of [e-puck](https://www.gctronic.com/doc/index.php/e-puck2) simulated robot in Webots.
+This package provides a ROS2 interface example of the simulated [e-puck](https://www.gctronic.com/doc/index.php/e-puck2) robot in Webots.
 
 Please use the following links for more details:
 

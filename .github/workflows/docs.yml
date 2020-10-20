@@ -9,6 +9,7 @@ on:
 jobs:
   docs_generator:
     runs-on: ubuntu-20.04
+    container: osrf/ros2
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:

@@ -49,9 +49,8 @@ for mod in [
 ]:
     try:
         importlib.import_module(mod)
-    except Exception:
+    except ImportError:
         autodoc_mock_imports.append(mod)
-
 
 project = 'webots_ros2'
 copyright = '2020, Cyberbotics'

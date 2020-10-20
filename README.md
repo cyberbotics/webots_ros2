@@ -8,6 +8,7 @@
 `webots_ros2` is a package that provides the necessary interfaces to simulate a robot in the [Webots](https://cyberbotics.com/) open-source 3D robots simulator.
 It integrates with ROS2 using ROS2 messages, services and actions.
 
+![Webots](docs/cover.png)
 
 Please visit our [documentation site](https://github.com/cyberbotics/webots_ros2/wiki) that contains:
 - [Getting Started](https://github.com/cyberbotics/webots_ros2/wiki/Getting-Started)
@@ -16,9 +17,6 @@ Please visit our [documentation site](https://github.com/cyberbotics/webots_ros2
 - [Examples](https://github.com/cyberbotics/webots_ros2/wiki/Examples)
 - [References](https://github.com/cyberbotics/webots_ros2/wiki/References)
 
-
-## Contact us / Technical support
-For questions about this package or Webots in general, get in touch with the developers on [Discord](https://discord.gg/fyPuMM4).
 
 ## Acknowledgement
 

@@ -10,7 +10,7 @@ It integrates with ROS2 using ROS2 messages, services and actions.
 
 ![Webots](docs/cover.png)
 
-Please visit the [documentation](https://github.com/cyberbotics/webots_ros2/wiki) that contains:
+Please visit the [documentation](https://github.com/cyberbotics/webots_ros2/wiki) that contains the following sections:
 - [Getting Started](https://github.com/cyberbotics/webots_ros2/wiki/Getting-Started)
 - [Build and Install](https://github.com/cyberbotics/webots_ros2/wiki/Build-and-Install)
 - [Tutorials](https://github.com/cyberbotics/webots_ros2/wiki/Tutorials)

@@ -52,6 +52,7 @@ class WebotsNode(Node):
         enableJointState (bool): Use `JointStatePublisher` to publish ROS2 messages of type
             [`sensor_msgs/JointState`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/JointState.msg).
     """
+
     def __init__(self, name, args=None, enableTfPublisher=False, enableJointState=False):
         super().__init__(name)
         self.declare_parameter('synchronization', False)

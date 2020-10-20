@@ -17,8 +17,8 @@ jobs:
       - name: Generate documentation
         run: |
           # Install dependencies
-          sudo apt-get install git python3-setuptools
-          pip3 install wheel
+          apt-get update
+          apt-get install git python3-setuptools python3-pip
           pip3 install sphinx-markdown-builder sphinx
           export PATH=${PATH}:${HOME}/.local/bin
 

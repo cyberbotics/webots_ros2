@@ -9,8 +9,6 @@ on:
 jobs:
   generate_references:
     runs-on: ubuntu-20.04
-    env:
-      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
       - uses: actions/checkout@v1
       - name: Generate documentation
@@ -44,5 +42,5 @@ jobs:
           if [ ! -z "$(git diff)" ]; then
             git add -A
             git commit -m "API docs updated"
-            git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/cyberbotics/webots_ros2.wiki.git"
+            git push "https://$GITHUB_ACTOR:${{secrets.GITHUB_TOKEN}}@github.com/cyberbotics/webots_ros2.wiki.git"
           fi

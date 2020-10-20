@@ -16,6 +16,7 @@
 
 import os
 import sys
+import datetime
 import importlib
 from unittest.mock import MagicMock
 
@@ -78,7 +79,7 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # Meta data
 project = 'webots_ros2'
-copyright = '2020, Cyberbotics'
+copyright = '{}, Cyberbotics'.format(datetime.datetime.now().year)
 author = 'Cyberbotics'
 
 # Extensions

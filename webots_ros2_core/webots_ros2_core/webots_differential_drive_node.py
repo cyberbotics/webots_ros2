@@ -27,6 +27,28 @@ from webots_ros2_core.utils import get_node_name_from_args
 
 
 class WebotsDifferentialDriveNode(WebotsNode):
+    """
+    Extends WebotsNode to allow easy integration with differential drive robots.
+
+    Args:
+        name (WebotsNode): Webots Robot node.
+        args (dict): Arguments passed to ROS2 base node.
+        wheel_distance (float): Distance between two wheels (axle length) in meters.
+        wheel_radius (float): Radius of both wheels in meters.
+        left_joint (str): Name of motor associated with left wheel.
+        right_joint (str): Name of motor associated with right wheel.
+        left_encoder (str): Name of encoder associated with left wheel.
+        right_encoder (str): Name of encoder associated with right wheel.
+        command_topic (str): Name of topic to which
+            [`geometry_msgs/Twist`](https://github.com/ros2/common_interfaces/blob/master/geometry_msgs/msg/Twist.msg)
+            the node is subscribed to.
+        odometry_topic (str): Name of topic to which
+            [`nav_msgs/Odometry`](https://github.com/ros2/common_interfaces/blob/master/nav_msgs/msg/Odometry.msg)
+            messages are published.
+        odometry_frame (str): Name of odometry frame.
+        robot_base_frame (str): Name of robot's base link.
+    """
+
     def __init__(self,
                  name,
                  args,

@@ -30,7 +30,17 @@ except Exception as e:
 
 
 class JointStatePublisher():
-    """Publish as a ROS topic the joint state."""
+    """
+    Publishes joint states.
+
+    Discovers all joints with positional sensors and publishes corresponding ROS2 messages of type
+    [`sensor_msgs/JointState`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/JointState.msg).
+
+    Args:
+        robot (WebotsNode): Webots Robot node.
+        jointPrefix (str): Prefix to all joint names.
+        node (Node): ROS2 node.
+    """
 
     def __init__(self, robot, jointPrefix, node):
         """Initialize the position sensors and the topic."""

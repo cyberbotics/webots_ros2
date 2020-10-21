@@ -27,8 +27,7 @@ class LightSensorDevice(SensorDevice):
     """
     ROS2 wrapper for Webots LightSensor node.
 
-    Creates suitable ROS2 interface based on Webots LightSensor node instance:
-    https://cyberbotics.com/doc/reference/lightsensor
+    Creates suitable ROS2 interface based on Webots [LightSensor](https://cyberbotics.com/doc/reference/lightsensor) node.
 
     It allows the following functinalities:
     - Publishes range measurements of type `sensor_msgs/Illuminance`

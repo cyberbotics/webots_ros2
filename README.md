@@ -1,15 +1,21 @@
-# webots_ros2 ROS2 packages
+# Webots ROS2 Interface
 
 [![Build Status](https://travis-ci.com/cyberbotics/webots_ros2.svg?branch=master)](https://travis-ci.com/cyberbotics/webots_ros2)
 [![license - apache 2.0](https://img.shields.io/:license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Version](https://img.shields.io/github/v/tag/cyberbotics/webots_ros2?label=version)](http://wiki.ros.org/webots_ros2)
 
-These packages provide an interface for controlling robots simulated in Webots using ROS2.
 
-All the documentation and tutorials are available on the [ROS wiki](http://wiki.ros.org/webots_ros2).
+`webots_ros2` is a package that provides the necessary interfaces to simulate a robot in the [Webots](https://cyberbotics.com/) open-source 3D robots simulator.
+It integrates with ROS2 using ROS2 messages, services and actions.
 
-![webots_ros2 screenshot](http://wiki.ros.org/webots_ros2/Tutorials/webots_ros2_universal_robot?action=AttachFile&do=get&target=universal_robot_multiple.png)
-![abb.png](webots_ros2_abb/abb.png)
+![Webots](docs/cover.png)
+
+Please visit the [documentation](https://github.com/cyberbotics/webots_ros2/wiki) that contains the following sections:
+- [Getting Started](https://github.com/cyberbotics/webots_ros2/wiki/Getting-Started)
+- [Build and Install](https://github.com/cyberbotics/webots_ros2/wiki/Build-and-Install)
+- [Tutorials](https://github.com/cyberbotics/webots_ros2/wiki/Tutorials)
+- [Examples](https://github.com/cyberbotics/webots_ros2/wiki/Examples)
+- [References](https://github.com/cyberbotics/webots_ros2/wiki/References)
 
 
 ## Acknowledgement

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - documentation-refactoring
 
 jobs:
   generate_references:

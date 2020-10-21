@@ -90,4 +90,4 @@ extensions = [
 ]
 
 # Misc
-master_doc = '_index'
+master_doc = '_API-Index'

@@ -78,8 +78,8 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
 # Meta data
-#  deepcode ignore W0622: Ignore W0622
 project = 'webots_ros2'
+#  deepcode ignore W0622: Ignore W0622
 copyright = '{}, Cyberbotics'.format(datetime.datetime.now().year)
 author = 'Cyberbotics'
 

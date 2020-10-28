@@ -5,7 +5,19 @@
   <version>0.0.1</version>
   <description>This package is made to aid youtube Webots_ROS2 tutorial series</description>
   <maintainer email="harsh.b.kakashaniya@gmail.com">Soft_illusion</maintainer>
-  <license>MIT</license>
+  <license>Apache License 2.0</license>
+  <url type="website">https://www.youtube.com/c/soft-illusion</url>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>webots_ros2_msgs</exec_depend>
+  <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>webots_ros2_core</exec_depend>
+  <exec_depend>rviz2</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

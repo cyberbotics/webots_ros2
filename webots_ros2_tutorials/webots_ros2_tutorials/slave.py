@@ -50,7 +50,7 @@ class service_node_vel(WebotsNode):
         self.leftMotor_front.setPosition(float('inf'))
         self.leftMotor_front.setVelocity(0)
 
-        self.rightMotor_front = self.robot.getMotor('wheel2')        
+        self.rightMotor_front = self.robot.getMotor('wheel2')
         self.rightMotor_front.setPosition(float('inf'))
         self.rightMotor_front.setVelocity(0)
 

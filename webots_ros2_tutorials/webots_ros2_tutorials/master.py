@@ -19,7 +19,7 @@ from rclpy.node import Node
 
 
 class LineFollower(Node):
-    def __init__ (self):
+    def __init__(self):
         super().__init__('linefollower_cmdvel')
         # Subscribe IR sensors
         self.subs_right_ir = self.create_subscription(Float64, 'right_IR', self.rightIR_cb, 1)
@@ -33,7 +33,7 @@ class LineFollower(Node):
         self.angle_correction = 0.01
 
         # Initialize parameters
-        self.GS_RIGHT, self.GS_MID, self.GS_LEFT= 0, 0, 0
+        self.GS_RIGHT, self.GS_MID, self.GS_LEFT = 0, 0, 0
         self.DeltaS = 0
         self.cmd = Twist()
         self.stop = False
@@ -49,7 +49,7 @@ class LineFollower(Node):
         self.cmd.angular.z = self.angle_correction*self.DeltaS
 
         # Logic for stop if black line not seen .
-        if self.GS_RIGHT > 500 and self.GS_LEFT > 500 and self.GS_MID > 500 :
+        if self.GS_RIGHT > 500 and self.GS_LEFT > 500 and self.GS_MID > 500:
             self.count += 1
         else:
             self.count = 0
@@ -77,9 +77,9 @@ class LineFollower(Node):
         self.GS_MID = msg.data
 
 
-def main(args = None):
+def main(args=None):
 
-    rclpy.init(args = args)
+    rclpy.init(args=args)
 
     ls = LineFollower()
     rclpy.spin(ls)
@@ -90,3 +90,4 @@ def main(args = None):
 
 if __name__ == '__main__':
     main()
+    

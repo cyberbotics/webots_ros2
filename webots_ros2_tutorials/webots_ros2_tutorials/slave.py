@@ -26,7 +26,7 @@ class service_node_vel(WebotsNode):
                                              self.sensor_callback)
 
         # Enable 3 sensors
-        self.timestep=16
+        self.timestep = 16
 
         self.right_sensor = self.robot.getDistanceSensor('ls_right')
         self.right_sensor.enable(self.timestep)

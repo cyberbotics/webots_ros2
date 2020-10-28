@@ -1,0 +1,121 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  info [
+    "Copyright (C) 2006 Laboratory of Intelligent Systems (LIS), EPFL"
+    "Thanks to jean-christophe.zufferey@epfl.ch"
+  ]
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation -0.3058819481884525 -0.8679302660128931 -0.3913224848015066 1.9494067816584852
+  position -2.0268683243479075 1.933834895887204 -0.8320245040472168
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 2 2
+  floorTileSize 2 2
+  floorAppearance PBRAppearance {
+    baseColorMap ImageTexture {
+      url [
+        "Loop_img.jpg"
+      ]
+    }
+    roughness 0.2
+    metalness 0
+  }
+  wallHeight 0.05
+}
+DEF OBSTACLE1 Solid {
+  translation 0.007158 0.025 0.207599
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.1 0.3
+        roughness 0.5
+        metalness 0
+      }
+      geometry DEF BOX1 Box {
+        size 0.05 0.05 0.05
+      }
+    }
+  ]
+  name "red box"
+  boundingObject USE BOX1
+}
+DEF OBSTACLE2 Solid {
+  translation -0.0203259 0.055 -0.482769
+  rotation 0 1 0 3.82203
+  scale 2 2 2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.501961 1
+        roughness 0.5
+        metalness 0
+      }
+      geometry DEF BOX2 Box {
+        size 0.08 0.05 0.08
+      }
+    }
+  ]
+  name "pink box"
+  boundingObject USE BOX2
+}
+DEF OBSTACLE3 Solid {
+  translation 0.550057 0.025 0.24285
+  rotation 0 1 0 13.7261
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.501961 0.501961 0.501961
+        roughness 0.5
+        metalness 0
+      }
+      geometry DEF BOX3 Box {
+        size 0.2 0.05 0.05
+      }
+    }
+  ]
+  name "gray box"
+  boundingObject USE BOX3
+}
+DEF EPUCK E-puck {
+  hidden position_0_0 1616.4650668739841
+  hidden position_0_1 1613.2724488735207
+  hidden linearVelocity_0 4.5972139696888926e-10 5.814086042240282e-10 2.2117684276660538e-10
+  hidden angularVelocity_0 6.838600311460623e-09 -4.218588712895139e-08 1.671254572547459e-08
+  hidden translation_1 -0.025999999999999867 0.02 0
+  hidden rotation_1 1 0 0 4.596742378349169
+  hidden linearVelocity_1 -2.1245566185904832e-10 6.836940791382583e-10 1.1361631482351522e-09
+  hidden angularVelocity_1 1.043218610738043 -0.00046623935632859425 0.7106651805468691
+  hidden translation_2 0.025999999999999808 0.02 0
+  hidden rotation_2 -1 0 0 4.7770102355465776
+  hidden linearVelocity_2 9.623815360138067e-10 5.034362704506701e-10 -6.178638277770959e-10
+  hidden angularVelocity_2 1.0276482460528693 -0.00045929148222982537 0.700058140988455
+  translation -0.9632096234453201 -3.0154763756611025e-05 0.9632326779422784
+  rotation 0.0010203868674102767 0.9999959568035874 -0.002654277136719538 2.5435830669584285
+  controller "e-puck_line"
+  groundSensorsSlot [
+    E-puckGroundSensors {
+    }
+  ]
+}
+Robot_sense {
+  hidden position_0_0 24.639778010955816
+  hidden position_0_1 6.591807654192824
+  hidden position_0_2 24.639778178135007
+  hidden position_0_3 6.591807575224559
+  hidden translation_4 0.06 0 0.05
+  hidden rotation_4 -0.23721782037516967 0.23702899264289104 0.9420960473025826 1.6296141054597306
+  hidden translation_5 -0.06 0 0.05
+  hidden rotation_5 -0.1520338032492515 0.15191278283749696 -0.9766310608823249 4.689540972681517
+  hidden translation_6 0.06 0 -0.05
+  hidden rotation_6 -0.23721774599794548 0.2370289183248715 0.9420960847288326 1.6296140658018539
+  hidden translation_7 -0.06 0 -0.05
+  hidden rotation_7 -0.15203376554913098 0.1519127451673859 -0.9766310726106663 4.689540984687359
+  translation -0.15294400106801842 0.03972101152876184 -0.17268499872800816
+  rotation 8.985634079782039e-06 0.9999999999505139 -4.2697502057938595e-06 -2.254251268392454
+}

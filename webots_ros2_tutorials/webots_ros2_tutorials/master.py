@@ -13,9 +13,9 @@
 # limitations under the License.
 
 import rclpy
+from rclpy.node import Node
 from std_msgs.msg import Float64
 from geometry_msgs.msg import Twist
-from rclpy.node import Node
 
 
 class LineFollower(Node):

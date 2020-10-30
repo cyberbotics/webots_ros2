@@ -33,7 +33,7 @@ def generate_launch_description():
         launch_arguments=[
             ('package', 'webots_ros2_tutorials'),
             ('executable', 'enable_robot'),
-            ('world', PathJoinSubstitution([package_dir, 'worlds', 'epuck_with_custom.wbt'])),
+            ('world', PathJoinSubstitution([package_dir, 'worlds', 'custom_line_follower.wbt'])),
         ]
     )
 

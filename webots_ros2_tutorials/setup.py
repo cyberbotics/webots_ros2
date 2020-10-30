@@ -11,7 +11,7 @@ data_files.append(('share/' + package_name, [
     'launch/line_following_launch.py'
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
-    'worlds/epuck_with_custom.wbt'
+    'worlds/custom_line_follower.wbt'
 ]))
 data_files.append(('share/' + package_name + '/protos', [
     'protos/Robot_sense.proto'

@@ -18,6 +18,7 @@ data_files.append(('share/' + package_name + '/protos', [
 ]))
 
 data_files.append(('share/' + package_name + '/protos/icons', glob('protos/icons/*')))
+data_files.append(('share/' + package_name + '/worlds/textures', glob('worlds/textures/*')))
 data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 
 data_files.append(('share/' + package_name, [

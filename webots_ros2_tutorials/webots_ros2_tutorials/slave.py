@@ -58,11 +58,11 @@ class service_node_vel(WebotsNode):
         # Rear wheels
         self.leftMotor_rear = self.robot.getMotor('wheel3')
         self.leftMotor_rear.setPosition(float('inf'))
-        # self.leftMotor_rear.setVelocity(0)
+        self.leftMotor_rear.setVelocity(0)
 
         self.rightMotor_rear = self.robot.getMotor('wheel4')
         self.rightMotor_rear.setPosition(float('inf'))
-        # self.rightMotor_rear.setVelocity(0)
+        self.rightMotor_rear.setVelocity(0)
 
         self.motorMaxSpeed = self.leftMotor_rear.getMaxVelocity()
 
@@ -73,15 +73,15 @@ class service_node_vel(WebotsNode):
         wheelGap = 0.1  # in meter
         wheelRadius = 0.04  # in meter
 
-        leftSpeed = ((2.0 * msg.linear.x - msg.angular.z * wheelGap) / (2.0 * wheelRadius))
-        rightSpeed = ((2.0 * msg.linear.x + msg.angular.z * wheelGap) / (2.0 * wheelRadius))
-        leftSpeed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed, leftSpeed))
-        rightSpeed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed, rightSpeed))
+        left_speed = ((2.0 * msg.linear.x - msg.angular.z * wheelGap) / (2.0 * wheelRadius))
+        right_speed = ((2.0 * msg.linear.x + msg.angular.z * wheelGap) / (2.0 * wheelRadius))
+        left_speed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed, left_speed))
+        right_speed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed, right_speed))
 
-        self.leftMotor_front.setVelocity(leftSpeed)
-        self.rightMotor_front.setVelocity(rightSpeed)
-        self.leftMotor_rear.setVelocity(leftSpeed)
-        self.rightMotor_rear.setVelocity(rightSpeed)
+        self.leftMotor_front.setVelocity(left_speed)
+        self.rightMotor_front.setVelocity(right_speed)
+        self.leftMotor_rear.setVelocity(left_speed)
+        self.rightMotor_rear.setVelocity(right_speed)
 
     def sensor_callback(self):
         # Publish distance sensor value

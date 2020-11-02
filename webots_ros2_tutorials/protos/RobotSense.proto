@@ -6,8 +6,8 @@
 # Robotsense
 
 PROTO RobotSense [
-    field SFVec3f    translation  -0.143941 0.0198605 0.202666
-    field SFRotation rotation     1.0911549263414444e-05 0.9999999999355068 3.1502938785775475e-06 2.349517532397045
+    field SFVec3f    translation  0 0.0198 0
+    field SFRotation rotation     0 1 0 2.3495
     field SFString   controller   "<extern>"
   ]
   {

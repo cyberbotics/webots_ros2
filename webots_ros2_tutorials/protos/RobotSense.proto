@@ -1,11 +1,18 @@
-PROTO Robot_sense [
+#VRML_SIM R2020b utf8
+# license: Apache License 2.0
+# license url: http://www.apache.org/licenses/LICENSE-2.0
+# tags: static
+# More info here: https://www.youtube.com/c/soft-illusion
+# Robotsense
+
+PROTO RobotSense [
     field SFVec3f    translation  -0.143941 0.0198605 0.202666
     field SFRotation rotation     1.0911549263414444e-05 0.9999999999355068 3.1502938785775475e-06 2.349517532397045
     field SFString   controller   "<extern>"
   ]
   {
     Robot {
-    translation IS translation
+  translation IS translation
   rotation IS rotation
   controller IS controller
   children [

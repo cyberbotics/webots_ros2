@@ -30,7 +30,7 @@ PROTO RobotSense [
           }
         }
       ]
-      name "ls_right"
+      name "distance_sensor_right"
       lookupTable [
         0 1000 0
         0.1 0 0
@@ -50,7 +50,7 @@ PROTO RobotSense [
           }
         }
       ]
-      name "ls_mid"
+      name "distance_sensor_mid"
       lookupTable [
         0 1000 0
         0.1 0 0
@@ -70,7 +70,7 @@ PROTO RobotSense [
           }
         }
       ]
-      name "ls_left"
+      name "distance_sensor_left"
       lookupTable [
         0 1000 0
         0.1 0 0
@@ -87,7 +87,7 @@ PROTO RobotSense [
     }
     HingeJoint {
       jointParameters HingeJointParameters {
-        position 24.639778010956185
+        position 0
         anchor 0.06 0 0.05
       }
       device [
@@ -118,7 +118,7 @@ PROTO RobotSense [
     }
     HingeJoint {
       jointParameters HingeJointParameters {
-        position 6.591807654192812
+        position 0
         anchor -0.06 0 0.05
       }
       device [
@@ -139,7 +139,7 @@ PROTO RobotSense [
     }
     HingeJoint {
       jointParameters HingeJointParameters {
-        position 24.639778178135185
+        position 0
         anchor 0.06 0 -0.05
       }
       device [
@@ -160,7 +160,7 @@ PROTO RobotSense [
     }
     HingeJoint {
       jointParameters HingeJointParameters {
-        position 6.59180757522415
+        position 0
         anchor -0.06 0 -0.05
       }
       device [

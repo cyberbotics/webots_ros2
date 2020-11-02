@@ -21,7 +21,7 @@ RectangleArena {
   floorAppearance PBRAppearance {
     baseColorMap ImageTexture {
       url [
-        "textures/loop_img.jpg"
+        "textures/loop.jpg"
       ]
     }
     roughness 0.2

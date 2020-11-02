@@ -21,7 +21,7 @@ from geometry_msgs.msg import Twist
 class LineFollower(Node):
     def __init__(self):
         super().__init__('linefollower_cmdvel')
-        # Subscribe IR sensors
+        # Subscribe Infra Red sensors
         self.subs_right_ir = self.create_subscription(Float64, 'right_IR', self.right_infrared_callback, 1)
         self.subs_left_ir = self.create_subscription(Float64, 'left_IR', self.left_infrared_callback, 1)
         self.subs_mid_ir = self.create_subscription(Float64, 'mid_IR', self.mid_infrared_callback, 1)
@@ -33,7 +33,7 @@ class LineFollower(Node):
         self.angle_correction = 0.01
 
         # Initialize parameters
-        self.GS_RIGHT, self.GS_MID, self.GS_LEFT = 0, 0, 0
+        self.ground_right, self.ground_mid, self.ground_left = 0, 0, 0
         self.DeltaS = 0
         self.cmd = Twist()
         self.stop = False
@@ -45,11 +45,11 @@ class LineFollower(Node):
         self.cmd.linear.x = self.speed
 
         # Correction parameters
-        self.DeltaS = self.GS_RIGHT - self.GS_LEFT
+        self.DeltaS = self.ground_right - self.ground_left
         self.cmd.angular.z = self.angle_correction*self.DeltaS
 
         # Logic for stop if black line not seen .
-        if self.GS_RIGHT > 500 and self.GS_LEFT > 500 and self.GS_MID > 500:
+        if self.ground_right > 500 and self.ground_left > 500 and self.ground_mid > 500:
             self.count += 1
         else:
             self.count = 0
@@ -67,14 +67,14 @@ class LineFollower(Node):
 
     # Call backs to update sensor reading variables
     def right_infrared_callback(self, msg):
-        self.GS_RIGHT = msg.data
+        self.ground_right = msg.data
         self.LineFollowingModule()
 
     def left_infrared_callback(self, msg):
-        self.GS_LEFT = msg.data
+        self.ground_left = msg.data
 
     def mid_infrared_callback(self, msg):
-        self.GS_MID = msg.data
+        self.ground_mid = msg.data
 
 
 def main(args=None):

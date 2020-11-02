@@ -28,15 +28,15 @@ class service_node_vel(WebotsNode):
         # Sensor section
         self.sensorTimer = self.create_timer(0.001 * self.service_node_vel_timestep, self.sensor_callback)
 
-        self.right_sensor = self.robot.getDistanceSensor('ls_right')
+        self.right_sensor = self.robot.getDistanceSensor('distance_sensor_right')
         self.right_sensor.enable(self.service_node_vel_timestep)
         self.sensorPublisher_right = self.create_publisher(Float64, 'right_IR', 1)
 
-        self.mid_sensor = self.robot.getDistanceSensor('ls_mid')
+        self.mid_sensor = self.robot.getDistanceSensor('distance_sensor_mid')
         self.mid_sensor.enable(self.service_node_vel_timestep)
         self.sensorPublisher_mid = self.create_publisher(Float64, 'mid_IR', 1)
 
-        self.left_sensor = self.robot.getDistanceSensor('ls_left')
+        self.left_sensor = self.robot.getDistanceSensor('distance_sensor_left')
         self.left_sensor.enable(self.service_node_vel_timestep)
         self.sensorPublisher_left = self.create_publisher(Float64, 'left_IR', 1)
 

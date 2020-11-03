@@ -18,7 +18,7 @@ from std_msgs.msg import Float64
 from geometry_msgs.msg import Twist
 
 
-class service_node_vel(WebotsNode):
+class ServiceNodeVelocity(WebotsNode):
     def __init__(self, args):
         super().__init__('slave_node', args)
 
@@ -99,7 +99,7 @@ class service_node_vel(WebotsNode):
 
 def main(args=None):
     rclpy.init(args=args)
-    client_vel = service_node_vel(args=args)
+    client_vel = ServiceNodeVelocity(args=args)
     rclpy.spin(client_vel)
 
     client_vel.destroy_node()

@@ -26,11 +26,14 @@ class ServiceNodeVelocity(WebotsNode):
         self.service_node_vel_timestep = 16
 
         # Sensor section
-        self.sensorTimer = self.create_timer(0.001 * self.service_node_vel_timestep, self.sensor_callback)
+        self.sensorTimer = self.create_timer(
+            0.001 * self.service_node_vel_timestep, self.sensor_callback)
 
-        self.right_sensor = self.robot.getDistanceSensor('distance_sensor_right')
+        self.right_sensor = self.robot.getDistanceSensor(
+            'distance_sensor_right')
         self.right_sensor.enable(self.service_node_vel_timestep)
-        self.sensorPublisher_right = self.create_publisher(Float64, 'right_IR', 1)
+        self.sensorPublisher_right = self.create_publisher(
+            Float64, 'right_IR', 1)
 
         self.mid_sensor = self.robot.getDistanceSensor('distance_sensor_mid')
         self.mid_sensor.enable(self.service_node_vel_timestep)
@@ -38,7 +41,8 @@ class ServiceNodeVelocity(WebotsNode):
 
         self.left_sensor = self.robot.getDistanceSensor('distance_sensor_left')
         self.left_sensor.enable(self.service_node_vel_timestep)
-        self.sensorPublisher_left = self.create_publisher(Float64, 'left_IR', 1)
+        self.sensorPublisher_left = self.create_publisher(
+            Float64, 'left_IR', 1)
 
         self.get_logger().info('Sensor enabled')
 
@@ -63,16 +67,21 @@ class ServiceNodeVelocity(WebotsNode):
         self.motorMaxSpeed = self.leftMotor_rear.getMaxVelocity()
 
         # Create Subscriber
-        self.cmdVelSubscriber = self.create_subscription(Twist, 'cmd_vel', self.cmdVel_callback, 1)
+        self.cmdVelSubscriber = self.create_subscription(
+            Twist, 'cmd_vel', self.cmdVel_callback, 1)
 
     def cmdVel_callback(self, msg):
         wheelGap = 0.1  # in meter
         wheelRadius = 0.04  # in meter
 
-        left_speed = ((2.0 * msg.linear.x - msg.angular.z * wheelGap) / (2.0 * wheelRadius))
-        right_speed = ((2.0 * msg.linear.x + msg.angular.z * wheelGap) / (2.0 * wheelRadius))
-        left_speed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed, left_speed))
-        right_speed = min(self.motorMaxSpeed, max(-self.motorMaxSpeed, right_speed))
+        left_speed = ((2.0 * msg.linear.x - msg.angular.z *
+                       wheelGap) / (2.0 * wheelRadius))
+        right_speed = ((2.0 * msg.linear.x + msg.angular.z *
+                        wheelGap) / (2.0 * wheelRadius))
+        left_speed = min(self.motorMaxSpeed,
+                         max(-self.motorMaxSpeed, left_speed))
+        right_speed = min(self.motorMaxSpeed,
+                          max(-self.motorMaxSpeed, right_speed))
 
         self.leftMotor_front.setVelocity(left_speed)
         self.rightMotor_front.setVelocity(right_speed)

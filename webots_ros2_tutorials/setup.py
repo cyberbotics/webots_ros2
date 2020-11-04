@@ -31,9 +31,12 @@ data_files.append(('share/' + package_name + '/protos', [
     'protos/RobotSense.proto'
 ]))
 
-data_files.append(('share/' + package_name + '/protos/icons', glob('protos/icons/*')))
-data_files.append(('share/' + package_name + '/worlds/textures', glob('worlds/textures/*')))
-data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
+data_files.append(
+    ('share/' + package_name + '/protos/icons', glob('protos/icons/*')))
+data_files.append(
+    ('share/' + package_name + '/worlds/textures', glob('worlds/textures/*')))
+data_files.append(
+    ('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 
 data_files.append(('share/' + package_name, [
     'package.xml'
@@ -46,7 +49,8 @@ setup(
     data_files=data_files,
     install_requires=['setuptools', 'launch'],
     zip_safe=True,
-    keywords=['ROS2', 'Webots', 'Soft_Illusion', 'Tutorials', 'Youtube', 'Simulation'],
+    keywords=['ROS2', 'Webots', 'Soft_Illusion',
+              'Tutorials', 'Youtube', 'Simulation'],
     maintainer='Soft_illusion',
     maintainer_email='harsh.b.kakashaniya@gmail.com',
     description='Projects for videos for webots ros2 tutorial series on youtube',
@@ -54,7 +58,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'Sub_tof = webots_ros2_tutorials.Sub_tof:main',
             'enable_robot = webots_ros2_tutorials.slave:main',
             'line_follower = webots_ros2_tutorials.master:main'
         ],

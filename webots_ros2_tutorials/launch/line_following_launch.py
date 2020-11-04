@@ -33,17 +33,18 @@ def generate_launch_description():
         launch_arguments=[
             ('package', 'webots_ros2_tutorials'),
             ('executable', 'enable_robot'),
-            ('world', PathJoinSubstitution([package_dir, 'worlds', 'custom_line_follower.wbt'])),
+            ('world', PathJoinSubstitution(
+                [package_dir, 'worlds', 'custom_line_follower.wbt'])),
         ]
     )
 
-    Line_follower = Node(
-            package='webots_ros2_tutorials',
-            executable='line_follower',
-            name='master_node'
-        )
+    line_follower = Node(
+        package='webots_ros2_tutorials',
+        executable='line_follower',
+        name='master_node'
+    )
 
     return LaunchDescription([
         webots,
-        Line_follower
+        line_follower
     ])

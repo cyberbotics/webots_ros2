@@ -22,9 +22,12 @@ class LineFollower(Node):
     def __init__(self):
         super().__init__('linefollower_cmdvel')
         # Subscribe Infra Red sensors
-        self.subs_right_ir = self.create_subscription(Float64, 'right_IR', self.right_infrared_callback, 1)
-        self.subs_left_ir = self.create_subscription(Float64, 'left_IR', self.left_infrared_callback, 1)
-        self.subs_mid_ir = self.create_subscription(Float64, 'mid_IR', self.mid_infrared_callback, 1)
+        self.subs_right_ir = self.create_subscription(
+            Float64, 'right_IR', self.right_infrared_callback, 1)
+        self.subs_left_ir = self.create_subscription(
+            Float64, 'left_IR', self.left_infrared_callback, 1)
+        self.subs_mid_ir = self.create_subscription(
+            Float64, 'mid_IR', self.mid_infrared_callback, 1)
         # Publish cmd vel
         self.pubs_cmdvel = self.create_publisher(Twist, 'cmd_vel', 1)
 
@@ -34,19 +37,19 @@ class LineFollower(Node):
 
         # Initialize parameters
         self.ground_right, self.ground_mid, self.ground_left = 0, 0, 0
-        self.DeltaS = 0
+        self.delta = 0
         self.cmd = Twist()
         self.stop = False
         self.count = 0
         self.count_threshold = 10
 
-    def LineFollowingModule(self):
+    def lineFollowingModule(self):
         # Constant velocity
         self.cmd.linear.x = self.speed
 
         # Correction parameters
-        self.DeltaS = self.ground_right - self.ground_left
-        self.cmd.angular.z = self.angle_correction*self.DeltaS
+        self.delta = self.ground_right - self.ground_left
+        self.cmd.angular.z = self.angle_correction*self.delta
 
         # Logic for stop if black line not seen .
         if self.ground_right > 500 and self.ground_left > 500 and self.ground_mid > 500:
@@ -68,7 +71,7 @@ class LineFollower(Node):
     # Call backs to update sensor reading variables
     def right_infrared_callback(self, msg):
         self.ground_right = msg.data
-        self.LineFollowingModule()
+        self.lineFollowingModule()
 
     def left_infrared_callback(self, msg):
         self.ground_left = msg.data

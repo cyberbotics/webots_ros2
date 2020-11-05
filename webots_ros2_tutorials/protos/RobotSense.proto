@@ -76,7 +76,7 @@ PROTO RobotSense [
             0.1 0 0
           ]
         }
-        DEF Body Shape {
+        DEF BODY Shape {
           appearance PBRAppearance {
             baseColor 1 0 0
             metalness 0
@@ -95,11 +95,11 @@ PROTO RobotSense [
               name "left_front_wheel"
             }
           ]
-          endPoint DEF left_front_wheel Solid {
+          endPoint Solid {
             translation 0.06 0 0.05
             rotation -0.2372178203750054 0.23702899264272692 0.9420960473026654 1.6296141054596442
             children [
-              DEF Wheel Shape {
+              DEF WHEEL Shape {
                 appearance PBRAppearance {
                   baseColor 0 1 0
                   metalness 0
@@ -111,7 +111,7 @@ PROTO RobotSense [
               }
             ]
             name "left_front_wheel"
-            boundingObject USE Wheel
+            boundingObject USE WHEEL
             physics DEF WHEEL_PHYSICS Physics {
             }
           }
@@ -126,14 +126,14 @@ PROTO RobotSense [
               name "right_front_wheel"
             }
           ]
-          endPoint DEF right_front_wheel Solid {
+          endPoint Solid {
             translation -0.06 0 0.05
             rotation -0.15203380324924576 0.15191278283749135 -0.9766310608823265 4.689540972681517
             children [
-              USE Wheel
+              USE WHEEL
             ]
             name "right_front_wheel"
-            boundingObject USE Wheel
+            boundingObject USE WHEEL
             physics USE WHEEL_PHYSICS
           }
         }
@@ -147,14 +147,14 @@ PROTO RobotSense [
               name "left_rear_wheel"
             }
           ]
-          endPoint DEF left_rear_wheel Solid {
+          endPoint Solid {
             translation 0.06 0 -0.05
             rotation -0.23721774599786627 0.2370289183247925 0.9420960847288723 1.629614065801813
             children [
-              USE Wheel
+              USE WHEEL
             ]
             name "left_rear_wheel"
-            boundingObject USE Wheel
+            boundingObject USE WHEEL
             physics USE WHEEL_PHYSICS
           }
         }
@@ -168,14 +168,14 @@ PROTO RobotSense [
               name "right_rear_wheel"
             }
           ]
-          endPoint DEF right_rear_wheel Solid {
+          endPoint Solid {
             translation -0.06 0 -0.05
             rotation -0.15203376554893583 0.15191274516719103 -0.9766310726107271 4.6895409846874205
             children [
-              USE Wheel
+              USE WHEEL
             ]
             name "right_rear_wheel"
-            boundingObject USE Wheel
+            boundingObject USE WHEEL
             physics USE WHEEL_PHYSICS
           }
         }
@@ -183,10 +183,10 @@ PROTO RobotSense [
           translation -0.02 0 0.1
           rotation 0 1 0 -1.87
           children [
-            DEF sensor Shape {
+            DEF SENSOR Shape {
               appearance PBRAppearance {
               }
-              geometry DEF Sensor Box {
+              geometry Box {
                 size 0.01 0.01 0.01
               }
             }
@@ -197,13 +197,13 @@ PROTO RobotSense [
           translation 0.02 0 0.1
           rotation 0 1 0 -1.27
           children [
-            USE sensor
+            USE SENSOR
           ]
           name "ds_left"
         }
     ]
     name "Robot_sense"
-    boundingObject USE Body
+    boundingObject USE BODY
     physics Physics {
     }
   }

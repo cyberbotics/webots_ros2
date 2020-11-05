@@ -26,81 +26,81 @@ class ServiceNodeVelocity(WebotsNode):
         self.service_node_vel_timestep = 16
 
         # Sensor section
-        self.sensorTimer = self.create_timer(
+        self.sensor_timer = self.create_timer(
             0.001 * self.service_node_vel_timestep, self.sensor_callback)
 
         self.right_sensor = self.robot.getDistanceSensor(
             'distance_sensor_right')
         self.right_sensor.enable(self.service_node_vel_timestep)
-        self.sensorPublisher_right = self.create_publisher(
+        self.sensor_publisher_right = self.create_publisher(
             Float64, 'right_IR', 1)
 
         self.mid_sensor = self.robot.getDistanceSensor('distance_sensor_mid')
         self.mid_sensor.enable(self.service_node_vel_timestep)
-        self.sensorPublisher_mid = self.create_publisher(Float64, 'mid_IR', 1)
+        self.sensor_publisher_mid = self.create_publisher(Float64, 'mid_IR', 1)
 
         self.left_sensor = self.robot.getDistanceSensor('distance_sensor_left')
         self.left_sensor.enable(self.service_node_vel_timestep)
-        self.sensorPublisher_left = self.create_publisher(
+        self.sensor_publisher_left = self.create_publisher(
             Float64, 'left_IR', 1)
 
         self.get_logger().info('Sensor enabled')
 
         # Front wheels
-        self.leftMotor_front = self.robot.getMotor('left_front_wheel')
-        self.leftMotor_front.setPosition(float('inf'))
-        self.leftMotor_front.setVelocity(0)
+        self.left_motor_front = self.robot.getMotor('left_front_wheel')
+        self.left_motor_front.setPosition(float('inf'))
+        self.left_motor_front.setVelocity(0)
 
-        self.rightMotor_front = self.robot.getMotor('right_front_wheel')
-        self.rightMotor_front.setPosition(float('inf'))
-        self.rightMotor_front.setVelocity(0)
+        self.right_motor_front = self.robot.getMotor('right_front_wheel')
+        self.right_motor_front.setPosition(float('inf'))
+        self.right_motor_front.setVelocity(0)
 
         # Rear wheels
-        self.leftMotor_rear = self.robot.getMotor('left_rear_wheel')
-        self.leftMotor_rear.setPosition(float('inf'))
-        self.leftMotor_rear.setVelocity(0)
+        self.left_motor_rear = self.robot.getMotor('left_rear_wheel')
+        self.left_motor_rear.setPosition(float('inf'))
+        self.left_motor_rear.setVelocity(0)
 
-        self.rightMotor_rear = self.robot.getMotor('right_rear_wheel')
-        self.rightMotor_rear.setPosition(float('inf'))
-        self.rightMotor_rear.setVelocity(0)
+        self.right_motor_rear = self.robot.getMotor('right_rear_wheel')
+        self.right_motor_rear.setPosition(float('inf'))
+        self.right_motor_rear.setVelocity(0)
 
-        self.motorMaxSpeed = self.leftMotor_rear.getMaxVelocity()
+        self.motor_max_speed = self.left_motor_rear.getMaxVelocity()
 
         # Create Subscriber
-        self.cmdVelSubscriber = self.create_subscription(
+        self.cmd_vel_subscriber = self.create_subscription(
             Twist, 'cmd_vel', self.cmdVel_callback, 1)
 
     def cmdVel_callback(self, msg):
-        wheelGap = 0.1  # in meter
-        wheelRadius = 0.04  # in meter
+        wheel_gap = 0.1  # in meter
+        wheel_radius = 0.04  # in meter
 
         left_speed = ((2.0 * msg.linear.x - msg.angular.z *
-                       wheelGap) / (2.0 * wheelRadius))
+                       wheel_gap) / (2.0 * wheel_radius))
         right_speed = ((2.0 * msg.linear.x + msg.angular.z *
-                        wheelGap) / (2.0 * wheelRadius))
-        left_speed = min(self.motorMaxSpeed,
-                         max(-self.motorMaxSpeed, left_speed))
-        right_speed = min(self.motorMaxSpeed,
-                          max(-self.motorMaxSpeed, right_speed))
+                        wheel_gap) / (2.0 * wheel_radius))
+        left_speed = min(self.motor_max_speed,
+                         max(-self.motor_max_speed, left_speed))
+        right_speed = min(self.motor_max_speed,
+                          max(-self.motor_max_speed, right_speed))
 
-        self.leftMotor_front.setVelocity(left_speed)
-        self.rightMotor_front.setVelocity(right_speed)
-        self.leftMotor_rear.setVelocity(left_speed)
-        self.rightMotor_rear.setVelocity(right_speed)
+        self.left_motor_front.setVelocity(left_speed)
+        self.right_motor_front.setVelocity(right_speed)
+        self.left_motor_rear.setVelocity(left_speed)
+        self.right_motor_rear.setVelocity(right_speed)
 
     def sensor_callback(self):
         # Publish distance sensor value
         msg_right = Float64()
         msg_right.data = self.right_sensor.getValue()
-        self.sensorPublisher_right.publish(msg_right)
+        self.sensor_publisher_right.publish(msg_right)
 
         msg_mid = Float64()
         msg_mid.data = self.mid_sensor.getValue()
-        self.sensorPublisher_mid.publish(msg_mid)
+        self.sensor_publisher_mid.publish(msg_mid)
 
         msg_left = Float64()
         msg_left.data = self.left_sensor.getValue()
-        self.sensorPublisher_left.publish(msg_left)
+        self.sensor_publisher_left.publish(msg_left)
 
 
 def main(args=None):

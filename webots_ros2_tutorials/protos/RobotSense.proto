@@ -12,195 +12,195 @@ PROTO RobotSense [
   ]
   {
     Robot {
-    translation IS translation
-    rotation IS rotation
-    controller IS controller
-    children [
-      DistanceSensor {
-        type "infra-red"
-        translation -0.03 -0.02 0.1
-        rotation 0 0 -1 1.5708
-        children [
-          Shape {
-            appearance PBRAppearance {
-              baseColor 0.988235 0.913725 0.309804
-            }
-            geometry Box {
-              size 0.01 0.01 0.01
-            }
-          }
-        ]
-        name "distance_sensor_right"
-        lookupTable [
-          0 1000 0
-          0.1 0 0
-        ]
-      }
-      DistanceSensor {
-        type "infra-red"
-        translation -6.74634e-14 -0.02 0.1
-        rotation 0 0 -1 1.5708
-        children [
-          Shape {
-            appearance PBRAppearance {
-              baseColor 0.988235 0.913725 0.309804
-            }
-            geometry Box {
-              size 0.01 0.01 0.01
-            }
-          }
-        ]
-        name "distance_sensor_mid"
-        lookupTable [
-          0 1000 0
-          0.1 0 0
-        ]
-      }
-      DistanceSensor {
-        type "infra-red"
-        translation 0.03 -0.02 0.1
-        rotation 0 0 -1 1.5708
-        children [
-          Shape {
-            appearance PBRAppearance {
-              baseColor 0.988235 0.913725 0.309804
-            }
-            geometry Box {
-              size 0.01 0.01 0.01
-            }
-          }
-        ]
-        name "distance_sensor_left"
-        lookupTable [
-          0 1000 0
-          0.1 0 0
-        ]
-      }
-      DEF Body Shape {
-        appearance PBRAppearance {
-          baseColor 1 0 0
-          metalness 0
-        }
-        geometry Box {
-          size 0.1 0.05 0.2
-        }
-      }
-      HingeJoint {
-        jointParameters HingeJointParameters {
-          position 0
-          anchor 0.06 0 0.05
-        }
-        device [
-          RotationalMotor {
-            name "left_front_wheel"
-          }
-        ]
-        endPoint DEF left_front_wheel Solid {
-          translation 0.06 0 0.05
-          rotation -0.2372178203750054 0.23702899264272692 0.9420960473026654 1.6296141054596442
+      translation IS translation
+      rotation IS rotation
+      controller IS controller
+      children [
+        DistanceSensor {
+          type "infra-red"
+          translation -0.03 -0.02 0.1
+          rotation 0 0 -1 1.5708
           children [
-            DEF Wheel Shape {
+            Shape {
               appearance PBRAppearance {
-                baseColor 0 1 0
-                metalness 0
+                baseColor 0.988235 0.913725 0.309804
               }
-              geometry Cylinder {
-                height 0.02
-                radius 0.04
+              geometry Box {
+                size 0.01 0.01 0.01
               }
             }
           ]
-          name "left_front_wheel"
-          boundingObject USE Wheel
-          physics DEF WHEEL_PHYSICS Physics {
+          name "distance_sensor_right"
+          lookupTable [
+            0 1000 0
+            0.1 0 0
+          ]
+        }
+        DistanceSensor {
+          type "infra-red"
+          translation -6.74634e-14 -0.02 0.1
+          rotation 0 0 -1 1.5708
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.988235 0.913725 0.309804
+              }
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance_sensor_mid"
+          lookupTable [
+            0 1000 0
+            0.1 0 0
+          ]
+        }
+        DistanceSensor {
+          type "infra-red"
+          translation 0.03 -0.02 0.1
+          rotation 0 0 -1 1.5708
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.988235 0.913725 0.309804
+              }
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance_sensor_left"
+          lookupTable [
+            0 1000 0
+            0.1 0 0
+          ]
+        }
+        DEF Body Shape {
+          appearance PBRAppearance {
+            baseColor 1 0 0
+            metalness 0
+          }
+          geometry Box {
+            size 0.1 0.05 0.2
           }
         }
-      }
-      HingeJoint {
-        jointParameters HingeJointParameters {
-          position 0
-          anchor -0.06 0 0.05
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            position 0
+            anchor 0.06 0 0.05
+          }
+          device [
+            RotationalMotor {
+              name "left_front_wheel"
+            }
+          ]
+          endPoint DEF left_front_wheel Solid {
+            translation 0.06 0 0.05
+            rotation -0.2372178203750054 0.23702899264272692 0.9420960473026654 1.6296141054596442
+            children [
+              DEF Wheel Shape {
+                appearance PBRAppearance {
+                  baseColor 0 1 0
+                  metalness 0
+                }
+                geometry Cylinder {
+                  height 0.02
+                  radius 0.04
+                }
+              }
+            ]
+            name "left_front_wheel"
+            boundingObject USE Wheel
+            physics DEF WHEEL_PHYSICS Physics {
+            }
+          }
         }
-        device [
-          RotationalMotor {
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            position 0
+            anchor -0.06 0 0.05
+          }
+          device [
+            RotationalMotor {
+              name "right_front_wheel"
+            }
+          ]
+          endPoint DEF right_front_wheel Solid {
+            translation -0.06 0 0.05
+            rotation -0.15203380324924576 0.15191278283749135 -0.9766310608823265 4.689540972681517
+            children [
+              USE Wheel
+            ]
             name "right_front_wheel"
+            boundingObject USE Wheel
+            physics USE WHEEL_PHYSICS
           }
-        ]
-        endPoint DEF right_front_wheel Solid {
-          translation -0.06 0 0.05
-          rotation -0.15203380324924576 0.15191278283749135 -0.9766310608823265 4.689540972681517
-          children [
-            USE Wheel
+        }
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            position 0
+            anchor 0.06 0 -0.05
+          }
+          device [
+            RotationalMotor {
+              name "left_rear_wheel"
+            }
           ]
-          name "right_front_wheel"
-          boundingObject USE Wheel
-          physics USE WHEEL_PHYSICS
-        }
-      }
-      HingeJoint {
-        jointParameters HingeJointParameters {
-          position 0
-          anchor 0.06 0 -0.05
-        }
-        device [
-          RotationalMotor {
+          endPoint DEF left_rear_wheel Solid {
+            translation 0.06 0 -0.05
+            rotation -0.23721774599786627 0.2370289183247925 0.9420960847288723 1.629614065801813
+            children [
+              USE Wheel
+            ]
             name "left_rear_wheel"
+            boundingObject USE Wheel
+            physics USE WHEEL_PHYSICS
           }
-        ]
-        endPoint DEF left_rear_wheel Solid {
-          translation 0.06 0 -0.05
-          rotation -0.23721774599786627 0.2370289183247925 0.9420960847288723 1.629614065801813
-          children [
-            USE Wheel
+        }
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            position 0
+            anchor -0.06 0 -0.05
+          }
+          device [
+            RotationalMotor {
+              name "right_rear_wheel"
+            }
           ]
-          name "left_rear_wheel"
-          boundingObject USE Wheel
-          physics USE WHEEL_PHYSICS
-        }
-      }
-      HingeJoint {
-        jointParameters HingeJointParameters {
-          position 0
-          anchor -0.06 0 -0.05
-        }
-        device [
-          RotationalMotor {
+          endPoint DEF right_rear_wheel Solid {
+            translation -0.06 0 -0.05
+            rotation -0.15203376554893583 0.15191274516719103 -0.9766310726107271 4.6895409846874205
+            children [
+              USE Wheel
+            ]
             name "right_rear_wheel"
+            boundingObject USE Wheel
+            physics USE WHEEL_PHYSICS
           }
-        ]
-        endPoint DEF right_rear_wheel Solid {
-          translation -0.06 0 -0.05
-          rotation -0.15203376554893583 0.15191274516719103 -0.9766310726107271 4.6895409846874205
-          children [
-            USE Wheel
-          ]
-          name "right_rear_wheel"
-          boundingObject USE Wheel
-          physics USE WHEEL_PHYSICS
         }
-      }
-      DistanceSensor {
-        translation -0.02 0 0.1
-        rotation 0 1 0 -1.87
-        children [
-          DEF sensor Shape {
-            appearance PBRAppearance {
+        DistanceSensor {
+          translation -0.02 0 0.1
+          rotation 0 1 0 -1.87
+          children [
+            DEF sensor Shape {
+              appearance PBRAppearance {
+              }
+              geometry DEF Sensor Box {
+                size 0.01 0.01 0.01
+              }
             }
-            geometry DEF Sensor Box {
-              size 0.01 0.01 0.01
-            }
-          }
-        ]
-        name "ds_right"
-      }
-      DistanceSensor {
-        translation 0.02 0 0.1
-        rotation 0 1 0 -1.27
-        children [
-          USE sensor
-        ]
-        name "ds_left"
-      }
+          ]
+          name "ds_right"
+        }
+        DistanceSensor {
+          translation 0.02 0 0.1
+          rotation 0 1 0 -1.27
+          children [
+            USE sensor
+          ]
+          name "ds_left"
+        }
     ]
     name "Robot_sense"
     boundingObject USE Body

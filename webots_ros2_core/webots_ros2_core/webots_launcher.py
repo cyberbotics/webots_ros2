@@ -134,6 +134,9 @@ class _WebotsCommandSubstitution(Substitution):
         # Add `world`
         command += [context.perform_substitution(self.__world)]
 
+        # Hide welcome window
+        command += ['--batch']
+
         # Add parameters to hide GUI if needed
         if context.perform_substitution(self.__gui).lower() in ['false', '0']:
             command += [

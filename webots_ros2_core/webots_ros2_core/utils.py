@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2019 Cyberbotics Ltd.
+# Copyright 1996-2020 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ from launch.launch_context import LaunchContext
 
 def get_required_webots_version():
     """Return the Webots version compatible with this version of the package."""
-    return 'R2020b revision 1'
+    return 'R2021a'
 
 
 def make_short_version(version):

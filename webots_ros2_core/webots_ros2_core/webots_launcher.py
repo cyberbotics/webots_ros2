@@ -133,7 +133,7 @@ class _WebotsCommandSubstitution(Substitution):
 
         # Add `world`
         command += [context.perform_substitution(self.__world)]
-        
+
         # Hide welcome window
         command += ['--batch']
 

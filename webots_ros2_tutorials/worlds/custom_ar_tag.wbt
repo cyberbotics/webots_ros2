@@ -1,0 +1,108 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  info [
+    "Simulation for Video 6: Webots ros2 tutorial series on Soft-illusion youtube channel"
+    "Copyright (C) Soft-illusion"
+  ]
+  title "ROS2 simulation of the custom robot for line following"
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation 0.05 -1 -0.09 4.2
+  position 1.16 0.73 -0.71
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 2 2
+  floorTileSize 2 2
+  floorAppearance PBRAppearance {
+    baseColorMap ImageTexture {
+      url [
+        "textures/loop.jpg"
+      ]
+    }
+    roughness 0.2
+    metalness 0
+  }
+  wallHeight 0.2
+}
+Solid {
+  translation -0.99 0.11 0
+  rotation 0 0 1 -1.57
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "textures/ar_tag.jpg"
+          ]
+        }
+        metalness 0
+      }
+      geometry Plane {
+        size 0.1 0.1
+      }
+    }
+  ]
+}
+DEF OBSTACLE1 Solid {
+  translation 0.007158 0.025 0.207599
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.1 0.3
+        roughness 0.5
+        metalness 0
+      }
+      geometry DEF BOX1 Box {
+        size 0.05 0.05 0.05
+      }
+    }
+  ]
+  name "red box"
+  boundingObject USE BOX1
+}
+DEF OBSTACLE2 Solid {
+  translation -0.02 0.055 -0.48
+  rotation 0 1 0 3.8
+  scale 2 2 2
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.5 1
+        roughness 0.5
+        metalness 0
+      }
+      geometry DEF BOX2 Box {
+        size 0.08 0.05 0.08
+      }
+    }
+  ]
+  name "pink box"
+  boundingObject USE BOX2
+}
+DEF OBSTACLE3 Solid {
+  translation 0.550057 0.025 0.24285
+  rotation 0 1 0 13.7261
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.501961 0.501961 0.501961
+        roughness 0.5
+        metalness 0
+      }
+      geometry DEF BOX3 Box {
+        size 0.2 0.05 0.05
+      }
+    }
+  ]
+  name "gray box"
+  boundingObject USE BOX3
+}
+RobotSenseCamera {
+  translation -0.153 0.04 -0.17
+  rotation 0 1 0 -2.25
+}

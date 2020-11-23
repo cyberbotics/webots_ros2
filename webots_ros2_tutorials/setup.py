@@ -22,13 +22,16 @@ data_files.append(('share/ament_index/resource_index/packages', [
     'resource/' + package_name
 ]))
 data_files.append(('share/' + package_name, [
-    'launch/line_following_launch.py'
+    'launch/line_following_launch.py',
+    'launch/ar_detection_launch.py'
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
-    'worlds/custom_line_follower.wbt'
+    'worlds/custom_line_follower.wbt',
+    'worlds/custom_ar_tag.wbt'
 ]))
 data_files.append(('share/' + package_name + '/protos', [
-    'protos/RobotSense.proto'
+    'protos/RobotSense.proto',
+    'protos/RobotSense_Cam.proto'
 ]))
 
 data_files.append(
@@ -59,7 +62,9 @@ setup(
     entry_points={
         'console_scripts': [
             'enable_robot = webots_ros2_tutorials.slave:main',
-            'line_follower = webots_ros2_tutorials.master:main'
+            'line_follower = webots_ros2_tutorials.master:main',
+            'camera_enable = webots_ros2_tutorials.robot_enable:main',
+            'commander = webots_ros2_tutorials.commander:main'
         ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }

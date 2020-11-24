@@ -40,12 +40,20 @@ class Image_processor(Node):
         self.stop = False
         self.count = 0
         self.number_of_pixels = 512
-        self.reach_threshold = self.number_of_pixels*0.4  # value is in pixels 40% of image
+        # value is in pixels 40% of image
+        self.reach_threshold = self.number_of_pixels*0.4
         self.reached = False
 
-        self.camera_subscriber = self.create_subscription(Image, 'camera/image_raw', self.Image_processing_callback, 1)
+        self.camera_subscriber = self.create_subscription(
+                                Image,
+                                'camera/image_raw',
+                                self.Image_processing_callback,
+                                1)
         self.bridge = CvBridge()
-        self.processedImage_publish = self.create_publisher(Image, 'camera/processed_image', 1)
+        self.processedImage_publish = self.create_publisher(
+                                      Image,
+                                      'camera/processed_image',
+                                      1)
         self.translation_x = 0
 
     def lineFollowingModule(self):
@@ -71,24 +79,41 @@ class Image_processor(Node):
         height = msg.height
         width = msg.width
         self.number_of_pixels = height
-        matrix_coefficients = np.mat([[1.0, 0.0, height/2], [0.0, 1.0, width / 2.0], [0.0, 0.0, 1.0]])
+        matrix_coefficients = np.mat([[1.0, 0.0, height/2],
+                                     [0.0, 1.0, width / 2.0],
+                                     [0.0, 0.0, 1.0]])
         distortion_coefficients = np.mat([0.0, 0.0, 0.0, 0.0])
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # Change grayscale
-        aruco_dict = aruco.Dictionary_get(aruco.DICT_5X5_250)  # Use 5x5 dictionary to find markers
-        parameters = aruco.DetectorParameters_create()  # Marker detection parameters
+        # Use 5x5 dictionary to find markers
+        aruco_dict = aruco.Dictionary_get(aruco.DICT_5X5_250)
+        # Marker detection parameters
+        parameters = aruco.DetectorParameters_create()
         # lists of ids and the corners beloning to each id
-        corners, ids, _ = aruco.detectMarkers(gray, aruco_dict,
-                                              parameters=parameters,
-                                              cameraMatrix=matrix_coefficients,
-                                              distCoeff=distortion_coefficients)
+        corners, ids, _ = aruco.detectMarkers(
+                            gray,
+                            aruco_dict,
+                            parameters=parameters,
+                            cameraMatrix=matrix_coefficients,
+                            distCoeff=distortion_coefficients)
         print(ids, ": ID of AR-tag")
         if np.all(ids is not None):  # If there are markers found by detector
             for i in range(0, len(ids)):  # Iterate in markers
-                rvec, tvec, _ = aruco.estimatePoseSingleMarkers(corners[i], 0.1, matrix_coefficients, distortion_coefficients)
-                aruco.drawDetectedMarkers(frame, corners)  # Draw A square around the markers
-                aruco.drawAxis(frame, matrix_coefficients, distortion_coefficients, rvec, tvec, 0.1)  # Draw Axis
-                if abs(corners[0][0][0][0]-corners[0][0][2][0]) > self.reach_threshold:
+                rvec, tvec, _ = aruco.estimatePoseSingleMarkers(
+                                    corners[i],
+                                    0.1,
+                                    matrix_coefficients,
+                                    distortion_coefficients)
+                # Draw A square around the markers
+                aruco.drawDetectedMarkers(frame, corners)
+                aruco.drawAxis(frame, matrix_coefficients,
+                               distortion_coefficients,
+                               rvec,
+                               tvec,
+                               0.1)  # Draw Axis
+                top = corners[0][0][0][0]
+                bottom = corners[0][0][2][0]
+                if abs(top - bottom) > self.reach_threshold:
                     self.reached = True
                     self.get_logger().info('Reached the goal')
                 else:
@@ -98,7 +123,8 @@ class Image_processor(Node):
         else:
             self.translation_x = 0
             self.stop = True
-        self.processedImage_publish.publish(self.bridge.cv2_to_imgmsg(frame, "rgb8"))
+        self.processedImage_publish.publish(self.bridge.cv2_to_imgmsg(frame,
+                                                                      "rgb8"))
         self.lineFollowingModule()
 
 

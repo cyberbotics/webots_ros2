@@ -15,7 +15,6 @@
 """Lidar device."""
 
 from sensor_msgs.msg import LaserScan, PointCloud2, PointField
-from geometry_msgs.msg import Point32
 from tf2_ros import StaticTransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 from .sensor_device import SensorDevice
@@ -108,7 +107,11 @@ class LidarDevice(SensorDevice):
                 PointField(name='z', offset=8, datatype=PointField.FLOAT32, count=1)
             ]
             msg.is_bigendian = False
-            msg.data = data
+            # We pass `data` directly to we avoid using `data` setter.
+            # Otherwise ROS2 converts data to `array.array` which slows down the simulation as it copies memory internally.
+            # Both, `bytearray` and `array.array`, implement Python buffer protocol, so we should not see unpredictable
+            # behavior.
+            msg._data = data
             self.__publisher.publish(msg)
 
     def __publish_laser_scan_data(self, stamp):

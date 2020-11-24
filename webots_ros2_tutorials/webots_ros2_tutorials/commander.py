@@ -71,7 +71,7 @@ class Image_processor(Node):
         height = msg.height
         width = msg.width
         self.number_of_pixels = height
-        matrix_coefficients =np.mat([[1.0, 0.0, height/2], [0.0, 1.0, width/2.0], [0.0, 0.0, 1.0]])
+        matrix_coefficients = np.mat([[1.0, 0.0, height/2], [0.0, 1.0, width/2.0], [0.0, 0.0, 1.0]])
         distortion_coefficients = np.mat([0.0, 0.0, 0.0, 0.0])
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # Change grayscale
@@ -79,9 +79,9 @@ class Image_processor(Node):
         parameters = aruco.DetectorParameters_create()  # Marker detection parameters
         # lists of ids and the corners beloning to each id
         corners, ids, _ = aruco.detectMarkers(gray, aruco_dict,
-                                            parameters=parameters,
-                                            cameraMatrix=matrix_coefficients,
-                                            distCoeff=distortion_coefficients)
+                                              parameters=parameters,
+                                              cameraMatrix=matrix_coefficients,
+                                              distCoeff=distortion_coefficients)
         print(ids, ": ID of AR-tag")
         if np.all(ids is not None):  # If there are markers found by detector
             for i in range(0, len(ids)):  # Iterate in markers
@@ -95,7 +95,7 @@ class Image_processor(Node):
                     self.reached = False
                 self.translation_x = tvec[0][0][0]
                 self.stop = False
-        else :
+        else:
             self.translation_x = 0
             self.stop = True
         self.processedImage_publish.publish(self.bridge.cv2_to_imgmsg(frame, "rgb8"))

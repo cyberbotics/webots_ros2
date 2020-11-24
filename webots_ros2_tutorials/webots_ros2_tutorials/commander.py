@@ -58,7 +58,7 @@ class Image_processor(Node):
         if self.stop:
             self.cmd.linear.x = 0.01
             self.cmd.angular.z = 1.2
-        
+
         if self.reached:
             self.cmd.linear.x = 0.0
             self.cmd.angular.z = 0.0
@@ -71,7 +71,7 @@ class Image_processor(Node):
         height = msg.height
         width = msg.width
         self.number_of_pixels = height
-        matrix_coefficients = np.mat([[1.0, 0.0, height/2], [0.0, 1.0, width/2.0], [0.0, 0.0, 1.0]])
+        matrix_coefficients = np.mat([[1.0, 0.0, height/2], [0.0, 1.0, width / 2.0], [0.0, 0.0, 1.0]])
         distortion_coefficients = np.mat([0.0, 0.0, 0.0, 0.0])
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # Change grayscale

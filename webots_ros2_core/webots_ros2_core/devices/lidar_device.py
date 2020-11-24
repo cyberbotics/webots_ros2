@@ -111,7 +111,7 @@ class LidarDevice(SensorDevice):
             # Otherwise ROS2 converts data to `array.array` which slows down the simulation as it copies memory internally.
             # Both, `bytearray` and `array.array`, implement Python buffer protocol, so we should not see unpredictable
             # behavior.
-            # deepcode ignore Lint: Avoid conversion from `bytearray` to `array.array`.
+            # deepcode ignore W0212: Avoid conversion from `bytearray` to `array.array`.
             msg._data = data
             self.__publisher.publish(msg)
 

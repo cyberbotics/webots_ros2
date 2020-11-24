@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import time
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
@@ -20,7 +21,6 @@ import numpy as np
 import cv2
 import cv2.aruco as aruco
 from cv_bridge import CvBridge
-import time
 
 
 class Image_processor(Node):

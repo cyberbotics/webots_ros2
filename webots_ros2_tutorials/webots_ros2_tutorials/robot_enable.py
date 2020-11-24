@@ -17,15 +17,12 @@ from webots_ros2_core.webots_node import WebotsNode
 from geometry_msgs.msg import Twist
 
 DEVICE_CONFIG = {
-    'camera_mid': {'topic_name': 'camera',
-                    'timestep': 16 }
-}
+    'camera_mid': {'topic_name': 'camera', 'timestep': 16}}
 
 
 class SensorEnable(WebotsNode):
     def __init__(self, args):
         super().__init__('sensor_enable', args)
-
 
         # Enable 3 sensors
         self.service_node_vel_timestep = 16
@@ -56,7 +53,6 @@ class SensorEnable(WebotsNode):
 
         self.start_device_manager(DEVICE_CONFIG)
         self.get_logger().info('Sensor enabled')
-        
 
     def cmdVel_callback(self, msg):
         wheel_gap = 0.1  # in meter
@@ -75,6 +71,7 @@ class SensorEnable(WebotsNode):
         self.right_motor_front.setVelocity(right_speed)
         self.left_motor_rear.setVelocity(left_speed)
         self.right_motor_rear.setVelocity(right_speed)
+
 
 def main(args=None):
     rclpy.init(args=args)

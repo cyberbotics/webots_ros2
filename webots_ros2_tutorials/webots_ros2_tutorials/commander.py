@@ -28,7 +28,7 @@ class Image_processor(Node):
         super().__init__('Image_processor')
         # Publish cmd vel
         self.pubs_cmdvel = self.create_publisher(Twist, 'cmd_vel', 1)
-        time.sleep(3)
+        time.sleep(5)
 
         # vehicle parameters
         self.speed = 0.1

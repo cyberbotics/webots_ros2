@@ -31,7 +31,7 @@ data_files.append(('share/' + package_name + '/worlds', [
 ]))
 data_files.append(('share/' + package_name + '/protos', [
     'protos/RobotSense.proto',
-    'protos/RobotSense_Cam.proto'
+    'protos/RobotSenseCamera.proto'
 ]))
 
 data_files.append(

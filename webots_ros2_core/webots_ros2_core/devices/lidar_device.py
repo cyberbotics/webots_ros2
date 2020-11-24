@@ -91,7 +91,7 @@ class LidarDevice(SensorDevice):
             self._wb_device.disable()
 
     def __publish_point_cloud_data(self, stamp):
-        data = self._wb_device.getPointCloud(dtype='buffer')
+        data = self._wb_device.getPointCloud(data_type='buffer')
         if data:
             msg = PointCloud2()
             msg.header.stamp = stamp

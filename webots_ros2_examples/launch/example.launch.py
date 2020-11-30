@@ -35,7 +35,7 @@ def generate_launch_description():
     # Controller node
     synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
     controller = ControllerLauncher(package='webots_ros2_examples',
-                                    node_executable='example_controller',
+                                    executable='example_controller',
                                     parameters=[{'synchronization': synchronization}],
                                     output='screen')
     return launch.LaunchDescription([

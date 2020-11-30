@@ -42,7 +42,7 @@ def generate_launch_description():
     rviz_config = os.path.join(package_dir, 'resource', 'view_robot_dynamic.rviz')
     rviz = Node(
         package='rviz2',
-        node_executable='rviz2',
+        executable='rviz2',
         output='log',
         arguments=['--display-config=' + rviz_config]
     )

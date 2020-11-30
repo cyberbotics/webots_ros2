@@ -56,7 +56,7 @@ def generate_launch_description():
                 f2.write(content)
     # Rviz node
     rviz = launch_ros.actions.Node(package='rviz2',
-                                   node_executable='rviz2',
+                                   executable='rviz2',
                                    arguments=['-d', customRvizFile],
                                    output='screen')
     return launch.LaunchDescription([

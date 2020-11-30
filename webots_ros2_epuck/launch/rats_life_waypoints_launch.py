@@ -139,7 +139,7 @@ def generate_launch_description():
 
     mapper = Node(
         package='webots_ros2_epuck',
-        node_executable='simple_mapper',
+        executable='simple_mapper',
         output='screen',
         parameters=[{'use_sim_time': use_sim_time, 'fill_map': True}],
     )

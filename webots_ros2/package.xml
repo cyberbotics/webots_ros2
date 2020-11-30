@@ -22,9 +22,9 @@
   <exec_depend>webots_ros2_importer</exec_depend>
   <exec_depend>webots_ros2_msgs</exec_depend>
   <exec_depend>webots_ros2_tiago</exec_depend>
-  <exec_depend>webots_ros2_universal_robot</exec_depend>
   <exec_depend>webots_ros2_turtlebot</exec_depend>
   <exec_depend>webots_ros2_tutorials</exec_depend>
+  <exec_depend>webots_ros2_universal_robot</exec_depend>
 
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->

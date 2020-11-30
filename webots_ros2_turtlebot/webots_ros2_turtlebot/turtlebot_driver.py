@@ -31,7 +31,11 @@ class TurtlebotDriver(WebotsDifferentialDriveNode):
             wheel_distance=0.160,
             wheel_radius=0.033
         )
-        self.start_device_manager({'LDS-01.topic_name': '/scan'})
+        self.start_device_manager({
+            'robot': {'publish_base_footprint': True},
+            'LDS-01': {'topic_name': '/scan'},
+            'accelerometer+gyro': {'frame_id': 'imu_link', 'topic_name': '/imu'}
+        })
 
 
 def main(args=None):

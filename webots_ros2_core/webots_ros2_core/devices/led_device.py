@@ -23,8 +23,7 @@ class LEDDevice(Device):
     """
     ROS2 wrapper for Webots LED node.
 
-    Creates suitable ROS2 interface based on Webots LED node instance:
-    https://cyberbotics.com/doc/reference/led
+    Creates suitable ROS2 interface based on Webots [LED](https://cyberbotics.com/doc/reference/led) node instance:
 
     It allows the following functinalities:
     - Subscribes to `std_msgs/Int32` and controls LEDs on the robot

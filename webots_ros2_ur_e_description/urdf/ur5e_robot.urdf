@@ -225,19 +225,6 @@
       <inertia ixx="9.890410052167731e-05" ixy="0.0" ixz="0.0" iyy="9.890410052167731e-05" iyz="0.0" izz="0.0001321171875"/>
     </inertial>
   </link>
-  <joint name="ee_fixed_joint" type="fixed">
-    <parent link="wrist_3_link"/>
-    <child link="ee_link"/>
-    <origin rpy="0.0 0.0 1.5707963267948966" xyz="0.0 0.1 0.0"/>
-  </joint>
-  <link name="ee_link">
-    <collision>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-      <origin rpy="0 0 0" xyz="-0.01 0 0"/>
-    </collision>
-  </link>
   <transmission name="shoulder_pan_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="shoulder_pan_joint">
@@ -313,28 +300,4 @@
   <gazebo reference="ee_link">
     <selfCollide>true</selfCollide>
   </gazebo>
-  <!-- ROS base_link to UR 'Base' Coordinates transform -->
-  <link name="base"/>
-  <joint name="base_link-base_fixed_joint" type="fixed">
-    <!-- NOTE: this rotation is only needed as long as base_link itself is
-                 not corrected wrt the real robot (ie: rotated over 180
-                 degrees)
-      -->
-    <origin rpy="0 0 -3.141592653589793" xyz="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="base"/>
-  </joint>
-  <!-- Frame coincident with all-zeros TCP on UR controller -->
-  <link name="tool0"/>
-  <joint name="wrist_3_link-tool0_fixed_joint" type="fixed">
-    <origin rpy="-1.5707963267948966 0 0" xyz="0 0.1 0"/>
-    <parent link="wrist_3_link"/>
-    <child link="tool0"/>
-  </joint>
-  <link name="world"/>
-  <joint name="world_joint" type="fixed">
-    <parent link="world"/>
-    <child link="base_link"/>
-    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
-  </joint>
 </robot>

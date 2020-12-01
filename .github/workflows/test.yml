@@ -6,7 +6,6 @@ on:
 
 jobs:
   industrial_ci:
-    if: github.event.pull_request.draft == false
     strategy:
       matrix:
         env:

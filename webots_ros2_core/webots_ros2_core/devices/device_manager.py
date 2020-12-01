@@ -70,7 +70,12 @@ class DeviceManager:
         self.__insert_imu_device()
         for device_key in self.__config.keys():
             if self.__is_imu_device(device_key):
-                self.__devices[device_key] = ImuDevice(node, device_key, self.__get_imu_wb_devices_from_key(device_key))
+                self.__devices[device_key] = ImuDevice(
+                    node,
+                    device_key,
+                    self.__get_imu_wb_devices_from_key(device_key),
+                    self.__config.get(device_key, None)
+                )
 
         # Verify parameters
         for device_name in self.__config.keys():
@@ -94,11 +99,11 @@ class DeviceManager:
 
         for wb_device_name in wb_device_names:
             if wb_device_name in self.__wb_devices:
-                if self.__wb_devices[wb_device_name] == Node.ACCELEROMETER:
+                if self.__wb_devices[wb_device_name].getNodeType() == Node.ACCELEROMETER:
                     accelerometer = self.__wb_devices[wb_device_name]
-                elif self.__wb_devices[wb_device_name] == Node.INERTIAL_UNIT:
+                elif self.__wb_devices[wb_device_name].getNodeType() == Node.INERTIAL_UNIT:
                     inertial_unit = self.__wb_devices[wb_device_name]
-                elif self.__wb_devices[wb_device_name] == Node.GYRO:
+                elif self.__wb_devices[wb_device_name].getNodeType() == Node.GYRO:
                     gyro = self.__wb_devices[wb_device_name]
 
         return [accelerometer, gyro, inertial_unit]

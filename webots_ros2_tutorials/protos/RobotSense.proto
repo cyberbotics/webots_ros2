@@ -1,0 +1,210 @@
+#VRML_SIM R2020b utf8
+# license: Apache License 2.0
+# license url: http://www.apache.org/licenses/LICENSE-2.0
+# tags: static
+# More info here: https://www.youtube.com/c/soft-illusion
+# Robotsense
+
+PROTO RobotSense [
+    field SFVec3f    translation  0 0.0198 0
+    field SFRotation rotation     0 1 0 2.3495
+    field SFString   controller   "<extern>"
+  ]
+  {
+    Robot {
+      translation IS translation
+      rotation IS rotation
+      controller IS controller
+      children [
+        DistanceSensor {
+          type "infra-red"
+          translation -0.03 -0.02 0.1
+          rotation 0 0 -1 1.5708
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.988235 0.913725 0.309804
+              }
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance_sensor_right"
+          lookupTable [
+            0 1000 0
+            0.1 0 0
+          ]
+        }
+        DistanceSensor {
+          type "infra-red"
+          translation -6.74634e-14 -0.02 0.1
+          rotation 0 0 -1 1.5708
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.988235 0.913725 0.309804
+              }
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance_sensor_mid"
+          lookupTable [
+            0 1000 0
+            0.1 0 0
+          ]
+        }
+        DistanceSensor {
+          type "infra-red"
+          translation 0.03 -0.02 0.1
+          rotation 0 0 -1 1.5708
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.988235 0.913725 0.309804
+              }
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "distance_sensor_left"
+          lookupTable [
+            0 1000 0
+            0.1 0 0
+          ]
+        }
+        DEF BODY Shape {
+          appearance PBRAppearance {
+            baseColor 1 0 0
+            metalness 0
+          }
+          geometry Box {
+            size 0.1 0.05 0.2
+          }
+        }
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            position 0
+            anchor 0.06 0 0.05
+          }
+          device [
+            RotationalMotor {
+              name "left_front_wheel"
+            }
+          ]
+          endPoint Solid {
+            translation 0.06 0 0.05
+            rotation -0.2372178203750054 0.23702899264272692 0.9420960473026654 1.6296141054596442
+            children [
+              DEF WHEEL Shape {
+                appearance PBRAppearance {
+                  baseColor 0 1 0
+                  metalness 0
+                }
+                geometry Cylinder {
+                  height 0.02
+                  radius 0.04
+                }
+              }
+            ]
+            name "left_front_wheel"
+            boundingObject USE WHEEL
+            physics DEF WHEEL_PHYSICS Physics {
+            }
+          }
+        }
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            position 0
+            anchor -0.06 0 0.05
+          }
+          device [
+            RotationalMotor {
+              name "right_front_wheel"
+            }
+          ]
+          endPoint Solid {
+            translation -0.06 0 0.05
+            rotation -0.15203380324924576 0.15191278283749135 -0.9766310608823265 4.689540972681517
+            children [
+              USE WHEEL
+            ]
+            name "right_front_wheel"
+            boundingObject USE WHEEL
+            physics USE WHEEL_PHYSICS
+          }
+        }
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            position 0
+            anchor 0.06 0 -0.05
+          }
+          device [
+            RotationalMotor {
+              name "left_rear_wheel"
+            }
+          ]
+          endPoint Solid {
+            translation 0.06 0 -0.05
+            rotation -0.23721774599786627 0.2370289183247925 0.9420960847288723 1.629614065801813
+            children [
+              USE WHEEL
+            ]
+            name "left_rear_wheel"
+            boundingObject USE WHEEL
+            physics USE WHEEL_PHYSICS
+          }
+        }
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            position 0
+            anchor -0.06 0 -0.05
+          }
+          device [
+            RotationalMotor {
+              name "right_rear_wheel"
+            }
+          ]
+          endPoint Solid {
+            translation -0.06 0 -0.05
+            rotation -0.15203376554893583 0.15191274516719103 -0.9766310726107271 4.6895409846874205
+            children [
+              USE WHEEL
+            ]
+            name "right_rear_wheel"
+            boundingObject USE WHEEL
+            physics USE WHEEL_PHYSICS
+          }
+        }
+        DistanceSensor {
+          translation -0.02 0 0.1
+          rotation 0 1 0 -1.87
+          children [
+            DEF SENSOR Shape {
+              appearance PBRAppearance {
+              }
+              geometry Box {
+                size 0.01 0.01 0.01
+              }
+            }
+          ]
+          name "ds_right"
+        }
+        DistanceSensor {
+          translation 0.02 0 0.1
+          rotation 0 1 0 -1.27
+          children [
+            USE SENSOR
+          ]
+          name "ds_left"
+        }
+    ]
+    name "Robot_sense"
+    boundingObject USE BODY
+    physics Physics {
+    }
+  }
+}

@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2</name>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <description>Interface between Webots and ROS2</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -22,6 +22,8 @@
   <exec_depend>webots_ros2_importer</exec_depend>
   <exec_depend>webots_ros2_msgs</exec_depend>
   <exec_depend>webots_ros2_tiago</exec_depend>
+  <exec_depend>webots_ros2_turtlebot</exec_depend>
+  <exec_depend>webots_ros2_tutorials</exec_depend>
   <exec_depend>webots_ros2_universal_robot</exec_depend>
 
   <!-- These test dependencies are optional

@@ -23,10 +23,10 @@ class ImuDevice(SensorDevice):
     """
     ROS2 wrapper for Webots Accelerometer, Gyro and InertialUnit node.
 
-    Creates suitable ROS2 interface based on Webots Accelerometer, Gyro and InertialUnit node instances:
-    https://cyberbotics.com/doc/reference/accelerometer
-    https://cyberbotics.com/doc/reference/gyro
-    https://cyberbotics.com/doc/reference/inertialunit
+    Creates suitable ROS2 interface based on Webots
+    [Accelerometer](https://cyberbotics.com/doc/reference/accelerometer),
+    [Gyro](https://cyberbotics.com/doc/reference/gyro) and
+    [InertialUnit](https://cyberbotics.com/doc/reference/inertialunit) node instances:
 
     It allows the following functinalities:
     - Combines readings from Accelerometer, Gyro and InertialUnit to ROS topic of type `sensor_msgs/Imu`

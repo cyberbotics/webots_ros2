@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>webots_ros2_turtlebot</name>
+  <version>1.0.3</version>
+  <description>TurtleBot3 Burger robot ROS2 interface for Webots.</description>
+
+  <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
+  <license>Apache License 2.0</license>
+  <url type="website">http://wiki.ros.org/webots_ros2</url>
+  <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
+  <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>builtin_interfaces</exec_depend>
+  <exec_depend>webots_ros2_core</exec_depend>
+
+  <!-- These test dependencies are optional
+  Their purpose is to make sure that the code passes the linters -->
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

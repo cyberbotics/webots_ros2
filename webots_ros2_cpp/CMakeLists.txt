@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(webots_ros2_cpp)
 
+
 # Compiler
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -11,6 +12,7 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
+
 
 # Webots
 link_directories($ENV{WEBOTS_HOME}/lib/controller)
@@ -23,7 +25,6 @@ include_directories(
   $ENV{WEBOTS_HOME}/include/controller/cpp
 )
 
-message($ENV{WEBOTS_HOME}/lib/controller)
 
 # ROS2
 find_package(ament_cmake REQUIRED)

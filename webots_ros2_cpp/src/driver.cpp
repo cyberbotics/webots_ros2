@@ -1,5 +1,3 @@
-// export LD_LIBRARY_PATH=${WEBOTS_HOME}/lib/controller
-
 #include <chrono>
 #include <functional>
 #include <memory>

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source /opt/ros/foxy/local_setup.bash
+source $HOME/foxy_ws/install/local_setup.bash
+
+ros2 run webots_ros2_cpp driver $@

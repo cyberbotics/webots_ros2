@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.3 (2020-xx-xx)
+------------------
+* Improved the performance of point cloud publishing by a few times.
+
 1.0.2 (2020-10-12)
 ------------------
 * Fixed support for 3D Lidars

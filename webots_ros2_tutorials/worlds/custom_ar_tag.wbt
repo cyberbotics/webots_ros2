@@ -49,7 +49,7 @@ Solid {
       appearance PBRAppearance {
         baseColorMap ImageTexture {
           url [
-            "textures/Soft_illusion.jpg"
+            "textures/soft_illusion.jpg"
           ]
         }
         metalness 0
@@ -1039,7 +1039,7 @@ Solid {
 }
 Solid {
   translation -5.70765e-06 0 -0.89
-  rotation 0 1 0 -1.57
+  rotation 0 1 0 -1.5707953071795862
   scale 0.2 0.2 0.2
   children [
     Shape {

@@ -18,22 +18,22 @@ PROTO RobotSenseCamera [
       children [
         Camera {
           translation 0 0.03 0.1
-        rotation 0 -1 0 3.14158
-      children [
-        Shape {
-          appearance PBRAppearance {
-            baseColor 0 0.7 1
-          }
-          geometry Capsule {
-            height 0.015
-            radius 0.007
-          }
+          rotation 0 -1 0 3.14158
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0 0.7 1
+              }
+              geometry Capsule {
+                height 0.015
+                radius 0.007
+              }
+            }
+          ]
+          width 512
+          height 512
+          name "camera_mid"
         }
-      ]
-      width 512
-      height 512
-      name "camera_mid"
-    }
         DistanceSensor {
           type "infra-red"
           translation -0.03 -0.02 0.1

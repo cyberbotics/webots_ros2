@@ -1038,8 +1038,8 @@ Solid {
   }
 }
 Solid {
-  translation -5.70765e-06 0 -0.89
-  rotation 0 1 0 -1.5707953071795862
+  translation 0 0 -0.89
+  rotation 0 1 0 -1.57
   scale 0.2 0.2 0.2
   children [
     Shape {
@@ -1155,7 +1155,7 @@ Solid {
 }
 Solid {
   translation 0.86 0.14 0.08
-  rotation 0 1 0 -1.5707953071795862
+  rotation 0 1 0 -1.57
   scale 0.2 0.2 0.2
   children [
     Shape {

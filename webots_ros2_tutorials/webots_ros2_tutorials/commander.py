@@ -79,7 +79,7 @@ class Image_processor(Node):
         height = msg.height
         width = msg.width
         self.number_of_pixels = height
-        matrix_coefficients = np.mat([[1.0, 0.0, height/2],
+        matrix_coefficients = np.mat([[1.0, 0.0, height / 2.0],
                                      [0.0, 1.0, width / 2.0],
                                      [0.0, 0.0, 1.0]])
         distortion_coefficients = np.mat([0.0, 0.0, 0.0, 0.0])

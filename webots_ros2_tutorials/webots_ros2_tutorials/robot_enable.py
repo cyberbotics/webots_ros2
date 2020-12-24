@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# This file is used to enable all the sensors and making robot move
 
 import rclpy
 from webots_ros2_core.webots_node import WebotsNode
@@ -20,12 +21,9 @@ DEVICE_CONFIG = {
     'camera_mid': {'topic_name': 'camera', 'timestep': 16}}
 
 
-class SensorEnable(WebotsNode):
+class RobotEnable(WebotsNode):
     def __init__(self, args):
         super().__init__('sensor_enable', args)
-
-        # Enable 3 sensors
-        self.service_node_vel_timestep = 16
 
         # Front wheels
         self.left_motor_front = self.robot.getMotor('left_front_wheel')
@@ -49,12 +47,12 @@ class SensorEnable(WebotsNode):
 
         # Create Subscriber
         self.cmd_vel_subscriber = self.create_subscription(
-            Twist, 'cmd_vel', self.cmdVel_callback, 1)
+            Twist, 'cmd_vel', self.cmd_velocity_callback, 1)
 
         self.start_device_manager(DEVICE_CONFIG)
         self.get_logger().info('Sensor enabled')
 
-    def cmdVel_callback(self, msg):
+    def cmd_velocity_callback(self, msg):
         wheel_gap = 0.1  # in meter
         wheel_radius = 0.04  # in meter
 
@@ -75,7 +73,7 @@ class SensorEnable(WebotsNode):
 
 def main(args=None):
     rclpy.init(args=args)
-    robot_object = SensorEnable(args=args)
+    robot_object = RobotEnable(args=args)
     rclpy.spin(robot_object)
 
     robot_object.destroy_node()

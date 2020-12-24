@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+# This script is used to process the incoming image and calculate cmd_vel.
 
 import time
 import rclpy
@@ -23,7 +24,7 @@ import cv2.aruco as aruco
 from cv_bridge import CvBridge
 
 
-class Image_processor(Node):
+class ArucoController(Node):
     def __init__(self):
         super().__init__('Image_processor')
         # Publish cmd vel
@@ -47,7 +48,7 @@ class Image_processor(Node):
         self.camera_subscriber = self.create_subscription(
                                 Image,
                                 'camera/image_raw',
-                                self.Image_processing_callback,
+                                self.image_processing_callback,
                                 1)
         self.bridge = CvBridge()
         self.processedImage_publish = self.create_publisher(
@@ -56,7 +57,7 @@ class Image_processor(Node):
                                       1)
         self.translation_x = 0
 
-    def lineFollowingModule(self):
+    def regulate_direction(self):
         # Constant velocity
         self.cmd.linear.x = self.speed
 
@@ -74,7 +75,7 @@ class Image_processor(Node):
         # Publish cmd vel
         self.pubs_cmdvel.publish(self.cmd)
 
-    def Image_processing_callback(self, msg):
+    def image_processing_callback(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "rgb8")
         height = msg.height
         width = msg.width
@@ -125,14 +126,14 @@ class Image_processor(Node):
             self.stop = True
         self.processedImage_publish.publish(self.bridge.cv2_to_imgmsg(frame,
                                                                       "rgb8"))
-        self.lineFollowingModule()
+        self.regulate_direction()
 
 
 def main(args=None):
 
     rclpy.init(args=args)
 
-    commander = Image_processor()
+    commander = ArucoController()
     rclpy.spin(commander)
 
     commander.destroy_node()

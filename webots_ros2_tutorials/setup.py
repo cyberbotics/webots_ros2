@@ -64,7 +64,7 @@ setup(
             'enable_robot = webots_ros2_tutorials.slave:main',
             'line_follower = webots_ros2_tutorials.master:main',
             'camera_enable = webots_ros2_tutorials.robot_enable:main',
-            'commander = webots_ros2_tutorials.commander:main'
+            'commander = webots_ros2_tutorials.aruco_controller:main'
         ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }

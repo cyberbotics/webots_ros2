@@ -61,7 +61,7 @@ class Image_processor(Node):
         self.cmd.linear.x = self.speed
 
         # # Correction parameters
-        self.cmd.angular.z = self.angle_correction*self.translation_x
+        self.cmd.angular.z = self.angle_correction * self.translation_x
 
         if self.stop:
             self.cmd.linear.x = 0.01

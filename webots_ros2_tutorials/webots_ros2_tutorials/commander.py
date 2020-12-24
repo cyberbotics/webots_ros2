@@ -41,7 +41,7 @@ class Image_processor(Node):
         self.count = 0
         self.number_of_pixels = 512
         # value is in pixels 40% of image
-        self.reach_threshold = self.number_of_pixels*0.4
+        self.reach_threshold = self.number_of_pixels * 0.4
         self.reached = False
 
         self.camera_subscriber = self.create_subscription(

@@ -1,4 +1,4 @@
-# Line Following Custom Robot
+# [Line Following Custom Robot](https://www.youtube.com/watch?v=ZTJa5f5F5fU)
 This [6th video](https://www.youtube.com/watch?v=ZTJa5f5F5fU) in the [Webots-ROS YouTube Tutorial Series](https://www.youtube.com/watch?v=jU_FD1_zAqo&list=PLt69C9MnPchkP0ZXZOqmIGRTOch8o9GiQ) implements the concept of a master and slave where the master publishes msgs on a topic and the slave subscribes to them.  Here a custom robot is made to follow a line. 3 sensors in front of the robot detects the color below it, using which we know the difference between the black and the blue color to make sure that the robot follows the black color. Using rqt_graph (visualization of nodes and topics) we can see that the master node subscribes to the sensor topics and does calculations and publishes to /cmd_vel topic which gets subscribed to by the slave node. Here the slave node acts as the bridge between Webots and ROS2 and the master node is like the brain written in ROS2.
 The launch file structure in ROS2 has also been explained in the video which includes the package and core directory. This is the robot_launch file which also has the package and the executable names. 
 <p align="center"><img src="images/gsod_06.png" alt="Video 6" height="300"></p>
@@ -12,7 +12,7 @@ The launch file structure in ROS2 has also been explained in the video which inc
 
 ``ros2 topic echo /topic_name`` can be used to subscribe to an topic.
 
-# Implementation of SLAM toolbox in an unknown environment
+# [Implementation of SLAM toolbox in an unknown environment](https://youtu.be/3Ak3KoNhfv0)
 This includes the [10th video](https://youtu.be/3Ak3KoNhfv0) and the [11th video](https://youtu.be/3Ak3KoNhfv0) in the [Webots-ROS YouTube Tutorial Series](https://www.youtube.com/watch?v=jU_FD1_zAqo&list=PLt69C9MnPchkP0ZXZOqmIGRTOch8o9GiQ)
 This [SteveMacenski's SLAM toolbox github repo](https://github.com/SteveMacenski/slam_toolbox) is used to study about the SLAM toolbox package. It includes different services and plugins for Rviz2 for working with this package.
 
@@ -53,7 +53,7 @@ In order to save the map, close the terminal with the slam_toolbox_launch and th
 ```
 ros2 run nav2_map_server map_saver_cli -t map
 ```
-#  Implementation of AR-tag detection and getting exact pose from camera. (Integration of OpenCV)
+#  [Implementation of AR-tag detection and getting exact pose from camera. (Integration of OpenCV)](https://youtu.be/iLwpk1mSxKM)
 ### Build the project: 
 ```
 cd ~/AR_ws/ 

@@ -137,7 +137,8 @@ def __get_webots_home(target_version, condition='ge'):
 
     # Use the 'which' command (Linux and Mac)
     try:
-        path = os.path.split(os.path.abspath(subprocess.check_output(['which', 'webots'])))[0]
+        where_command = 'where' if sys.platform == 'win32' else 'which'
+        path = os.path.split(os.path.abspath(subprocess.check_output([where_command, 'webots'])))[0]
         path = path.decode('utf-8')
         if os.path.isdir(path) and version_condition(WebotsVersion.from_path(path), target_version):
             os.environ['WEBOTS_HOME'] = path
@@ -158,7 +159,7 @@ def __get_webots_home(target_version, condition='ge'):
         os.getenv('LOCALAPPDATA', '') + '\\Programs\\Webots'    # Windows user install
     ]
     if target_version is not None:
-        paths.append(os.path.join(os.environ['HOME'], '.ros', 'webots' + target_version.short(), 'webots'))
+        paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + target_version.short(), 'webots'))
     for path in paths:
         if os.path.isdir(path) and version_condition(WebotsVersion.from_path(path), target_version):
             os.environ['WEBOTS_HOME'] = path

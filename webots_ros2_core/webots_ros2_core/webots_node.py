@@ -60,10 +60,10 @@ class WebotsNode(Node):
             os.environ['WEBOTS_ROBOT_NAME'] = arguments.webots_robot_name
 
         self.robot = Supervisor()
-        self.__timestep = int(self.robot.getBasicTimeStep())
+        self.timestep = int(self.robot.getBasicTimeStep())
         self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
         self.__step_service = self.create_service(SetInt, 'step', self.__step_callback)
-        self.__timer = self.create_timer(0.001 * self.__timestep, self.__timer_callback)
+        self.__timer = self.create_timer(0.001 * self.timestep, self.__timer_callback)
         self.__device_manager = None
 
         # Joint state publisher
@@ -99,7 +99,7 @@ class WebotsNode(Node):
         self.__clock_publisher.publish(msg)
 
     def __timer_callback(self):
-        self.step(self.__timestep)
+        self.step(self.timestep)
 
     def __step_callback(self, request, response):
         self.step(request.value)

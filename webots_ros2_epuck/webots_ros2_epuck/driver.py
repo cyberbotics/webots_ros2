@@ -20,7 +20,7 @@ from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import TransformStamped
-from webots_ros2_core.math_utils import interpolate_lookup_table
+from webots_ros2_core.math.interpolation import interpolate_lookup_table
 from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 

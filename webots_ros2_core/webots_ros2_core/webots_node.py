@@ -79,6 +79,7 @@ class WebotsNode(Node):
         self.__joint_state_publisher = JointStatePublisher(self.robot, '', self)
 
     def step(self, ms):
+        """Call this method on each step."""
         if self.get_parameter('use_joint_state_publisher').value:
             self.__joint_state_publisher.publish()
         if self.__device_manager:

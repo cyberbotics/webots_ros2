@@ -89,7 +89,7 @@ class WebotsVersion:
         return self.version.replace('revision ', 'rev').replace(' ', '-')
 
 
-def get_webots_home(target_version=None, minimum_version=None):
+def get_webots_home(target_version=None, minimum_version=None, show_warning=False):
     # Normalize Webots version
     if target_version is not None and isinstance(target_version, str):
         target_version = WebotsVersion(target_version)
@@ -109,7 +109,8 @@ def get_webots_home(target_version=None, minimum_version=None):
     path = __get_webots_home(target_version, condition='ge')
     if path is not None:
         found_version = WebotsVersion.from_path(path)
-        print(f'WARNING: Target Webots version `{target_version}`` is not found, fallback to `{found_version}`')
+        if show_warning:
+            print(f'WARNING: Target Webots version `{target_version}` is not found, fallback to `{found_version}`')
         return path
 
     return None

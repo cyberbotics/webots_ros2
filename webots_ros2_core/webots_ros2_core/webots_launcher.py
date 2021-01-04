@@ -83,7 +83,7 @@ class _WebotsCommandSubstitution(Substitution):
             sys.exit(f'Missing Webots version {target_version}')
 
     def perform(self, context):
-        webots_path = get_webots_home()
+        webots_path = get_webots_home(show_warning=True)
         if webots_path is None:
             self.__handle_webots_installation()
 

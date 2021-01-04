@@ -57,6 +57,7 @@ class _WebotsCommandSubstitution(Substitution):
         print(f'Installing Webots {target_version}... This might take some time.')
         url = f'https://github.com/cyberbotics/webots/releases/download/{target_version.short()}/'
         urllib.request.urlretrieve(url + archive_name, archive_path, reporthook=on_download_progress_changed)
+        print('')
 
         # Extract Webots archive
         print('Extracting...')

@@ -159,7 +159,7 @@ class TrajectoryFollower():
         for name in goal_handle.trajectory.joint_names:
             if name not in self.__motors.keys():
                 self.__node.get_logger().warn('Received a goal with incorrect joint names: (%s)' %
-                                            ', '.join(goal_handle.trajectory.joint_names))
+                                              ', '.join(goal_handle.trajectory.joint_names))
                 return GoalResponse.REJECT
         if not trajectory_is_finite(goal_handle.trajectory):
             self.__node.get_logger().warn('Received a goal with infinites or NaNs')

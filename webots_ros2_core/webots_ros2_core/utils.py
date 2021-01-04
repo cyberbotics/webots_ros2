@@ -45,8 +45,7 @@ class WebotsVersion:
         self.year = int(parts[0][0])
         self.release = parts[0][1].lower()
         self.revision = 0
-        revision = parts[0][-1]
-        if len(revision) > 0:
+        if parts[0][-1] != '':
             self.revision = int(parts[0][-1])
 
     @staticmethod
@@ -191,16 +190,24 @@ def append_webots_python_lib_to_path():
         return False
 
     if sys.platform == 'darwin':
-        sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],
-                                     'lib',
-                                     'controller',
-                                     'python%d%d_brew' % (sys.version_info[0], sys.version_info[1])))
+        sys.path.append(
+            os.path.join(
+                os.environ['WEBOTS_HOME'],
+                'lib',
+                'controller',
+                'python%d%d_brew' % (sys.version_info[0], sys.version_info[1])
+            )
+        )
         return True
     elif 'WEBOTS_HOME' in os.environ:
-        sys.path.append(os.path.join(os.environ['WEBOTS_HOME'],
-                                     'lib',
-                                     'controller',
-                                     'python%d%d' % (sys.version_info[0], sys.version_info[1])))
+        sys.path.append(
+            os.path.join(
+                os.environ['WEBOTS_HOME'],
+                'lib',
+                'controller',
+                'python%d%d' % (sys.version_info[0], sys.version_info[1])
+            )
+        )
         return True
     else:
         print('No Webots installation has been found!', file=sys.stderr)

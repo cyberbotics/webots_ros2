@@ -30,11 +30,12 @@ class WebotsRoboticArmNode(WebotsNode):
     """
 
     def __init__(self, name, args, prefix=''):
-        super().__init__(name, args, enableJointState=True)
-        self.prefix_param = self.declare_parameter('prefix', prefix)
-        self.trajectoryFollower = TrajectoryFollower(self.robot, self, jointPrefix=self.prefix_param.value)
+        super().__init__(name, args)
+        self.start_joint_state_publisher()
+        self.__prefix_param = self.declare_parameter('prefix', prefix)
+        self.__trajectory_follower = TrajectoryFollower(self.robot, self, joint_prefix=self.__prefix_param.value)
 
-        self.get_logger().info('Initializing robotic arm node with prefix = "%s"' % self.prefix_param.value)
+        self.get_logger().info('Initializing robotic arm node with prefix = "%s"' % self.__prefix_param.value)
 
 
 def main(args=None):

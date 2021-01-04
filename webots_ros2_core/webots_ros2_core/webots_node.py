@@ -72,7 +72,7 @@ class WebotsNode(Node):
             self.__joint_state_publisher = JointStatePublisher(self.robot, '', self)
 
     def start_joint_state_publisher(self):
-        """Use `JointStatePublisher` to publish ROS2 messages of type
+        """Use `JointStatePublisher` to publish ROS2 messages of type \
         [`sensor_msgs/JointState`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/JointState.msg).
         """
         self.__joint_state_publisher = JointStatePublisher(self.robot, '', self)

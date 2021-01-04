@@ -78,7 +78,7 @@ class WebotsVersion:
         return False
 
     def get_number(self):
-        """Converts the version to a number that can be compared."""
+        """Convert the version to a number that can be compared."""
         return self.year * 1e6 + (ord(self.release) - ord('a')) * 1e3 + self.revision
 
     def __str__(self):
@@ -117,7 +117,6 @@ def get_webots_home(target_version=None, minimum_version=None, show_warning=Fals
 
 def __get_webots_home(target_version, condition='ge'):
     """Path to the Webots installation directory."""
-
     def version_condition(found, target):
         if target is None:
             return True

@@ -7,4 +7,5 @@ except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
     raise e
 
+#  deepcode ignore C0413: <comment the reason here>
 from controller import *

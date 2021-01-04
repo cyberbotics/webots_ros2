@@ -70,6 +70,9 @@ class WebotsVersion:
             return True
         return False
 
+    def __ne__(self, other):
+        return not self == other
+
     def __gt__(self, other):
         if other.get_number() < self.get_number():
             return True

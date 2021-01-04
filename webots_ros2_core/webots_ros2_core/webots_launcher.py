@@ -21,6 +21,7 @@ import shutil
 import sys
 import tarfile
 import urllib.request
+from pathlib import Path
 from launch.actions import ExecuteProcess
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
@@ -37,7 +38,7 @@ class _WebotsCommandSubstitution(Substitution):
         target_version = WebotsVersion.target()
 
         # Remove previous archive
-        installation_directory = os.path.join(os.environ['HOME'], '.ros')
+        installation_directory = os.path.join(str(Path.home()), '.ros')
         installation_path = os.path.abspath(os.path.join(installation_directory, 'webots'))
         archive_name = 'webots-%s-x86-64.tar.bz2' % target_version.short()
         archive_path = os.path.join(installation_directory, archive_name)

@@ -34,13 +34,17 @@ class _WebotsCommandSubstitution(Substitution):
         self.__mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
         self.__world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
 
-    def __install_webots(self):
+    def __install_webots(self, installation_directory):
         target_version = WebotsVersion.target()
 
+        def on_download_progress_changed(count, block_size, total_size):
+            percent = count*block_size*100/total_size
+            sys.stdout.write(f'\rDownloading... {percent:.2f}%')
+            sys.stdout.flush()
+
         # Remove previous archive
-        installation_directory = os.path.join(str(Path.home()), '.ros')
         installation_path = os.path.abspath(os.path.join(installation_directory, 'webots'))
-        archive_name = 'webots-%s-x86-64.tar.bz2' % target_version.short()
+        archive_name = f'webots-{target_version.short()}-x86-64.tar.bz2'
         archive_path = os.path.join(installation_directory, archive_name)
         if os.path.exists(archive_path):
             os.remove(archive_path)
@@ -50,11 +54,12 @@ class _WebotsCommandSubstitution(Substitution):
             shutil.rmtree(installation_path)
 
         # Get Webots archive
-        print('\033[33mInstalling Webots %s, this might take some time.\033[0m' % target_version)
-        url = 'https://github.com/cyberbotics/webots/releases/download/%s/' % target_version.short()
-        urllib.request.urlretrieve(url + archive_name, archive_path)
+        print(f'Installing Webots {target_version}... This might take some time.')
+        url = f'https://github.com/cyberbotics/webots/releases/download/{target_version.short()}/'
+        urllib.request.urlretrieve(url + archive_name, archive_path, reporthook=on_download_progress_changed)
 
         # Extract Webots archive
+        print('Extracting...')
         tar = tarfile.open(archive_path, 'r:bz2')
         tar.extractall(os.path.join(installation_directory, 'webots' + target_version.short()))
         tar.close()
@@ -63,23 +68,24 @@ class _WebotsCommandSubstitution(Substitution):
 
     def __handle_webots_installation(self):
         target_version = WebotsVersion.target()
-        webots_release_url = 'https://github.com/cyberbotics/webots/releases/tag/%s' % target_version.short()
+        installation_directory = os.path.join(str(Path.home()), '.ros')
+        webots_release_url = f'https://github.com/cyberbotics/webots/releases/tag/{target_version.short()}'
 
         print(f'Webots {target_version} was not found in your system.\n'
-              f'- If you want to manually install Webots {target_version} please visit please download '
+              f'- If you want to manually install Webots {target_version} please download '
               f'it from {webots_release_url}.\n'
               f'- If you already have installed Webots {target_version} installed please specify the '
               f'`WEBOTS_HOME` environment variable.\n'
               )
-
+        
         method = input(
-            f'Do you want Webots {target_version} to be automatically installed in ~/.ros ([Y]es/[N]o)?: ')
+            f'Do you want Webots {target_version} to be automatically installed in `{installation_directory}` ([Y]es/[N]o)?: ')
 
         if method.lower() == 'y':
-            self.__install_webots()
+            self.__install_webots(installation_directory)
             webots_path = get_webots_home()
             if webots_path is None:
-                sys.exit('Failed to install Webots %s' % target_version)
+                sys.exit(f'Failed to install Webots {target_version}')
         else:
             sys.exit(f'Missing Webots version {target_version}')
 

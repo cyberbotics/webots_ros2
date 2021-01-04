@@ -16,7 +16,6 @@
 
 """Auto discover Webots devices and publish suitable ROS2 topics."""
 
-import sys
 from .camera_device import CameraDevice
 from .led_device import LEDDevice
 from .lidar_device import LidarDevice

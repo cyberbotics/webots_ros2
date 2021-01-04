@@ -29,7 +29,6 @@ from webots_ros2_msgs.srv import SetInt
 from webots_ros2_core.joint_state_publisher import JointStatePublisher
 from webots_ros2_core.devices.device_manager import DeviceManager
 from webots_ros2_core.utils import get_node_name_from_args
-from webots_ros2_core.tf_publisher import TfPublisher
 
 from webots_ros2_core.webots_controller import Supervisor
 

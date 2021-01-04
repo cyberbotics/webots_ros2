@@ -45,7 +45,8 @@ class WebotsVersion:
         self.year = int(parts[0][0])
         self.release = parts[0][1].lower()
         self.revision = 0
-        if len(parts[0][-1]) > 0:
+        revision = parts[0][-1]
+        if len(revision) > 0:
             self.revision = int(parts[0][-1])
 
     @staticmethod

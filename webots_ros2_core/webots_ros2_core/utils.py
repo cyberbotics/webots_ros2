@@ -135,7 +135,7 @@ def __get_webots_home(target_version, condition='ge'):
             os.environ['WEBOTS_HOME'] = os.environ[variable]
             return os.environ[variable]
 
-    # Use the 'which' command
+    # Use the 'which' command (Linux and Mac)
     try:
         path = os.path.split(os.path.abspath(subprocess.check_output(['which', 'webots'])))[0]
         path = path.decode('utf-8')
@@ -143,7 +143,10 @@ def __get_webots_home(target_version, condition='ge'):
             os.environ['WEBOTS_HOME'] = path
             return path
     except subprocess.CalledProcessError:
-        # The `which` command not available or Webots not found
+        # Webots not found
+        pass
+    except FileNotFoundError:
+        # The `which` command not available
         pass
 
     # Look at standard installation pathes

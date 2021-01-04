@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 def interpolate_function(value, start_x, start_y, end_x, end_y, ascending=None):
     if end_x - start_x == 0:
         if (ascending and value < start_x) or (not ascending and value > start_x):

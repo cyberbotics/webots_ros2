@@ -22,6 +22,7 @@ import tempfile
 from ament_index_python.packages import get_package_share_directory
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'urdf2webots'))
+#  deepcode ignore C0413: We need to import the library first
 from urdf2webots.importer import convert2urdf   # noqa: E402
 
 

@@ -268,6 +268,7 @@ def __install_webots(installation_directory):
         print('Installing...')
         subprocess.check_output(f'{archive_path} /SILENT /CURRENTUSER', shell=True)
 
+
 def handle_webots_installation():
     target_version = WebotsVersion.target()
     installation_directory = os.path.join(str(Path.home()), '.ros')

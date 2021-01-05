@@ -15,7 +15,7 @@
 """Webots DistanceSensor device wrapper for ROS2."""
 
 from sensor_msgs.msg import Range
-from webots_ros2_core.math_utils import interpolate_lookup_table
+from webots_ros2_core.math.interpolation import interpolate_lookup_table
 from .sensor_device import SensorDevice
 
 

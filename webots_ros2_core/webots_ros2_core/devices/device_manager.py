@@ -16,7 +16,6 @@
 
 """Auto discover Webots devices and publish suitable ROS2 topics."""
 
-import sys
 from .camera_device import CameraDevice
 from .led_device import LEDDevice
 from .lidar_device import LidarDevice
@@ -24,13 +23,7 @@ from .distance_sensor_device import DistanceSensorDevice
 from .light_sensor_device import LightSensorDevice
 from .robot_device import RobotDevice
 from .imu_device import ImuDevice
-from webots_ros2_core.utils import append_webots_python_lib_to_path
-try:
-    append_webots_python_lib_to_path()
-    from controller import Node
-except Exception as e:
-    sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
-    raise e
+from webots_ros2_core.webots_controller import Node
 
 
 class DeviceManager:

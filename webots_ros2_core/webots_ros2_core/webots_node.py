@@ -16,29 +16,21 @@
 
 """Base node class."""
 
-import argparse
 import os
 import sys
-from rclpy.time import Time
-from webots_ros2_core.joint_state_publisher import JointStatePublisher
-from webots_ros2_core.devices.device_manager import DeviceManager
-
-from webots_ros2_core.utils import append_webots_python_lib_to_path, get_node_name_from_args
-from webots_ros2_core.tf_publisher import TfPublisher
-
-from webots_ros2_msgs.srv import SetInt
-
-from rosgraph_msgs.msg import Clock
+import argparse
 
 import rclpy
+from rclpy.time import Time
 from rclpy.node import Node
+from rosgraph_msgs.msg import Clock
 
-try:
-    append_webots_python_lib_to_path()
-    from controller import Supervisor
-except Exception as e:
-    sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
-    raise e
+from webots_ros2_msgs.srv import SetInt
+from webots_ros2_core.joint_state_publisher import JointStatePublisher
+from webots_ros2_core.devices.device_manager import DeviceManager
+from webots_ros2_core.utils import get_node_name_from_args
+
+from webots_ros2_core.webots_controller import Supervisor
 
 
 class WebotsNode(Node):
@@ -48,61 +40,65 @@ class WebotsNode(Node):
     Args:
         name (WebotsNode): Webots Robot node.
         args (dict): Arguments passed to ROS2 base node.
-        enableTfPublisher (bool): Enable tf2 publisher (deprecated, use `robot_state_publisher` with URDF instead).
-        enableJointState (bool): Use `JointStatePublisher` to publish ROS2 messages of type
-            [`sensor_msgs/JointState`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/JointState.msg).
     """
 
-    def __init__(self, name, args=None, enableTfPublisher=False, enableJointState=False):
+    def __init__(self, name, args=None):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         self.declare_parameter('use_joint_state_publisher', False)
         parser = argparse.ArgumentParser()
-        parser.add_argument('--webots-robot-name', dest='webotsRobotName', default='',
-                            help='Specifies the "name" field of the robot in Webots.')
-        # use 'parse_known_args' because ROS2 adds a lot of internal arguments
-        arguments, unknown = parser.parse_known_args()
-        if arguments.webotsRobotName:
-            os.environ['WEBOTS_ROBOT_NAME'] = arguments.webotsRobotName
+        parser.add_argument(
+            '--webots-robot-name',
+            dest='webots_robot_name',
+            default='',
+            help='Specifies the "name" field of the robot in Webots.'
+        )
+
+        # Get robot name
+        arguments, _ = parser.parse_known_args()
+        if arguments.webots_robot_name:
+            os.environ['WEBOTS_ROBOT_NAME'] = arguments.webots_robot_name
+
         self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())
-        self.clockPublisher = self.create_publisher(Clock, 'clock', 10)
-        timer_period = 0.001 * self.timestep  # seconds
-        self.stepService = self.create_service(SetInt, 'step', self.step_callback)
-        self.timer = self.create_timer(timer_period, self.timer_callback)
-        self.sec = 0
-        self.nanosec = 0
+        self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
+        self.__step_service = self.create_service(SetInt, 'step', self.__step_callback)
+        self.__timer = self.create_timer(0.001 * self.timestep, self.__timer_callback)
         self.__device_manager = None
-        if enableTfPublisher:
-            if self.robot.getSupervisor():
-                self.tfPublisher = TfPublisher(self.robot, self)
-            else:
-                self.get_logger().warn('Impossible to publish transforms because the "supervisor"'
-                                       ' field is false.')
-        if self.get_parameter('use_joint_state_publisher').value or enableJointState:
-            self.jointStatePublisher = JointStatePublisher(self.robot, '', self)
+
+        # Joint state publisher
+        self.__joint_state_publisher = None
+        if self.get_parameter('use_joint_state_publisher').value:
+            self.__joint_state_publisher = JointStatePublisher(self.robot, '', self)
+
+    def start_joint_state_publisher(self):
+        """Use `JointStatePublisher` to publish ROS2 messages of type `sensor_msgs/JointState`."""
+        self.__joint_state_publisher = JointStatePublisher(self.robot, '', self)
 
     def step(self, ms):
+        """Call this method on each step."""
         if self.get_parameter('use_joint_state_publisher').value:
-            self.jointStatePublisher.publish()
+            self.__joint_state_publisher.publish()
         if self.__device_manager:
             self.__device_manager.step()
         if self.robot is None or self.get_parameter('synchronization').value:
             return
+
         # Robot step
         if self.robot.step(ms) < 0.0:
             del self.robot
             self.robot = None
             sys.exit(0)
+
         # Update time
         msg = Clock()
         msg.clock = Time(seconds=self.robot.getTime()).to_msg()
-        self.clockPublisher.publish(msg)
+        self.__clock_publisher.publish(msg)
 
-    def timer_callback(self):
+    def __timer_callback(self):
         self.step(self.timestep)
 
-    def step_callback(self, request, response):
+    def __step_callback(self, request, response):
         self.step(request.value)
         response.success = True
         return response

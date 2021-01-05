@@ -1,9 +1,5 @@
 name: CI
 
-on: 
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-
 jobs:
   industrial_ci:
     strategy:
@@ -18,4 +14,3 @@ jobs:
          submodules: recursive
       - uses: 'ros-industrial/industrial_ci@master'
         env: ${{matrix.env}}
-

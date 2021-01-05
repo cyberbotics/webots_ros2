@@ -39,10 +39,10 @@ class _WebotsCommandSubstitution(Substitution):
         # Add `webots` executable to command
         if sys.platform == 'win32':
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')
-        command = [os.path.join(webots_path, 'webots')]
+        command = [r'"{}"'.format(os.path.join(webots_path, 'webots'))]
 
         # Add `world`
-        command += [context.perform_substitution(self.__world)]
+        command += [r'"{}"'.format(context.perform_substitution(self.__world))]
 
         # Hide welcome window
         command += ['--batch']

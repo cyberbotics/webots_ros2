@@ -158,7 +158,7 @@ def __get_webots_home(target_version, condition='ge'):
         '/usr/local/webots',                                    # Linux default install
         '/snap/webots/current/usr/share/webots',                # Linux snap install
         '/Applications/Webots.app',                             # macOS default install
-        r'C:\\Program Files\\Webots',                           # Windows default install
+        'C:\\Program Files\\Webots',                           # Windows default install
         os.getenv('LOCALAPPDATA', '') + '\\Programs\\Webots'    # Windows user install
     ]
     if target_version is not None:

@@ -48,26 +48,28 @@ class _WebotsCommandSubstitution(Substitution):
             sys.stdout.write(f'\rDownloading... {percent:.2f}%')
             sys.stdout.flush()
 
+        print(f'Installing Webots {target_version}... This might take some time.')
+
         # Remove previous archive
         installation_path = os.path.abspath(os.path.join(installation_directory, 'webots'))
         archive_name = self.__get_archive_name(target_version)
         archive_path = os.path.join(installation_directory, archive_name)
-        if os.path.exists(archive_path):
-            os.remove(archive_path)
 
         # Remove previous webots folder
         if os.path.exists(installation_path):
             shutil.rmtree(installation_path)
 
         # Get Webots archive
-        print(f'Installing Webots {target_version}... This might take some time.')
-        url = f'https://github.com/cyberbotics/webots/releases/download/{target_version.short()}/'
-        urllib.request.urlretrieve(url + archive_name, archive_path, reporthook=on_download_progress_changed)
-        print('')
+        if not os.path.exists(archive_path):
+            url = f'https://github.com/cyberbotics/webots/releases/download/{target_version.short()}/'
+            urllib.request.urlretrieve(url + archive_name, archive_path, reporthook=on_download_progress_changed)
+            print('')
+        else:
+            print(f'Using installation present at `{archive_path}`...')
 
         # Extract Webots archive
         installation_subdirectory = os.path.join(installation_directory, 'webots' + target_version.short())
-        if sys.platform == 'darwin' or sys.platform == 'linux': 
+        if sys.platform == 'darwin' or sys.platform == 'linux':
             print('Extracting...')
             tar = tarfile.open(archive_path, 'r:bz2')
             tar.extractall(installation_subdirectory)
@@ -107,6 +109,7 @@ class _WebotsCommandSubstitution(Substitution):
         webots_path = get_webots_home(show_warning=True)
         if webots_path is None:
             self.__handle_webots_installation()
+            webots_path = get_webots_home(show_warning=True)
 
         # Add `webots` executable to command
         if sys.platform == 'win32':

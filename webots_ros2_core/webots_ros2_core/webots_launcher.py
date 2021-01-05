@@ -20,6 +20,7 @@ import os
 import shutil
 import sys
 import tarfile
+import subprocess
 import urllib.request
 from pathlib import Path
 from launch.actions import ExecuteProcess
@@ -34,6 +35,11 @@ class _WebotsCommandSubstitution(Substitution):
         self.__mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
         self.__world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
 
+    def __get_archive_name(self, version):
+        if sys.platform == 'darwin' or sys.platform == 'linux':
+            return f'webots-{version.short()}-x86-64.tar.bz2'
+        return f'webots-{version.short()}_setup.exe'
+
     def __install_webots(self, installation_directory):
         target_version = WebotsVersion.target()
 
@@ -44,7 +50,7 @@ class _WebotsCommandSubstitution(Substitution):
 
         # Remove previous archive
         installation_path = os.path.abspath(os.path.join(installation_directory, 'webots'))
-        archive_name = f'webots-{target_version.short()}-x86-64.tar.bz2'
+        archive_name = self.__get_archive_name(target_version)
         archive_path = os.path.join(installation_directory, archive_name)
         if os.path.exists(archive_path):
             os.remove(archive_path)
@@ -60,24 +66,31 @@ class _WebotsCommandSubstitution(Substitution):
         print('')
 
         # Extract Webots archive
-        print('Extracting...')
-        tar = tarfile.open(archive_path, 'r:bz2')
-        tar.extractall(os.path.join(installation_directory, 'webots' + target_version.short()))
-        tar.close()
-        os.remove(archive_path)
-        os.environ['WEBOTS_HOME'] = os.path.join(installation_path, 'webots')
+        installation_subdirectory = os.path.join(installation_directory, 'webots' + target_version.short())
+        if sys.platform == 'darwin' or sys.platform == 'linux': 
+            print('Extracting...')
+            tar = tarfile.open(archive_path, 'r:bz2')
+            tar.extractall(installation_subdirectory)
+            tar.close()
+            os.remove(archive_path)
+            os.environ['WEBOTS_HOME'] = os.path.join(installation_path, 'webots')
+        else:
+            print('Installing...')
+            windows_installation_subdirectory = os.path.join(installation_subdirectory, 'webots')
+            subprocess.check_output(f'{archive_path} /SILENT /CURRENTUSER /DIR="{windows_installation_subdirectory}"', shell=True)
 
     def __handle_webots_installation(self):
         target_version = WebotsVersion.target()
         installation_directory = os.path.join(str(Path.home()), '.ros')
         webots_release_url = f'https://github.com/cyberbotics/webots/releases/tag/{target_version.short()}'
 
-        print(f'Webots {target_version} was not found in your system.\n'
-              f'- If you want to manually install Webots {target_version} please download '
-              f'it from {webots_release_url}.\n'
-              f'- If you already have installed Webots {target_version} installed please specify the '
-              f'`WEBOTS_HOME` environment variable.\n'
-              )
+        print(
+            f'Webots {target_version} was not found in your system.\n'
+            f'- If you want to manually install Webots {target_version} please download '
+            f'it from {webots_release_url}.\n'
+            f'- If you already have installed Webots {target_version} installed please specify the '
+            f'`WEBOTS_HOME` environment variable.\n'
+        )
 
         method = input(
             f'Do you want Webots {target_version} to be automatically installed in `{installation_directory}` ([Y]es/[N]o)?: ')

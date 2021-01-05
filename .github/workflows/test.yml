@@ -6,13 +6,14 @@ jobs:
   industrial_ci:
     strategy:
       matrix:
-        env:
-          - "{ROS_DISTRO: foxy, ROS_REPO: testing}"
-          - "{ROS_DISTRO: foxy, ROS_REPO: main}"
+        ROS_REPO: [main, testing]
+        ROS_DISTRO: [foxy]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
         with:
          submodules: recursive
       - uses: 'ros-industrial/industrial_ci@master'
-        env: ${{matrix.env}}
+        env: 
+          ROS_REPO: ${{matrix.ROS_REPO}}
+          ROS_DISTRO: ${{matrix.ROS_DISTRO}}

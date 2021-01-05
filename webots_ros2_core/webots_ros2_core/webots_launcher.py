@@ -78,7 +78,7 @@ class _WebotsCommandSubstitution(Substitution):
               f'- If you already have installed Webots {target_version} installed please specify the '
               f'`WEBOTS_HOME` environment variable.\n'
               )
-        
+
         method = input(
             f'Do you want Webots {target_version} to be automatically installed in `{installation_directory}` ([Y]es/[N]o)?: ')
 

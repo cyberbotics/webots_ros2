@@ -2,6 +2,17 @@
 Changelog for package webots_ros2_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.4 (2021-xx-xx)
+------------------
+* Improved performance of camera.
+* Replaced `tkinter` by a simple command line tools.
+* Fixed usage on Windows.
+* Introduced notion of minimum and target Webots versions.
+
+1.0.3 (2020-12-01)
+------------------
+* Improved the performance of point cloud publishing by a few times.
+
 1.0.2 (2020-10-12)
 ------------------
 * Fixed support for 3D Lidars

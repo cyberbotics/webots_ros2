@@ -1,4 +1,4 @@
-# Copyright 1996-2019 Cyberbotics Ltd.
+# Copyright 1996-2020 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import tempfile
 from ament_index_python.packages import get_package_share_directory
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'urdf2webots'))
-#  deepcode ignore C0413: We need to import the library first
 from urdf2webots.importer import convert2urdf   # noqa: E402
 
 

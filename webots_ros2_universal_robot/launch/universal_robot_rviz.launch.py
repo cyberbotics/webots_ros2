@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2019 Cyberbotics Ltd.
+# Copyright 1996-2020 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,22 +43,31 @@ def generate_launch_description():
     )
 
     # Copy .rviz config file and update path ro URDF file.
-    templateRvizFile = os.path.join(get_package_share_directory('webots_ros2_ur_e_description'),
-                                    'rviz', 'view_robot') + '.rviz'
+    template_rviz_file = os.path.join(
+        get_package_share_directory('webots_ros2_ur_e_description'),
+        'rviz',
+        'view_robot.rviz'
+    )
     home = Path.home()
-    customRvizFile = os.path.join(home, 'webots_ros2_ur_e_description.rviz')
+    custom_rviz_file = os.path.join(home, 'webots_ros2_ur_e_description.rviz')
     if not os.path.exists(os.path.join(home, 'webots_ros2_ur_e_description.rviz')):
-        with open(templateRvizFile, 'r') as f:
+        with open(template_rviz_file, 'r') as f:
             content = f.read()
-            content = content.replace('package://webots_ros2_ur_e_description',
-                                      get_package_share_directory('webots_ros2_ur_e_description'))
-            with open(customRvizFile, 'w') as f2:
+            content = content.replace(
+                'package://webots_ros2_ur_e_description',
+                get_package_share_directory('webots_ros2_ur_e_description')
+            )
+            with open(custom_rviz_file, 'w') as f2:
                 f2.write(content)
+
     # Rviz node
-    rviz = launch_ros.actions.Node(package='rviz2',
-                                   executable='rviz2',
-                                   arguments=['-d', customRvizFile],
-                                   output='screen')
+    rviz = launch_ros.actions.Node(
+        package='rviz2',
+        executable='rviz2',
+        arguments=['-d', custom_rviz_file],
+        output='screen'
+    )
+
     return launch.LaunchDescription([
         rviz,
         webots

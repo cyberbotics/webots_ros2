@@ -76,8 +76,7 @@ class _WebotsCommandSubstitution(Substitution):
             os.environ['WEBOTS_HOME'] = os.path.join(installation_path, 'webots')
         else:
             print('Installing...')
-            windows_installation_subdirectory = os.path.join(installation_subdirectory, 'webots')
-            subprocess.check_output(f'{archive_path} /SILENT /CURRENTUSER /DIR="{windows_installation_subdirectory}"', shell=True)
+            subprocess.check_output(f'{archive_path} /SILENT /CURRENTUSER', shell=True)
 
     def __handle_webots_installation(self):
         target_version = WebotsVersion.target()
@@ -92,8 +91,9 @@ class _WebotsCommandSubstitution(Substitution):
             f'`WEBOTS_HOME` environment variable.\n'
         )
 
+        location_text = '' if sys.platform == 'win32' else f'in `{installation_directory}` '
         method = input(
-            f'Do you want Webots {target_version} to be automatically installed in `{installation_directory}` ([Y]es/[N]o)?: ')
+            f'Do you want Webots {target_version} to be automatically installed {location_text}([Y]es/[N]o)?: ')
 
         if method.lower() == 'y':
             self.__install_webots(installation_directory)

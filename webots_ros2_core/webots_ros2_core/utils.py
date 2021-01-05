@@ -120,6 +120,8 @@ def __get_webots_home(target_version, condition='ge'):
     def version_condition(found, target):
         if target is None:
             return True
+        if found is None:
+            return False
         if condition == 'eq':
             return found == target
         elif condition == 'ge':

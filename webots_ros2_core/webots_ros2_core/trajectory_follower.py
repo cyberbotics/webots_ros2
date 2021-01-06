@@ -245,7 +245,7 @@ class TrajectoryFollower():
             last_point_start = Duration.from_msg(trajectory.joint_trajectory.points[-1].time_from_start)
             if (now - trajectory.start_time) <= last_point_start:
                 # Sending intermediate points
-                trajectory.lastPointSent = False
+                trajectory.last_point_sent = False
                 setpoint = sample_trajectory(trajectory.joint_trajectory,
                                              now - trajectory.start_time)
                 for name in trajectory.joint_trajectory.joint_names:
@@ -253,9 +253,9 @@ class TrajectoryFollower():
                     set_position_in_limit(self.__motors[name], setpoint.positions[index])
                     # Velocity control is not used on the real robot and gives
                     # bad results in the simulation
-            elif not trajectory.lastPointSent:
+            elif not trajectory.last_point_sent:
                 # All intermediate points sent, sending last point to make sure we reach the goal
-                trajectory.lastPointSent = True
+                trajectory.last_point_sent = True
                 setpoint = sample_trajectory(trajectory.joint_trajectory, last_point_start)
                 for name in trajectory.joint_trajectory.joint_names:
                     index = trajectory.joint_trajectory.joint_names.index(name)
@@ -268,7 +268,7 @@ class TrajectoryFollower():
                 tolerances = [0.1] * len(last_point.positions)
                 for name in trajectory.joint_trajectory.joint_names:
                     reference_positions.append(position[name])
-                    for tolerance in trajectory.goalTolerance:
+                    for tolerance in trajectory.goal_tolerance:
                         if tolerance.name == name:
                             tolerances[len(reference_positions) - 1] = tolerance.position
                             break

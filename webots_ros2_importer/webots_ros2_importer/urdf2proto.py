@@ -54,7 +54,7 @@ def main(args=None, input=None):
                         'the first 3 joints of your robot to the specified values, '
                         'and leave the rest with their default value.')
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
-    arguments, unknown = parser.parse_known_args()
+    arguments, _ = parser.parse_known_args()
     file = os.path.abspath(input) if input is not None else os.path.abspath(arguments.inFile)
     if not file:
         sys.exit('Input file not specified (should be specified with the "--input" argument).')
@@ -66,24 +66,24 @@ def main(args=None, input=None):
     with open(file, 'r') as f:
         content = f.read()
     # look for package-relative file path and replace them
-    urdfFile = file
-    generatedFile = False
+    urdf_file = file
+    generated_file = False
     packages = re.findall(r'filename="package:\/\/([^\/]*)', content)
     for package in set(packages):  # do the replacement
-        packagePath = ''
+        package_path = ''
         try:
-            packagePath = get_package_share_directory(package)
+            package_path = get_package_share_directory(package)
         except LookupError:
             sys.exit('This urdf depends on the "%s" package, but this package could not be found' %
                      package)
-        content = content.replace('package://%s' % package, '%s' % packagePath)
+        content = content.replace('package://%s' % package, '%s' % package_path)
     if packages:  # some package-relative file paths have been found
         # generate a temporary file with the replacement content
-        urdfFile = tempfile.mkstemp(suffix='.urdf')[1]
-        generatedFile = True
-        with open(urdfFile, 'w') as f:
+        urdf_file = tempfile.mkstemp(suffix='.urdf')[1]
+        generated_file = True
+        with open(urdf_file, 'w') as f:
             f.write(content)
-    convert2urdf(inFile=urdfFile,
+    convert2urdf(inFile=urdf_file,
                  outFile=arguments.outFile,
                  normal=arguments.normal,
                  boxCollision=arguments.boxCollision,
@@ -94,8 +94,8 @@ def main(args=None, input=None):
                  initRotation=arguments.initRotation,
                  initPos=arguments.initPos)
     # remove temporary file
-    if generatedFile:
-        os.remove(urdfFile)
+    if generated_file:
+        os.remove(urdf_file)
 
 
 if __name__ == '__main__':

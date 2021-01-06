@@ -17,16 +17,15 @@
 import copy
 import os
 import sys
-import xacro
-
 from tempfile import mkstemp
+import xacro
 from webots_ros2_importer import urdf2proto
 
 
 def main(args=None):
     # remvove arguments specific to the urdf2proto converter
-    savedArgv = copy.copy(sys.argv)
-    argsToRemove = [
+    saved_argv = copy.copy(sys.argv)
+    args_to_remove = [
         '--normal',
         '--box-collision',
         '--disable-mesh-optimization',
@@ -36,17 +35,17 @@ def main(args=None):
         '--tool-slot',
         '--rotation'
     ]
-    for arg in savedArgv:
-        for argToRemove in argsToRemove:
-            if arg.startswith(argToRemove):
+    for arg in saved_argv:
+        for arg_to_remove in args_to_remove:
+            if arg.startswith(arg_to_remove):
                 sys.argv.remove(arg)
                 break
-    for arg in argsToRemove:
+    for arg in args_to_remove:
         if arg in sys.argv:
             sys.argv.remove(arg)
     # redirect stdout to temporary urdf file
     orig_stdout = sys.stdout
-    file, path = mkstemp(suffix='.urdf')
+    _, path = mkstemp(suffix='.urdf')
     with open(path, 'w') as f:
         sys.stdout = f
         # run xacro to urdf conversio
@@ -54,7 +53,7 @@ def main(args=None):
         xacro.main()
     # restore stdout and arguments and then run urdf to proto conversion
     sys.stdout = orig_stdout
-    sys.argv = savedArgv
+    sys.argv = saved_argv
     urdf2proto.main(input=path)
     os.remove(path)
 

@@ -3,29 +3,20 @@
     This is a format for representing semantic information about the robot structure.
     A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
 -->
-<robot name="UR5e">
+<robot name="base_link">
     <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
     <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
-    <group name="sample_group">
-        <link name="base_link"/>
-        <link name="shoulder_link"/>
-        <link name="upper_arm_link"/>
-        <link name="forearm_link"/>
-        <link name="wrist_1_link"/>
-        <link name="wrist_2_link"/>
-        <link name="wrist_3_link"/>
+    <group name="manipulator">
+        <chain base_link="base_link" tip_link="wrist_3_link"/>
     </group>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="end_effector" parent_link="wrist_3_link" group="sample_group"/>
+    <end_effector name="gripper" parent_link="wrist_3_link" group="manipulator"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="virtual_joint" type="fixed" parent_frame="map" child_link="base_link"/>
+    <virtual_joint name="FixedBase" type="fixed" parent_frame="world" child_link="base_link"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="Velodyne VLP-16" link2="wrist_1_link" reason="Never"/>
-    <disable_collisions link1="Velodyne VLP-16" link2="wrist_2_link" reason="Never"/>
-    <disable_collisions link1="Velodyne VLP-16" link2="wrist_3_link" reason="Adjacent"/>
     <disable_collisions link1="base_link" link2="shoulder_link" reason="Adjacent"/>
     <disable_collisions link1="base_link" link2="upper_arm_link" reason="Never"/>
     <disable_collisions link1="forearm_link" link2="upper_arm_link" reason="Adjacent"/>

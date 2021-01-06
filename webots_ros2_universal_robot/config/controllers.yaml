@@ -1,8 +1,11 @@
-controller_list:
-  - name: ""
-    action_ns: follow_joint_trajectory
-    type: FollowJointTrajectory
-    joints:
+controller_names:
+  - ure_controller
+
+ure_controller:
+  action_ns: follow_joint_trajectory
+  type: FollowJointTrajectory
+  default: true
+  joints:
       - shoulder_pan_joint
       - shoulder_lift_joint
       - elbow_joint

@@ -21,15 +21,13 @@ launchers = [
     'launch/universal_robot_multiple.launch.py',
     'launch/universal_robot_rviz.launch.py',
     'launch/universal_robot_rviz_dynamic.launch.py',
-    'launch/universal_robot_moveit2.launch.py'
+    'launch/universal_robot_moveit2.launch.py',
+    'launch/universal_robot_moveit2.rviz'
 ]
 config = [
     'config/controllers.yaml',
-    'config/fake_controllers.yaml',
-    'config/joint_limits.yaml',
-    'config/kinematics.yaml',
-    'config/ompl_planning.yaml',
-    'config/ur5e.srdf'
+    'config/ur5e.srdf',
+    'config/kinematics.yaml'
 ]
 textures = []
 for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
@@ -39,7 +37,7 @@ for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
 
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
-data_files.append(('share/' + package_name, launchers))
+data_files.append(('share/' + package_name + '/launch', launchers))
 data_files.append(('share/' + package_name + '/config', config))
 data_files.append(('share/' + package_name + '/worlds', worlds))
 data_files.append(('share/' + package_name + '/worlds/textures', textures))

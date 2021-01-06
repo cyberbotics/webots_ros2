@@ -21,5 +21,5 @@ import pytest
 @pytest.mark.linter
 @pytest.mark.pep257
 def test_pep257():
-    rc = main(argv=['.', '--exclude', 'webots_ros2_core/math/quaternions.py'])
+    rc = main(argv=['.', '--exclude', 'webots_ros2_core/math/quaternions.py', 'webots_ros2_core/webots_controller.py'])
     assert rc == 0, 'Found code style errors / warnings'

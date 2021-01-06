@@ -2,11 +2,11 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2_ur_e_description</name>
-  <version>1.0.1</version>
+  <version>1.0.4</version>
   <description>Universal Robot description for Webots.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
-  <license>Apache License 2.0</license>
+  <license>BSD</license>
   <url type="website">http://wiki.ros.org/webots_ros2</url>
   <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>

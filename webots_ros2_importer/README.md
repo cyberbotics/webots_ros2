@@ -1,11 +1,7 @@
-## Example usage:
+# URDF and Xacro Importers
 
-### urdf import
-```
-ros2 run webots_ros2_importer urdf2proto --input=/home/user/ros2_workspace/install/turtlebot3_description/share/turtlebot3_description/urdf/turtlebot3_burger.urdf --disable-mesh-optimization --output=Turtlebot3Burger.proto
-```
+This package allows URDF and Xacro robot models to be imported in Webots.
 
-### xacro import
-```
-ros2 run webots_ros2_importer xacro2proto /home/user/ros2_workspace/install/turtlebot3_description/share/turtlebot3_description/urdf/turtlebot3_burger.urdf.xacro --disable-mesh-optimization --output=Turtlebot3Burger.proto
-```
+Please use the following links for more details:
+
+* [Tutorial: Using URDF or Xacro](https://github.com/cyberbotics/webots_ros2/wiki/Using-URDF-or-Xacro)

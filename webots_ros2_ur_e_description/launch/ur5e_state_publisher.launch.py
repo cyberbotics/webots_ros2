@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 1996-2019 Cyberbotics Ltd.
+# Copyright 1996-2020 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ def generate_launch_description():
 
         Node(
             package='robot_state_publisher',
-            node_executable='robot_state_publisher',
+            executable='robot_state_publisher',
             node_name='robot_state_publisher',
             output='screen',
             parameters=[{'use_sim_time': use_sim_time}],

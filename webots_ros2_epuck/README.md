@@ -1,11 +1,9 @@
-# ROS2 Driver for E-Puck Robot in Webots
-This package adds ROS2 support for [e-puck](https://www.gctronic.com/doc/index.php/e-puck2) simulated robot in [Webots](https://cyberbotics.com/).
-Since ROS2 driver for the physical ([`epuck_ros2`](https://github.com/cyberbotics/epuck_ros2)) and simulated ([`webots_ros2_epuck`](https://github.com/cyberbotics/webots_ros2/tree/master/webots_ros2_epuck)) robot share the same API you can find more instructions [here](./EPUCK_ROS2.md). 
+# E-Puck
 
-![Mapping process](./assets/mapping.gif) 
+This package provides a ROS2 interface example of the simulated [e-puck](https://www.gctronic.com/doc/index.php/e-puck2) robot in Webots.
 
-## Launching the Simulation
-There is a launch file available that starts Webots simulation and e-puck ROS2 driver.
-``` 
-ros2 launch webots_ros2_epuck robot_launch.py
-```
+Please use the following links for more details:
+
+* [Example: E-puck](https://github.com/cyberbotics/webots_ros2/wiki/Example-E-puck)
+* [Tutorial: E-puck for ROS2 Beginners](https://github.com/cyberbotics/webots_ros2/wiki/Tutorial-E-puck-for-ROS2-Beginners)
+* [ROS2 Driver for Physical E-puck](https://github.com/cyberbotics/epuck_ros2)

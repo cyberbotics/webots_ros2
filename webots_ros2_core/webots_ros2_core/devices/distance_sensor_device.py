@@ -15,7 +15,7 @@
 """Webots DistanceSensor device wrapper for ROS2."""
 
 from sensor_msgs.msg import Range
-from webots_ros2_core.math_utils import interpolate_lookup_table
+from webots_ros2_core.math.interpolation import interpolate_lookup_table
 from .sensor_device import SensorDevice
 
 
@@ -23,8 +23,7 @@ class DistanceSensorDevice(SensorDevice):
     """
     ROS2 wrapper for Webots DistanceSensor node.
 
-    Creates suitable ROS2 interface based on Webots DistanceSensor node instance:
-    https://cyberbotics.com/doc/reference/distancesensor
+    Creates suitable ROS2 interface based on Webots [DistanceSensor](https://cyberbotics.com/doc/reference/distancesensor) node.
 
     It allows the following functinalities:
     - Publishes range measurements of type `sensor_msgs/Range`

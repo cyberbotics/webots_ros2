@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2019 Cyberbotics Ltd.
+# Copyright 1996-2020 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,12 +17,9 @@
 """Launch Webots and the controller."""
 
 import os
-
 import launch
-
 from webots_ros2_core.utils import ControllerLauncher
 from webots_ros2_core.webots_launcher import WebotsLauncher
-
 from ament_index_python.packages import get_package_share_directory
 
 
@@ -34,14 +31,16 @@ def generate_launch_description():
 
     # Controller node
     synchronization = launch.substitutions.LaunchConfiguration('synchronization', default=False)
-    controller = ControllerLauncher(package='webots_ros2_examples',
-                                    node_executable='example_controller',
-                                    parameters=[{'synchronization': synchronization}],
-                                    output='screen')
+    controller = ControllerLauncher(
+        package='webots_ros2_examples',
+        executable='example_controller',
+        parameters=[{'synchronization': synchronization}],
+        output='screen'
+    )
+
     return launch.LaunchDescription([
         webots,
         controller,
-        # Shutdown launch when Webots exits.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,

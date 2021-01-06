@@ -1,4 +1,4 @@
-# Copyright 1996-2019 Cyberbotics Ltd.
+# Copyright 1996-2020 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,61 +14,63 @@
 
 """Joint state publisher."""
 
-import sys
-
-from webots_ros2_core.utils import append_webots_python_lib_to_path
-
 from sensor_msgs.msg import JointState
 from rclpy.time import Time
-
-try:
-    append_webots_python_lib_to_path()
-    from controller import Node
-except Exception as e:
-    sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
-    raise e
+from webots_ros2_core.webots_controller import Node
 
 
-class JointStatePublisher():
-    """Publish as a ROS topic the joint state."""
+class JointStatePublisher:
+    """
+    Publishes joint states.
 
-    def __init__(self, robot, jointPrefix, node):
+    Discovers all joints with positional sensors and publishes corresponding ROS2 messages of type
+    [`sensor_msgs/JointState`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/JointState.msg).
+
+    Args:
+        robot (WebotsNode): Webots Robot node.
+        jointPrefix (str): Prefix to all joint names.
+        node (Node): ROS2 node.
+    """
+
+    def __init__(self, robot, joint_prefix, node, frame_id='joint_states'):
         """Initialize the position sensors and the topic."""
-        self.robot = robot
-        self.jointPrefix = jointPrefix
-        self.node = node
-        self.sensors = []
-        self.timestep = int(robot.getBasicTimeStep())
-        self.last_joint_states = None
-        self.previousTime = 0
-        self.previousPosition = []
-        self.jointNames = []
+        self.__robot = robot
+        self.__frame_id = frame_id
+        self.__joint_prefix = joint_prefix
+        self.__node = node
+        self.__sensors = []
+        self.__timestep = int(robot.getBasicTimeStep())
+        self.__last_joint_states = None
+        self.__previous_time = 0
+        self.__previous_position = []
+        self.__joint_names = []
+
         for i in range(robot.getNumberOfDevices()):
             device = robot.getDeviceByIndex(i)
             if device.getNodeType() == Node.POSITION_SENSOR:
                 motor = device.getMotor()
                 name = motor.getName() if motor is not None else device.getName()
-                self.jointNames.append(name)
-                self.sensors.append(device)
-                self.previousPosition.append(0)
-                device.enable(self.timestep)
-        self.publisher = self.node.create_publisher(JointState, 'joint_states', 1)
+                self.__joint_names.append(name)
+                self.__sensors.append(device)
+                self.__previous_position.append(0)
+                device.enable(self.__timestep)
+        self.__publisher = self.__node.create_publisher(JointState, 'joint_states', 1)
 
     def publish(self):
         """Publish the 'joint_states' topic with up to date value."""
         msg = JointState()
-        msg.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
-        msg.header.frame_id = 'From simulation state data'
-        msg.name = [s + self.jointPrefix for s in self.jointNames]
+        msg.header.stamp = Time(seconds=self.__robot.getTime()).to_msg()
+        msg.header.frame_id = self.__frame_id
+        msg.name = [s + self.__joint_prefix for s in self.__joint_names]
         msg.position = []
-        timeDifference = self.robot.getTime() - self.previousTime
-        for i in range(len(self.sensors)):
-            value = self.sensors[i].getValue()
+        time_difference = self.__robot.getTime() - self.__previous_time
+        for i in range(len(self.__sensors)):
+            value = self.__sensors[i].getValue()
             msg.position.append(value)
-            msg.velocity.append((value - self.previousPosition[i]) /
-                                timeDifference if timeDifference > 0 else 0.0)
-            self.previousPosition[i] = value
+            msg.velocity.append((value - self.__previous_position[i]) /
+                                time_difference if time_difference > 0 else 0.0)
+            self.__previous_position[i] = value
         msg.effort = [0.0] * 6
-        self.publisher.publish(msg)
-        self.last_joint_states = msg
-        self.previousTime = self.robot.getTime()
+        self.__publisher.publish(msg)
+        self.__last_joint_states = msg
+        self.__previous_time = self.__robot.getTime()

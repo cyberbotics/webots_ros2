@@ -1,4 +1,4 @@
-# Copyright 1996-2020 Soft_illusion.
+# Copyright 1996-2021 Soft_illusion.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ data_files.append(('share/' + package_name, [
 
 setup(
     name=package_name,
-    version='1.0.4',
+    version='1.0.5',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

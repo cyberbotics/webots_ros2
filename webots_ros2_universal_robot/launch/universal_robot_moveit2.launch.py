@@ -59,13 +59,13 @@ def generate_launch_description():
         ),
         launch_arguments={
             'executable': 'webots_robotic_arm_node',
-            'world': os.path.join(package_dir, 'worlds', 'universal_robot_rviz.wbt')
+            'world': os.path.join(package_dir, 'worlds', 'universal_robot.wbt')
         }.items()
     )
 
-    # MoveIt Config
+    # MoveIt config
     robot_description_config = None
-    with open('/tmp/webots_robot_base_link.urdf', 'r') as file:
+    with open('/tmp/webots_robot_UR5e.urdf', 'r') as file:
         robot_description_config = file.read()
     robot_description = {'robot_description': robot_description_config}
     robot_description_semantic = {

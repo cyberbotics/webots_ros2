@@ -95,7 +95,7 @@ def set_position_in_limit(motor, position):
     motor.setPosition(position)
 
 
-class Trajectory():
+class Trajectory:
     """Trajectory representation."""
 
     def __init__(self, goal_handle, start_time):
@@ -107,10 +107,10 @@ class Trajectory():
         self.id = None
 
 
-class TrajectoryFollower():
+class TrajectoryFollower:
     """Create and handle the action 'follow_joint_trajectory' server."""
 
-    def __init__(self, robot, node, joint_prefix):
+    def __init__(self, robot, node, joint_prefix, controller_name):
         self.__robot = robot
         self.__node = node
         self.__previous_time = Time(seconds=robot.getTime())
@@ -141,7 +141,7 @@ class TrajectoryFollower():
         self.__joint_path_tolerances = [0.05] * self.__number_of_motors
         self.__trajectories = []
         self.__server = ActionServer(self.__node, FollowJointTrajectory,
-                                     'follow_joint_trajectory',
+                                     controller_name + '/follow_joint_trajectory',
                                      execute_callback=self.update,
                                      goal_callback=self.on_goal,
                                      cancel_callback=self.on_cancel,

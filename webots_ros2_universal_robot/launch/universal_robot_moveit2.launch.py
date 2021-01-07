@@ -75,8 +75,8 @@ def generate_launch_description():
         'robot_description_kinematics': load_yaml('webots_ros2_universal_robot', 'config/kinematics.yaml')
     }
     moveit_controllers = {
-        'moveit_simple_controller_manager': load_yaml('webots_ros2_universal_robot', 'config/controllers.yaml'),
-        'moveit_controller_manager': 'moveit_simple_controller_manager/MoveItSimpleControllerManager'
+        'moveit_controller_manager': 'moveit_simple_controller_manager/MoveItSimpleControllerManager',
+        'moveit_simple_controller_manager': load_yaml('webots_ros2_universal_robot', 'config/controllers.yaml')
     }
     run_move_group_node = Node(
         package='moveit_ros_move_group',
@@ -86,7 +86,8 @@ def generate_launch_description():
             robot_description_semantic,
             robot_description,
             moveit_controllers,
-            robot_description_kinematics
+            robot_description_kinematics,
+            {'use_sim_time': True}
         ]
     )
 
@@ -98,6 +99,7 @@ def generate_launch_description():
         name='rviz2',
         arguments=['-d', rviz_config_file],
         parameters=[
+            robot_description_kinematics,
             robot_description,
             robot_description_semantic
         ]

@@ -14,17 +14,23 @@
 
 """Trajectory follower client for the ABB irb4600 robot."""
 
-from webots_ros2_demos.follow_joint_trajectory_client import followJointTrajectoryClient
-
 import rclpy
+from webots_ros2_demos.follow_joint_trajectory_client import FollowJointTrajectoryClient
 
 
 def main(args=None):
     rclpy.init(args=args)
-    armedRobotUR = followJointTrajectoryClient('armed_robots_abb', '/abb/follow_joint_trajectory')
-    armedRobotUR.send_goal({
-        'joint_names': ['A motor', 'B motor', 'C motor', 'E motor', 'finger_1_joint_1',
-                        'finger_2_joint_1', 'finger_middle_joint_1'],
+    armed_robot_abb = FollowJointTrajectoryClient('armed_robots_abb', '/abb/follow_joint_trajectory')
+    armed_robot_abb.send_goal({
+        'joint_names': [
+            'A motor',
+            'B motor',
+            'C motor',
+            'E motor',
+            'finger_1_joint_1',
+            'finger_2_joint_1',
+            'finger_middle_joint_1'
+        ],
         'points': [
             {
                 'positions': [0.0, 0.0, 0.0, 0., 0.0, 0.0, 0.0],
@@ -82,7 +88,7 @@ def main(args=None):
             }
         ]
     }, 10)
-    rclpy.spin(armedRobotUR)
+    rclpy.spin(armed_robot_abb)
 
 
 if __name__ == '__main__':

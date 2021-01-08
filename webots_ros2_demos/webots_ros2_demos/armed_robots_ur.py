@@ -14,18 +14,23 @@
 
 """Trajectory follower client for the UR5 robot."""
 
-from webots_ros2_demos.follow_joint_trajectory_client import followJointTrajectoryClient
-
 import rclpy
+from webots_ros2_demos.follow_joint_trajectory_client import FollowJointTrajectoryClient
 
 
 def main(args=None):
     rclpy.init(args=args)
-    armedRobotUR = followJointTrajectoryClient('armed_robots_ur', '/ur/follow_joint_trajectory')
-    armedRobotUR.send_goal({
-        'joint_names': ['shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint',
-                        'wrist_1_joint', 'finger_1_joint_1', 'finger_2_joint_1',
-                        'finger_middle_joint_1'],
+    armed_robot_ur = FollowJointTrajectoryClient('armed_robots_ur', '/ur/follow_joint_trajectory')
+    armed_robot_ur.send_goal({
+        'joint_names': [
+            'shoulder_pan_joint',
+            'shoulder_lift_joint',
+            'elbow_joint',
+            'wrist_1_joint',
+            'finger_1_joint_1',
+            'finger_2_joint_1',
+            'finger_middle_joint_1'
+        ],
         'points': [
             {
                 'positions': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -71,7 +76,7 @@ def main(args=None):
             }
         ]
     }, 10)
-    rclpy.spin(armedRobotUR)
+    rclpy.spin(armed_robot_ur)
 
 
 if __name__ == '__main__':

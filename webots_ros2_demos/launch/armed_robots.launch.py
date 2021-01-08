@@ -18,9 +18,9 @@
 
 import os
 import launch
+from ament_index_python.packages import get_package_share_directory
 from webots_ros2_core.utils import ControllerLauncher
 from webots_ros2_core.webots_launcher import WebotsLauncher
-from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
@@ -33,16 +33,14 @@ def generate_launch_description():
         package='webots_ros2_core',
         executable='webots_robotic_arm_node',
         arguments=['--webots-robot-name=abbirb4600'],
-        namespace='abb',
-        parameters=[{'synchronization': synchronization}],
+        parameters=[{'synchronization': synchronization, 'controller_name': 'abb'}],
         output='screen'
     )
     ure5_controller = ControllerLauncher(
         package='webots_ros2_core',
         executable='webots_robotic_arm_node',
         arguments=['--webots-robot-name=UR5e'],
-        namespace='ur',
-        parameters=[{'synchronization': synchronization}],
+        parameters=[{'synchronization': synchronization, 'controller_name': 'ur'}],
         output='screen'
     )
 

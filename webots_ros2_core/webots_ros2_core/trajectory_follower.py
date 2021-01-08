@@ -179,7 +179,10 @@ class TrajectoryFollower:
         target_position = min(max(target_position, self.__motors[name].getMinPosition()), self.__motors[name].getMaxPosition())
         self.__motors[name].setPosition(target_position)
 
-    def __on_update(self, goal_handle):
+    async def __on_update(self, goal_handle):
+        feedback_message = FollowJointTrajectory.Feedback()
+        feedback_message.joint_names = list(self.__goal.trajectory.joint_names)
+
         while self.__goal and self.__robot:
             done = False
 
@@ -195,6 +198,13 @@ class TrajectoryFollower:
                 self.__goal = None
                 goal_handle.succeed()
                 return FollowJointTrajectory.Result()
+
+            # Publish state
+            time_passed = self.__robot.getTime() - self.__start_time
+            feedback_message.actual.positions = [self.__motors[name].getPositionSensor().getValue()
+                                                 for name in self.__goal.trajectory.joint_names]
+            feedback_message.actual.time_from_start = Duration(seconds=time_passed).to_msg()
+            goal_handle.publish_feedback(feedback_message)
 
             time.sleep(self.__timestep * 1e-3)
 

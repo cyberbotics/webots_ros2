@@ -19,18 +19,18 @@
 import os
 import sys
 import argparse
-
 import rclpy
 from rclpy.time import Time
 from rclpy.node import Node
 from rosgraph_msgs.msg import Clock
-
 from webots_ros2_msgs.srv import SetInt
 from webots_ros2_core.joint_state_publisher import JointStatePublisher
 from webots_ros2_core.devices.device_manager import DeviceManager
 from webots_ros2_core.utils import get_node_name_from_args
-
 from webots_ros2_core.webots_controller import Supervisor
+
+
+MAX_REALTIME_FACTOR = 20
 
 
 class WebotsNode(Node):
@@ -63,7 +63,7 @@ class WebotsNode(Node):
         self.timestep = int(self.robot.getBasicTimeStep())
         self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
         self.__step_service = self.create_service(SetInt, 'step', self.__step_callback)
-        self.__timer = self.create_timer(0.001 * self.timestep, self.__timer_callback)
+        self.__timer = self.create_timer((1 / MAX_REALTIME_FACTOR) * 1e-3 * self.timestep, self.__timer_callback)
         self.__device_manager = None
 
         # Joint state publisher
@@ -77,7 +77,7 @@ class WebotsNode(Node):
 
     def step(self, ms):
         """Call this method on each step."""
-        if self.get_parameter('use_joint_state_publisher').value:
+        if self.__joint_state_publisher:
             self.__joint_state_publisher.publish()
         if self.__device_manager:
             self.__device_manager.step()

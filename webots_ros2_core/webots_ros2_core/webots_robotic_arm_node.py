@@ -29,7 +29,7 @@ class WebotsRoboticArmNode(WebotsNode):
         prefix (str): Prefix passed to JointStatePublisher.
     """
 
-    def __init__(self, name, args, prefix='', controller_name='webots_controller'):
+    def __init__(self, name, args, prefix='', controller_name=''):
         super().__init__(name, args)
         self.start_joint_state_publisher()
         self.__prefix_param = self.declare_parameter('prefix', prefix)

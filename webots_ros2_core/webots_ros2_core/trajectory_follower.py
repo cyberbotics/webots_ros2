@@ -74,7 +74,6 @@ class TrajectoryFollower:
 
     def __on_goal(self, goal_handle):
         """Handle a new goal trajectory command."""
-
         # Reject if joints don't match
         for name in goal_handle.trajectory.joint_names:
             if name not in self.__motors.keys():

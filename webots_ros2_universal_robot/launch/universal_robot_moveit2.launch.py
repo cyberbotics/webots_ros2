@@ -20,11 +20,13 @@
 
 import os
 import yaml
+import launch
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import RegisterEventHandler, EmitEvent
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
+from webots_ros2_core.webots_launcher import WebotsLauncher
+from webots_ros2_core.utils import ControllerLauncher
 
 
 def load_file(package_name, file_path):
@@ -53,14 +55,25 @@ def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_universal_robot')
 
     # Webots
-    webots = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
-        ),
-        launch_arguments={
-            'executable': 'webots_robotic_arm_node',
-            'world': os.path.join(package_dir, 'worlds', 'universal_robot.wbt')
-        }.items()
+    webots = WebotsLauncher(world=os.path.join(package_dir, 'worlds', 'universal_robot.wbt'))
+
+    # Driver node
+    controller = ControllerLauncher(
+        package='webots_ros2_core',
+        executable='webots_robotic_arm_node',
+        parameters=[{'controller_name': 'webots_controller', 'use_joint_state_publisher': True}],
+        output='screen'
+    )
+
+    # Robot state publisher
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>',
+            'use_sim_time': True
+        }],
     )
 
     # MoveIt config
@@ -106,4 +119,16 @@ def generate_launch_description():
         ]
     )
 
-    return LaunchDescription([webots, rviz_node, run_move_group_node])
+    return LaunchDescription([
+        webots,
+        controller,
+        robot_state_publisher,
+        rviz_node,
+        run_move_group_node,
+        RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=webots,
+                on_exit=[EmitEvent(event=launch.events.Shutdown())],
+            )
+        )
+    ])

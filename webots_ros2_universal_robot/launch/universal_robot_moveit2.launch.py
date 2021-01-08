@@ -101,7 +101,8 @@ def generate_launch_description():
         parameters=[
             robot_description_kinematics,
             robot_description,
-            robot_description_semantic
+            robot_description_semantic,
+            {'use_sim_time': True}
         ]
     )
 

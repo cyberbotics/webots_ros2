@@ -54,6 +54,7 @@ class TrajectoryFollower:
         self.__current_point_index = 1
         self.__start_time = None
         self.__goal = None
+        self.__mode = None
         self.__tolerances = {}
         self.__server = ActionServer(
             self.__node,
@@ -97,11 +98,18 @@ class TrajectoryFollower:
         self.__goal = goal_handle
         self.__current_point_index = 1
         self.__start_time = self.__robot.getTime()
+
         for tolerance in self.__goal.goal_tolerance:
             self.__tolerances[tolerance.name] = tolerance.position
         for name in self.__goal.trajectory.joint_names:
             if name not in self.__tolerances.keys():
                 self.__tolerances[name] = self.__default_tolerance
+
+        self.__mode = 'velocity'
+        for point in self.__goal.trajectory.points:
+            if to_s(point.time_from_start) != 0:
+                self.__mode = 'time'
+                break
 
         # If a user forget the initial position
         if to_s(self.__goal.trajectory.points[0].time_from_start) != 0:
@@ -129,24 +137,37 @@ class TrajectoryFollower:
             return CancelResponse.ACCEPT
         return CancelResponse.REJECT
 
-    def __regulate_velocity_mode(self, now):
+    def __regulate_velocity_mode(self):
+        curr_point = self.__goal.trajectory.points[self.__current_point_index]
+
+        for index, name in enumerate(self.__goal.trajectory.joint_names):
+            self.__set_motor_position(name, curr_point.positions[index])
+
         done = TrajectoryFollower.__is_within_tolerance(
             curr_point.positions,
             [self.__motors[name].getPositionSensor().getValue() for name in self.__goal.trajectory.joint_names],
             [self.__tolerances[name] for name in self.__goal.trajectory.joint_names],
         )
+        if done:
+            self.__current_point_index += 1
+            if self.__current_point_index >= len(self.__goal.trajectory.points):
+                return True
+        return False
 
-    def __regulate_time_mode(self, now):
+    def __regulate_time_mode(self):
+        now = self.__robot.getTime()
         prev_point = self.__goal.trajectory.points[self.__current_point_index - 1]
         curr_point = self.__goal.trajectory.points[self.__current_point_index]
         time_passed = now - self.__start_time
 
         if time_passed <= to_s(curr_point.time_from_start):
             # Linear interpolation
-            ratio = (time_passed - to_s(prev_point.time_from_start)) / (to_s(curr_point.time_from_start) - to_s(prev_point.time_from_start))
+            ratio = (time_passed - to_s(prev_point.time_from_start)) /\
+                (to_s(curr_point.time_from_start) - to_s(prev_point.time_from_start))
             for index, name in enumerate(self.__goal.trajectory.joint_names):
                 side = -1 if curr_point.positions[index] < prev_point.positions[index] else 1
-                target_position = prev_point.positions[index] + side * ratio * abs(curr_point.positions[index] - prev_point.positions[index])
+                target_position = prev_point.positions[index] + \
+                    side * ratio * abs(curr_point.positions[index] - prev_point.positions[index])
                 self.__set_motor_position(name, target_position)
         else:
             self.__current_point_index += 1
@@ -159,16 +180,25 @@ class TrajectoryFollower:
         self.__motors[name].setPosition(target_position)
 
     def __on_update(self, goal_handle):
-        result = FollowJointTrajectory.Result()
         while self.__goal and self.__robot:
-            now = self.__robot.getTime()
-            if self.__regulate_time_mode(now):
+            done = False
+
+            # Regulate
+            if self.__mode == 'time':
+                done = self.__regulate_time_mode()
+            else:
+                done = self.__regulate_velocity_mode()
+
+            # Finalize
+            if done:
                 self.__node.get_logger().info('Goal Succeeded')
-                goal_handle.abort()
-                return result
+                self.__goal = None
+                goal_handle.succeed()
+                return FollowJointTrajectory.Result()
 
             time.sleep(self.__timestep * 1e-3)
 
+        result = FollowJointTrajectory.Result()
         result.error_code = result.PATH_TOLERANCE_VIOLATED
         return result
 

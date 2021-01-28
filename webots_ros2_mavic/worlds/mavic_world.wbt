@@ -138,6 +138,7 @@ Forest {
 Mavic2Pro {
   translation 0 0.1 0
   rotation 0 -0.7071067811865475 -0.7071067811865475 -3.14159
+  controller "<extern>"
   cameraSlot [
     Camera {
       width 400

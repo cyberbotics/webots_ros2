@@ -44,8 +44,8 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
-            default_value='mavic_burger_example.wbt',
-            description='Choose one of the world files from `/webots_ros2_mavic/world` directory'
+            default_value='mavic_world.wbt',
+            description='Choose one of the world files from `/webots_ros2_mavic/worlds` directory'
         ),
         webots
     ])

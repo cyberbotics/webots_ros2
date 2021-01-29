@@ -85,7 +85,6 @@ class MavicDriver(WebotsNode):
         self.__current_twist.linear.z = (position[2] - self.__previous_position[2]) / (ms / 1000)
         self.__current_twist.angular.z = self.__gyro.getValues()[2]
         self.__previous_position = position.copy()
-        self.log(self.__current_twist.linear.z)
 
         # Control
         error_linear_x = self.__target_twist.linear.x - self.__current_twist.linear.x
@@ -97,11 +96,14 @@ class MavicDriver(WebotsNode):
         yaw_disturbance = 0
         self.__target_altitude += error_linear_z
 
-        roll = self.__inertial_unit.getRollPitchYaw()[0] + math.pi / 2
-        pitch = self.__inertial_unit.getRollPitchYaw()[1]
+        roll = self.__inertial_unit.getRollPitchYaw()[0] - math.pi / 2
+        pitch = self.__inertial_unit.getRollPitchYaw()[2] + math.pi / 2
         altitude = self.__gps.getValues()[1]
         roll_acceleration = self.__gyro.getValues()[0]
         pitch_acceleration = self.__gyro.getValues()[1]
+
+        # Typical in ENU: -1.57, 0.065, -3.14
+        self.log(self.__inertial_unit.getRollPitchYaw())
 
         roll_input = K_ROLL_P * clamp(roll, -1.0, 1.0) + roll_acceleration + roll_disturbance
         pitch_input = K_PITCH_P * clamp(pitch, -1.0, 1.0) - pitch_acceleration + pitch_disturbance

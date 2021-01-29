@@ -85,10 +85,11 @@ class ImuDevice(SensorDevice):
                 msg.angular_velocity.y = interpolate_lookup_table(raw_data[1], self.__gyro.getLookupTable())
                 msg.angular_velocity.z = interpolate_lookup_table(raw_data[2], self.__gyro.getLookupTable())
             if self.__inertial_unit:
-                raw_data = self.__inertial_unit.getValues()
-                msg.orientation.x = interpolate_lookup_table(raw_data[0], self.__inertial_unit.getLookupTable())
-                msg.orientation.y = interpolate_lookup_table(raw_data[1], self.__inertial_unit.getLookupTable())
-                msg.orientation.z = interpolate_lookup_table(raw_data[2], self.__inertial_unit.getLookupTable())
+                raw_data = self.__inertial_unit.getQuaternion()
+                msg.orientation.x = raw_data[0]
+                msg.orientation.y = raw_data[1]
+                msg.orientation.z = raw_data[2]
+                msg.orientation.w = raw_data[3]
             self._publisher.publish(msg)
         else:
             self.__disable_imu()

@@ -16,12 +16,8 @@
 
 import numpy as np
 from sensor_msgs.msg import Image
-<<<<<<< HEAD
 from rclpy.time import Time
 from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSPresetProfiles, qos_profile_sensor_data
-=======
-from rclpy.qos import qos_profile_sensor_data
->>>>>>> fdeb50964e933c2989a4cc605a8f6351270ba7f8
 from .sensor_device import SensorDevice
 
 
@@ -77,7 +73,6 @@ class RangeFinderDevice(SensorDevice):
             msg.width = self._wb_device.getWidth()
             msg.is_bigendian = False
             msg.step = self._wb_device.getWidth() * 4
-<<<<<<< HEAD
             
             range_image = self._wb_device.getRangeImage()
             if range_image is None:
@@ -93,22 +88,5 @@ class RangeFinderDevice(SensorDevice):
               msg.encoding = '32FC1'
 
               self._image_publisher.publish(msg)
-=======
-
-            if self._wb_device.getRangeImage() is None:
-                return
-            image_array = np.array(self._wb_device.getRangeImage(), dtype="float32")
-
-            # We pass `data` directly to we avoid using `data` setter.
-            # Otherwise ROS2 converts data to `array.array` which slows down the simulation as it copies memory internally.
-            # Both, `bytearray` and `array.array`, implement Python buffer protocol, so we should not see unpredictable
-            # behavior.
-            # deepcode ignore W0212: Avoid conversion from `bytearray` to `array.array`.
-            msg._data = image_array.tobytes()
-            msg.encoding = '32FC1'
-
-            self._image_publisher.publish(msg)
-
->>>>>>> fdeb50964e933c2989a4cc605a8f6351270ba7f8
         else:
             self._wb_device.disable()

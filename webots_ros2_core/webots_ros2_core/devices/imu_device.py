@@ -52,7 +52,8 @@ class ImuDevice(SensorDevice):
         # Create topics
         self._publisher = None
         if not self._disable:
-            self._publisher = self._node.create_publisher(Imu, self._topic_name, 1)
+            self._publisher = self._node.create_publisher(Imu, self._topic_name,
+                                                          rclpy.qos.qos_profile_sensor_data)
 
     def __enable_imu(self):
         for wb_device in self._wb_device:

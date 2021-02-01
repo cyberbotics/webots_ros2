@@ -62,9 +62,11 @@ class LidarDevice(SensorDevice):
         # Create topics
         if wb_device.getNumberOfLayers() > 1:
             wb_device.enablePointCloud()
-            self.__publisher = node.create_publisher(PointCloud2, self._topic_name, 1)
+            self.__publisher = node.create_publisher(PointCloud2, self._topic_name,
+                                                     rclpy.qos.qos_profile_sensor_data)
         else:
-            self.__publisher = node.create_publisher(LaserScan, self._topic_name, 1)
+            self.__publisher = node.create_publisher(LaserScan, self._topic_name,
+                                                     rclpy.qos.qos_profile_sensor_data)
             self.__static_broadcaster = StaticTransformBroadcaster(node)
             transform_stamped = TransformStamped()
             transform_stamped.header.frame_id = self._frame_id

@@ -14,9 +14,11 @@
 
 """Camera device."""
 
+import sys
+
 from sensor_msgs.msg import Image, CameraInfo
 from rclpy.time import Time
-from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSReliabilityPolicy
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSPresetProfiles
 from .sensor_device import SensorDevice
 
 
@@ -44,47 +46,24 @@ class CameraDevice(SensorDevice):
         super().__init__(node, device_key, wb_device, params)
         self._camera_info_publisher = None
         self._image_publisher = None
+        self._info_published = False
 
         # Create topics
         if not self._disable:
             self._image_publisher = self._node.create_publisher(
                 Image,
                 self._topic_name + '/image_raw',
-                rclpy.qos.qos_profile_sensor_data
+                1
             )
             self._camera_info_publisher = self._node.create_publisher(
                 CameraInfo,
                 self._topic_name + '/camera_info',
                 QoSProfile(
                     depth=1,
-                    reliability=QoSReliabilityPolicy.RELIABLE,
                     durability=DurabilityPolicy.TRANSIENT_LOCAL,
                     history=HistoryPolicy.KEEP_LAST,
                 )
             )
-
-            # CameraInfo data
-            msg = CameraInfo()
-            msg.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
-            msg.height = self._wb_device.getHeight()
-            msg.width = self._wb_device.getWidth()
-            msg.distortion_model = 'plumb_bob'
-            focal_length = self._wb_device.getFocalLength()
-            if focal_length == 0:
-              focal_length = 570.34  # Identical to Orbbec Astra
-            msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
-            msg.r = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-            msg.k = [
-                focal_length, 0.0, self._wb_device.getWidth() / 2,
-                0.0, focal_length, self._wb_device.getHeight() / 2,
-                0.0, 0.0, 1.0
-            ]
-            msg.p = [
-                focal_length, 0.0, self._wb_device.getWidth() / 2, 0.0,
-                0.0, focal_length, self._wb_device.getHeight() / 2, 0.0,
-                0.0, 0.0, 1.0, 0.0
-            ]
-            self._camera_info_publisher.publish(msg)
 
             # Load parameters
             camera_period_param = node.declare_parameter(wb_device.getName() + '_period', self._timestep)
@@ -94,9 +73,7 @@ class CameraDevice(SensorDevice):
         stamp = super().step()
         if not stamp:
             return
-        image = self._wb_device.getImage()
-        if image is None:
-          return
+
         # Publish camera data
         if self._image_publisher.get_subscription_count() > 0 or self._always_publish:
             self._wb_device.enable(self._timestep)
@@ -114,8 +91,38 @@ class CameraDevice(SensorDevice):
             # Both, `bytearray` and `array.array`, implement Python buffer protocol, so we should not see unpredictable
             # behavior.
             # deepcode ignore W0212: Avoid conversion from `bytearray` to `array.array`.
-            msg._data = image
-            msg.encoding = 'bgra8'
-            self._image_publisher.publish(msg)
+            
+            image = self._wb_device.getImage()
+            if image is None:
+              return
+            else:
+              if not self._info_published:
+                self._info_published = True
+                # CameraInfo data
+                focal = self._wb_device.getFocalLength()
+                if focal == 0:
+                  focal = 570.34  # Identical to Orbbec Astra
+
+                msgi = CameraInfo()
+                msgi.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
+                msgi.height = self._wb_device.getHeight()
+                msgi.width = self._wb_device.getWidth()
+                msgi.distortion_model = 'plumb_bob'
+                msgi.d = [0.0, 0.0, 0.0, 0.0, 0.0]
+                msgi.r = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+                msgi.k = [
+                    focal, 0.0, self._wb_device.getWidth() / 2,
+                    0.0, focal, self._wb_device.getHeight() / 2,
+                    0.0, 0.0, 1.0
+                ]
+                msgi.p = [
+                    focal, 0.0, self._wb_device.getWidth() / 2, 0.0,
+                    0.0, focal, self._wb_device.getHeight() / 2, 0.0,
+                    0.0, 0.0, 1.0, 0.0
+                ]
+                self._camera_info_publisher.publish(msgi)
+              msg._data = image
+              msg.encoding = 'bgra8'
+              self._image_publisher.publish(msg)
         else:
             self._wb_device.disable()

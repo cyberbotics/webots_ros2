@@ -48,7 +48,8 @@ class LightSensorDevice(SensorDevice):
         # Create topics
         self._publisher = None
         if not self._disable:
-            self._publisher = self._node.create_publisher(Illuminance, self._topic_name, 1)
+            self._publisher = self._node.create_publisher(Illuminance, self._topic_name,
+                                                          rclpy.qos.qos_profile_sensor_data)
 
     def __get_variance(self, raw_value):
         table = self._wb_device.getLookupTable()

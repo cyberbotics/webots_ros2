@@ -18,7 +18,7 @@ from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Illuminance
 from webots_ros2_core.math.interpolation import interpolate_lookup_table
 from .sensor_device import SensorDevice
-import rclpy
+
 
 # https://ieee-dataport.org/open-access/conversion-guide-solar-irradiance-and-lux-illuminance
 IRRADIANCE_TO_ILLUMINANCE = 120

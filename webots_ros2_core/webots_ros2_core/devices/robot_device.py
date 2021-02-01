@@ -16,7 +16,6 @@
 
 import os
 import tempfile
-import rclpy
 from rcl_interfaces.srv import SetParameters
 from rcl_interfaces.msg._parameter import Parameter
 from rclpy.parameter import ParameterType, ParameterValue

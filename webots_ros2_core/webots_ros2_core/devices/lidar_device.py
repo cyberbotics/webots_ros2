@@ -20,6 +20,7 @@ from tf2_ros import StaticTransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 from .sensor_device import SensorDevice
 
+
 class LidarDevice(SensorDevice):
     """
     ROS2 wrapper for Webots Lidar node.

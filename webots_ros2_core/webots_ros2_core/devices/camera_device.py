@@ -64,27 +64,27 @@ class CameraDevice(SensorDevice):
             )
 
             # CameraInfo data
-            self._msg_info = CameraInfo()
-            self._msg_info.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
-            self._msg_info.height = self._wb_device.getHeight()
-            self._msg_info.width = self._wb_device.getWidth()
-            self._msg_info.distortion_model = 'plumb_bob'
+            self.__message_info = CameraInfo()
+            self.__message_info.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
+            self.__message_info.height = self._wb_device.getHeight()
+            self.__message_info.width = self._wb_device.getWidth()
+            self.__message_info.distortion_model = 'plumb_bob'
             focal_length = self._wb_device.getFocalLength()
             if focal_length == 0:
-              focal_length = 570.34  # Identical to Orbbec Astra
-            self._msg_info.d = [0.0, 0.0, 0.0, 0.0, 0.0]
-            self._msg_info.r = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-            self._msg_info.k = [
+                focal_length = 570.34  # Identical to Orbbec Astra
+            self.__message_info.d = [0.0, 0.0, 0.0, 0.0, 0.0]
+            self.__message_info.r = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+            self.__message_info.k = [
                 focal_length, 0.0, self._wb_device.getWidth() / 2,
                 0.0, focal_length, self._wb_device.getHeight() / 2,
                 0.0, 0.0, 1.0
             ]
-            self._msg_info.p = [
+            self.__message_info.p = [
                 focal_length, 0.0, self._wb_device.getWidth() / 2, 0.0,
                 0.0, focal_length, self._wb_device.getHeight() / 2, 0.0,
                 0.0, 0.0, 1.0, 0.0
             ]
-            self._camera_info_publisher.publish(self._msg_info)
+            self._camera_info_publisher.publish(self.__message_info)
 
             # Load parameters
             camera_period_param = node.declare_parameter(wb_device.getName() + '_period', self._timestep)
@@ -100,7 +100,7 @@ class CameraDevice(SensorDevice):
             image = self._wb_device.getImage()
 
             if image is None:
-              return
+                return
 
             # Image data
             msg = Image()
@@ -118,8 +118,8 @@ class CameraDevice(SensorDevice):
             msg._data = image
             msg.encoding = 'bgra8'
             self._image_publisher.publish(msg)
-            
-            self._msg_info.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
-            self._camera_info_publisher.publish(self._msg_info)
+
+            self.__message_info.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
+            self._camera_info_publisher.publish(self.__message_info)
         else:
             self._wb_device.disable()

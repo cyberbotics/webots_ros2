@@ -37,6 +37,13 @@ We created a collection of Python modules that read a Webots node description an
    :show-inheritance:
 
 
+### RangeFinder Device
+
+.. automodule:: webots_ros2_core.devices.range_finder_device
+   :members:
+   :show-inheritance:
+
+
 ### Distance Sensor Device
 
 .. automodule:: webots_ros2_core.devices.distance_sensor_device

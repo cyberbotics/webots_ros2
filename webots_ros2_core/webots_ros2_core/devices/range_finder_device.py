@@ -73,19 +73,19 @@ class RangeFinderDevice(SensorDevice):
             msg.is_bigendian = False
             msg.step = self._wb_device.getWidth() * 4
 
+            if self._wb_device.getRangeImage() is None:
+                return
+            image_array = np.array(self._wb_device.getRangeImage(), dtype="float32")
+            
             # We pass `data` directly to we avoid using `data` setter.
             # Otherwise ROS2 converts data to `array.array` which slows down the simulation as it copies memory internally.
             # Both, `bytearray` and `array.array`, implement Python buffer protocol, so we should not see unpredictable
             # behavior.
             # deepcode ignore W0212: Avoid conversion from `bytearray` to `array.array`.
-            if self._wb_device.getRangeImage() is None:
-                return
-            else:
-                image_array = np.array(self._wb_device.getRangeImage(), dtype="float32")
-                msg._data = image_array.tobytes()
-                msg.encoding = '32FC1'
+            msg._data = image_array.tobytes()
+            msg.encoding = '32FC1'
 
-                self._image_publisher.publish(msg)
+            self._image_publisher.publish(msg)
 
         else:
             self._wb_device.disable()

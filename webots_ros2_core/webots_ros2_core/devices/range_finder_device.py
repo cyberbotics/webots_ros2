@@ -16,8 +16,7 @@
 
 import numpy as np
 from sensor_msgs.msg import Image
-from rclpy.time import Time
-from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSPresetProfiles, qos_profile_sensor_data
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, qos_profile_sensor_data
 from .sensor_device import SensorDevice
 
 

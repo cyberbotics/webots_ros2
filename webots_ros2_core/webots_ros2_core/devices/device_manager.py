@@ -16,8 +16,6 @@
 
 """Auto discover Webots devices and publish suitable ROS2 topics."""
 
-import sys
-
 from .camera_device import CameraDevice
 from .range_finder_device import RangeFinderDevice
 from .led_device import LEDDevice

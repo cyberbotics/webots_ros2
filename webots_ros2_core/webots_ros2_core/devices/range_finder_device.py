@@ -18,7 +18,7 @@ import sys
 import numpy as np
 from sensor_msgs.msg import Image, CameraInfo
 from rclpy.time import Time
-from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSPresetProfiles
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSPresetProfiles, qos_profile_sensor_data
 from .sensor_device import SensorDevice
 
 
@@ -50,7 +50,7 @@ class RangeFinderDevice(SensorDevice):
             self._image_publisher = self._node.create_publisher(
                 Image,
                 self._topic_name + '/image_depth',
-                rclpy.qos.qos_profile_sensor_data
+                qos_profile_sensor_data
             )
 
             # Load parameters

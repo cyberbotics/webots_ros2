@@ -14,10 +14,11 @@
 
 """Webots LightSensor device wrapper for ROS2."""
 
+from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Illuminance
 from webots_ros2_core.math.interpolation import interpolate_lookup_table
 from .sensor_device import SensorDevice
-
+import rclpy
 
 # https://ieee-dataport.org/open-access/conversion-guide-solar-irradiance-and-lux-illuminance
 IRRADIANCE_TO_ILLUMINANCE = 120
@@ -49,7 +50,7 @@ class LightSensorDevice(SensorDevice):
         self._publisher = None
         if not self._disable:
             self._publisher = self._node.create_publisher(Illuminance, self._topic_name,
-                                                          rclpy.qos.qos_profile_sensor_data)
+                                                          qos_profile_sensor_data)
 
     def __get_variance(self, raw_value):
         table = self._wb_device.getLookupTable()

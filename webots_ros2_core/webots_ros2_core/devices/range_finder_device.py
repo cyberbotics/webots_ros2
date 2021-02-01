@@ -76,7 +76,7 @@ class RangeFinderDevice(SensorDevice):
             if self._wb_device.getRangeImage() is None:
                 return
             image_array = np.array(self._wb_device.getRangeImage(), dtype="float32")
-            
+
             # We pass `data` directly to we avoid using `data` setter.
             # Otherwise ROS2 converts data to `array.array` which slows down the simulation as it copies memory internally.
             # Both, `bytearray` and `array.array`, implement Python buffer protocol, so we should not see unpredictable

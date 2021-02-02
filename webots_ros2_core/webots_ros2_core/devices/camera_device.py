@@ -16,7 +16,7 @@
 
 from sensor_msgs.msg import Image, CameraInfo
 from rclpy.time import Time
-from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSReliabilityPolicy, qos_profile_sensor_data
 from .sensor_device import SensorDevice
 
 
@@ -50,36 +50,41 @@ class CameraDevice(SensorDevice):
             self._image_publisher = self._node.create_publisher(
                 Image,
                 self._topic_name + '/image_raw',
-                1
+                qos_profile_sensor_data
             )
             self._camera_info_publisher = self._node.create_publisher(
                 CameraInfo,
                 self._topic_name + '/camera_info',
                 QoSProfile(
                     depth=1,
+                    reliability=QoSReliabilityPolicy.RELIABLE,
                     durability=DurabilityPolicy.TRANSIENT_LOCAL,
                     history=HistoryPolicy.KEEP_LAST,
                 )
             )
 
             # CameraInfo data
-            msg = CameraInfo()
-            msg.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
-            msg.height = self._wb_device.getHeight()
-            msg.width = self._wb_device.getWidth()
-            msg.distortion_model = 'plumb_bob'
-            msg.d = [0.0, 0.0, 0.0, 0.0, 0.0]
-            msg.k = [
-                self._wb_device.getFocalLength(), 0.0, self._wb_device.getWidth() / 2,
-                0.0, self._wb_device.getFocalLength(), self._wb_device.getHeight() / 2,
+            self.__message_info = CameraInfo()
+            self.__message_info.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
+            self.__message_info.height = self._wb_device.getHeight()
+            self.__message_info.width = self._wb_device.getWidth()
+            self.__message_info.distortion_model = 'plumb_bob'
+            focal_length = self._wb_device.getFocalLength()
+            if focal_length == 0:
+                focal_length = 570.34  # Identical to Orbbec Astra
+            self.__message_info.d = [0.0, 0.0, 0.0, 0.0, 0.0]
+            self.__message_info.r = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+            self.__message_info.k = [
+                focal_length, 0.0, self._wb_device.getWidth() / 2,
+                0.0, focal_length, self._wb_device.getHeight() / 2,
                 0.0, 0.0, 1.0
             ]
-            msg.p = [
-                self._wb_device.getFocalLength(), 0.0, self._wb_device.getWidth() / 2, 0.0,
-                0.0, self._wb_device.getFocalLength(), self._wb_device.getHeight() / 2, 0.0,
+            self.__message_info.p = [
+                focal_length, 0.0, self._wb_device.getWidth() / 2, 0.0,
+                0.0, focal_length, self._wb_device.getHeight() / 2, 0.0,
                 0.0, 0.0, 1.0, 0.0
             ]
-            self._camera_info_publisher.publish(msg)
+            self._camera_info_publisher.publish(self.__message_info)
 
             # Load parameters
             camera_period_param = node.declare_parameter(wb_device.getName() + '_period', self._timestep)
@@ -89,10 +94,13 @@ class CameraDevice(SensorDevice):
         stamp = super().step()
         if not stamp:
             return
-
         # Publish camera data
         if self._image_publisher.get_subscription_count() > 0 or self._always_publish:
             self._wb_device.enable(self._timestep)
+            image = self._wb_device.getImage()
+
+            if image is None:
+                return
 
             # Image data
             msg = Image()
@@ -107,8 +115,11 @@ class CameraDevice(SensorDevice):
             # Both, `bytearray` and `array.array`, implement Python buffer protocol, so we should not see unpredictable
             # behavior.
             # deepcode ignore W0212: Avoid conversion from `bytearray` to `array.array`.
-            msg._data = self._wb_device.getImage()
+            msg._data = image
             msg.encoding = 'bgra8'
             self._image_publisher.publish(msg)
+
+            self.__message_info.header.stamp = Time(seconds=self._node.robot.getTime()).to_msg()
+            self._camera_info_publisher.publish(self.__message_info)
         else:
             self._wb_device.disable()

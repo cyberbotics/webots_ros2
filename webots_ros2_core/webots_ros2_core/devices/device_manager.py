@@ -17,6 +17,7 @@
 """Auto discover Webots devices and publish suitable ROS2 topics."""
 
 from .camera_device import CameraDevice
+from .range_finder_device import RangeFinderDevice
 from .led_device import LEDDevice
 from .lidar_device import LidarDevice
 from .distance_sensor_device import DistanceSensorDevice
@@ -45,6 +46,8 @@ class DeviceManager:
             # Create ROS2 wrapped device
             if wb_device.getNodeType() == Node.CAMERA:
                 device = CameraDevice(node, device_key, wb_device, self.__config.get(device_key, None))
+            if wb_device.getNodeType() == Node.RANGE_FINDER:
+                device = RangeFinderDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LED:
                 device = LEDDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LIDAR:

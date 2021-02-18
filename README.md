@@ -18,7 +18,7 @@ Please visit the [documentation](https://github.com/cyberbotics/webots_ros2/wiki
 - [References](https://github.com/cyberbotics/webots_ros2/wiki/References)
 
 
-## Acknowledgement
+## Acknowledgements
 
 <a href="http://rosin-project.eu">
   <img src="http://rosin-project.eu/wp-content/uploads/rosin_ack_logo_wide.png"

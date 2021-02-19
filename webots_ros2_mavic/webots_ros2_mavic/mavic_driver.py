@@ -14,17 +14,16 @@
 
 """ROS2 Mavic 2 Pro driver."""
 
-import math
 import rclpy
 from geometry_msgs.msg import Twist
 from webots_ros2_core.webots_node import WebotsNode
 
 
 K_VERTICAL_THRUST = 68.5    # with this thrust, the drone lifts.
-K_VERTICAL_OFFSET = 0.6     # Vertical offset where the robot actually targets to stabilize itself.
-K_VERTICAL_P = 3.0          # P constant of the vertical PID.
-K_ROLL_P = 50.0             # P constant of the roll PID.
-K_PITCH_P = 30.0            # P constant of the pitch PID.
+K_VERTICAL_P = 5.0          # P constant of the vertical PID.
+K_ROLL_P = 20.0             # P constant of the roll PID.
+K_PITCH_P = 20.0            # P constant of the pitch PID.
+K_YAW_P = 2.0
 
 
 def clamp(value, value_min, value_max):
@@ -43,14 +42,14 @@ class MavicDriver(WebotsNode):
         self.__gps = self.robot.getDevice('gps')
         self.__gps.enable(self.timestep)
         self.__gyro = self.robot.getDevice('gyro')
-        self.__inertial_unit = self.robot.getDevice('inertial unit')
+        self.__imu = self.robot.getDevice('inertial unit')
 
         # Propellers
         self.__propellers = [
-            self.robot.getDevice('front left propeller'),
             self.robot.getDevice('front right propeller'),
-            self.robot.getDevice('rear left propeller'),
-            self.robot.getDevice('rear right propeller')
+            self.robot.getDevice('front left propeller'),
+            self.robot.getDevice('rear right propeller'),
+            self.robot.getDevice('rear left propeller')
         ]
         for propeller in self.__propellers:
             propeller.setPosition(float('inf'))
@@ -74,47 +73,35 @@ class MavicDriver(WebotsNode):
     def step(self, ms):
         super().step(ms)
 
-        if self.__previous_position is None:
-            self.__previous_position = self.__gps.getValues().copy()
-            return
+        roll_ref = 0
+        pitch_ref = 0
+        yaw_ref = self.__target_twist.angular.z
+        vertical_ref = 1
 
-        # Update current state
-        position = self.__gps.getValues()
-        self.__current_twist.linear.x = (position[0] - self.__previous_position[0]) / (ms / 1000)
-        self.__current_twist.linear.y = (position[1] - self.__previous_position[1]) / (ms / 1000)
-        self.__current_twist.linear.z = (position[2] - self.__previous_position[2]) / (ms / 1000)
-        self.__current_twist.angular.z = self.__gyro.getValues()[2]
-        self.__previous_position = position.copy()
+        roll, pitch, _ = self.__imu.getRollPitchYaw()
+        _, _, vertical = self.__gps.getValues()
+        _, _, twist_yaw = self.__gyro.getValues()
+        roll_input = - K_ROLL_P * (roll_ref - roll)
+        pitch_input = - K_PITCH_P * (pitch_ref - pitch)
+        yaw_input = K_YAW_P * (yaw_ref - twist_yaw)
+        vertical_input = K_VERTICAL_P * (vertical_ref - vertical)
 
-        # Control
-        error_linear_x = self.__target_twist.linear.x - self.__current_twist.linear.x
-        error_linear_y = self.__target_twist.linear.y - self.__current_twist.linear.y
-        error_linear_z = self.__target_twist.linear.z - self.__current_twist.linear.z
+        m1 = K_VERTICAL_THRUST + vertical_input + yaw_input + pitch_input + roll_input
+        m2 = K_VERTICAL_THRUST + vertical_input - yaw_input + pitch_input - roll_input
+        m3 = K_VERTICAL_THRUST + vertical_input - yaw_input - pitch_input + roll_input
+        m4 = K_VERTICAL_THRUST + vertical_input + yaw_input - pitch_input - roll_input
 
-        roll_disturbance = 0
-        pitch_disturbance = 0
-        yaw_disturbance = 0
-        self.__target_altitude += error_linear_z
+        """
+        self.log('Readings:', roll, pitch, twist_yaw, vertical)
+        self.log('Inputs:', roll_input, pitch_input, yaw_input, vertical_input)
+        self.log('Motors:', m1, m2, m3, m4)
+        self.log('----')
+        """
 
-        roll = self.__inertial_unit.getRollPitchYaw()[0] - math.pi / 2
-        pitch = self.__inertial_unit.getRollPitchYaw()[2] + math.pi / 2
-        altitude = self.__gps.getValues()[1]
-        roll_acceleration = self.__gyro.getValues()[0]
-        pitch_acceleration = self.__gyro.getValues()[1]
-
-        # Typical in ENU: -1.57, 0.065, -3.14
-        self.log(self.__inertial_unit.getRollPitchYaw())
-
-        roll_input = K_ROLL_P * clamp(roll, -1.0, 1.0) + roll_acceleration + roll_disturbance
-        pitch_input = K_PITCH_P * clamp(pitch, -1.0, 1.0) - pitch_acceleration + pitch_disturbance
-        yaw_input = yaw_disturbance
-        clamped_difference_altitude = clamp(self.__target_altitude - altitude + K_VERTICAL_OFFSET, -1.0, 1.0)
-        vertical_input = K_VERTICAL_P * pow(clamped_difference_altitude, 3.0)
-
-        self.__propellers[0].setVelocity(K_VERTICAL_THRUST + vertical_input - roll_input - pitch_input + yaw_input)
-        self.__propellers[1].setVelocity(- (K_VERTICAL_THRUST + vertical_input + roll_input - pitch_input - yaw_input))
-        self.__propellers[2].setVelocity(- (K_VERTICAL_THRUST + vertical_input - roll_input + pitch_input - yaw_input))
-        self.__propellers[3].setVelocity(K_VERTICAL_THRUST + vertical_input + roll_input + pitch_input + yaw_input)
+        self.__propellers[0].setVelocity(-m1)
+        self.__propellers[1].setVelocity(m2)
+        self.__propellers[2].setVelocity(m3)
+        self.__propellers[3].setVelocity(-m4)
 
 
 def main(args=None):

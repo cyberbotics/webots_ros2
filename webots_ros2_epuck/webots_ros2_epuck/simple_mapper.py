@@ -1,4 +1,4 @@
-# Copyright 1996-2020 Cyberbotics Ltd.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from math import sin, cos
+from math import sin, cos, atan2
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile
@@ -22,7 +22,6 @@ from geometry_msgs.msg import TransformStamped
 from tf2_ros import StaticTransformBroadcaster, TransformListener, Buffer
 from tf2_ros import LookupException, ConnectivityException, ExtrapolationException
 from builtin_interfaces.msg import Time
-from webots_ros2_core.math_utils import quaternion_to_euler
 
 
 WORLD_WIDTH = 3
@@ -92,7 +91,8 @@ class SimpleMapper(Node):
         laser_translation = None
         try:
             tf = self.tf_buffer.lookup_transform('odom', msg.header.frame_id, Time(sec=0, nanosec=0))
-            laser_rotation = quaternion_to_euler(tf.transform.rotation)[0]
+            q = tf.transform.rotation
+            laser_rotation = atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z))
             laser_translation = tf.transform.translation
         except (LookupException, ConnectivityException, ExtrapolationException) as e:
             print('No required transformation found: `{}`'.format(str(e)))

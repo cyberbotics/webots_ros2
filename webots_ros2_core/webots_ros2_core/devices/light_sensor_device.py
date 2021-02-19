@@ -1,4 +1,4 @@
-# Copyright 1996-2020 Cyberbotics Ltd.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
 
 """Webots LightSensor device wrapper for ROS2."""
 
+from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Illuminance
-from webots_ros2_core.math_utils import interpolate_lookup_table
+from webots_ros2_core.math.interpolation import interpolate_lookup_table
 from .sensor_device import SensorDevice
 
 
@@ -27,8 +28,7 @@ class LightSensorDevice(SensorDevice):
     """
     ROS2 wrapper for Webots LightSensor node.
 
-    Creates suitable ROS2 interface based on Webots LightSensor node instance:
-    https://cyberbotics.com/doc/reference/lightsensor
+    Creates suitable ROS2 interface based on Webots [LightSensor](https://cyberbotics.com/doc/reference/lightsensor) node.
 
     It allows the following functinalities:
     - Publishes range measurements of type `sensor_msgs/Illuminance`
@@ -49,7 +49,8 @@ class LightSensorDevice(SensorDevice):
         # Create topics
         self._publisher = None
         if not self._disable:
-            self._publisher = self._node.create_publisher(Illuminance, self._topic_name, 1)
+            self._publisher = self._node.create_publisher(Illuminance, self._topic_name,
+                                                          qos_profile_sensor_data)
 
     def __get_variance(self, raw_value):
         table = self._wb_device.getLookupTable()

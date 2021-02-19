@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2020 Cyberbotics Ltd.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ def generate_launch_description():
     rviz_config = os.path.join(get_package_share_directory('webots_ros2_tiago'), 'resource', 'odometry.rviz')
     rviz = launch_ros.actions.Node(
         package='rviz2',
-        node_executable='rviz2',
+        executable='rviz2',
         output='screen',
         arguments=['--display-config=' + rviz_config],
         condition=launch.conditions.IfCondition(use_rviz)

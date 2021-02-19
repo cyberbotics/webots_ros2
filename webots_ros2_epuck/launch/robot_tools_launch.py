@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2020 Cyberbotics Ltd.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ def generate_launch_description():
     launch_description_nodes.append(
         Node(
             package='rviz2',
-            node_executable='rviz2',
+            executable='rviz2',
             output='log',
             arguments=['--display-config=' + rviz_config],
             parameters=[{'use_sim_time': use_sim_time}],
@@ -90,7 +90,7 @@ def generate_launch_description():
     launch_description_nodes.append(
         Node(
             package='webots_ros2_epuck',
-            node_executable='simple_mapper',
+            executable='simple_mapper',
             output='screen',
             parameters=[{'use_sim_time': use_sim_time, 'fill_map': fill_map}],
             condition=launch.conditions.IfCondition(use_mapper)

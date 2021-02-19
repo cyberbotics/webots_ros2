@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2020 Cyberbotics Ltd.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@ def generate_launch_description():
     # Driver node
     controller = ControllerLauncher(
         package=package,
-        node_executable=executable,
+        executable=executable,
         parameters=[
             node_parameters,
             {
@@ -124,7 +124,7 @@ def generate_launch_description():
     # Robot state publisher
     robot_state_publisher = Node(
         package='robot_state_publisher',
-        node_executable='robot_state_publisher',
+        executable='robot_state_publisher',
         output='screen',
         parameters=[{
             'robot_description': '<robot name=""><link name=""/></robot>',

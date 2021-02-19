@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2020 Cyberbotics Ltd.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,21 +16,15 @@
 
 """Auto discover Webots devices and publish suitable ROS2 topics."""
 
-import sys
 from .camera_device import CameraDevice
+from .range_finder_device import RangeFinderDevice
 from .led_device import LEDDevice
 from .lidar_device import LidarDevice
 from .distance_sensor_device import DistanceSensorDevice
 from .light_sensor_device import LightSensorDevice
 from .robot_device import RobotDevice
 from .imu_device import ImuDevice
-from webots_ros2_core.utils import append_webots_python_lib_to_path
-try:
-    append_webots_python_lib_to_path()
-    from controller import Node
-except Exception as e:
-    sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
-    raise e
+from webots_ros2_core.webots_controller import Node
 
 
 class DeviceManager:
@@ -52,6 +46,8 @@ class DeviceManager:
             # Create ROS2 wrapped device
             if wb_device.getNodeType() == Node.CAMERA:
                 device = CameraDevice(node, device_key, wb_device, self.__config.get(device_key, None))
+            if wb_device.getNodeType() == Node.RANGE_FINDER:
+                device = RangeFinderDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LED:
                 device = LEDDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LIDAR:
@@ -70,7 +66,12 @@ class DeviceManager:
         self.__insert_imu_device()
         for device_key in self.__config.keys():
             if self.__is_imu_device(device_key):
-                self.__devices[device_key] = ImuDevice(node, device_key, self.__get_imu_wb_devices_from_key(device_key))
+                self.__devices[device_key] = ImuDevice(
+                    node,
+                    device_key,
+                    self.__get_imu_wb_devices_from_key(device_key),
+                    self.__config.get(device_key, None)
+                )
 
         # Verify parameters
         for device_name in self.__config.keys():
@@ -94,11 +95,11 @@ class DeviceManager:
 
         for wb_device_name in wb_device_names:
             if wb_device_name in self.__wb_devices:
-                if self.__wb_devices[wb_device_name] == Node.ACCELEROMETER:
+                if self.__wb_devices[wb_device_name].getNodeType() == Node.ACCELEROMETER:
                     accelerometer = self.__wb_devices[wb_device_name]
-                elif self.__wb_devices[wb_device_name] == Node.INERTIAL_UNIT:
+                elif self.__wb_devices[wb_device_name].getNodeType() == Node.INERTIAL_UNIT:
                     inertial_unit = self.__wb_devices[wb_device_name]
-                elif self.__wb_devices[wb_device_name] == Node.GYRO:
+                elif self.__wb_devices[wb_device_name].getNodeType() == Node.GYRO:
                     gyro = self.__wb_devices[wb_device_name]
 
         return [accelerometer, gyro, inertial_unit]

@@ -1,4 +1,4 @@
-# Copyright 1996-2020 Cyberbotics Ltd.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 """Lidar device."""
 
+from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import LaserScan, PointCloud2, PointField
 from tf2_ros import StaticTransformBroadcaster
 from geometry_msgs.msg import TransformStamped
@@ -24,8 +25,7 @@ class LidarDevice(SensorDevice):
     """
     ROS2 wrapper for Webots Lidar node.
 
-    Creates suitable ROS2 interface based on Webots Lidar node instance:
-    https://cyberbotics.com/doc/reference/lidar
+    Creates suitable ROS2 interface based on Webots [Lidar](https://cyberbotics.com/doc/reference/lidar) node instance:
 
     It allows the following functinalities:
     - Publishes range measurements of type `sensor_msgs/LaserScan` if 2D Lidar is present
@@ -63,9 +63,11 @@ class LidarDevice(SensorDevice):
         # Create topics
         if wb_device.getNumberOfLayers() > 1:
             wb_device.enablePointCloud()
-            self.__publisher = node.create_publisher(PointCloud2, self._topic_name, 1)
+            self.__publisher = node.create_publisher(PointCloud2, self._topic_name,
+                                                     qos_profile_sensor_data)
         else:
-            self.__publisher = node.create_publisher(LaserScan, self._topic_name, 1)
+            self.__publisher = node.create_publisher(LaserScan, self._topic_name,
+                                                     qos_profile_sensor_data)
             self.__static_broadcaster = StaticTransformBroadcaster(node)
             transform_stamped = TransformStamped()
             transform_stamped.header.frame_id = self._frame_id

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2020 Cyberbotics Ltd.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ def generate_launch_description():
     rviz_config = os.path.join(package_dir, 'resource', 'view_robot_dynamic.rviz')
     rviz = Node(
         package='rviz2',
-        node_executable='rviz2',
+        executable='rviz2',
         output='log',
         arguments=['--display-config=' + rviz_config]
     )

@@ -57,9 +57,8 @@ class MavicDriver(WebotsNode):
 
         # State
         self.__target_twist = Twist()
-        self.__target_altitude = 0.1
-        self.__current_twist = Twist()
-        self.__previous_position = None
+        self.__previous_x = None
+        self.__previous_y = None
 
         # ROS interface
         self.create_subscription(Twist, 'cmd_vel', self.__cmd_vel_callback, 1)
@@ -73,14 +72,25 @@ class MavicDriver(WebotsNode):
     def step(self, ms):
         super().step(ms)
 
+        roll, pitch, _ = self.__imu.getRollPitchYaw()
+        _, _, vertical = self.__gps.getValues()
+        x, y, twist_yaw = self.__gyro.getValues()
+
+        if self.__previous_x is None:
+            self.__previous_x = x
+            self.__previous_y = y
+            return
+
+        # High level controller (linear and angular velocity)
+        x_velocity = (x - self.__previous_x) / (ms / 1000)
+        y_velocity = (y - self.__previous_y) / (ms / 1000)
+
+        # Low level controller (roll, pitch, yaw)
         roll_ref = 0
         pitch_ref = 0
         yaw_ref = self.__target_twist.angular.z
         vertical_ref = 1
 
-        roll, pitch, _ = self.__imu.getRollPitchYaw()
-        _, _, vertical = self.__gps.getValues()
-        _, _, twist_yaw = self.__gyro.getValues()
         roll_input = - K_ROLL_P * (roll_ref - roll)
         pitch_input = - K_PITCH_P * (pitch_ref - pitch)
         yaw_input = K_YAW_P * (yaw_ref - twist_yaw)
@@ -98,10 +108,15 @@ class MavicDriver(WebotsNode):
         self.log('----')
         """
 
+        # Apply control
         self.__propellers[0].setVelocity(-m1)
         self.__propellers[1].setVelocity(m2)
         self.__propellers[2].setVelocity(m3)
         self.__propellers[3].setVelocity(-m4)
+
+        # Save state
+        self.__previous_x = x
+        self.__previous_y = y
 
 
 def main(args=None):

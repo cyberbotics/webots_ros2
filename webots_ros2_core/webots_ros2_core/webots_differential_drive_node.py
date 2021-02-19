@@ -1,4 +1,4 @@
-# Copyright 1996-2020 Cyberbotics Ltd.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,11 +22,32 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist, TransformStamped
 from tf2_ros import TransformBroadcaster
 from webots_ros2_core.webots_node import WebotsNode
-from webots_ros2_core.math_utils import euler_to_quaternion
 from webots_ros2_core.utils import get_node_name_from_args
 
 
 class WebotsDifferentialDriveNode(WebotsNode):
+    """
+    Extends WebotsNode to allow easy integration with differential drive robots.
+
+    Args:
+        name (WebotsNode): Webots Robot node.
+        args (dict): Arguments passed to ROS2 base node.
+        wheel_distance (float): Distance between two wheels (axle length) in meters.
+        wheel_radius (float): Radius of both wheels in meters.
+        left_joint (str): Name of motor associated with left wheel.
+        right_joint (str): Name of motor associated with right wheel.
+        left_encoder (str): Name of encoder associated with left wheel.
+        right_encoder (str): Name of encoder associated with right wheel.
+        command_topic (str): Name of topic to which
+            [`geometry_msgs/Twist`](https://github.com/ros2/common_interfaces/blob/master/geometry_msgs/msg/Twist.msg)
+            the node is subscribed to.
+        odometry_topic (str): Name of topic to which
+            [`nav_msgs/Odometry`](https://github.com/ros2/common_interfaces/blob/master/nav_msgs/msg/Odometry.msg)
+            messages are published.
+        odometry_frame (str): Name of odometry frame.
+        robot_base_frame (str): Name of robot's base link.
+    """
+
     def __init__(self,
                  name,
                  args,
@@ -160,7 +181,8 @@ class WebotsDifferentialDriveNode(WebotsNode):
         msg.twist.twist.angular.z = omega
         msg.pose.pose.position.x = position[0]
         msg.pose.pose.position.y = position[1]
-        msg.pose.pose.orientation = euler_to_quaternion(0, 0, angle)
+        msg.pose.pose.orientation.z = sin(angle / 2)
+        msg.pose.pose.orientation.w = cos(angle / 2)
         self._odometry_publisher.publish(msg)
 
         # Pack & publish transforms
@@ -171,7 +193,8 @@ class WebotsDifferentialDriveNode(WebotsNode):
         tf.transform.translation.x = position[0]
         tf.transform.translation.y = position[1]
         tf.transform.translation.z = 0.0
-        tf.transform.rotation = euler_to_quaternion(0, 0, angle)
+        tf.transform.rotation.z = sin(angle / 2)
+        tf.transform.rotation.w = cos(angle / 2)
         self._tf_broadcaster.sendTransform(tf)
 
     def _on_param_changed(self, params):

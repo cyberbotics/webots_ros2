@@ -21,8 +21,8 @@ from webots_ros2_core.webots_node import WebotsNode
 
 K_VERTICAL_THRUST = 68.5    # with this thrust, the drone lifts.
 K_VERTICAL_P = 5.0          # P constant of the vertical PID.
-K_ROLL_P = 20.0             # P constant of the roll PID.
-K_PITCH_P = 20.0            # P constant of the pitch PID.
+K_ROLL_P = 30.0             # P constant of the roll PID.
+K_PITCH_P = 15.0            # P constant of the pitch PID.
 K_YAW_P = 2.0
 
 
@@ -57,8 +57,6 @@ class MavicDriver(WebotsNode):
 
         # State
         self.__target_twist = Twist()
-        self.__previous_x = None
-        self.__previous_y = None
 
         # ROS interface
         self.create_subscription(Twist, 'cmd_vel', self.__cmd_vel_callback, 1)
@@ -76,18 +74,11 @@ class MavicDriver(WebotsNode):
         _, _, vertical = self.__gps.getValues()
         x, y, twist_yaw = self.__gyro.getValues()
 
-        if self.__previous_x is None:
-            self.__previous_x = x
-            self.__previous_y = y
-            return
-
         # High level controller (linear and angular velocity)
-        x_velocity = (x - self.__previous_x) / (ms / 1000)
-        y_velocity = (y - self.__previous_y) / (ms / 1000)
+        roll_ref = self.__target_twist.linear.y
+        pitch_ref = self.__target_twist.linear.x
 
         # Low level controller (roll, pitch, yaw)
-        roll_ref = 0
-        pitch_ref = 0
         yaw_ref = self.__target_twist.angular.z
         vertical_ref = 1
 
@@ -101,22 +92,11 @@ class MavicDriver(WebotsNode):
         m3 = K_VERTICAL_THRUST + vertical_input - yaw_input - pitch_input + roll_input
         m4 = K_VERTICAL_THRUST + vertical_input + yaw_input - pitch_input - roll_input
 
-        """
-        self.log('Readings:', roll, pitch, twist_yaw, vertical)
-        self.log('Inputs:', roll_input, pitch_input, yaw_input, vertical_input)
-        self.log('Motors:', m1, m2, m3, m4)
-        self.log('----')
-        """
-
         # Apply control
         self.__propellers[0].setVelocity(-m1)
         self.__propellers[1].setVelocity(m2)
         self.__propellers[2].setVelocity(m3)
         self.__propellers[3].setVelocity(-m4)
-
-        # Save state
-        self.__previous_x = x
-        self.__previous_y = y
 
 
 def main(args=None):

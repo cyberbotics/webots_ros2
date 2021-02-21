@@ -1,6 +1,5 @@
 """webots_ros2 package setup file."""
 
-from glob import glob
 from setuptools import setup
 
 

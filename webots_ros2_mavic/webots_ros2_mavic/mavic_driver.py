@@ -14,7 +14,6 @@
 
 """ROS2 Mavic 2 Pro driver."""
 
-from math import cos, sin
 import rclpy
 from geometry_msgs.msg import Twist
 from webots_ros2_core.webots_node import WebotsNode
@@ -94,7 +93,7 @@ class MavicDriver(WebotsNode):
             velocity_x = (pitch / (abs(roll) + abs(pitch))) * velocity
             velocity_y = - (roll / (abs(roll) + abs(pitch))) * velocity
 
-            # High level controller (linear and angular velocity)
+            # High level controller (linear velocity)
             linear_y_error = self.__target_twist.linear.y - velocity_y
             linear_x_error = self.__target_twist.linear.x - velocity_x
             self.__linear_x_integral += linear_x_error
@@ -106,6 +105,7 @@ class MavicDriver(WebotsNode):
                 max(vertical - 0.5, LIFT_HEIGHT),
                 vertical + 0.5
             )
+        vertical_input = K_VERTICAL_P * (self.__vertical_ref - vertical)
 
         # Low level controller (roll, pitch, yaw)
         yaw_ref = self.__target_twist.angular.z
@@ -113,7 +113,6 @@ class MavicDriver(WebotsNode):
         roll_input = K_ROLL_P * clamp(roll, -1, 1) + roll_acceleration + roll_ref
         pitch_input = K_PITCH_P * clamp(pitch, -1, 1) + pitch_acceleraiton + pitch_ref
         yaw_input = K_YAW_P * (yaw_ref - twist_yaw)
-        vertical_input = K_VERTICAL_P * (self.__vertical_ref - vertical)
 
         m1 = K_VERTICAL_THRUST + vertical_input + yaw_input + pitch_input + roll_input
         m2 = K_VERTICAL_THRUST + vertical_input - yaw_input + pitch_input - roll_input

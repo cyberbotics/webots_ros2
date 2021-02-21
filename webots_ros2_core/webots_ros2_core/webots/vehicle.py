@@ -23,5 +23,5 @@ except Exception as e:
     sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
     raise e
 
-#  deepcode ignore W0401,C0413: This module is just a proxy to `controller`
-from vehicle import *
+#  deepcode ignore W0401,C0413: This module is just a proxy to `vehicle`
+from vehicle import *   # noqa: F401,F403

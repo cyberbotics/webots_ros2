@@ -24,4 +24,4 @@ except Exception as e:
     raise e
 
 #  deepcode ignore W0401,C0413: This module is just a proxy to `controller`
-from controller import *
+from controller import *    # noqa: F401,F403

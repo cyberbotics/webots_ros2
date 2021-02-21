@@ -14,16 +14,22 @@
 
 """ROS2 Mavic 2 Pro driver."""
 
+from math import cos, sin
 import rclpy
 from geometry_msgs.msg import Twist
 from webots_ros2_core.webots_node import WebotsNode
 
 
 K_VERTICAL_THRUST = 68.5    # with this thrust, the drone lifts.
-K_VERTICAL_P = 5.0          # P constant of the vertical PID.
-K_ROLL_P = 30.0             # P constant of the roll PID.
-K_PITCH_P = 15.0            # P constant of the pitch PID.
+K_VERTICAL_P = 3.0          # P constant of the vertical PID.
+K_ROLL_P = 50.0             # P constant of the roll PID.
+K_PITCH_P = 30.0            # P constant of the pitch PID.
 K_YAW_P = 2.0
+K_X_VELOCITY_P = 1
+K_Y_VELOCITY_P = 1
+K_X_VELOCITY_I = 0.01
+K_Y_VELOCITY_I = 0.01
+LIFT_HEIGHT = 1
 
 
 def clamp(value, value_min, value_max):
@@ -57,6 +63,9 @@ class MavicDriver(WebotsNode):
 
         # State
         self.__target_twist = Twist()
+        self.__vertical_ref = LIFT_HEIGHT
+        self.__linear_x_integral = 0
+        self.__linear_y_integral = 0
 
         # ROS interface
         self.create_subscription(Twist, 'cmd_vel', self.__cmd_vel_callback, 1)
@@ -70,22 +79,41 @@ class MavicDriver(WebotsNode):
     def step(self, ms):
         super().step(ms)
 
+        roll_ref = 0
+        pitch_ref = 0
+
+        # Read sensors
         roll, pitch, _ = self.__imu.getRollPitchYaw()
         _, _, vertical = self.__gps.getValues()
-        x, y, twist_yaw = self.__gyro.getValues()
+        roll_acceleration, pitch_acceleraiton, twist_yaw = self.__gyro.getValues()
+        velocity = self.__gps.getSpeed()
 
-        # High level controller (linear and angular velocity)
-        roll_ref = self.__target_twist.linear.y
-        pitch_ref = self.__target_twist.linear.x
+        # Allow high level control once the drone is lifted
+        if vertical > 0.2:
+            # Calculate velocity
+            velocity_x = (pitch / (abs(roll) + abs(pitch))) * velocity
+            velocity_y = - (roll / (abs(roll) + abs(pitch))) * velocity
+
+            # High level controller (linear and angular velocity)
+            linear_y_error = self.__target_twist.linear.y - velocity_y
+            linear_x_error = self.__target_twist.linear.x - velocity_x
+            self.__linear_x_integral += linear_x_error
+            self.__linear_y_integral += linear_y_error
+            roll_ref = K_Y_VELOCITY_P * linear_y_error + K_Y_VELOCITY_I * self.__linear_y_integral
+            pitch_ref = - K_X_VELOCITY_P * linear_x_error - K_X_VELOCITY_I * self.__linear_x_integral
+            self.__vertical_ref = clamp(
+                self.__vertical_ref + self.__target_twist.linear.z * (ms / 1000),
+                max(vertical - 0.5, LIFT_HEIGHT),
+                vertical + 0.5
+            )
 
         # Low level controller (roll, pitch, yaw)
         yaw_ref = self.__target_twist.angular.z
-        vertical_ref = 1
 
-        roll_input = - K_ROLL_P * (roll_ref - roll)
-        pitch_input = - K_PITCH_P * (pitch_ref - pitch)
+        roll_input = K_ROLL_P * clamp(roll, -1, 1) + roll_acceleration + roll_ref
+        pitch_input = K_PITCH_P * clamp(pitch, -1, 1) + pitch_acceleraiton + pitch_ref
         yaw_input = K_YAW_P * (yaw_ref - twist_yaw)
-        vertical_input = K_VERTICAL_P * (vertical_ref - vertical)
+        vertical_input = K_VERTICAL_P * (self.__vertical_ref - vertical)
 
         m1 = K_VERTICAL_THRUST + vertical_input + yaw_input + pitch_input + roll_input
         m2 = K_VERTICAL_THRUST + vertical_input - yaw_input + pitch_input - roll_input

@@ -1,12 +1,9 @@
 #VRML_SIM R2021b utf8
 WorldInfo {
   info [
-    "Autonomous Vehicle Simulation"
-    "The simple controller example uses an on-board camera to follow the yellow road lines and a SICK sensor to avoid the obstacles."
-    "The control of the vehicle is done using the driver library."
-    "The vehicle based on the Car PROTO is modelled with realistic physics properties: motor torques, body mass, friction forces, suspensions, etc."
+    "Simulation of Tesla Model 3 that exposes the AckermannDrive ROS 2 interface."
   ]
-  title "City"
+  title "ROS2 simulation of the Tesla car"
   ERP 0.6
   basicTimeStep 10
   lineScale 1
@@ -21,47 +18,7 @@ WorldInfo {
       slideSound ""
     }
     ContactProperties {
-      material2 "CitroenCZeroWheels"
-      coulombFriction [
-        8
-      ]
-      softCFM 1e-05
-      bumpSound ""
-      rollSound ""
-      slideSound ""
-    }
-    ContactProperties {
-      material2 "ToyotaPriusWheels"
-      coulombFriction [
-        8
-      ]
-      softCFM 1e-05
-      bumpSound ""
-      rollSound ""
-      slideSound ""
-    }
-    ContactProperties {
-      material2 "LincolnMKZWheels"
-      coulombFriction [
-        8
-      ]
-      softCFM 1e-05
-      bumpSound ""
-      rollSound ""
-      slideSound ""
-    }
-    ContactProperties {
-      material2 "RangeRoverSportSVRWheels"
-      coulombFriction [
-        8
-      ]
-      softCFM 1e-05
-      bumpSound ""
-      rollSound ""
-      slideSound ""
-    }
-    ContactProperties {
-      material2 "TruckWheels"
+      material2 "TeslaModel3Wheel"
       coulombFriction [
         8
       ]
@@ -73,8 +30,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.5330391489887378 -0.3981921295957068 -0.7465335180508628 4.711734462936672
-  position 111.87194017533237 16.94110829144034 68.02466309912377
+  orientation -0.6202115618327386 -0.5083401483132255 -0.5974344417439312 4.401329221429705
+  position 53.989688990898316 41.04101843488102 5.13997654842832
   near 1
   follow "vehicle"
   followSmoothness 0

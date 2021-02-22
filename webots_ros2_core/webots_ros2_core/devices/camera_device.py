@@ -144,7 +144,9 @@ class CameraDevice(SensorDevice):
                 seconds=self._node.robot.getTime()).to_msg()
             self._camera_info_publisher.publish(self.__message_info)
 
-            if self._wb_device.hasRecognition() and self._recognition_publisher.get_subscription_count() > 0:
+            if self._wb_device.hasRecognition() and (
+                    self._recognition_publisher.get_subscription_count() > 0 or
+                    self._recognition_webots_publisher.get_subscription_count() > 0):
                 self._wb_device.recognitionEnable(self._timestep)
                 objects = self._wb_device.getRecognitionObjects()
 
@@ -154,34 +156,29 @@ class CameraDevice(SensorDevice):
                 # Recognition data
                 reco_msg = Detection2DArray()
                 reco_msg_webots = WbCameraRecognitionObjects()
-                
                 reco_msg.header.stamp = stamp
                 reco_msg_webots.header.stamp = stamp
-                
                 reco_msg.header.frame_id = self._frame_id
                 reco_msg_webots.header.frame_id = self._frame_id
                 for obj in objects:
                     # Getting Object Info
                     position = Point()
                     orientation = Quaternion()
-
                     position.x = obj.get_position()[0]
                     position.y = obj.get_position()[1]
                     position.z = obj.get_position()[2]
-                    
                     axangle = obj.get_orientation()
                     quat = axangle2quat(axangle[:-1], axangle[-1])
                     orientation.w = quat[0]
                     orientation.x = quat[1]
                     orientation.y = quat[2]
                     orientation.z = quat[3]
-
                     obj_model = obj.get_model().decode('UTF-8')
-                    obj_center = [float(i) for i in obj.get_position_on_image()]
+                    obj_center = [float(i)
+                                  for i in obj.get_position_on_image()]
                     obj_size = [float(i) for i in obj.get_size_on_image()]
                     obj_id = obj.get_id()
                     obj_colors = obj.get_colors()
-                    
                     # Object Info -> Detection2D
                     reco_obj = Detection2D()
                     hyp = ObjectHypothesisWithPose()
@@ -194,7 +191,7 @@ class CameraDevice(SensorDevice):
                     reco_obj.bbox.size_x = obj_size[0]
                     reco_obj.bbox.size_y = obj_size[1]
                     reco_msg.detections.append(reco_obj)
-                    
+
                     # Object Info -> WbCameraRecognitionObject
                     reco_webots_obj = WbCameraRecognitionObject()
                     reco_webots_obj.id = obj_id

@@ -27,7 +27,8 @@ from webots_ros2_msgs.srv import SetInt
 from webots_ros2_core.joint_state_publisher import JointStatePublisher
 from webots_ros2_core.devices.device_manager import DeviceManager
 from webots_ros2_core.utils import get_node_name_from_args
-from webots_ros2_core.webots_controller import Supervisor
+from webots_ros2_core.webots.controller import Supervisor
+from webots_ros2_core.webots.vehicle import Driver
 
 
 MAX_REALTIME_FACTOR = 20
@@ -42,7 +43,7 @@ class WebotsNode(Node):
         args (dict): Arguments passed to ROS2 base node.
     """
 
-    def __init__(self, name, args=None):
+    def __init__(self, name, args=None, controller_class=Supervisor):
         super().__init__(name)
         self.declare_parameter('synchronization', False)
         self.declare_parameter('use_joint_state_publisher', False)
@@ -59,7 +60,7 @@ class WebotsNode(Node):
         if arguments.webots_robot_name:
             os.environ['WEBOTS_ROBOT_NAME'] = arguments.webots_robot_name
 
-        self.robot = Supervisor()
+        self.robot = controller_class()
         self.timestep = int(self.robot.getBasicTimeStep())
         self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
         self.__step_service = self.create_service(SetInt, 'step', self.__step_callback)
@@ -85,7 +86,12 @@ class WebotsNode(Node):
             return
 
         # Robot step
-        if self.robot.step(ms) < 0.0:
+        step_result = None
+        if isinstance(self.robot, Driver):
+            step_result = self.robot.step()
+        else:
+            step_result = self.robot.step(ms)
+        if step_result < 0:
             del self.robot
             self.robot = None
             sys.exit(0)

@@ -16,7 +16,7 @@
 
 from sensor_msgs.msg import JointState
 from rclpy.time import Time
-from webots_ros2_core.webots_controller import Node
+from webots_ros2_core.webots.controller import Node
 
 
 class JointStatePublisher:

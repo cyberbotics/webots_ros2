@@ -24,7 +24,7 @@ from .distance_sensor_device import DistanceSensorDevice
 from .light_sensor_device import LightSensorDevice
 from .robot_device import RobotDevice
 from .imu_device import ImuDevice
-from webots_ros2_core.webots_controller import Node
+from webots_ros2_core.webots.controller import Node
 
 
 class DeviceManager:

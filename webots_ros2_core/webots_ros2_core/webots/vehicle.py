@@ -1,4 +1,6 @@
-# Copyright 2017 Open Source Robotics Foundation, Inc.
+#!/usr/bin/env python
+
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,16 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Test that python files respect flake8."""
+import sys
+from webots_ros2_core.utils import append_webots_python_lib_to_path
 
-from ament_flake8.main import main
-import pytest
+try:
+    append_webots_python_lib_to_path()
+except Exception as e:
+    sys.stderr.write('"WEBOTS_HOME" is not correctly set.')
+    raise e
 
-
-@pytest.mark.flake8
-@pytest.mark.linter
-def test_flake8():
-    rc = main(argv=[
-        '--linelength', '128', '--exclude', 'webots_ros2_core/math/quaternions.py'
-    ])
-    assert rc == 0, 'Found errors'
+#  deepcode ignore W0401,C0413: This module is just a proxy to `vehicle`
+from vehicle import *   # noqa: F401,F403

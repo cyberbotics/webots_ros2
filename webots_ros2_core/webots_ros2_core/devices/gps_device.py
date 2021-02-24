@@ -76,7 +76,9 @@ class GpsDevice(SensorDevice):
         if not stamp:
             return
 
-        if self.__gps_publisher.get_subscription_count() > 0 or self._always_publish:
+        if self.__gps_publisher.get_subscription_count() > 0 or \
+            self.__speed_publisher.get_subscription_count() > 0 or \
+                self._always_publish:
             self._wb_device.enable(self._timestep)
             msg = Float32()
             msg.data = self._wb_device.getSpeed()

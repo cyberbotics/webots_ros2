@@ -18,6 +18,7 @@
 #include <webots_ros2_cpp/wb_ros2_device.hpp>
 #include <webots_ros2_cpp/wb_ros2_sensor.hpp>
 #include <webots_ros2_cpp/sensors/wb_ros2_lidar.hpp>
+#include <webots_ros2_cpp/sensors/wb_ros2_camera.hpp>
 
 // webots
 #include <webots/Robot.hpp>

@@ -71,11 +71,21 @@ void WbRos2Interface::setupSensors() {
     auto temp_device = robot_->getDeviceByIndex(i);
     switch (temp_device->getNodeType()) {
       case webots::Node::LIDAR:
+      {
         auto lidar = std::make_shared<wb_ros2_interface::sensors::WbRos2Lidar>
           (dynamic_cast<webots::Lidar*>(temp_device), this->shared_from_this());
         lidar->enable(128);
         sensors_.push_back(lidar);
         break;
+      }
+      case webots::Node::CAMERA:
+      {
+        auto camera = std::make_shared<wb_ros2_interface::sensors::WbRos2Camera>
+          (dynamic_cast<webots::Camera*>(temp_device), this->shared_from_this());
+        camera->enable(128);
+        sensors_.push_back(camera);
+        break;
+      }
     }
   }
 }

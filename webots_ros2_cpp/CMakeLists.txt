@@ -23,7 +23,7 @@ include_directories(
 find_package(ament_cmake REQUIRED)
 find_package(action_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rclcpp_lifecycle REQUIRED)
+find_package(robot_state_publisher REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -33,7 +33,7 @@ find_package(webots_ros2_msgs REQUIRED)
 set(${PROJECT_NAME}_dependencies
   action_msgs  
   rclcpp
-  rclcpp_lifecycle
+  robot_state_publisher
   sensor_msgs
   std_msgs
   tf2_ros

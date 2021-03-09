@@ -20,15 +20,32 @@
 
 // ros
 #include <rclcpp/rclcpp.hpp>
+#include <robot_state_publisher/robot_state_publisher.hpp>
+
+std::shared_ptr<robot_state_publisher::RobotStatePublisher> 
+createRobotPublisher(
+  const std::shared_ptr<wb_ros2_interface::WbRos2Interface>& node) 
+{
+  auto urdf = node->getURDF();
+  rclcpp::NodeOptions options;
+  options.append_parameter_override("robot_description", urdf);
+  return std::make_shared<
+    robot_state_publisher::RobotStatePublisher>(options);
+}
 
 int main(int argc, char **argv) {
   // Initialize without sigint handler
   rclcpp::init(argc, argv);
 
   // Start an asyncronous spinner
-  auto node = std::make_shared<wb_ros2_interface::WbRos2Interface>();
-  node->setup();
-  rclcpp::spin(node);
+  auto webots_node = std::make_shared<wb_ros2_interface::WbRos2Interface>();
+  webots_node->setup();
+  auto robot_publisher = createRobotPublisher(webots_node);
+  
+  rclcpp::executors::SingleThreadedExecutor exec;
+  exec.add_node(webots_node);
+  exec.add_node(robot_publisher);
+  exec.spin();
   rclcpp::shutdown();
   return 0;
 }

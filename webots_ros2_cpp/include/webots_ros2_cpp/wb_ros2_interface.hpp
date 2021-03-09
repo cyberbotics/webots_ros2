@@ -31,6 +31,7 @@
 // ros
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/clock.hpp>
+#include <rclcpp/node_options.hpp>
 
 // std
 #include <memory>
@@ -48,6 +49,7 @@ public:
   static std::string fixedNameString(const std::string &name);
   virtual void setup();
   int getStep() { return step_; };
+  std::string getURDF() { return robot_->getUrdf(); }
 
 protected:
   virtual void setupRobot();

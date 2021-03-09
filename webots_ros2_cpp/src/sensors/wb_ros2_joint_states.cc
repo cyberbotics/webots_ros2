@@ -9,7 +9,7 @@ WbRos2JointState::WbRos2JointState(const std::shared_ptr<rclcpp::Node> node) :
     clock_(std::make_shared<rclcpp::Clock>(RCL_ROS_TIME)) {
   if (auto nh = node_.lock()) {
     joints_pub_ = nh->create_publisher<sensor_msgs::msg::JointState>(
-      "/joint_state", rclcpp::SensorDataQoS());
+      "/joint_states", rclcpp::SensorDataQoS());
   }
 }
 
@@ -57,7 +57,7 @@ void WbRos2JointState::pubJoints() {
       joint_msg_.velocity[i] = (joint_msg_.position[i] - value) / dt;
   }
   joint_msg_.header.stamp = t;
-  joint_msg_.header.frame_id = "joint_state";
+  joint_msg_.header.frame_id = "joint_states";
   joints_pub_->publish(joint_msg_);
 }
   

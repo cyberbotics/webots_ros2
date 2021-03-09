@@ -28,7 +28,6 @@ WbRos2Interface::~WbRos2Interface() {
 
 void WbRos2Interface::setup() {
   setupRobot();
-  fixName();
   setupSensors();
   std::chrono::milliseconds ms(step_);
   timer_ = this->create_wall_timer(ms, 
@@ -49,23 +48,9 @@ std::string WbRos2Interface::fixedNameString(const std::string &name) {
   return fixedName;
 }
 
-void WbRos2Interface::fixName() {
-  std::string webotsPID;
-  std::string webotsHostname;
-  std::ostringstream s;
-  s << getppid();
-  webotsPID = s.str();
-
-  char hostname[256];
-  gethostname(hostname, 256);
-  webotsHostname = std::string(hostname);
-
-  robot_name_ = robot_->getName();
-  robot_name_ += '_' + webotsPID + '_' + webotsHostname;
-  robot_name_ = fixedNameString(robot_name_);
-}
-
 void WbRos2Interface::setupSensors() {
+  joints_ = std::make_shared<wb_ros2_interface::sensors::WbRos2JointState>(
+    this->shared_from_this());
   int number_of_devices = robot_->getNumberOfDevices();
   for (int i = 0; i < number_of_devices; i++) {
     auto temp_device = robot_->getDeviceByIndex(i);
@@ -86,6 +71,30 @@ void WbRos2Interface::setupSensors() {
         sensors_.push_back(camera);
         break;
       }
+      case webots::Node::INERTIAL_UNIT:
+      {
+        auto imu = std::make_shared<wb_ros2_interface::sensors::WbRos2Imu>
+          (dynamic_cast<webots::InertialUnit*>(temp_device), 
+          this->shared_from_this());
+        imu->enable(128);
+        sensors_.push_back(imu);
+        break;
+      }
+      case webots::Node::POSITION_SENSOR:
+      {
+        joints_->addPositionSensor(dynamic_cast<webots::PositionSensor*>(
+          temp_device), 128);
+        break;
+      }
+      case webots::Node::GPS:
+      {
+        auto gps = std::make_shared<wb_ros2_interface::sensors::WbRos2GPS>
+          (dynamic_cast<webots::GPS*>(temp_device), 
+          this->shared_from_this());
+        gps->enable(128);
+        sensors_.push_back(gps);
+        break;
+      }
     }
   }
 }
@@ -94,6 +103,7 @@ void WbRos2Interface::timerCallback() {
   robot_->step(step_);
   for (const auto& sensor : sensors_)
     sensor->publish();
+  joints_->publish();
 }
 
 } // end namespace wb_ros2_interface

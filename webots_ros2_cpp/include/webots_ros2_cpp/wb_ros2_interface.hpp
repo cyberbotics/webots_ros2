@@ -17,8 +17,11 @@
 // webots_ros2_cpp
 #include <webots_ros2_cpp/wb_ros2_device.hpp>
 #include <webots_ros2_cpp/wb_ros2_sensor.hpp>
-#include <webots_ros2_cpp/sensors/wb_ros2_lidar.hpp>
 #include <webots_ros2_cpp/sensors/wb_ros2_camera.hpp>
+#include <webots_ros2_cpp/sensors/wb_ros2_gps.hpp>
+#include <webots_ros2_cpp/sensors/wb_ros2_imu.hpp>
+#include <webots_ros2_cpp/sensors/wb_ros2_joint_states.hpp>
+#include <webots_ros2_cpp/sensors/wb_ros2_lidar.hpp>
 
 // webots
 #include <webots/Robot.hpp>
@@ -30,7 +33,6 @@
 #include <rclcpp/clock.hpp>
 
 // std
-#include <unistd.h>
 #include <memory>
 #include <chrono>
 
@@ -53,9 +55,9 @@ protected:
   virtual int step(int duration) { return robot_->step(duration); }
 
 private:
-  void fixName();
   std::string robot_name_;
   std::vector<std::shared_ptr<WbRos2Sensor>> sensors_;
+  std::shared_ptr<wb_ros2_interface::sensors::WbRos2JointState> joints_;
   rclcpp::TimerBase::SharedPtr timer_;
   int step_;
   std::unique_ptr<webots::Supervisor> robot_;

@@ -40,16 +40,6 @@ ARGUMENTS = [
         'mode',
         default_value='realtime',
         description='Choose the startup mode (it must be either `pause`, `realtime`, `run` or `fast`).'
-    ),
-    DeclareLaunchArgument(
-        'publish_tf',
-        default_value='True',
-        description='Whether to publish transforms (tf)'
-    ),
-    DeclareLaunchArgument(
-        'use_sim_time',
-        description='Whether to use the simulation (Webots) time',
-        default_value='True'
     )
 ]
 
@@ -58,8 +48,6 @@ def generate_launch_description():
     world = LaunchConfiguration('world')
     gui = LaunchConfiguration('gui')
     mode = LaunchConfiguration('mode')
-    publish_tf = LaunchConfiguration('publish_tf')
-    use_sim_time = LaunchConfiguration('use_sim_time')
 
     # Webots
     webots = WebotsLauncher(
@@ -68,20 +56,7 @@ def generate_launch_description():
         gui=gui
     )
 
-    # Robot state publisher
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        output='screen',
-        parameters=[{
-            'robot_description': '<robot name=""><link name=""/></robot>',
-            'use_sim_time': use_sim_time
-        }],
-        condition=launch.conditions.IfCondition(publish_tf)
-    )
-
     return LaunchDescription(ARGUMENTS + [
-        robot_state_publisher,
         webots,
 
         # Shutdown launch when Webots exits.

@@ -47,8 +47,11 @@ set(${PROJECT_NAME}_dependencies
 
 add_library(${PROJECT_NAME} SHARED
   src/wb_ros2_interface.cc
-  src/sensors/wb_ros2_lidar.cc
   src/sensors/wb_ros2_camera.cc
+  src/sensors/wb_ros2_gps.cc
+  src/sensors/wb_ros2_imu.cc
+  src/sensors/wb_ros2_joint_states.cc
+  src/sensors/wb_ros2_lidar.cc
   src/math.cc
 )
 ament_target_dependencies(${PROJECT_NAME} 

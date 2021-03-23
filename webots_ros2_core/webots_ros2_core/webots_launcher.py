@@ -16,12 +16,10 @@
 
 """This launcher simply start Webots."""
 
-import os
-import sys
 from launch.actions import ExecuteProcess
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
-from webots_ros2_core.utils import get_webots_home, handle_webots_installation
+from webots_ros2_core.utils import get_webots_executable_path
 
 
 class _WebotsCommandSubstitution(Substitution):
@@ -31,15 +29,8 @@ class _WebotsCommandSubstitution(Substitution):
         self.__world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
 
     def perform(self, context):
-        webots_path = get_webots_home(show_warning=True)
-        if webots_path is None:
-            handle_webots_installation()
-            webots_path = get_webots_home()
-
-        # Add `webots` executable to command
-        if sys.platform == 'win32':
-            webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')
-        command = [r'"{}"'.format(os.path.join(webots_path, 'webots'))]
+        webots_path = get_webots_executable_path()
+        command = [r'"{}"'.format(webots_path)]
 
         # Add `world`
         command += [r'"{}"'.format(context.perform_substitution(self.__world))]

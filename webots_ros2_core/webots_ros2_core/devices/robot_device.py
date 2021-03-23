@@ -54,7 +54,7 @@ class RobotDevice(Device):
 
         # Determine default params
         params = params or {}
-        self.__publish_robot_description = self._get_param('publish_robot_description', True)
+        self.__publish_robot_description = self._get_param('publish_robot_description', False)
         self.__publish_base_footprint = self._get_param('publish_base_footprint', False)
 
         # Create robot_description publishers if needed

@@ -91,7 +91,7 @@ class WebotsVersion:
         return self.version.replace('revision ', 'rev').replace(' ', '-')
 
 
-def get_webots_home(target_version=None, minimum_version=None, show_warning=False):
+def get_webots_home(target_version=None, minimum_version=None, show_warning=False, handle_installation=True):
     # Normalize Webots version
     if target_version is not None and isinstance(target_version, str):
         target_version = WebotsVersion(target_version)
@@ -114,6 +114,10 @@ def get_webots_home(target_version=None, minimum_version=None, show_warning=Fals
         if show_warning:
             print(f'WARNING: Target Webots version `{target_version}` is not found, fallback to `{found_version}`')
         return path
+
+    if handle_installation:
+        handle_webots_installation()
+        return get_webots_home(target_version=target_version, minimum_version=minimum_version, handle_installation=False)
 
     return None
 
@@ -267,6 +271,15 @@ def __install_webots(installation_directory):
     else:
         print('Installing...')
         subprocess.check_output(f'{archive_path} /SILENT /CURRENTUSER', shell=True)
+
+
+def get_webots_executable_path():
+    webots_path = get_webots_home(show_warning=True)
+    if webots_path is None:
+        webots_path = get_webots_home()
+    if sys.platform == 'win32':
+        webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')
+    return os.path.join(webots_path, 'webots')
 
 
 def handle_webots_installation():

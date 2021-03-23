@@ -21,12 +21,14 @@
 import os
 import yaml
 import launch
+import subprocess
 from launch import LaunchDescription
 from launch.actions import RegisterEventHandler, EmitEvent
 from launch_ros.actions import Node
+from launch.substitutions import Command
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_core.webots_launcher import WebotsLauncher
-from webots_ros2_core.utils import ControllerLauncher
+from webots_ros2_core.utils import ControllerLauncher, get_webots_executable_path, get_webots_home
 
 
 def load_file(package_name, file_path):
@@ -53,6 +55,17 @@ def load_yaml(package_name, file_path):
 
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_universal_robot')
+    urdf_description = Command([
+        get_webots_executable_path(),
+        ' convert ',
+        f'{get_webots_home()}/projects/robots/universal_robots/protos/UR5e.proto'
+    ])
+    urdf_description = subprocess.check_output([
+        get_webots_executable_path(),
+        'convert',
+        f'{get_webots_home()}/projects/robots/universal_robots/protos/UR5e.proto'
+    ]).decode('utf-8')
+    print(urdf_description)
 
     # Webots
     webots = WebotsLauncher(world=os.path.join(package_dir, 'worlds', 'universal_robot.wbt'))
@@ -71,7 +84,7 @@ def generate_launch_description():
         executable='robot_state_publisher',
         output='screen',
         parameters=[{
-            'robot_description': '<robot name=""><link name=""/></robot>',
+            'robot_description': urdf_description,
             'use_sim_time': True
         }],
     )
@@ -80,7 +93,7 @@ def generate_launch_description():
     robot_description_config = None
     with open('/tmp/webots_robot_UR5e.urdf', 'r') as file:
         robot_description_config = file.read()
-    robot_description = {'robot_description': robot_description_config}
+    robot_description = {'robot_description': urdf_description}
     robot_description_semantic = {
         'robot_description_semantic': load_file('webots_ros2_universal_robot', 'config/ur5e.srdf')
     }

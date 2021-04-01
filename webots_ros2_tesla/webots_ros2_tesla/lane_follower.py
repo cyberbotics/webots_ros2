@@ -51,7 +51,6 @@ class LaneFollower(Node):
         command_message.steering_angle = 0.0
 
         if contours:
-            
             largest_contour = max(contours, key=cv2.contourArea)
             largest_contour_center = cv2.moments(largest_contour)
 
@@ -60,7 +59,7 @@ class LaneFollower(Node):
                 # Find error (the lane distance from the target distance)
                 error = center_x - 190
                 command_message.steering_angle = error*CONTROL_COEFFICIENT
-        
+
         self.__ackermann_publisher.publish(command_message)
 
 

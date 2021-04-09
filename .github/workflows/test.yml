@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         ROS_REPO: [main, testing]
-        ROS_DISTRO: [foxy, rolling]
+        ROS_DISTRO: [foxy]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1

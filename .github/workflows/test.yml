@@ -1,8 +1,7 @@
 name: CI
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled, unlabeled]
+  push:
 
 jobs:
   industrial_ci:

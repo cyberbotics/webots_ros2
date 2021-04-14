@@ -36,31 +36,24 @@
 #include <memory>
 #include <chrono>
 
-namespace wb_ros2_interface {
+namespace webots_ros2
+{
 
-class WbRos2Interface : public rclcpp::Node {
-public:
-  WbRos2Interface();
-  virtual ~WbRos2Interface();
+  class WebotsNode : public rclcpp::Node
+  {
+  public:
+    WebotsNode();
+    void registerPlugin(const std::string &pathToPlugin, const std::map<std::string, std::string> &arguments);
+    void init();
 
-  void timerCallback();
-  std::string name() const { return robot_name_; }
-  static std::string fixedNameString(const std::string &name);
-  virtual void setup();
-  int getStep() { return step_; };
+  private:
+    void timerCallback();
+    static std::string fixedNameString(const std::string &name);
 
-protected:
-  virtual void setupRobot();
-  virtual void setupSensors();
-  virtual int step(int duration) { return robot_->step(duration); }
+    std::string mRobotName;
+    rclcpp::TimerBase::SharedPtr mTimer;
+    int mStep;
+    std::shared_ptr<webots::Supervisor> mRobot;
+  };
 
-private:
-  std::string robot_name_;
-  std::vector<std::shared_ptr<WbRos2Sensor>> sensors_;
-  std::shared_ptr<wb_ros2_interface::sensors::WbRos2JointState> joints_;
-  rclcpp::TimerBase::SharedPtr timer_;
-  int step_;
-  std::unique_ptr<webots::Supervisor> robot_;
-};
-
-} // end namespace wb_ros2_interface
+} // end namespace webots_ros2

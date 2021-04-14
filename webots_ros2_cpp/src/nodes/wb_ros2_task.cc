@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // webots_ros2_cpp
-#include <webots_ros2_cpp/wb_ros2_interface.hpp>
+#include <webots_ros2_cpp/WebotsNode.hpp>
 
 // std
 #include <memory>
@@ -26,8 +26,8 @@ int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
 
   // Start an asyncronous spinner
-  auto node = std::make_shared<wb_ros2_interface::WbRos2Interface>();
-  node->setup();
+  auto node = std::make_shared<webots::WebotsNode>();
+  node->init();
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;

@@ -21,19 +21,21 @@ find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 
-# Compile
+
+# ros2_control
+# ros2_control: compile
 add_library(
-  ${PROJECT_NAME}
+  ${PROJECT_NAME}_control
   SHARED
   src/WbRos2Control.cpp
 )
 target_include_directories(
-  ${PROJECT_NAME}
+  ${PROJECT_NAME}_control
   PRIVATE
   include
 )
 ament_target_dependencies(
-  ${PROJECT_NAME}
+  ${PROJECT_NAME}_control
   hardware_interface
   pluginlib
   rclcpp
@@ -41,9 +43,9 @@ ament_target_dependencies(
 
 pluginlib_export_plugin_description_file(hardware_interface wb_ros2_control.xml)
 
-# Install
+# ros2_control: install
 install(
-  TARGETS ${PROJECT_NAME}
+  TARGETS ${PROJECT_NAME}_control
   DESTINATION lib
 )
 install(
@@ -55,12 +57,12 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
 endif()
 
-# Export
+# ros2_control: export
 ament_export_include_directories(
   include
 )
 ament_export_libraries(
-  ${PROJECT_NAME}
+  ${PROJECT_NAME}_control
 )
 ament_export_dependencies(
   hardware_interface

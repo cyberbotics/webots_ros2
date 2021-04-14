@@ -1,0 +1,10 @@
+<library path="webots_ros2_bridge">
+  <class
+    name="webots_ros2_bridge/WbRos2Control"
+    type="webots_ros2_bridge::WbRos2Control"
+    base_class_type="webots_ros2_bridge::WbRos2ControlInterface">
+    <description>
+      WebotsPositionJoint
+    </description>
+  </class>
+</library>

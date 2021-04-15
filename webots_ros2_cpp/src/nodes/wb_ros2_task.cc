@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
 
   // Start an asyncronous spinner
-  auto node = std::make_shared<webots::WebotsNode>();
+  auto node = std::make_shared<webots_ros2::WebotsNode>();
   node->init();
   rclcpp::spin(node);
   rclcpp::shutdown();

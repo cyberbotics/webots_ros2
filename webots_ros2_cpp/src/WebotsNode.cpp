@@ -12,11 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// wb_ros2_interface
-#include <webots_ros2_cpp/WebotsNode.hpp>
+#include <dlfcn.h>
+
+#include "webots_ros2_cpp/WebotsNode.hpp"
+#include "webots_ros2_cpp/PluginInterface.hpp"
+
 
 namespace webots_ros2
 {
+  typedef PluginInterface *(*creatorFunction)();
 
   WebotsNode::WebotsNode() : Node("webots_ros2_interface")
   {
@@ -44,6 +48,23 @@ namespace webots_ros2
   {
     // TODO: Call all plugins
     mRobot->step(mStep);
+  }
+
+  void WebotsNode::registerPlugin(const std::string &pathToPlugin, const std::map<std::string, std::string> &arguments)
+  {
+    void *handle = dlopen(pathToPlugin.c_str(), RTLD_LAZY);
+    if (!handle)
+    {
+      fprintf(stderr, "dlopen failure: %s\n", dlerror());
+      exit(EXIT_FAILURE);
+    }
+    creatorFunction create = (creatorFunction)dlsym(handle, "create_plugin");
+
+    PluginInterface *plugin = (*create)();
+    // plugin->method();
+    delete plugin;
+
+    dlclose(handle);
   }
 
 } // end namespace webots_ros2

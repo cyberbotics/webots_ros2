@@ -47,12 +47,12 @@ set(${PROJECT_NAME}_dependencies
 
 add_library(${PROJECT_NAME} SHARED
   src/WebotsNode.cpp
-  src/sensors/wb_ros2_camera.cc
-  src/sensors/wb_ros2_gps.cc
-  src/sensors/wb_ros2_imu.cc
-  src/sensors/wb_ros2_joint_states.cc
-  src/sensors/wb_ros2_lidar.cc
-  src/math.cc
+  # src/sensors/wb_ros2_camera.cc
+  # src/sensors/wb_ros2_gps.cc
+  # src/sensors/wb_ros2_imu.cc
+  # src/sensors/wb_ros2_joint_states.cc
+  # src/sensors/wb_ros2_lidar.cc
+  # src/math.cc
 )
 ament_target_dependencies(${PROJECT_NAME} 
   ${${PROJECT_NAME}_dependencies}
@@ -71,6 +71,7 @@ target_link_libraries(wb_task_node
   ${PROJECT_NAME}
   ${WEBOTS_LIB}  
 )
+
 
 #############
 ## Install ##

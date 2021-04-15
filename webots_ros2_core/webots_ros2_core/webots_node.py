@@ -39,7 +39,7 @@ class WebotsNode(Node):
     Extends ROS2 base node to provide integration with Webots.
 
     Args:
-        name (WebotsNode): Webots Robot node.
+        name (str): Webots Robot node.
         args (dict): Arguments passed to ROS2 base node.
     """
 

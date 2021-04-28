@@ -15,7 +15,7 @@
 """LED device."""
 
 from std_msgs.msg import Int32
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import qos_profile_system_default
 from .device import Device
 
 
@@ -53,7 +53,7 @@ class LEDDevice(Device):
             Int32,
             self._topic_name,
             self.__callback,
-            qos_profile_sensor_data
+            qos_profile_system_default
         )
 
     def __callback(self, msg):

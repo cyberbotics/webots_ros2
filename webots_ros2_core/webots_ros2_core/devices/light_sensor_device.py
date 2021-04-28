@@ -14,7 +14,7 @@
 
 """Webots LightSensor device wrapper for ROS2."""
 
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import qos_profile_system_default
 from sensor_msgs.msg import Illuminance
 from webots_ros2_core.math.interpolation import interpolate_lookup_table
 from .sensor_device import SensorDevice
@@ -50,7 +50,7 @@ class LightSensorDevice(SensorDevice):
         self._publisher = None
         if not self._disable:
             self._publisher = self._node.create_publisher(Illuminance, self._topic_name,
-                                                          qos_profile_sensor_data)
+                                                          qos_profile_system_default)
 
     def __get_variance(self, raw_value):
         table = self._wb_device.getLookupTable()

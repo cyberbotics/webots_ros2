@@ -17,10 +17,9 @@
 #include "webots_ros2_cpp/WebotsNode.hpp"
 #include "webots_ros2_cpp/PluginInterface.hpp"
 
-
 namespace webots_ros2
 {
-  typedef PluginInterface *(*creatorFunction)();
+  typedef std::shared_ptr<PluginInterface> (*creatorFunction)(webots_ros2::WebotsNode *node, const std::map<std::string, std::string> &parameters);
 
   WebotsNode::WebotsNode() : Node("webots_ros2_interface")
   {
@@ -46,8 +45,9 @@ namespace webots_ros2
 
   void WebotsNode::timerCallback()
   {
-    // TODO: Call all plugins
     mRobot->step(mStep);
+    for (std::shared_ptr<PluginInterface> plugin : mPlugins)
+      plugin->step(mStep);
   }
 
   void WebotsNode::registerPlugin(const std::string &pathToPlugin, const std::map<std::string, std::string> &arguments)
@@ -60,9 +60,8 @@ namespace webots_ros2
     }
     creatorFunction create = (creatorFunction)dlsym(handle, "create_plugin");
 
-    PluginInterface *plugin = (*create)();
-    // plugin->method();
-    delete plugin;
+    std::shared_ptr<PluginInterface> plugin = (*create)(this, {{"name", "ds0"}});
+    mPlugins.push_back(plugin);
 
     dlclose(handle);
   }

@@ -1,5 +1,8 @@
 #include <webots/Supervisor.hpp>
 
+#ifndef PLUGIN_INTERFACE
+#define PLUGIN_INTERFACE
+
 namespace webots_ros2
 {
     class PluginInterface
@@ -14,3 +17,5 @@ namespace webots_ros2
         virtual void step(int size) = 0;
     };
 }
+
+#endif

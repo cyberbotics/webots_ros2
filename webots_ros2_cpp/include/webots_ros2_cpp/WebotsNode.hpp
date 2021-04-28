@@ -12,16 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#pragma once
+#ifndef WEBOTS_NODE_HPP
+#define WEBOTS_NODE_HPP
 
-// webots_ros2_cpp
-#include <webots_ros2_cpp/wb_ros2_device.hpp>
-#include <webots_ros2_cpp/wb_ros2_sensor.hpp>
-#include <webots_ros2_cpp/sensors/wb_ros2_camera.hpp>
-#include <webots_ros2_cpp/sensors/wb_ros2_gps.hpp>
-#include <webots_ros2_cpp/sensors/wb_ros2_imu.hpp>
-#include <webots_ros2_cpp/sensors/wb_ros2_joint_states.hpp>
-#include <webots_ros2_cpp/sensors/wb_ros2_lidar.hpp>
+#include <webots_ros2_cpp/PluginInterface.hpp>
 
 // webots
 #include <webots/Robot.hpp>
@@ -43,8 +37,9 @@ namespace webots_ros2
   {
   public:
     WebotsNode();
-    void registerPlugin(const std::string &pathToPlugin, const std::map<std::string, std::string> &arguments);
+    void registerPlugin(const std::string &pathToPlugin, const std::map<std::string, std::string> &parameters);
     void init();
+    std::shared_ptr<webots::Supervisor> robot() { return mRobot; }
 
   private:
     void timerCallback();
@@ -54,6 +49,9 @@ namespace webots_ros2
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;
     std::shared_ptr<webots::Supervisor> mRobot;
+    std::vector<std::shared_ptr<webots_ros2::PluginInterface>> mPlugins;
   };
 
 } // end namespace webots_ros2
+
+#endif

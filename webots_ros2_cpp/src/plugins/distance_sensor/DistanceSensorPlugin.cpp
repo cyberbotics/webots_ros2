@@ -12,7 +12,7 @@ namespace webots_ros2
     class DistanceSensorPlugin : public PluginInterface
     {
     public:
-        DistanceSensorPlugin(std::shared_ptr<webots_ros2::WebotsNode> node, const std::map<std::string, std::string> &parameters)
+        DistanceSensorPlugin(webots_ros2::WebotsNode* node, const std::map<std::string, std::string> &parameters)
         {
             mNode = node;
             mName = parameters.at("name");
@@ -22,13 +22,14 @@ namespace webots_ros2
             std::cout << "step()\n";
         }
 
+
     private:
         std::string mName;
-        std::shared_ptr<webots_ros2::WebotsNode> mNode;
+        webots_ros2::WebotsNode* mNode;
     };
 }
 
-extern "C" webots_ros2::PluginInterface* create_plugin(std::shared_ptr<webots_ros2::WebotsNode> node, const std::map<std::string, std::string> &parameters)
+extern "C" std::shared_ptr<webots_ros2::PluginInterface> create_plugin(webots_ros2::WebotsNode* node, const std::map<std::string, std::string> &parameters)
 {
     return new webots_ros2::DistanceSensorPlugin(node, parameters);
 }

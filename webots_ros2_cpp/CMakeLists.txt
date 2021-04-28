@@ -4,8 +4,6 @@ project(webots_ros2_cpp)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-g)
-
 # Webots
 link_directories($ENV{WEBOTS_HOME}/lib/controller)
 set(WEBOTS_LIB
@@ -79,10 +77,11 @@ target_link_libraries(wb_task_node
 
 install(
   TARGETS ${PROJECT_NAME}
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
+  DESTINATION lib
+)
+install(
+  DIRECTORY include/
+  DESTINATION include
 )
 
 install(TARGETS wb_task_node

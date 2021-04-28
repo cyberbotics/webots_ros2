@@ -20,7 +20,7 @@ from geometry_msgs.msg import Point, Quaternion
 from std_msgs.msg import ColorRGBA
 from webots_ros2_msgs.msg import WbCameraRecognitionObject, WbCameraRecognitionObjects
 from rclpy.time import Time
-from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSReliabilityPolicy, qos_profile_system_default
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSReliabilityPolicy, qos_profile_sensor_data
 from .sensor_device import SensorDevice
 from webots_ros2_core.math.quaternions import axangle2quat
 
@@ -52,12 +52,15 @@ class CameraDevice(SensorDevice):
         self._recognition_webots_publisher = None
         self._image_publisher = None
 
+        qos_sensor_reliable = qos_profile_sensor_data
+        qos_sensor_reliable.reliability = QoSReliabilityPolicy.RELIABLE
+
         # Create topics
         if not self._disable:
             self._image_publisher = self._node.create_publisher(
                 Image,
                 self._topic_name + '/image_raw',
-                qos_profile_system_default
+                qos_sensor_reliable
             )
             self._camera_info_publisher = self._node.create_publisher(
                 CameraInfo,
@@ -73,12 +76,12 @@ class CameraDevice(SensorDevice):
                 self._recognition_publisher = self._node.create_publisher(
                     Detection2DArray,
                     self._topic_name + '/recognitions',
-                    qos_profile_system_default
+                    qos_sensor_reliable
                 )
                 self._recognition_webots_publisher = self._node.create_publisher(
                     WbCameraRecognitionObjects,
                     self._topic_name + '/recognitions/webots',
-                    qos_profile_system_default
+                    qos_sensor_reliable
                 )
 
             # CameraInfo data

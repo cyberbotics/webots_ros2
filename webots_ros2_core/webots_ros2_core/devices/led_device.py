@@ -15,7 +15,7 @@
 """LED device."""
 
 from std_msgs.msg import Int32
-from rclpy.qos import QoSReliabilityPolicy,qos_profile_sensor_data
+from rclpy.qos import QoSReliabilityPolicy, qos_profile_sensor_data
 from .device import Device
 
 

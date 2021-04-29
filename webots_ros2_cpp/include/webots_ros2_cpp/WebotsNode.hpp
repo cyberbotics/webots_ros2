@@ -17,6 +17,9 @@
 
 #include <memory>
 #include <chrono>
+#include <map>
+
+#include <tinyxml2.h>
 
 #include <webots/Robot.hpp>
 #include <webots/Node.hpp>
@@ -41,6 +44,7 @@ namespace webots_ros2
 
   private:
     void timerCallback();
+    std::map<std::string, std::string> getDeviceRosProperties(const std::string &name);
     static std::string fixedNameString(const std::string &name);
 
     std::string mRobotName;
@@ -48,6 +52,7 @@ namespace webots_ros2
     int mStep;
     std::shared_ptr<webots::Supervisor> mRobot;
     std::vector<std::shared_ptr<webots_ros2::PluginInterface>> mPlugins;
+    tinyxml2::XMLElement* mWebotsXMLElement;
   };
 
 } // end namespace webots_ros2

@@ -13,13 +13,11 @@
 // limitations under the License.
 
 #include <dlfcn.h>
-
 #include <webots/Device.hpp>
 
 #include "webots_ros2_cpp/WebotsNode.hpp"
 #include "webots_ros2_cpp/PluginInterface.hpp"
 #include <webots_ros2_cpp/devices/Ros2Lidar.hpp>
-
 
 namespace webots_ros2
 {
@@ -27,6 +25,36 @@ namespace webots_ros2
 
   WebotsNode::WebotsNode() : Node("webots_ros2_interface")
   {
+    const std::string robotDescription = this->declare_parameter<std::string>("robot_description", "");
+
+    tinyxml2::XMLDocument document;
+    document.Parse(robotDescription.c_str());
+    mWebotsXMLElement = document.FirstChildElement("webots");
+  }
+
+  std::map<std::string, std::string> WebotsNode::getDeviceRosProperties(const std::string &name)
+  {
+    std::map<std::string, std::string> properties;
+
+    // No URDF file specified
+    if (!mWebotsXMLElement)
+      return properties;
+
+    tinyxml2::XMLElement *deviceChild = nullptr;
+    for (deviceChild = mWebotsXMLElement->FirstChildElement(); deviceChild != NULL; deviceChild = deviceChild->NextSiblingElement())
+      if (deviceChild->Attribute("reference") == name)
+        break;
+
+    // No properties found for the given device
+    if (!deviceChild)
+      return properties;
+
+    for (tinyxml2::XMLElement *propertyChild = deviceChild->FirstChildElement(); propertyChild != NULL; propertyChild = propertyChild->NextSiblingElement()) {
+      properties[propertyChild->Name()] = propertyChild->GetText();
+      std::cout << propertyChild->Name() << "\n";
+    }
+
+    return properties;
   }
 
   void WebotsNode::init()

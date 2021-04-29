@@ -12,14 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// webots_ros2_cpp
+#include <memory>
+#include <rclcpp/rclcpp.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 
-// std
-#include <memory>
-
-// ros
-#include <rclcpp/rclcpp.hpp>
 
 int main(int argc, char **argv)
 {

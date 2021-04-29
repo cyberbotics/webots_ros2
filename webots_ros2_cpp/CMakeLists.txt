@@ -27,6 +27,8 @@ find_package(std_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(vision_msgs REQUIRED)
 find_package(webots_ros2_msgs REQUIRED)
+find_package(tinyxml2_vendor REQUIRED)
+find_package(TinyXML2 REQUIRED)
 
 set(${PROJECT_NAME}_dependencies
   action_msgs  
@@ -37,11 +39,9 @@ set(${PROJECT_NAME}_dependencies
   tf2_ros
   vision_msgs
   webots_ros2_msgs
+  tinyxml2_vendor
+  TinyXML2
 )
-
-#############
-##  Build  ##
-#############
 
 add_library(${PROJECT_NAME} SHARED
   src/WebotsNode.cpp
@@ -70,11 +70,6 @@ target_link_libraries(wb_task_node
   ${PROJECT_NAME}
   ${WEBOTS_LIB}  
 )
-
-
-#############
-## Install ##
-#############
 
 install(
   TARGETS ${PROJECT_NAME}

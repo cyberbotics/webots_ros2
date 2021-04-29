@@ -53,6 +53,7 @@ namespace webots_ros2
     std::shared_ptr<webots::Supervisor> mRobot;
     std::vector<std::shared_ptr<webots_ros2::PluginInterface>> mPlugins;
     tinyxml2::XMLElement* mWebotsXMLElement;
+    std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;
   };
 
 } // end namespace webots_ros2

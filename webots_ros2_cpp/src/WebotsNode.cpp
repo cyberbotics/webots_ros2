@@ -26,32 +26,35 @@ namespace webots_ros2
   WebotsNode::WebotsNode() : Node("webots_ros2_interface")
   {
     const std::string robotDescription = this->declare_parameter<std::string>("robot_description", "");
-
-    tinyxml2::XMLDocument document;
-    document.Parse(robotDescription.c_str());
-    mWebotsXMLElement = document.FirstChildElement("webots");
+    mRobotDescriptionDocument = std::make_shared<tinyxml2::XMLDocument>();
+    mRobotDescriptionDocument->Parse(robotDescription.c_str());
+    mWebotsXMLElement = mRobotDescriptionDocument->FirstChildElement("webots");
   }
 
   std::map<std::string, std::string> WebotsNode::getDeviceRosProperties(const std::string &name)
   {
-    std::map<std::string, std::string> properties;
+    std::map<std::string, std::string> properties({{"enabled", "true"}});
 
     // No URDF file specified
     if (!mWebotsXMLElement)
       return properties;
 
-    tinyxml2::XMLElement *deviceChild = nullptr;
-    for (deviceChild = mWebotsXMLElement->FirstChildElement(); deviceChild != NULL; deviceChild = deviceChild->NextSiblingElement())
+    tinyxml2::XMLElement *deviceChild = mWebotsXMLElement->FirstChildElement();
+    while (deviceChild) {
       if (deviceChild->Attribute("reference") == name)
         break;
+      deviceChild = deviceChild->NextSiblingElement();
+    }
 
     // No properties found for the given device
-    if (!deviceChild)
+    if (deviceChild == NULL || deviceChild->FirstChildElement("ros") == NULL)
       return properties;
 
-    for (tinyxml2::XMLElement *propertyChild = deviceChild->FirstChildElement(); propertyChild != NULL; propertyChild = propertyChild->NextSiblingElement()) {
+    // Store ROS properties
+    tinyxml2::XMLElement *propertyChild = deviceChild->FirstChildElement("ros")->FirstChildElement();
+    while (propertyChild) {
       properties[propertyChild->Name()] = propertyChild->GetText();
-      std::cout << propertyChild->Name() << "\n";
+      propertyChild = propertyChild->NextSiblingElement();
     }
 
     return properties;
@@ -70,9 +73,12 @@ namespace webots_ros2
       {
       case webots::Node::LIDAR:
       {
-        std::map<std::string, std::string> parameters;
-        auto lidar = std::make_shared<webots_ros2::Ros2Lidar>(this, parameters);
-        mPlugins.push_back(lidar);
+        std::map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
+        if (parameters["enabled"] == "true") {
+          parameters["name"] = device->getName();
+          auto lidar = std::make_shared<webots_ros2::Ros2Lidar>(this, parameters);
+          mPlugins.push_back(lidar);
+        }
         break;
       }
         /*

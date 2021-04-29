@@ -4,22 +4,43 @@ namespace webots_ros2
 {
   Ros2Lidar::Ros2Lidar(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) : mNode(node)
   {
-    mLidar = mNode->robot()->getLidar("lidar");
+    mLidar = mNode->robot()->getLidar(parameters["name"]);
 
     // Parameters
     mTopicName = parameters.count("topicName") ? parameters["topicName"] : "/" + mLidar->getName();
+    mPublishTimestep = parameters.count("updateRate") ? 1.0 / atof(parameters["updateRate"].c_str()) : 0;
+    mAlwaysOn = parameters.count("alwaysOn") ? (parameters["alwaysOn"] == "true") : false;
+
+    // Calcualte timestep
+    mPublishTimestepSyncedMs = mNode->robot()->getBasicTimeStep();
+    while (mPublishTimestepSyncedMs / 1000.0 <= mPublishTimestep)
+      mPublishTimestepSyncedMs *= 2;
 
     // Initialize publishers
-    mLaserPublisher = mNode->create_publisher<sensor_msgs::msg::LaserScan>(mTopicName,  rclcpp::SensorDataQoS().reliable());
+    if (mLidar->getNumberOfLayers() == 1)
+      mLaserPublisher = mNode->create_publisher<sensor_msgs::msg::LaserScan>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mPointCloudPublisher = mNode->create_publisher<sensor_msgs::msg::PointCloud>(mTopicName + "/point_cloud", rclcpp::SensorDataQoS().reliable());
+
+    mLastUpdate = mNode->robot()->getTime();
   }
 
   void Ros2Lidar::step(int size)
   {
-    if (mLidar->getNumberOfLayers() > 1)
-      pubPointCloud();
-    if (mLidar->getNumberOfLayers() == 1)
+    if (mNode->robot()->getTime() - mLastUpdate < mPublishTimestep)
+      return;
+    mLastUpdate = mNode->robot()->getTime();
+
+    // Enable/Disable sensor
+    if (mAlwaysOn || mLaserPublisher->get_subscription_count() > 0 || mPointCloudPublisher->get_subscription_count() > 0)
+      mLidar->enable(mPublishTimestepSyncedMs);
+    else
+      mLidar->disable();
+
+    // Publish data
+    if (mLaserPublisher != nullptr && (mLaserPublisher->get_subscription_count() > 0 || mAlwaysOn))
       pubLaserScan();
+    if (mPointCloudPublisher->get_subscription_count() > 0 || mAlwaysOn)
+      pubPointCloud();
   }
 
   void Ros2Lidar::pubPointCloud()

@@ -10,12 +10,12 @@
         </ros>
     </device>
 
-    <device reference="lidar" type="Lidar">
+    <device reference="LDS-01" type="Lidar">
         <!-- Using the official Webots ROS 2 interface -->
         <ros>
             <enabled>true</enabled>
             <updateRate>5</updateRate>
-            <topicName>/image_raw</topicName>
+            <topicName>/scan</topicName>
             <alwaysOn>false</alwaysOn>
             <frameName>ds0</frameName>
         </ros>

@@ -42,7 +42,12 @@ namespace webots_ros2
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr mLaserPublisher;
     rclcpp::Publisher<sensor_msgs::msg::PointCloud>::SharedPtr mPointCloudPublisher;
 
+    double mLastUpdate;
+
     std::string mTopicName;
+    double mPublishTimestep;
+    bool mAlwaysOn;
+    int mPublishTimestepSyncedMs;
   };
 
 } // end namespace webots_ros2

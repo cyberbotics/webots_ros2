@@ -41,7 +41,7 @@ namespace webots_ros2
 
     tinyxml2::XMLElement *deviceChild = mWebotsXMLElement->FirstChildElement();
     while (deviceChild) {
-      if (deviceChild->Attribute("reference") == name)
+      if (deviceChild->Attribute("reference") != NULL && deviceChild->Attribute("reference") == name)
         break;
       deviceChild = deviceChild->NextSiblingElement();
     }
@@ -62,23 +62,26 @@ namespace webots_ros2
 
   void WebotsNode::init()
   {
-    mRobot = std::make_unique<webots::Supervisor>();
+    mRobot = new webots::Supervisor();
     std::chrono::milliseconds ms((int)mRobot->getBasicTimeStep());
     mTimer = this->create_wall_timer(ms, std::bind(&WebotsNode::timerCallback, this));
 
     for (int i = 0; i < mRobot->getNumberOfDevices(); i++)
     {
       webots::Device *device = mRobot->getDeviceByIndex(i);
+
+      // Prepare parameters
+      std::map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
+      if (parameters["enabled"] == "false")
+        continue;
+      parameters["name"] = device->getName();
+
       switch (device->getNodeType())
       {
       case webots::Node::LIDAR:
       {
-        std::map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
-        if (parameters["enabled"] == "true") {
-          parameters["name"] = device->getName();
-          auto lidar = std::make_shared<webots_ros2::Ros2Lidar>(this, parameters);
-          mPlugins.push_back(lidar);
-        }
+        auto lidar = std::make_shared<webots_ros2::Ros2Lidar>(this, parameters);
+        mPlugins.push_back(lidar);
         break;
       }
         /*
@@ -122,6 +125,7 @@ namespace webots_ros2
 
   void WebotsNode::timerCallback()
   {
+    RCLCPP_INFO(get_logger(), "aaaa");
     mRobot->step(mStep);
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step(mStep);

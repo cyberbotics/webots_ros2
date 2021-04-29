@@ -40,7 +40,7 @@ namespace webots_ros2
     WebotsNode();
     void registerPlugin(const std::string &pathToPlugin, const std::map<std::string, std::string> &parameters);
     void init();
-    std::shared_ptr<webots::Supervisor> robot() { return mRobot; }
+    webots::Supervisor* robot() { return mRobot; }
 
   private:
     void timerCallback();
@@ -50,7 +50,7 @@ namespace webots_ros2
     std::string mRobotName;
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;
-    std::shared_ptr<webots::Supervisor> mRobot;
+    webots::Supervisor* mRobot;
     std::vector<std::shared_ptr<webots_ros2::PluginInterface>> mPlugins;
     tinyxml2::XMLElement* mWebotsXMLElement;
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;

@@ -16,13 +16,9 @@
 #include <rclcpp/rclcpp.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 
-
 int main(int argc, char **argv)
 {
-  // Initialize without sigint handler
   rclcpp::init(argc, argv);
-
-  // Start an asyncronous spinner
   auto node = std::make_shared<webots_ros2::WebotsNode>();
   node->init();
   rclcpp::spin(node);

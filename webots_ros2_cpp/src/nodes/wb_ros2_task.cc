@@ -21,7 +21,8 @@
 // ros
 #include <rclcpp/rclcpp.hpp>
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
   // Initialize without sigint handler
   rclcpp::init(argc, argv);
 

@@ -45,6 +45,7 @@ set(${PROJECT_NAME}_dependencies
 
 add_library(${PROJECT_NAME} SHARED
   src/WebotsNode.cpp
+  src/devices/Ros2Lidar.cpp
   # src/sensors/wb_ros2_camera.cc
   # src/sensors/wb_ros2_gps.cc
   # src/sensors/wb_ros2_imu.cc

@@ -15,20 +15,18 @@
 #ifndef WEBOTS_NODE_HPP
 #define WEBOTS_NODE_HPP
 
-#include <webots_ros2_cpp/PluginInterface.hpp>
+#include <memory>
+#include <chrono>
 
-// webots
 #include <webots/Robot.hpp>
 #include <webots/Node.hpp>
 #include <webots/Supervisor.hpp>
 
-// ros
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/clock.hpp>
 
-// std
-#include <memory>
-#include <chrono>
+#include <webots_ros2_cpp/PluginInterface.hpp>
+
 
 namespace webots_ros2
 {

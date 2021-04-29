@@ -1,0 +1,32 @@
+<webots>
+    <device reference="ds0" type="DistanceSensor">
+        <!-- Using the official Webots ROS 2 interface -->
+        <ros>
+            <enabled>true</enabled>
+            <updateRate>20</updateRate>
+            <topicName>image_raw</topicName>
+            <alwaysOn>false</alwaysOn>
+            <frameName>ds0</frameName>
+        </ros>
+    </device>
+
+    <device reference="lidar" type="Lidar">
+        <!-- Using the official Webots ROS 2 interface -->
+        <ros>
+            <enabled>true</enabled>
+            <updateRate>5</updateRate>
+            <topicName>/image_raw</topicName>
+            <alwaysOn>false</alwaysOn>
+            <frameName>ds0</frameName>
+        </ros>
+    </device>
+
+    <plugin name="webots_ros2_imu" filename="libwebots_ros2_imu.so">
+        <inertial_unit>inertial_unit</inertial_unit>
+        <gyro>gyro</gyro>
+        <updateRate>5</updateRate>
+        <topicName>/imu</topicName>
+        <alwaysOn>false</alwaysOn>
+        <frameName>imu</frameName>
+    </plugin>
+</webots>

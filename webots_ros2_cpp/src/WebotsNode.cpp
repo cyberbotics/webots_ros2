@@ -14,8 +14,12 @@
 
 #include <dlfcn.h>
 
+#include <webots/Device.hpp>
+
 #include "webots_ros2_cpp/WebotsNode.hpp"
 #include "webots_ros2_cpp/PluginInterface.hpp"
+#include <webots_ros2_cpp/devices/Ros2Lidar.hpp>
+
 
 namespace webots_ros2
 {
@@ -30,6 +34,45 @@ namespace webots_ros2
     mRobot = std::make_unique<webots::Supervisor>();
     std::chrono::milliseconds ms((int)mRobot->getBasicTimeStep());
     mTimer = this->create_wall_timer(ms, std::bind(&WebotsNode::timerCallback, this));
+
+    for (int i = 0; i < mRobot->getNumberOfDevices(); i++)
+    {
+      webots::Device *device = mRobot->getDeviceByIndex(i);
+      switch (device->getNodeType())
+      {
+      case webots::Node::LIDAR:
+      {
+        std::map<std::string, std::string> parameters;
+        auto lidar = std::make_shared<webots_ros2::Ros2Lidar>(this, parameters);
+        mPlugins.push_back(lidar);
+        break;
+      }
+        /*
+      case webots::Node::CAMERA:
+      {
+        auto camera = std::make_shared<wb_ros2_interface::sensors::WbRos2Camera>(dynamic_cast<webots::Camera *>(device), this->shared_from_this());
+        camera->enable(128);
+        sensors_.push_back(camera);
+        break;
+      }
+      case webots::Node::INERTIAL_UNIT:
+      {
+        auto imu = std::make_shared<wb_ros2_interface::sensors::WbRos2Imu>(dynamic_cast<webots::InertialUnit *>(device),
+                                                                           this->shared_from_this());
+        imu->enable(128);
+        sensors_.push_back(imu);
+        break;
+      }
+      case webots::Node::GPS:
+      {
+        auto gps = std::make_shared<wb_ros2_interface::sensors::WbRos2GPS>(dynamic_cast<webots::GPS *>(device),
+                                                                           this->shared_from_this());
+        sensors_.push_back(gps);
+        break;
+      }
+      */
+      }
+    }
   }
 
   std::string WebotsNode::fixedNameString(const std::string &name)
@@ -60,8 +103,8 @@ namespace webots_ros2
     }
     creatorFunction create = (creatorFunction)dlsym(handle, "create_plugin");
 
-    std::shared_ptr<PluginInterface> plugin = (*create)(this, {{"name", "ds0"}});
-    mPlugins.push_back(plugin);
+    // std::shared_ptr<PluginInterface> plugin = (*create)(this, {{"name", "ds0"}});
+    // mPlugins.push_back(plugin);
 
     dlclose(handle);
   }

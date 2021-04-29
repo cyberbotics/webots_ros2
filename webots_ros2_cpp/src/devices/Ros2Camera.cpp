@@ -1,10 +1,8 @@
-// wb_ros2_interface
-#include <webots_ros2_cpp/sensors/wb_ros2_camera.hpp>
+#include <webots_ros2_cpp/devices/Ros2Camera.hpp>
 
-namespace wb_ros2_interface {
-namespace sensors {
+namespace wb_ros2 {
 
-WbRos2Camera::WbRos2Camera(webots::Camera* camera, 
+Ros2Camera::Ros2Camera(webots::Camera* camera, 
     const std::shared_ptr<rclcpp::Node> node) :
   camera_(camera),
   WbRos2Sensor(node),
@@ -33,10 +31,10 @@ WbRos2Camera::WbRos2Camera(webots::Camera* camera,
   }
 }
 
-WbRos2Camera::~WbRos2Camera() {
+Ros2Camera::~Ros2Camera() {
 }
 
-void WbRos2Camera::enable(int sampling_period) { 
+void Ros2Camera::enable(int sampling_period) { 
   camera_->enable(sampling_period); 
   if (camera_->hasRecognition()) {
     camera_->recognitionEnable(sampling_period);
@@ -47,7 +45,7 @@ void WbRos2Camera::enable(int sampling_period) {
   }
 };
 
-void WbRos2Camera::createCameraInfoMsg() {
+void Ros2Camera::createCameraInfoMsg() {
   camera_info_.header.stamp = clock_->now();
   camera_info_.height = camera_->getHeight();
   camera_info_.width = camera_->getWidth();
@@ -68,7 +66,7 @@ void WbRos2Camera::createCameraInfoMsg() {
   };
 }
 
-void WbRos2Camera::pubImage() {
+void Ros2Camera::pubImage() {
   sensor_msgs::msg::Image image_msg;
   image_msg.header.stamp = clock_->now();
   image_msg.header.frame_id = camera_->getName();
@@ -89,7 +87,7 @@ void WbRos2Camera::pubImage() {
   camera_info_pub_->publish(camera_info_);
 }
 
-void WbRos2Camera::pubRecognition() {
+void Ros2Camera::pubRecognition() {
   if (camera_->getRecognitionNumberOfObjects() == 0)
     return;
 
@@ -147,7 +145,7 @@ void WbRos2Camera::pubRecognition() {
   recog_pub_->publish(reco_msg);
 }
 
-void WbRos2Camera::publish() {
+void Ros2Camera::publish() {
   if (auto nh = node_.lock()) {
     pubImage();
     if (camera_->hasRecognition()) {
@@ -156,5 +154,4 @@ void WbRos2Camera::publish() {
   }
 }
 
-} // end namespace sensors
 } // end namespace wb_ros2_interface

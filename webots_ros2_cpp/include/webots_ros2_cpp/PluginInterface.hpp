@@ -1,7 +1,7 @@
-#include <webots/Supervisor.hpp>
-
 #ifndef PLUGIN_INTERFACE
 #define PLUGIN_INTERFACE
+
+#include <webots/Supervisor.hpp>
 
 namespace webots_ros2
 {

@@ -24,7 +24,7 @@ namespace webots_ros2
     mLastUpdate = mNode->robot()->getTime();
   }
 
-  void Ros2Lidar::step(int size)
+  void Ros2Lidar::step()
   {
     if (mNode->robot()->getTime() - mLastUpdate < mPublishTimestep)
       return;

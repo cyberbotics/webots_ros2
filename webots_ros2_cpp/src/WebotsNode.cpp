@@ -63,8 +63,8 @@ namespace webots_ros2
   void WebotsNode::init()
   {
     mRobot = new webots::Supervisor();
-    std::chrono::milliseconds ms((int)mRobot->getBasicTimeStep());
-    mTimer = this->create_wall_timer(ms, std::bind(&WebotsNode::timerCallback, this));
+    mStep = mRobot->getBasicTimeStep();
+    mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 
     for (int i = 0; i < mRobot->getNumberOfDevices(); i++)
     {
@@ -125,10 +125,9 @@ namespace webots_ros2
 
   void WebotsNode::timerCallback()
   {
-    RCLCPP_INFO(get_logger(), "aaaa");
     mRobot->step(mStep);
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
-      plugin->step(mStep);
+      plugin->step();
   }
 
   void WebotsNode::registerPlugin(const std::string &pathToPlugin, const std::map<std::string, std::string> &arguments)

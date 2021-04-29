@@ -30,7 +30,7 @@ namespace webots_ros2
   {
   public:
     Ros2Lidar(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters);
-    virtual void step(int size) override;
+    virtual void step() override;
 
   private:
     void pubPointCloud();

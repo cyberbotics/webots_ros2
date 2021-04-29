@@ -14,7 +14,7 @@ namespace webots_ros2
 
         // This method is called on each timestep.
         // Never call `robot.step()` in this method.
-        virtual void step(int size) = 0;
+        virtual void step() = 0;
     };
 }
 

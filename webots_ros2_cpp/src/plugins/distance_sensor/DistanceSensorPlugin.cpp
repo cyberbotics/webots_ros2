@@ -17,7 +17,7 @@ namespace webots_ros2
             mNode = node;
             mName = parameters.at("name");
         };
-        virtual void step(int size) override
+        virtual void step() override
         {
             std::cout << "step()\n";
         }

@@ -18,8 +18,7 @@
 #include <map>
 #include <webots/Lidar.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
-#include <sensor_msgs/msg/point_cloud.hpp>
-#include <sensor_msgs/msg/channel_float32.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 #include <webots_ros2_cpp/PluginInterface.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 
@@ -40,11 +39,13 @@ namespace webots_ros2
     std::shared_ptr<webots_ros2::WebotsNode> mNode;
     std::map<std::string, std::string> mParameters;
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr mLaserPublisher;
-    rclcpp::Publisher<sensor_msgs::msg::PointCloud>::SharedPtr mPointCloudPublisher;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr mPointCloudPublisher;
 
     double mLastUpdate;
+    bool mIsEnabled;
 
     std::string mTopicName;
+    std::string mFrameName;
     double mPublishTimestep;
     bool mAlwaysOn;
     int mPublishTimestepSyncedMs;

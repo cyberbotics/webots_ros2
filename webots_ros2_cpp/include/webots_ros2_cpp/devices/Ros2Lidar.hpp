@@ -32,14 +32,18 @@ namespace webots_ros2
     virtual void step() override;
 
   private:
-    void pubPointCloud();
-    void pubLaserScan();
+    void publishPointCloud();
+    void publishLaserScan();
 
     webots::Lidar *mLidar;
     std::shared_ptr<webots_ros2::WebotsNode> mNode;
     std::map<std::string, std::string> mParameters;
+
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr mLaserPublisher;
+    sensor_msgs::msg::LaserScan mLaserMessage;
+
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr mPointCloudPublisher;
+    sensor_msgs::msg::PointCloud2 mPointCloudMessage;
 
     double mLastUpdate;
     bool mIsEnabled;

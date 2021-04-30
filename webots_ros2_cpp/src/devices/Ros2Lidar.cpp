@@ -19,13 +19,42 @@ namespace webots_ros2
     while (mPublishTimestepSyncedMs / 1000.0 <= mPublishTimestep)
       mPublishTimestepSyncedMs *= 2;
 
-    // Initialize publishers
+    // Laser publisher
     if (mLidar->getNumberOfLayers() == 1)
     {
       mLaserPublisher = mNode->create_publisher<sensor_msgs::msg::LaserScan>(mTopicName, rclcpp::SensorDataQoS().reliable());
+      const int resolution = mLidar->getHorizontalResolution();
+      mLaserMessage.header.frame_id = mFrameName;
+      mLaserMessage.angle_min = -mLidar->getFov() / 2.0;
+      mLaserMessage.angle_max = mLidar->getFov() / 2.0;
+      mLaserMessage.angle_increment = mLidar->getFov() / resolution;
+      mLaserMessage.time_increment = (double)mLidar->getSamplingPeriod() / (1000.0 * resolution);
+      mLaserMessage.scan_time = (double)mLidar->getSamplingPeriod() / 1000.0;
+      mLaserMessage.range_min = mLidar->getMinRange();
+      mLaserMessage.range_max = mLidar->getMaxRange();
+      mLaserMessage.ranges.resize(resolution);
     }
+
+    // Point cloud publisher
     mPointCloudPublisher = mNode->create_publisher<sensor_msgs::msg::PointCloud2>(mTopicName + "/point_cloud", rclcpp::SensorDataQoS().reliable());
-    mLidar->enablePointCloud();
+    mPointCloudMessage.header.frame_id = mFrameName;
+    mPointCloudMessage.height = 1;
+    mPointCloudMessage.point_step = 20;
+    mPointCloudMessage.is_dense = false;
+    mPointCloudMessage.fields.resize(3);
+    mPointCloudMessage.fields[0].name = "x";
+    mPointCloudMessage.fields[0].datatype = sensor_msgs::msg::PointField::FLOAT32;
+    mPointCloudMessage.fields[0].count = 1;
+    mPointCloudMessage.fields[0].offset = 0;
+    mPointCloudMessage.fields[1].name = "y";
+    mPointCloudMessage.fields[1].datatype = sensor_msgs::msg::PointField::FLOAT32;
+    mPointCloudMessage.fields[1].count = 1;
+    mPointCloudMessage.fields[1].offset = 4;
+    mPointCloudMessage.fields[2].name = "z";
+    mPointCloudMessage.fields[2].datatype = sensor_msgs::msg::PointField::FLOAT32;
+    mPointCloudMessage.fields[2].count = 1;
+    mPointCloudMessage.fields[2].offset = 8;
+    mPointCloudMessage.is_bigendian = false;
 
     mLastUpdate = mNode->robot()->getTime();
     mIsEnabled = false;
@@ -51,64 +80,41 @@ namespace webots_ros2
 
     // Publish data
     if (mLaserPublisher != nullptr && (mLaserPublisher->get_subscription_count() > 0 || mAlwaysOn))
-      pubLaserScan();
+      publishLaserScan();
     if (mPointCloudPublisher->get_subscription_count() > 0 || mAlwaysOn)
-      pubPointCloud();
+    {
+      mLidar->enablePointCloud();
+      publishPointCloud();
+    }
+    else
+      mLidar->disablePointCloud();
   }
 
-  void Ros2Lidar::pubPointCloud()
+  void Ros2Lidar::publishPointCloud()
   {
-    const auto data = mLidar->getPointCloud();
+    auto data = mLidar->getPointCloud();
     if (data)
     {
-      auto message = sensor_msgs::msg::PointCloud2();
-      message.header.stamp = rclcpp::Clock().now();
-      message.header.frame_id = mFrameName;
-      message.height = 1;
-      message.width = mLidar->getNumberOfPoints();
-      message.point_step = 20;
-      message.row_step = 20 * mLidar->getNumberOfPoints();
-      message.is_dense = false;
-      message.fields.resize(3);
-      message.fields[0].name = "x";
-      message.fields[0].datatype = sensor_msgs::msg::PointField::FLOAT32;
-      message.fields[0].count = 1;
-      message.fields[0].offset = 0;
-      message.fields[1].name = "y";
-      message.fields[1].datatype = sensor_msgs::msg::PointField::FLOAT32;
-      message.fields[1].count = 1;
-      message.fields[1].offset = 4;
-      message.fields[2].name = "z";
-      message.fields[2].datatype = sensor_msgs::msg::PointField::FLOAT32;
-      message.fields[2].count = 1;
-      message.fields[2].offset = 8;
-      message.is_bigendian = false;
-      message.data.resize(message.row_step * message.height);
-      memcpy(message.data.data(), data, message.row_step * message.height);
-      mPointCloudPublisher->publish(message);
+      mPointCloudMessage.header.stamp = rclcpp::Clock().now();
+
+      mPointCloudMessage.width = mLidar->getNumberOfPoints();
+      mPointCloudMessage.row_step = 20 * mLidar->getNumberOfPoints();
+      if (mPointCloudMessage.data.size() != mPointCloudMessage.row_step * mPointCloudMessage.height)
+        mPointCloudMessage.data.resize(mPointCloudMessage.row_step * mPointCloudMessage.height);
+
+      memcpy(mPointCloudMessage.data.data(), data, mPointCloudMessage.row_step * mPointCloudMessage.height);
+      mPointCloudPublisher->publish(mPointCloudMessage);
     }
   }
 
-  void Ros2Lidar::pubLaserScan()
+  void Ros2Lidar::publishLaserScan()
   {
-    const auto rangeImage = mLidar->getLayerRangeImage(0);
+    auto rangeImage = mLidar->getLayerRangeImage(0);
     if (rangeImage)
     {
-      const int resolution = mLidar->getHorizontalResolution();
-
-      sensor_msgs::msg::LaserScan message;
-      message.header.stamp = rclcpp::Clock().now();
-      message.header.frame_id = mFrameName;
-      message.angle_min = -mLidar->getFov() / 2.0;
-      message.angle_max = mLidar->getFov() / 2.0;
-      message.angle_increment = mLidar->getFov() / resolution;
-      message.time_increment = (double)mLidar->getSamplingPeriod() / (1000.0 * resolution);
-      message.scan_time = (double)mLidar->getSamplingPeriod() / 1000.0;
-      message.range_min = mLidar->getMinRange();
-      message.range_max = mLidar->getMaxRange();
-
-      message.ranges = std::vector<float>(rangeImage, rangeImage + resolution);
-      mLaserPublisher->publish(message);
+      memcpy(mLaserMessage.ranges.data(), rangeImage, mLaserMessage.ranges.size() * sizeof(float));
+      mLaserMessage.header.stamp = rclcpp::Clock().now();
+      mLaserPublisher->publish(mLaserMessage);
     }
   }
 

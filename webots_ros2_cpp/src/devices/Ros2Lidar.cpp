@@ -5,20 +5,21 @@
 
 namespace webots_ros2
 {
-  Ros2Lidar::Ros2Lidar(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) : mNode(node)
+  Ros2Lidar::Ros2Lidar(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) : mNode(node), mIsEnabled(false)
   {
     mLidar = mNode->robot()->getLidar(parameters["name"]);
 
     // Parameters
     mTopicName = parameters.count("topicName") ? parameters["topicName"] : "/" + mLidar->getName();
-    mPublishTimestep = parameters.count("updateRate") ? 1.0 / atof(parameters["updateRate"].c_str()) : 0;
+    mPublishTimestep = parameters.count("updateRate") ? atof(parameters["updateRate"].c_str()) : 0;
     mAlwaysOn = parameters.count("alwaysOn") ? (parameters["alwaysOn"] == "true") : false;
     mFrameName = parameters.count("frameName") ? parameters["frameName"] : mLidar->getName();
 
     // Calcualte timestep
     mPublishTimestepSyncedMs = mNode->robot()->getBasicTimeStep();
-    while (mPublishTimestepSyncedMs / 1000.0 <= mPublishTimestep)
+    while (mPublishTimestepSyncedMs / 1000.0 < mPublishTimestep / 2)
       mPublishTimestepSyncedMs *= 2;
+    mLastUpdate = mNode->robot()->getTime();
 
     // Laser publisher
     if (mLidar->getNumberOfLayers() == 1)
@@ -66,9 +67,6 @@ namespace webots_ros2
     mPointCloudMessage.fields[2].count = 1;
     mPointCloudMessage.fields[2].offset = 8;
     mPointCloudMessage.is_bigendian = false;
-
-    mLastUpdate = mNode->robot()->getTime();
-    mIsEnabled = false;
   }
 
   void Ros2Lidar::step()

@@ -42,7 +42,8 @@ namespace webots_ros2
       return properties;
 
     tinyxml2::XMLElement *deviceChild = mWebotsXMLElement->FirstChildElement();
-    while (deviceChild) {
+    while (deviceChild)
+    {
       if (deviceChild->Attribute("reference") != NULL && deviceChild->Attribute("reference") == name)
         break;
       deviceChild = deviceChild->NextSiblingElement();
@@ -54,7 +55,8 @@ namespace webots_ros2
 
     // Store ROS properties
     tinyxml2::XMLElement *propertyChild = deviceChild->FirstChildElement("ros")->FirstChildElement();
-    while (propertyChild) {
+    while (propertyChild)
+    {
       properties[propertyChild->Name()] = propertyChild->GetText();
       propertyChild = propertyChild->NextSiblingElement();
     }
@@ -93,23 +95,6 @@ namespace webots_ros2
         mPlugins.push_back(camera);
         break;
       }
-      /*
-      case webots::Node::INERTIAL_UNIT:
-      {
-        auto imu = std::make_shared<wb_ros2_interface::sensors::WbRos2Imu>(dynamic_cast<webots::InertialUnit *>(device),
-                                                                           this->shared_from_this());
-        imu->enable(128);
-        sensors_.push_back(imu);
-        break;
-      }
-      case webots::Node::GPS:
-      {
-        auto gps = std::make_shared<wb_ros2_interface::sensors::WbRos2GPS>(dynamic_cast<webots::GPS *>(device),
-                                                                           this->shared_from_this());
-        sensors_.push_back(gps);
-        break;
-      }
-      */
       }
     }
   }

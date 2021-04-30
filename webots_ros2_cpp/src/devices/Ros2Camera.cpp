@@ -7,13 +7,13 @@ namespace webots_ros2
   {
     mCamera = mNode->robot()->getCamera(parameters["name"]);
     mTopicName = parameters.count("topicName") ? parameters["topicName"] : "/" + mCamera->getName();
-    mPublishTimestep = parameters.count("updateRate") ? 1.0 / atof(parameters["updateRate"].c_str()) : 0;
+    mPublishTimestep = parameters.count("updateRate") ? atof(parameters["updateRate"].c_str()) : 0;
     mAlwaysOn = parameters.count("alwaysOn") ? (parameters["alwaysOn"] == "true") : false;
     mFrameName = parameters.count("frameName") ? parameters["frameName"] : mCamera->getName();
 
     // Calcualte timestep
     mPublishTimestepSyncedMs = mNode->robot()->getBasicTimeStep();
-    while (mPublishTimestepSyncedMs / 1000.0 <= mPublishTimestep)
+    while (mPublishTimestepSyncedMs / 1000.0 < mPublishTimestep / 2)
       mPublishTimestepSyncedMs *= 2;
 
     // Image publisher

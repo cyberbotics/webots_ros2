@@ -21,6 +21,7 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <webots_ros2_cpp/PluginInterface.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
+#include <tf2_ros/static_transform_broadcaster.h>
 
 
 namespace webots_ros2
@@ -41,6 +42,7 @@ namespace webots_ros2
 
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr mLaserPublisher;
     sensor_msgs::msg::LaserScan mLaserMessage;
+    std::unique_ptr<tf2_ros::StaticTransformBroadcaster> mTfBroadcaster;
 
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr mPointCloudPublisher;
     sensor_msgs::msg::PointCloud2 mPointCloudMessage;

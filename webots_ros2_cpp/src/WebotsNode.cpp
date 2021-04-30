@@ -28,7 +28,7 @@ namespace webots_ros2
     const std::string robotDescription = this->declare_parameter<std::string>("robot_description", "");
     mRobotDescriptionDocument = std::make_shared<tinyxml2::XMLDocument>();
     mRobotDescriptionDocument->Parse(robotDescription.c_str());
-    mWebotsXMLElement = mRobotDescriptionDocument->FirstChildElement("webots");
+    mWebotsXMLElement = mRobotDescriptionDocument->FirstChildElement("robot")->FirstChildElement("webots");
   }
 
   std::map<std::string, std::string> WebotsNode::getDeviceRosProperties(const std::string &name)

@@ -1,32 +1,40 @@
-<webots>
-    <device reference="ds0" type="DistanceSensor">
-        <!-- Using the official Webots ROS 2 interface -->
-        <ros>
-            <enabled>true</enabled>
-            <updateRate>20</updateRate>
-            <topicName>image_raw</topicName>
-            <alwaysOn>false</alwaysOn>
-            <frameName>ds0</frameName>
-        </ros>
-    </device>
+<?xml version="1.0" ?>
+<robot name="robot_name">
+    <webots>
+        <device reference="ds0" type="DistanceSensor">
+            <!-- Using the official Webots ROS 2 interface -->
+            <ros>
+                <enabled>true</enabled>
+                <updateRate>20</updateRate>
+                <topicName>image_raw</topicName>
+                <alwaysOn>false</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
 
-    <device reference="LDS-01" type="Lidar">
-        <!-- Using the official Webots ROS 2 interface -->
-        <ros>
-            <enabled>true</enabled>
+        <device reference="LDS-01" type="Lidar">
+            <tiltAngle>0.0</tiltAngle>
+            <horizontalResolution>512</horizontalResolution>
+            <fieldOfView>1.5708</fieldOfView>
+            <verticalFieldOfView>0.2</verticalFieldOfView>
+
+            <!-- Using the official Webots ROS 2 interface -->
+            <ros>
+                <enabled>true</enabled>
+                <updateRate>5</updateRate>
+                <topicName>/scan</topicName>
+                <alwaysOn>false</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <plugin name="webots_ros2_imu" filename="libwebots_ros2_imu.so">
+            <inertial_unit>inertial_unit</inertial_unit>
+            <gyro>gyro</gyro>
             <updateRate>5</updateRate>
-            <topicName>/scan</topicName>
+            <topicName>/imu</topicName>
             <alwaysOn>false</alwaysOn>
-            <frameName>ds0</frameName>
-        </ros>
-    </device>
-
-    <plugin name="webots_ros2_imu" filename="libwebots_ros2_imu.so">
-        <inertial_unit>inertial_unit</inertial_unit>
-        <gyro>gyro</gyro>
-        <updateRate>5</updateRate>
-        <topicName>/imu</topicName>
-        <alwaysOn>false</alwaysOn>
-        <frameName>imu</frameName>
-    </plugin>
-</webots>
+            <frameName>imu</frameName>
+        </plugin>
+    </webots>
+</robot>

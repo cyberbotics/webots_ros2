@@ -11,7 +11,7 @@ namespace webots_ros2
 
     // Parameters
     mTopicName = parameters.count("topicName") ? parameters["topicName"] : "/" + mLidar->getName();
-    mPublishTimestep = parameters.count("updateRate") ? atof(parameters["updateRate"].c_str()) : 0;
+    mPublishTimestep = parameters.count("updateRate") ? 1.0 / atof(parameters["updateRate"].c_str()) : 0;
     mAlwaysOn = parameters.count("alwaysOn") ? (parameters["alwaysOn"] == "true") : false;
     mFrameName = parameters.count("frameName") ? parameters["frameName"] : mLidar->getName();
 

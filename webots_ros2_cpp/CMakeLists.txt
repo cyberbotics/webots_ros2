@@ -50,8 +50,7 @@ add_library(${PROJECT_NAME} SHARED
   # src/sensors/wb_ros2_gps.cc
   # src/sensors/wb_ros2_imu.cc
   # src/sensors/wb_ros2_joint_states.cc
-  # src/sensors/wb_ros2_lidar.cc
-  # src/math.cc
+  src/utils/Math.cpp
 )
 ament_target_dependencies(${PROJECT_NAME} 
   ${${PROJECT_NAME}_dependencies}
@@ -60,13 +59,13 @@ target_link_libraries(${PROJECT_NAME}
   ${WEBOTS_LIB}
 )
 
-add_executable(wb_task_node 
-  src/nodes/wb_ros2_task.cc
+add_executable(driver 
+  src/Driver.cpp
 )
-ament_target_dependencies(wb_task_node 
+ament_target_dependencies(driver 
   ${${PROJECT_NAME}_dependencies}
 )
-target_link_libraries(wb_task_node 
+target_link_libraries(driver 
   ${PROJECT_NAME}
   ${WEBOTS_LIB}  
 )
@@ -80,7 +79,7 @@ install(
   DESTINATION include
 )
 
-install(TARGETS wb_task_node
+install(TARGETS driver
   RUNTIME 
   DESTINATION lib/${PROJECT_NAME}
 )

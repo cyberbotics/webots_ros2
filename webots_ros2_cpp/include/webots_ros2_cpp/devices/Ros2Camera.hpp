@@ -29,9 +29,9 @@
 #include <vision_msgs/msg/detection2_d_array.hpp>
 #include <vision_msgs/msg/object_hypothesis_with_pose.hpp>
 
-// #include <webots_ros2_msgs/msg/wb_camera_recognition_object.hpp>
-// #include <webots_ros2_msgs/msg/wb_camera_recognition_objects.hpp>
-// #include <webots_ros2_cpp/math.hpp>
+#include <webots_ros2_msgs/msg/wb_camera_recognition_object.hpp>
+#include <webots_ros2_msgs/msg/wb_camera_recognition_objects.hpp>
+#include <webots_ros2_cpp/utils/Math.hpp>
 #include <webots_ros2_cpp/PluginInterface.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 
@@ -47,8 +47,7 @@ namespace webots_ros2
 
   private:
     void publishImage();
-    // void pubRecognition();
-    // void createCameraInfoMsg();
+    void publishRecognition();
 
     webots::Camera* mCamera;
     std::shared_ptr<webots_ros2::WebotsNode> mNode;
@@ -56,10 +55,13 @@ namespace webots_ros2
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
     sensor_msgs::msg::Image mImageMessage;
 
-    // sensor_msgs::msg::CameraInfo camera_info_;
-    // rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr camera_info_pub_;
-    // rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr recog_pub_;
-    // rclcpp::Publisher<webots_ros2_msgs::msg::WbCameraRecognitionObjects>::SharedPtr wb_recog_pub_;
+    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr mCameraInfoPublisher;
+    sensor_msgs::msg::CameraInfo mCameraInfoMessage;
+
+    rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr mRecogntionPublisher;
+    rclcpp::Publisher<webots_ros2_msgs::msg::WbCameraRecognitionObjects>::SharedPtr mWebotsRecognitionPublisher;
+    vision_msgs::msg::Detection2DArray mRecogntionMessage;
+    webots_ros2_msgs::msg::WbCameraRecognitionObjects mWebotsRecognitionMessage;
 
     std::string mTopicName;
     std::string mFrameName;

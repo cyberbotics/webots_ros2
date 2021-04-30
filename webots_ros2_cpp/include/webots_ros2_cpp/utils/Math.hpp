@@ -12,25 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#pragma once
+#ifndef MATH_HPP
+#define MATH_HPP
 
-// ros
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/vector3.hpp>
-
-// std
 #include <cmath>
 
-// Copy from Webots-ROS1
-namespace wb_ros2_interface {
-
-void matrixToQuaternion(const double *matrix, 
-  geometry_msgs::msg::Quaternion &q);
-
-void axisAngleToQuaternion(const double *axisAngle, 
-  geometry_msgs::msg::Quaternion &q);
-
-void quaternionToAxisAngle(const geometry_msgs::msg::Quaternion &q, 
-  double *axisAngle);
-
-}  // wb_ros2_interface
+namespace webots_ros2
+{
+  void matrixToQuaternion(const double *matrix, geometry_msgs::msg::Quaternion &q);
+  void axisAngleToQuaternion(const double *axisAngle, geometry_msgs::msg::Quaternion &q);
+  void quaternionToAxisAngle(const geometry_msgs::msg::Quaternion &q, double *axisAngle);
+}
+#endif

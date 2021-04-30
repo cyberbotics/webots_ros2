@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "webots_ros2_cpp/WebotsNode.hpp"
+
 #include <dlfcn.h>
 #include <webots/Device.hpp>
 
-#include "webots_ros2_cpp/WebotsNode.hpp"
 #include "webots_ros2_cpp/PluginInterface.hpp"
 #include <webots_ros2_cpp/devices/Ros2Lidar.hpp>
+#include <webots_ros2_cpp/devices/Ros2Camera.hpp>
 
 namespace webots_ros2
 {
@@ -69,6 +71,7 @@ namespace webots_ros2
     for (int i = 0; i < mRobot->getNumberOfDevices(); i++)
     {
       webots::Device *device = mRobot->getDeviceByIndex(i);
+      // RCLCPP_INFO(get_logger(), device->getName());
 
       // Prepare parameters
       std::map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
@@ -84,14 +87,13 @@ namespace webots_ros2
         mPlugins.push_back(lidar);
         break;
       }
-        /*
       case webots::Node::CAMERA:
       {
-        auto camera = std::make_shared<wb_ros2_interface::sensors::WbRos2Camera>(dynamic_cast<webots::Camera *>(device), this->shared_from_this());
-        camera->enable(128);
-        sensors_.push_back(camera);
+        auto camera = std::make_shared<webots_ros2::Ros2Camera>(this, parameters);
+        mPlugins.push_back(camera);
         break;
       }
+      /*
       case webots::Node::INERTIAL_UNIT:
       {
         auto imu = std::make_shared<wb_ros2_interface::sensors::WbRos2Imu>(dynamic_cast<webots::InertialUnit *>(device),

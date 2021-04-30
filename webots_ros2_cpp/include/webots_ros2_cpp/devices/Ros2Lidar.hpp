@@ -38,7 +38,6 @@ namespace webots_ros2
 
     webots::Lidar *mLidar;
     std::shared_ptr<webots_ros2::WebotsNode> mNode;
-    std::map<std::string, std::string> mParameters;
 
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr mLaserPublisher;
     sensor_msgs::msg::LaserScan mLaserMessage;

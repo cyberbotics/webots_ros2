@@ -1,17 +1,6 @@
 <?xml version="1.0" ?>
 <robot name="robot_name">
     <webots>
-        <device reference="ds0" type="DistanceSensor">
-            <!-- Using the official Webots ROS 2 interface -->
-            <ros>
-                <enabled>true</enabled>
-                <updateRate>20</updateRate>
-                <topicName>image_raw</topicName>
-                <alwaysOn>false</alwaysOn>
-                <frameName>ds0</frameName>
-            </ros>
-        </device>
-
         <device reference="LDS-01" type="Lidar">
             <tiltAngle>0.0</tiltAngle>
             <horizontalResolution>512</horizontalResolution>
@@ -24,6 +13,111 @@
                 <updateRate>5</updateRate>
                 <topicName>/scan</topicName>
                 <alwaysOn>false</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="camera_1" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="camera_2" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="camera_3" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="camera_4" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="camera_5" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="camera_6" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="camera_7" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+
+        <device reference="camera_8" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="camera_9" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="camera_10" type="Camera">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="vl16" type="Lidar">
+            <ros>
+                <updateRate>30</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="hdl32_1" type="Lidar">
+            <ros>
+                <updateRate>10</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
+        <device reference="hdl32_2" type="Lidar">
+            <ros>
+                <updateRate>10</updateRate>
+                <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
         </device>

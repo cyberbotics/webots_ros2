@@ -79,7 +79,10 @@ namespace webots_ros2
     mLastUpdate = mNode->robot()->getTime();
 
     // Enable/Disable sensor
-    const bool shouldBeEnabled = mAlwaysOn || mLaserPublisher->get_subscription_count() > 0 || mPointCloudPublisher->get_subscription_count() > 0;
+    const bool shouldBeEnabled = mAlwaysOn || 
+      mPointCloudPublisher->get_subscription_count() > 0 || 
+      (mLaserPublisher != nullptr && mLaserPublisher->get_subscription_count() > 0);
+
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)

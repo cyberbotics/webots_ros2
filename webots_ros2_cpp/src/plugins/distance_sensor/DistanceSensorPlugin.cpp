@@ -29,7 +29,7 @@ namespace webots_ros2
     };
 }
 
-extern "C" std::shared_ptr<webots_ros2::PluginInterface> create_plugin(webots_ros2::WebotsNode* node, const std::map<std::string, std::string> &parameters)
+extern "C" webots_ros2::PluginInterface* create_plugin(webots_ros2::WebotsNode* node, const std::map<std::string, std::string> &parameters)
 {
     return new webots_ros2::DistanceSensorPlugin(node, parameters);
 }

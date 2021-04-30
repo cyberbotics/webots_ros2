@@ -51,6 +51,7 @@ add_library(${PROJECT_NAME} SHARED
   # src/sensors/wb_ros2_imu.cc
   # src/sensors/wb_ros2_joint_states.cc
   src/utils/Math.cpp
+  src/utils/Utils.cpp
 )
 ament_target_dependencies(${PROJECT_NAME} 
   ${${PROJECT_NAME}_dependencies}

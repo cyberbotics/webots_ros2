@@ -3,6 +3,8 @@
 #include <sensor_msgs/msg/point_field.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 
+#include <webots_ros2_cpp/utils/Utils.hpp>
+
 namespace webots_ros2
 {
   Ros2Lidar::Ros2Lidar(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) : mNode(node), mIsEnabled(false)
@@ -16,10 +18,7 @@ namespace webots_ros2
     mFrameName = parameters.count("frameName") ? parameters["frameName"] : mLidar->getName();
 
     // Calcualte timestep
-    mPublishTimestepSyncedMs = mNode->robot()->getBasicTimeStep();
-    while (mPublishTimestepSyncedMs / 1000.0 < mPublishTimestep / 2)
-      mPublishTimestepSyncedMs *= 2;
-    mLastUpdate = mNode->robot()->getTime();
+    mPublishTimestepSyncedMs = getDeviceTimestepMsFromPublishTimestep(mPublishTimestep, mNode->robot()->getBasicTimeStep());
 
     // Laser publisher
     if (mLidar->getNumberOfLayers() == 1)
@@ -77,9 +76,9 @@ namespace webots_ros2
     mLastUpdate = mNode->robot()->getTime();
 
     // Enable/Disable sensor
-    const bool shouldBeEnabled = mAlwaysOn || 
-      mPointCloudPublisher->get_subscription_count() > 0 || 
-      (mLaserPublisher != nullptr && mLaserPublisher->get_subscription_count() > 0);
+    const bool shouldBeEnabled = mAlwaysOn ||
+                                 mPointCloudPublisher->get_subscription_count() > 0 ||
+                                 (mLaserPublisher != nullptr && mLaserPublisher->get_subscription_count() > 0);
 
     if (shouldBeEnabled != mIsEnabled)
     {

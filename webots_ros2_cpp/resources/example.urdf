@@ -19,7 +19,7 @@
 
         <device reference="camera_1" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -27,7 +27,7 @@
 
         <device reference="camera_2" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -35,7 +35,7 @@
 
         <device reference="camera_3" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -43,7 +43,7 @@
 
         <device reference="camera_4" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -51,7 +51,7 @@
 
         <device reference="camera_5" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -59,7 +59,7 @@
 
         <device reference="camera_6" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -67,7 +67,7 @@
 
         <device reference="camera_7" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -76,7 +76,7 @@
 
         <device reference="camera_8" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -84,7 +84,7 @@
 
         <device reference="camera_9" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -92,7 +92,7 @@
 
         <device reference="camera_10" type="Camera">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>
@@ -100,7 +100,7 @@
 
         <device reference="vl16" type="Lidar">
             <ros>
-                <updateRate>30</updateRate>
+                <updateRate>33</updateRate>
                 <alwaysOn>true</alwaysOn>
                 <frameName>ds0</frameName>
             </ros>

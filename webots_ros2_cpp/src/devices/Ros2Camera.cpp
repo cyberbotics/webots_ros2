@@ -1,5 +1,8 @@
 #include <webots_ros2_cpp/devices/Ros2Camera.hpp>
 
+#include <webots_ros2_cpp/utils/Utils.hpp>
+
+
 namespace webots_ros2
 {
   Ros2Camera::Ros2Camera(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) : mNode(node), mIsEnabled(false)
@@ -11,9 +14,7 @@ namespace webots_ros2
     mFrameName = parameters.count("frameName") ? parameters["frameName"] : mCamera->getName();
 
     // Calcualte timestep
-    mPublishTimestepSyncedMs = mNode->robot()->getBasicTimeStep();
-    while (mPublishTimestepSyncedMs / 1000.0 < mPublishTimestep / 2)
-      mPublishTimestepSyncedMs *= 2;
+    mPublishTimestepSyncedMs = getDeviceTimestepMsFromPublishTimestep(mPublishTimestep, mNode->robot()->getBasicTimeStep());
 
     // Image publisher
     mImagePublisher = mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName, rclcpp::SensorDataQoS().reliable());

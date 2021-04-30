@@ -45,7 +45,6 @@ namespace webots_ros2
   private:
     void timerCallback();
     std::map<std::string, std::string> getDeviceRosProperties(const std::string &name);
-    static std::string fixedNameString(const std::string &name);
 
     std::string mRobotName;
     rclcpp::TimerBase::SharedPtr mTimer;

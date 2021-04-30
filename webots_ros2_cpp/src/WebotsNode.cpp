@@ -20,6 +20,7 @@
 #include "webots_ros2_cpp/PluginInterface.hpp"
 #include <webots_ros2_cpp/devices/Ros2Lidar.hpp>
 #include <webots_ros2_cpp/devices/Ros2Camera.hpp>
+#include <webots_ros2_cpp/devices/Ros2GPS.hpp>
 
 namespace webots_ros2
 {
@@ -84,30 +85,16 @@ namespace webots_ros2
       switch (device->getNodeType())
       {
       case webots::Node::LIDAR:
-      {
-        auto lidar = std::make_shared<webots_ros2::Ros2Lidar>(this, parameters);
-        mPlugins.push_back(lidar);
+        mPlugins.push_back(std::make_shared<webots_ros2::Ros2Lidar>(this, parameters));
         break;
-      }
       case webots::Node::CAMERA:
-      {
-        auto camera = std::make_shared<webots_ros2::Ros2Camera>(this, parameters);
-        mPlugins.push_back(camera);
+        mPlugins.push_back(std::make_shared<webots_ros2::Ros2Camera>(this, parameters));
         break;
-      }
+      case webots::Node::GPS:
+        mPlugins.push_back(std::make_shared<webots_ros2::Ros2GPS>(this, parameters));
+        break;
       }
     }
-  }
-
-  std::string WebotsNode::fixedNameString(const std::string &name)
-  {
-    std::string fixedName = name;
-    std::replace(fixedName.begin(), fixedName.end(), '-', '_');
-    std::replace(fixedName.begin(), fixedName.end(), '.', '_');
-    std::replace(fixedName.begin(), fixedName.end(), ' ', '_');
-    std::replace(fixedName.begin(), fixedName.end(), ')', '_');
-    std::replace(fixedName.begin(), fixedName.end(), '(', '_');
-    return fixedName;
   }
 
   void WebotsNode::timerCallback()

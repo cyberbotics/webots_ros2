@@ -5,13 +5,13 @@
 
 namespace webots_ros2
 {
-  Ros2Camera::Ros2Camera(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) : mNode(node), mIsEnabled(false)
+  Ros2Camera::Ros2Camera(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) : mNode(node), mIsEnabled(false), mLastUpdate(0)
   {
     mCamera = mNode->robot()->getCamera(parameters["name"]);
-    mTopicName = parameters.count("topicName") ? parameters["topicName"] : "/" + mCamera->getName();
+    mTopicName = parameters.count("topicName") ? parameters["topicName"] : "/" + getFixedNameString(mCamera->getName());
     mPublishTimestep = parameters.count("updateRate") ? 1.0 / atof(parameters["updateRate"].c_str()) : 0;
     mAlwaysOn = parameters.count("alwaysOn") ? (parameters["alwaysOn"] == "true") : false;
-    mFrameName = parameters.count("frameName") ? parameters["frameName"] : mCamera->getName();
+    mFrameName = parameters.count("frameName") ? parameters["frameName"] : getFixedNameString(mCamera->getName());
 
     // Calcualte timestep
     mPublishTimestepSyncedMs = getDeviceTimestepMsFromPublishTimestep(mPublishTimestep, mNode->robot()->getBasicTimeStep());

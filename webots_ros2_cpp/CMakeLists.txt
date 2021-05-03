@@ -30,7 +30,16 @@ find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
 
-set(${PROJECT_NAME}_dependencies
+add_executable(driver 
+  src/Driver.cpp
+  src/WebotsNode.cpp
+  src/devices/Ros2Lidar.cpp
+  src/devices/Ros2Camera.cpp
+  src/devices/Ros2GPS.cpp
+  src/utils/Math.cpp
+  src/utils/Utils.cpp
+)
+ament_target_dependencies(driver 
   action_msgs  
   rclcpp
   rclcpp_lifecycle
@@ -42,37 +51,10 @@ set(${PROJECT_NAME}_dependencies
   tinyxml2_vendor
   TinyXML2
 )
-
-add_library(${PROJECT_NAME} SHARED
-  src/WebotsNode.cpp
-  src/devices/Ros2Lidar.cpp
-  src/devices/Ros2Camera.cpp
-  src/devices/Ros2GPS.cpp
-  src/utils/Math.cpp
-  src/utils/Utils.cpp
-)
-ament_target_dependencies(${PROJECT_NAME} 
-  ${${PROJECT_NAME}_dependencies}
-)
-target_link_libraries(${PROJECT_NAME} 
-  ${WEBOTS_LIB}
-)
-
-add_executable(driver 
-  src/Driver.cpp
-)
-ament_target_dependencies(driver 
-  ${${PROJECT_NAME}_dependencies}
-)
 target_link_libraries(driver 
-  ${PROJECT_NAME}
   ${WEBOTS_LIB}  
 )
 
-install(
-  TARGETS ${PROJECT_NAME}
-  DESTINATION lib
-)
 install(
   DIRECTORY include/
   DESTINATION include
@@ -84,7 +66,4 @@ install(TARGETS driver
 )
 
 ament_export_include_directories(include)
-ament_export_libraries(
-  ${PROJECT_NAME} 
-)
 ament_package()

@@ -38,8 +38,8 @@ namespace webots_ros2
     webots::GPS *mGPS;
     std::shared_ptr<webots_ros2::WebotsNode> mNode;
 
-    rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr mGpsPublisher;
-    sensor_msgs::msg::NavSatFix mGpsMessage;
+    rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr mGPSPublisher;
+    sensor_msgs::msg::NavSatFix mGPSMessage;
 
     rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr mPointPublisher;
     geometry_msgs::msg::PointStamped mPointMessage;

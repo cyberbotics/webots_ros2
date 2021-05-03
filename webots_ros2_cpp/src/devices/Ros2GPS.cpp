@@ -21,10 +21,10 @@ namespace webots_ros2
 
     if (mGPS->getCoordinateSystem() == webots::GPS::WGS84)
     {
-      mGpsPublisher = mNode->create_publisher<sensor_msgs::msg::NavSatFix>(mTopicName, rclcpp::SensorDataQoS().reliable());
-      mGpsMessage.header.frame_id = mFrameName;
-      mGpsMessage.position_covariance_type = sensor_msgs::msg::NavSatFix::COVARIANCE_TYPE_UNKNOWN;
-      mGpsMessage.status.service = sensor_msgs::msg::NavSatStatus::SERVICE_GPS;
+      mGPSPublisher = mNode->create_publisher<sensor_msgs::msg::NavSatFix>(mTopicName, rclcpp::SensorDataQoS().reliable());
+      mGPSMessage.header.frame_id = mFrameName;
+      mGPSMessage.position_covariance_type = sensor_msgs::msg::NavSatFix::COVARIANCE_TYPE_UNKNOWN;
+      mGPSMessage.status.service = sensor_msgs::msg::NavSatStatus::SERVICE_GPS;
     }
     else
     {
@@ -44,7 +44,7 @@ namespace webots_ros2
     // Enable/Disable sensor
     const bool shouldBeEnabled = mAlwaysOn ||
                                  (mPointPublisher != nullptr && mPointPublisher->get_subscription_count() > 0) ||
-                                 (mGpsPublisher != nullptr && mGpsPublisher->get_subscription_count() > 0) ||
+                                 (mGPSPublisher != nullptr && mGPSPublisher->get_subscription_count() > 0) ||
                                  mVelocityPublisher->get_subscription_count() > 0;
     if (shouldBeEnabled != mIsEnabled)
     {
@@ -58,7 +58,7 @@ namespace webots_ros2
     // Publish data
     if (mPointPublisher)
       pubishPoint();
-    if (mGpsPublisher)
+    if (mGPSPublisher)
       publishGPS();
 
     // Publish velocity
@@ -79,11 +79,11 @@ namespace webots_ros2
 
   void Ros2GPS::publishGPS()
   {
-    mGpsMessage.header.stamp = rclcpp::Clock().now();
+    mGPSMessage.header.stamp = rclcpp::Clock().now();
     const double *values = mGPS->getValues();
-    mGpsMessage.latitude = values[0];
-    mGpsMessage.longitude = values[1];
-    mGpsMessage.altitude = values[2];
-    mGpsPublisher->publish(mGpsMessage);
+    mGPSMessage.latitude = values[0];
+    mGPSMessage.longitude = values[1];
+    mGPSMessage.altitude = values[2];
+    mGPSPublisher->publish(mGPSMessage);
   }
 }

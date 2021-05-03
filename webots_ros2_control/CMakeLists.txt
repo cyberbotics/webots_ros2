@@ -27,7 +27,7 @@ find_package(rclcpp REQUIRED)
 add_library(
   ${PROJECT_NAME}_control
   SHARED
-  src/WbRos2Control.cpp
+  src/Ros2Control.cpp
 )
 target_include_directories(
   ${PROJECT_NAME}_control

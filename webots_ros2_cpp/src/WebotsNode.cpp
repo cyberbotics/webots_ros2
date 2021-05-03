@@ -26,12 +26,21 @@ namespace webots_ros2
 {
   typedef std::shared_ptr<PluginInterface> (*creatorFunction)(webots_ros2::WebotsNode *node, const std::map<std::string, std::string> &parameters);
 
-  WebotsNode::WebotsNode() : Node("webots_ros2_interface")
+  WebotsNode::WebotsNode() : Node("webots_ros2")
   {
     const std::string robotDescription = this->declare_parameter<std::string>("robot_description", "");
-    mRobotDescriptionDocument = std::make_shared<tinyxml2::XMLDocument>();
-    mRobotDescriptionDocument->Parse(robotDescription.c_str());
-    mWebotsXMLElement = mRobotDescriptionDocument->FirstChildElement("robot")->FirstChildElement("webots");
+    if (robotDescription != "") {
+      mRobotDescriptionDocument = std::make_shared<tinyxml2::XMLDocument>();
+      mRobotDescriptionDocument->Parse(robotDescription.c_str());
+      if (!mRobotDescriptionDocument)
+        throw std::runtime_error("Invalid URDF, it cannot be parsed");
+      tinyxml2::XMLElement *robotXMLElement = mRobotDescriptionDocument->FirstChildElement("robot");
+      if (!robotXMLElement)
+        throw std::runtime_error("Invalid URDF, it doesn't contain a <robot> tag");
+      mWebotsXMLElement = robotXMLElement->FirstChildElement("webots");
+    } else {
+      RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
+    }
   }
 
   std::map<std::string, std::string> WebotsNode::getDeviceRosProperties(const std::string &name)

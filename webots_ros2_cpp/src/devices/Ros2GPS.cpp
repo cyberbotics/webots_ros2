@@ -2,7 +2,6 @@
 
 #include <webots_ros2_cpp/utils/Utils.hpp>
 
-
 namespace webots_ros2
 {
 
@@ -42,10 +41,10 @@ namespace webots_ros2
     mLastUpdate = mNode->robot()->getTime();
 
     // Enable/Disable sensor
-    const bool shouldBeEnabled = mAlwaysOn ||
-                                 (mPointPublisher != nullptr && mPointPublisher->get_subscription_count() > 0) ||
-                                 (mGPSPublisher != nullptr && mGPSPublisher->get_subscription_count() > 0) ||
-                                 mVelocityPublisher->get_subscription_count() > 0;
+    const bool pointSubscriptionsExist = mPointPublisher != nullptr && mPointPublisher->get_subscription_count() > 0;
+    const bool gpsSubscriptionsExist = mGPSPublisher != nullptr && mGPSPublisher->get_subscription_count() > 0;
+    const bool velocitySubscriptionsExist = mVelocityPublisher->get_subscription_count() > 0;
+    const bool shouldBeEnabled = mAlwaysOn || pointSubscriptionsExist || gpsSubscriptionsExist || velocitySubscriptionsExist;
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
@@ -56,15 +55,16 @@ namespace webots_ros2
     }
 
     // Publish data
-    if (mPointPublisher)
+    if (mPointPublisher && (mAlwaysOn || pointSubscriptionsExist))
       pubishPoint();
-    if (mGPSPublisher)
+    if (mGPSPublisher && (mAlwaysOn || gpsSubscriptionsExist))
       publishGPS();
-
-    // Publish velocity
-    std_msgs::msg::Float32 mSpeedMessage;
-    mSpeedMessage.data = mGPS->getSpeed();
-    mVelocityPublisher->publish(mSpeedMessage);
+    if (mAlwaysOn || velocitySubscriptionsExist)
+    {
+      std_msgs::msg::Float32 mSpeedMessage;
+      mSpeedMessage.data = mGPS->getSpeed();
+      mVelocityPublisher->publish(mSpeedMessage);
+    }
   }
 
   void Ros2GPS::pubishPoint()

@@ -130,13 +130,8 @@
             </ros>
         </device>
 
-        <plugin name="webots_ros2_imu" filename="libwebots_ros2_imu.so">
-            <inertial_unit>inertial_unit</inertial_unit>
-            <gyro>gyro</gyro>
-            <updateRate>5</updateRate>
-            <topicName>/imu</topicName>
-            <alwaysOn>false</alwaysOn>
-            <frameName>imu</frameName>
+        <plugin package="webots_ros2_control" type="webots_ros2_control::Ros2Control" name="webots_ros2_control" >
+            
         </plugin>
     </webots>
 </robot>

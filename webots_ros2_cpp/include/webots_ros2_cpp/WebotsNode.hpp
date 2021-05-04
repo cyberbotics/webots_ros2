@@ -27,6 +27,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/clock.hpp>
+#include <pluginlib/class_loader.hpp>
 
 #include <webots_ros2_cpp/PluginInterface.hpp>
 
@@ -38,7 +39,6 @@ namespace webots_ros2
   {
   public:
     WebotsNode();
-    void registerPlugin(const std::string &pathToPlugin, const std::map<std::string, std::string> &parameters);
     void init();
     webots::Supervisor* robot() { return mRobot; }
 
@@ -51,6 +51,7 @@ namespace webots_ros2
     int mStep;
     webots::Supervisor* mRobot;
     std::vector<std::shared_ptr<webots_ros2::PluginInterface>> mPlugins;
+    std::vector<std::shared_ptr<pluginlib::ClassLoader<PluginInterface>>> mPluginLoaders;
     tinyxml2::XMLElement* mWebotsXMLElement;
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;
   };

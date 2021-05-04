@@ -24,11 +24,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "pluginlib/class_list_macros.hpp"
 
+#include <iostream>
 namespace webots_ros2_control
 {
 
   void Ros2Control::step()
   {
+    std::cout << "test\n";
   }
 }
 

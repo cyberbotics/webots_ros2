@@ -34,8 +34,6 @@ namespace webots_ros2_control
   {
   public:
     void step() override;
-
-  private:
   };
 }
 

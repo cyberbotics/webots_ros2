@@ -10,6 +10,7 @@
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
+  <depend>webots_ros2_cpp</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

@@ -14,7 +14,6 @@
 
 #include "webots_ros2_cpp/WebotsNode.hpp"
 
-#include <dlfcn.h>
 #include <webots/Device.hpp>
 
 #include "webots_ros2_cpp/PluginInterface.hpp"
@@ -29,7 +28,8 @@ namespace webots_ros2
   WebotsNode::WebotsNode() : Node("webots_ros2")
   {
     const std::string robotDescription = this->declare_parameter<std::string>("robot_description", "");
-    if (robotDescription != "") {
+    if (robotDescription != "")
+    {
       mRobotDescriptionDocument = std::make_shared<tinyxml2::XMLDocument>();
       mRobotDescriptionDocument->Parse(robotDescription.c_str());
       if (!mRobotDescriptionDocument)
@@ -38,7 +38,9 @@ namespace webots_ros2
       if (!robotXMLElement)
         throw std::runtime_error("Invalid URDF, it doesn't contain a <robot> tag");
       mWebotsXMLElement = robotXMLElement->FirstChildElement("webots");
-    } else {
+    }
+    else
+    {
       RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
     }
   }
@@ -80,10 +82,10 @@ namespace webots_ros2
     mStep = mRobot->getBasicTimeStep();
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 
+    // Load static plugins
     for (int i = 0; i < mRobot->getNumberOfDevices(); i++)
     {
       webots::Device *device = mRobot->getDeviceByIndex(i);
-      // RCLCPP_INFO(get_logger(), device->getName());
 
       // Prepare parameters
       std::map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
@@ -104,6 +106,26 @@ namespace webots_ros2
         break;
       }
     }
+
+    // Load dynamic plugins
+    tinyxml2::XMLElement *pluginElement = mWebotsXMLElement->FirstChildElement("plugin");
+    while (pluginElement)
+    {
+      if (!pluginElement->Attribute("type"))
+        throw std::runtime_error("Invalid URDF, a plugin is missing a `type` property at line " + std::to_string(pluginElement->GetLineNum()));
+      if (!pluginElement->Attribute("package"))
+        throw std::runtime_error("Invalid URDF, a plugin is missing a `package` property at line " + std::to_string(pluginElement->GetLineNum()));
+
+      const std::string type = pluginElement->Attribute("type");
+      const std::string package = pluginElement->Attribute("package");
+
+      pluginlib::ClassLoader<PluginInterface> *pluginLoader = new pluginlib::ClassLoader<PluginInterface>(package, "webots_ros2::PluginInterface");
+      mPluginLoaders.push_back(std::shared_ptr<pluginlib::ClassLoader<PluginInterface>>(pluginLoader));
+      std::shared_ptr<PluginInterface> plugin(pluginLoader->createUnmanagedInstance(type));
+      mPlugins.push_back(plugin);
+
+      pluginElement = pluginElement->NextSiblingElement("plugin");
+    }
   }
 
   void WebotsNode::timerCallback()
@@ -112,21 +134,4 @@ namespace webots_ros2
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
   }
-
-  void WebotsNode::registerPlugin(const std::string &pathToPlugin, const std::map<std::string, std::string> &arguments)
-  {
-    void *handle = dlopen(pathToPlugin.c_str(), RTLD_LAZY);
-    if (!handle)
-    {
-      fprintf(stderr, "dlopen failure: %s\n", dlerror());
-      exit(EXIT_FAILURE);
-    }
-    creatorFunction create = (creatorFunction)dlsym(handle, "create_plugin");
-
-    // std::shared_ptr<PluginInterface> plugin = (*create)(this, {{"name", "ds0"}});
-    // mPlugins.push_back(plugin);
-
-    dlclose(handle);
-  }
-
 } // end namespace webots_ros2

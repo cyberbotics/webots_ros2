@@ -1,6 +1,7 @@
 #ifndef PLUGIN_INTERFACE
 #define PLUGIN_INTERFACE
 
+#include <map>
 #include <webots/Supervisor.hpp>
 
 namespace webots_ros2
@@ -15,6 +16,7 @@ namespace webots_ros2
         // This method is called on each timestep.
         // Never call `robot.step()` in this method.
         virtual void step() = 0;
+        // virtual void init(webots_ros2::WebotsNode* node, const std::map<std::string, std::string> &parameters) = 0;
     };
 }
 

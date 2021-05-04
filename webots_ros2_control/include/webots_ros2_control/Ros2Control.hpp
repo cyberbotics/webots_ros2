@@ -1,4 +1,4 @@
-// Copyright 2020 ros2_control Development Team
+// Copyright 1996-2021 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
 #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #include "rclcpp/macros.hpp"
 #include "webots_ros2_cpp/PluginInterface.hpp"
+#include "webots_ros2_cpp/WebotsNode.hpp"
 
 namespace webots_ros2_control
 {
@@ -34,6 +35,7 @@ namespace webots_ros2_control
   {
   public:
     void step() override;
+    void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
   };
 }
 

@@ -29,15 +29,15 @@ namespace webots_ros2
   class Ros2Lidar : public webots_ros2::PluginInterface
   {
   public:
-    Ros2Lidar(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters);
-    virtual void step() override;
+    void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
+    void step() override;
 
   private:
     void publishPointCloud();
     void publishLaserScan();
 
     webots::Lidar *mLidar;
-    std::shared_ptr<webots_ros2::WebotsNode> mNode;
+    webots_ros2::WebotsNode *mNode;
 
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr mLaserPublisher;
     sensor_msgs::msg::LaserScan mLaserMessage;

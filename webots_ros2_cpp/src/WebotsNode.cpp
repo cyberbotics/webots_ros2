@@ -45,6 +45,12 @@ namespace webots_ros2
     }
   }
 
+  std::map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement)
+  {
+    std::map<std::string, std::string> properties;
+    return properties;
+  }
+
   std::map<std::string, std::string> WebotsNode::getDeviceRosProperties(const std::string &name)
   {
     std::map<std::string, std::string> properties({{"enabled", "true"}});
@@ -93,17 +99,23 @@ namespace webots_ros2
         continue;
       parameters["name"] = device->getName();
 
+      std::shared_ptr<PluginInterface> plugin = nullptr;
       switch (device->getNodeType())
       {
       case webots::Node::LIDAR:
-        mPlugins.push_back(std::make_shared<webots_ros2::Ros2Lidar>(this, parameters));
+        plugin = std::make_shared<webots_ros2::Ros2Lidar>();
         break;
       case webots::Node::CAMERA:
-        mPlugins.push_back(std::make_shared<webots_ros2::Ros2Camera>(this, parameters));
+        plugin = std::make_shared<webots_ros2::Ros2Camera>();
         break;
       case webots::Node::GPS:
-        mPlugins.push_back(std::make_shared<webots_ros2::Ros2GPS>(this, parameters));
+        plugin = std::make_shared<webots_ros2::Ros2GPS>();
         break;
+      }
+      if (plugin)
+      {
+        plugin->init(this, parameters);
+        mPlugins.push_back(plugin);
       }
     }
 
@@ -121,7 +133,10 @@ namespace webots_ros2
 
       pluginlib::ClassLoader<PluginInterface> *pluginLoader = new pluginlib::ClassLoader<PluginInterface>(package, "webots_ros2::PluginInterface");
       mPluginLoaders.push_back(std::shared_ptr<pluginlib::ClassLoader<PluginInterface>>(pluginLoader));
+
       std::shared_ptr<PluginInterface> plugin(pluginLoader->createUnmanagedInstance(type));
+      std::map<std::string, std::string> pluginProperties = getPluginProperties(pluginElement);
+      plugin->init(this, pluginProperties);
       mPlugins.push_back(plugin);
 
       pluginElement = pluginElement->NextSiblingElement("plugin");

@@ -28,15 +28,15 @@ namespace webots_ros2
   class Ros2GPS : public PluginInterface
   {
   public:
-    Ros2GPS(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters);
-    virtual void step() override;
+    void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
+    void step() override;
 
   private:
     void pubishPoint();
     void publishGPS();
 
     webots::GPS *mGPS;
-    std::shared_ptr<webots_ros2::WebotsNode> mNode;
+    webots_ros2::WebotsNode *mNode;
 
     rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr mGPSPublisher;
     sensor_msgs::msg::NavSatFix mGPSMessage;

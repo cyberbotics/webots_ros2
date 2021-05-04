@@ -42,15 +42,15 @@ namespace webots_ros2
   class Ros2Camera : public PluginInterface
   {
   public:
-    Ros2Camera(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters);
-    virtual void step() override;
+    void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
+    void step() override;
 
   private:
     void publishImage();
     void publishRecognition();
 
     webots::Camera* mCamera;
-    std::shared_ptr<webots_ros2::WebotsNode> mNode;
+    webots_ros2::WebotsNode *mNode;
 
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
     sensor_msgs::msg::Image mImageMessage;

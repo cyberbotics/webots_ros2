@@ -1,4 +1,4 @@
-// Copyright 2020 ros2_control Development Team
+// Copyright 1996-2021 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,10 +30,13 @@ namespace webots_ros2_control
 
   void Ros2Control::step()
   {
-    std::cout << "test\n";
+    std::cout << "Ros2Control::step()\n";
+  }
+
+  void Ros2Control::init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters)
+  {
+    std::cout << "Ros2Control::init()\n";
   }
 }
 
-PLUGINLIB_EXPORT_CLASS(
-    webots_ros2_control::Ros2Control,
-    webots_ros2::PluginInterface)
+PLUGINLIB_EXPORT_CLASS(webots_ros2_control::Ros2Control, webots_ros2::PluginInterface)

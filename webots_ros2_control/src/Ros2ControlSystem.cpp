@@ -1,4 +1,4 @@
-// Copyright 2020 ros2_control Development Team
+// Copyright 1996-2021 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,6 +84,4 @@ namespace webots_ros2_control
   }
 }
 
-PLUGINLIB_EXPORT_CLASS(
-    webots_ros2_control::Ros2ControlSystem,
-    hardware_interface::SystemInterface)
+PLUGINLIB_EXPORT_CLASS(webots_ros2_control::Ros2ControlSystem, hardware_interface::SystemInterface)

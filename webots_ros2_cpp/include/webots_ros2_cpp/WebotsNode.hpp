@@ -29,8 +29,7 @@
 #include <rclcpp/clock.hpp>
 #include <pluginlib/class_loader.hpp>
 
-#include <webots_ros2_cpp/PluginInterface.hpp>
-
+#include "webots_ros2_cpp/PluginInterface.hpp"
 
 namespace webots_ros2
 {
@@ -40,19 +39,20 @@ namespace webots_ros2
   public:
     WebotsNode();
     void init();
-    webots::Supervisor* robot() { return mRobot; }
+    webots::Supervisor *robot() { return mRobot; }
 
   private:
     void timerCallback();
     std::map<std::string, std::string> getDeviceRosProperties(const std::string &name);
+    std::map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement);
 
     std::string mRobotName;
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;
-    webots::Supervisor* mRobot;
-    std::vector<std::shared_ptr<webots_ros2::PluginInterface>> mPlugins;
+    webots::Supervisor *mRobot;
+    std::vector<std::shared_ptr<PluginInterface>> mPlugins;
     std::vector<std::shared_ptr<pluginlib::ClassLoader<PluginInterface>>> mPluginLoaders;
-    tinyxml2::XMLElement* mWebotsXMLElement;
+    tinyxml2::XMLElement *mWebotsXMLElement;
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;
   };
 

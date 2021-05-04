@@ -30,31 +30,12 @@
 
 namespace webots_ros2_control
 {
-  struct Ros2ControlInfo
-  {
-    std::vector<double> jointPositionsCommand;
-    std::vector<double> jointPositions;
-  };
-
-  class Ros2Control : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>, webots_ros2::PluginInterface
+  class Ros2Control : public webots_ros2::PluginInterface
   {
   public:
-    // hardware_interface::BaseInterface
-    hardware_interface::return_type configure(const hardware_interface::HardwareInfo &info) override;
-    std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-    std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
-    hardware_interface::return_type start() override;
-    hardware_interface::return_type stop() override;
-    hardware_interface::return_type read() override;
-    hardware_interface::return_type write() override;
-
-    // webots_ros2::PluginInterface
     void step() override;
 
   private:
-    std::vector<double> mCommands;
-    std::vector<double> mStates;
-    Ros2ControlInfo mInfo;
   };
 }
 

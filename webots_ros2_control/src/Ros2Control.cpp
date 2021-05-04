@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "webots_ros2_bridge/Ros2Control.hpp"
+#include "webots_ros2_control/Ros2Control.hpp"
 
 #include <chrono>
 #include <cmath>
@@ -27,63 +27,11 @@
 namespace webots_ros2_control
 {
 
-  hardware_interface::return_type Ros2Control::configure(
-      const hardware_interface::HardwareInfo &info)
+  void Ros2Control::step()
   {
-    status_ = hardware_interface::status::CONFIGURED;
-
-    return hardware_interface::return_type::OK;
-  }
-
-  std::vector<hardware_interface::StateInterface>
-  Ros2Control::export_state_interfaces()
-  {
-    std::vector<hardware_interface::StateInterface> interfaces;
-    interfaces.emplace_back(
-        hardware_interface::StateInterface(
-            "interfaceName",
-            hardware_interface::HW_IF_POSITION, &mInfo.jointPositions[0]));
-
-    return interfaces;
-  }
-
-  std::vector<hardware_interface::CommandInterface>
-  Ros2Control::export_command_interfaces()
-  {
-    std::vector<hardware_interface::CommandInterface> interfaces;
-    interfaces.emplace_back(
-        hardware_interface::CommandInterface(
-            "interfaceName",
-            hardware_interface::HW_IF_POSITION, &mInfo.jointPositionsCommand[0]));
-
-    return interfaces;
-  }
-
-  hardware_interface::return_type Ros2Control::start()
-  {
-    status_ = hardware_interface::status::STARTED;
-
-    return hardware_interface::return_type::OK;
-  }
-
-  hardware_interface::return_type Ros2Control::stop()
-  {
-    status_ = hardware_interface::status::STOPPED;
-
-    return hardware_interface::return_type::OK;
-  }
-
-  hardware_interface::return_type Ros2Control::read()
-  {
-    return hardware_interface::return_type::OK;
-  }
-
-  hardware_interface::return_type Ros2Control::write()
-  {
-    return hardware_interface::return_type::OK;
   }
 }
 
 PLUGINLIB_EXPORT_CLASS(
     webots_ros2_control::Ros2Control,
-    hardware_interface::SystemInterface)
+    webots_ros2::PluginInterface)

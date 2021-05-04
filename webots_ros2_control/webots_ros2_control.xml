@@ -1,0 +1,10 @@
+<library path="default_webots_hardware">
+  <class
+    name="webots_ros2_control/Ros2Control"
+    type="webots_ros2_control::Ros2Control"
+    base_class_type="webots_ros2_control::PluginInterface">
+    <description>
+      Default ros2_control Hardware Component to interface with Webots.
+    </description>
+  </class>
+</library>

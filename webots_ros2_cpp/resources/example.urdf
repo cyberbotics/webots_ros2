@@ -17,6 +17,14 @@
             </ros>
         </device>
 
+        <device reference="camera" type="Camera">
+            <ros>
+                <updateRate>33</updateRate>
+                <alwaysOn>true</alwaysOn>
+                <frameName>ds0</frameName>
+            </ros>
+        </device>
+
         <device reference="camera_1" type="Camera">
             <ros>
                 <updateRate>33</updateRate>

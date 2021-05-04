@@ -1,4 +1,4 @@
-<library path="default_webots_hardware">
+<library path="webots_ros2_control_system">
   <class
     name="webots_ros2_control/Ros2ControlHardware"
     type="webots_ros2_control::Ros2ControlHardware"

@@ -36,6 +36,9 @@ namespace webots_ros2_control
   public:
     void step() override;
     void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
+
+    private:
+      webots_ros2::WebotsNode *mNode;
   };
 }
 

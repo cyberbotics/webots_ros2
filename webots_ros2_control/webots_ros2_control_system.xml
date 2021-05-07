@@ -1,4 +1,4 @@
-<library path="webots_ros2_control_system">
+<library path="webots_ros2_control">
   <class
     type="webots_ros2_control::Ros2ControlHardware"
     base_class_type="webots_ros2_control::PluginInterface">

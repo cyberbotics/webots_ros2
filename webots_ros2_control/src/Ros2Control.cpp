@@ -36,6 +36,7 @@ namespace webots_ros2_control
   void Ros2Control::init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters)
   {
     std::cout << "Ros2Control::init()\n";
+    mNode = node;
   }
 }
 

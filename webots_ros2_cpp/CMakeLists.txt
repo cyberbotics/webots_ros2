@@ -40,7 +40,7 @@ add_executable(driver
   src/utils/Utils.cpp
 )
 ament_target_dependencies(driver 
-  action_msgs  
+  action_msgs
   rclcpp
   rclcpp_lifecycle
   sensor_msgs
@@ -65,5 +65,20 @@ install(TARGETS driver
   DESTINATION lib/${PROJECT_NAME}
 )
 
-ament_export_include_directories(include)
+ament_export_include_directories(
+  include
+)
+
+ament_export_dependencies(
+  rclcpp
+  rclcpp_lifecycle
+  sensor_msgs
+  std_msgs
+  tf2_ros
+  vision_msgs
+  webots_ros2_msgs
+  tinyxml2_vendor
+  TinyXML2
+)
+
 ament_package()

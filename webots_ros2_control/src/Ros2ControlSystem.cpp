@@ -26,6 +26,10 @@
 
 namespace webots_ros2_control
 {
+  void Ros2ControlSystem::init(webots_ros2::WebotsNode *node)
+  {
+  }
+
   hardware_interface::return_type Ros2ControlSystem::configure(
       const hardware_interface::HardwareInfo &info)
   {

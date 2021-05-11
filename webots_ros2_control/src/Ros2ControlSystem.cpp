@@ -26,7 +26,6 @@
 
 namespace webots_ros2_control
 {
-
   hardware_interface::return_type Ros2ControlSystem::configure(
       const hardware_interface::HardwareInfo &info)
   {
@@ -84,4 +83,4 @@ namespace webots_ros2_control
   }
 }
 
-PLUGINLIB_EXPORT_CLASS(webots_ros2_control::Ros2ControlSystem, hardware_interface::SystemInterface)
+PLUGINLIB_EXPORT_CLASS(webots_ros2_control::Ros2ControlSystem, webots_ros2_control::Ros2ControlSystemInterface)

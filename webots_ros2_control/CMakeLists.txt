@@ -18,6 +18,7 @@ endif()
 # Dependencies
 find_package(ament_cmake REQUIRED)
 find_package(hardware_interface REQUIRED)
+find_package(controller_manager REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(webots_ros2_cpp REQUIRED)
@@ -43,6 +44,7 @@ target_include_directories(
 ament_target_dependencies(
   ${PROJECT_NAME}
   hardware_interface
+  controller_manager
   pluginlib
   rclcpp
   webots_ros2_cpp
@@ -85,10 +87,14 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
 endif()
 
-#ament_export_dependencies(
-#  hardware_interface
-#  pluginlib
-#  rclcpp
-#)
+ament_export_dependencies(
+  hardware_interface
+  pluginlib
+  rclcpp
+)
+ament_export_libraries(
+  ${PROJECT_NAME}
+  ${PROJECT_NAME}_system
+)
 
 ament_package()

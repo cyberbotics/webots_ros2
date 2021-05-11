@@ -21,6 +21,8 @@
 #include <vector>
 
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
+#include "hardware_interface/resource_manager.hpp"
+#include "hardware_interface/component_parser.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "pluginlib/class_list_macros.hpp"
 
@@ -31,12 +33,59 @@ namespace webots_ros2_control
   void Ros2Control::step()
   {
     std::cout << "Ros2Control::step()\n";
+
+    mControllerManager->read();
+    mControllerManager->update();
+    mControllerManager->write();
   }
 
   void Ros2Control::init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters)
   {
     std::cout << "Ros2Control::init()\n";
     mNode = node;
+
+    // Load hardware
+    try
+    {
+      mHardwareLoader.reset(new pluginlib::ClassLoader<webots_ros2_control::Ros2ControlSystemInterface>(
+          "webots_ros2_control",
+          "webots_ros2_control::Ros2ControlSystemInterface"));
+    }
+    catch (pluginlib::LibraryLoadException &ex)
+    {
+      throw std::runtime_error("Hardware loader cannot be created: " + atoi(ex.what()));
+    }
+
+    // Control Hardware
+    std::string urdfString;
+    std::vector<hardware_interface::HardwareInfo> controlHardware;
+    std::unique_ptr<hardware_interface::ResourceManager> resourceManager = std::make_unique<hardware_interface::ResourceManager>();
+    try
+    {
+      urdfString = mNode->urdf();
+      controlHardware = hardware_interface::parse_control_resources_from_urdf(urdfString);
+    }
+    catch (const std::runtime_error &ex)
+    {
+      throw std::runtime_error("URDF cannot be parsed by a `ros2_control` component parser: " + atoi(ex.what()));
+    }
+    for (unsigned int i = 0; i < controlHardware.size(); i++)
+    {
+      const std::string hardwareType = controlHardware[i].hardware_class_type;
+      auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
+          mHardwareLoader->createUnmanagedInstance(hardwareType));
+      webotsSystem->init(mNode);
+      resourceManager->import_component(std::move(webotsSystem));
+    }
+
+    // Controller Manager
+    rclcpp::executors::MultiThreadedExecutor::SharedPtr executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
+    RCLCPP_INFO(mNode->get_logger(), "Loading ControllerManager");
+    mControllerManager.reset(new controller_manager::ControllerManager(
+        std::move(resourceManager),
+        executor,
+        "controller_manager"));
+    executor->add_node(mControllerManager);
   }
 }
 

@@ -40,6 +40,7 @@ namespace webots_ros2
     WebotsNode();
     void init();
     webots::Supervisor *robot() { return mRobot; }
+    std::string urdf() const { return mRobotDescription; };
 
   private:
     void timerCallback();
@@ -47,6 +48,8 @@ namespace webots_ros2
     std::map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement);
 
     std::string mRobotName;
+    std::string mRobotDescription;
+
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;
     webots::Supervisor *mRobot;

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROS2_CONTROL_HPP
-#define ROS2_CONTROL_HPP
+#ifndef ROS2_CONTROL_INTERFACE_HPP
+#define ROS2_CONTROL_INTERFACE_HPP
 
 #include <memory>
 #include <string>
@@ -25,24 +25,16 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "hardware_interface/types/hardware_interface_status_values.hpp"
-#include "controller_manager/controller_manager.hpp"
-#include "rclcpp/macros.hpp"
 #include "webots_ros2_cpp/PluginInterface.hpp"
+#include <webots/Supervisor.hpp>
 #include "webots_ros2_cpp/WebotsNode.hpp"
-#include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
 
 namespace webots_ros2_control
 {
-  class Ros2Control : public webots_ros2::PluginInterface
+  class Ros2ControlSystemInterface : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
   {
   public:
-    void step() override;
-    void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
-
-    private:
-      webots_ros2::WebotsNode *mNode;
-      std::shared_ptr<pluginlib::ClassLoader<Ros2ControlSystemInterface>> mHardwareLoader;
-      std::shared_ptr<controller_manager::ControllerManager> mControllerManager;
+    virtual void init(webots_ros2::WebotsNode *node) = 0;
   };
 }
 

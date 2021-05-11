@@ -27,6 +27,9 @@
 #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #include "rclcpp/macros.hpp"
 #include "webots_ros2_cpp/PluginInterface.hpp"
+#include <webots/Supervisor.hpp>
+
+#include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
 
 namespace webots_ros2_control
 {
@@ -36,10 +39,11 @@ namespace webots_ros2_control
     std::vector<double> jointPositions;
   };
 
-  class Ros2ControlSystem : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
+  class Ros2ControlSystem : public Ros2ControlSystemInterface
   {
   public:
-    // hardware_interface::BaseInterface
+    void init(webots_ros2::WebotsNode *node) override;
+
     hardware_interface::return_type configure(const hardware_interface::HardwareInfo &info) override;
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
@@ -51,6 +55,7 @@ namespace webots_ros2_control
   private:
     std::vector<double> mCommands;
     std::vector<double> mStates;
+    webots::Supervisor *mNode;
     Ros2ControlInfo mInfo;
   };
 }

@@ -27,11 +27,11 @@ namespace webots_ros2
 
   WebotsNode::WebotsNode() : Node("webots_ros2")
   {
-    const std::string robotDescription = this->declare_parameter<std::string>("robot_description", "");
-    if (robotDescription != "")
+    mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
+    if (mRobotDescription != "")
     {
       mRobotDescriptionDocument = std::make_shared<tinyxml2::XMLDocument>();
-      mRobotDescriptionDocument->Parse(robotDescription.c_str());
+      mRobotDescriptionDocument->Parse(mRobotDescription.c_str());
       if (!mRobotDescriptionDocument)
         throw std::runtime_error("Invalid URDF, it cannot be parsed");
       tinyxml2::XMLElement *robotXMLElement = mRobotDescriptionDocument->FirstChildElement("robot");

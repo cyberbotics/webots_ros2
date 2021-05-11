@@ -8,6 +8,7 @@
   <license>TODO: License declaration</license>
 
   <depend>hardware_interface</depend>
+  <depend>controller_manager</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>webots_ros2_cpp</depend>

@@ -28,36 +28,58 @@ namespace webots_ros2_control
 {
   void Ros2ControlSystem::init(webots_ros2::WebotsNode *node)
   {
+    mNode = node;
   }
 
-  hardware_interface::return_type Ros2ControlSystem::configure(
-      const hardware_interface::HardwareInfo &info)
+  hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info)
   {
-    status_ = hardware_interface::status::CONFIGURED;
+    for (hardware_interface::ComponentInfo component : info.joints) {
+      Joint joint;
+      joint.name = component.name;
 
+      webots::Motor* motor = mNode->robot()->getMotor(joint.name);
+      webots::PositionSensor* sensor = mNode->robot()->getPositionSensor(joint.name);
+      joint.motor = (motor) ? motor : sensor->getMotor();
+      joint.sensor = (sensor) ? sensor : motor->getPositionSensor();
+
+      joint.controlPosition = false;
+      joint.controlVelocity = false;
+      joint.controlEffort = false;
+      for (hardware_interface::InterfaceInfo commandInterface : component.command_interfaces) {
+        if (commandInterface.name == "position")
+          joint.controlPosition = true;
+        else if (commandInterface.name == "velocity") {
+          joint.controlVelocity = true;
+          if (joint.motor)
+            joint.motor->setPosition(INFINITY);
+        }
+        else if (commandInterface.name == "effort")
+          joint.controlEffort = true;
+      }
+
+      mJoints.push_back(joint);
+    }
+
+    status_ = hardware_interface::status::CONFIGURED;
     return hardware_interface::return_type::OK;
   }
 
-  std::vector<hardware_interface::StateInterface>
-  Ros2ControlSystem::export_state_interfaces()
+  std::vector<hardware_interface::StateInterface> Ros2ControlSystem::export_state_interfaces()
   {
     std::vector<hardware_interface::StateInterface> interfaces;
-    interfaces.emplace_back(
-        hardware_interface::StateInterface(
-            "interfaceName",
-            hardware_interface::HW_IF_POSITION, &mInfo.jointPositions[0]));
+    for (Joint joint : mJoints)
+      if (joint.sensor)
+        interfaces.emplace_back(hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_POSITION, &joint.position));
 
     return interfaces;
   }
 
-  std::vector<hardware_interface::CommandInterface>
-  Ros2ControlSystem::export_command_interfaces()
+  std::vector<hardware_interface::CommandInterface> Ros2ControlSystem::export_command_interfaces()
   {
     std::vector<hardware_interface::CommandInterface> interfaces;
-    interfaces.emplace_back(
-        hardware_interface::CommandInterface(
-            "interfaceName",
-            hardware_interface::HW_IF_POSITION, &mInfo.jointPositionsCommand[0]));
+    for (Joint joint : mJoints)
+      if (joint.motor)
+        interfaces.emplace_back(hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_POSITION, &joint.positionCommand));
 
     return interfaces;
   }
@@ -65,24 +87,37 @@ namespace webots_ros2_control
   hardware_interface::return_type Ros2ControlSystem::start()
   {
     status_ = hardware_interface::status::STARTED;
-
     return hardware_interface::return_type::OK;
   }
 
   hardware_interface::return_type Ros2ControlSystem::stop()
   {
     status_ = hardware_interface::status::STOPPED;
-
     return hardware_interface::return_type::OK;
   }
 
   hardware_interface::return_type Ros2ControlSystem::read()
   {
+    for (Joint joint : mJoints) {
+      if (joint.sensor)
+        joint.position = joint.sensor->getValue();
+    }
+
     return hardware_interface::return_type::OK;
   }
 
   hardware_interface::return_type Ros2ControlSystem::write()
   {
+    for (Joint joint : mJoints) {
+      if (joint.motor) {
+        if (joint.controlPosition)
+          joint.motor->setPosition(joint.positionCommand);
+        if (joint.controlVelocity)
+          joint.motor->setVelocity(joint.velocityCommand);
+        if (joint.controlEffort)
+          joint.motor->setTorque(joint.effortCommand);
+      }
+    }
     return hardware_interface::return_type::OK;
   }
 }

@@ -27,16 +27,27 @@
 #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #include "rclcpp/macros.hpp"
 #include "webots_ros2_cpp/PluginInterface.hpp"
-#include <webots/Supervisor.hpp>
+#include "webots_ros2_cpp/WebotsNode.hpp"
 
 #include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
+#include "webots/Motor.hpp"
+#include "webots/PositionSensor.hpp"
 
 namespace webots_ros2_control
 {
-  struct Ros2ControlInfo
-  {
-    std::vector<double> jointPositionsCommand;
-    std::vector<double> jointPositions;
+  struct Joint {
+    double positionCommand;
+    double position;
+    double velocityCommand;
+    double velocity;
+    double effortCommand;
+    double effort;
+    bool controlPosition;
+    bool controlVelocity;
+    bool controlEffort;
+    std::string name;
+    webots::Motor* motor;
+    webots::PositionSensor* sensor;
   };
 
   class Ros2ControlSystem : public Ros2ControlSystemInterface
@@ -53,10 +64,8 @@ namespace webots_ros2_control
     hardware_interface::return_type write() override;
 
   private:
-    std::vector<double> mCommands;
-    std::vector<double> mStates;
-    webots::Supervisor *mNode;
-    Ros2ControlInfo mInfo;
+    webots_ros2::WebotsNode *mNode;
+    std::vector<Joint> mJoints;
   };
 }
 

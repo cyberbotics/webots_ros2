@@ -130,7 +130,7 @@
             </ros>
         </device>
 
-        <plugin package="webots_ros2_cpp" type="webots_ros2_control::Ros2Control">
+        <plugin package="webots_ros2_control" type="webots_ros2_control::Ros2Control">
         </plugin>
     </webots>
 

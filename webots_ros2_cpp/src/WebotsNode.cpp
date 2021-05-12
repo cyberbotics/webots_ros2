@@ -21,6 +21,9 @@
 #include <webots_ros2_cpp/devices/Ros2Camera.hpp>
 #include <webots_ros2_cpp/devices/Ros2GPS.hpp>
 
+#include "webots_ros2_cpp/PluginInterface.hpp"
+
+
 namespace webots_ros2
 {
   typedef std::shared_ptr<PluginInterface> (*creatorFunction)(webots_ros2::WebotsNode *node, const std::map<std::string, std::string> &parameters);

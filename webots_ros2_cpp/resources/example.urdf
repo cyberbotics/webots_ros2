@@ -130,7 +130,7 @@
             </ros>
         </device>
 
-        <plugin package="webots_ros2_control" type="webots_ros2_control::Ros2Control">
+        <plugin package="webots_ros2_cpp" type="webots_ros2_control::Ros2Control">
         </plugin>
     </webots>
 
@@ -139,7 +139,10 @@
             <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
         </hardware>
         <joint name="right wheel motor">
-            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="left wheel motor">
+            <state_interface name="velocity"/>
         </joint>
     </ros2_control>
 </robot>

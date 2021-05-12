@@ -29,10 +29,9 @@
 #include <rclcpp/clock.hpp>
 #include <pluginlib/class_loader.hpp>
 
-#include "webots_ros2_cpp/PluginInterface.hpp"
-
 namespace webots_ros2
 {
+  class PluginInterface;
 
   class WebotsNode : public rclcpp::Node
   {

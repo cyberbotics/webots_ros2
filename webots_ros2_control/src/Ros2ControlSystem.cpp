@@ -26,14 +26,10 @@
 
 namespace webots_ros2_control
 {
-  void Ros2ControlSystem::init(webots_ros2::WebotsNode *node)
+  void Ros2ControlSystem::init(webots_ros2::WebotsNode *node, const hardware_interface::HardwareInfo &info)
   {
     mNode = node;
-  }
-
-  hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info)
-  {
-    for (hardware_interface::ComponentInfo component : info.joints) {
+     for (hardware_interface::ComponentInfo component : info.joints) {
       Joint joint;
       joint.name = component.name;
 
@@ -41,6 +37,8 @@ namespace webots_ros2_control
       webots::PositionSensor* sensor = mNode->robot()->getPositionSensor(joint.name);
       joint.motor = (motor) ? motor : sensor->getMotor();
       joint.sensor = (sensor) ? sensor : motor->getPositionSensor();
+      if (joint.sensor)
+        joint.sensor->enable(node->robot()->getBasicTimeStep());
 
       joint.controlPosition = false;
       joint.controlVelocity = false;
@@ -59,7 +57,13 @@ namespace webots_ros2_control
 
       mJoints.push_back(joint);
     }
+  }
 
+  hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info)
+  {
+    if (configure_default(info) != hardware_interface::return_type::OK) {
+      return hardware_interface::return_type::ERROR;
+    }
     status_ = hardware_interface::status::CONFIGURED;
     return hardware_interface::return_type::OK;
   }
@@ -78,9 +82,14 @@ namespace webots_ros2_control
   {
     std::vector<hardware_interface::CommandInterface> interfaces;
     for (Joint joint : mJoints)
-      if (joint.motor)
-        interfaces.emplace_back(hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_POSITION, &joint.positionCommand));
-
+      if (joint.motor) {
+        if (joint.controlPosition)
+          interfaces.emplace_back(hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_POSITION, &joint.positionCommand));
+        if (joint.controlEffort)
+          interfaces.emplace_back(hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_EFFORT, &joint.effortCommand));
+        if (joint.controlVelocity)
+          interfaces.emplace_back(hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_VELOCITY, &joint.velocityCommand));
+      }
     return interfaces;
   }
 

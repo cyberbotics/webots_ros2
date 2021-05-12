@@ -140,9 +140,11 @@
         </hardware>
         <joint name="right wheel motor">
             <state_interface name="velocity"/>
+            <command_interface name="velocity"/>
         </joint>
         <joint name="left wheel motor">
             <state_interface name="velocity"/>
+            <command_interface name="velocity"/>
         </joint>
     </ros2_control>
 </robot>

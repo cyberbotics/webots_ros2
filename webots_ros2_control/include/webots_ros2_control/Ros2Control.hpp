@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <thread>
 
 #include "hardware_interface/base_interface.hpp"
 #include "hardware_interface/system_interface.hpp"
@@ -43,6 +44,9 @@ namespace webots_ros2_control
       webots_ros2::WebotsNode *mNode;
       std::shared_ptr<pluginlib::ClassLoader<Ros2ControlSystemInterface>> mHardwareLoader;
       std::shared_ptr<controller_manager::ControllerManager> mControllerManager;
+
+      std::thread mThreadExecutor;
+      rclcpp::executors::MultiThreadedExecutor::SharedPtr mExecutor;
   };
 }
 

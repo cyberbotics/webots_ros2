@@ -34,7 +34,7 @@ namespace webots_ros2_control
   class Ros2ControlSystemInterface : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
   {
   public:
-    virtual void init(webots_ros2::WebotsNode *node) = 0;
+    virtual void init(webots_ros2::WebotsNode *node, const hardware_interface::HardwareInfo &info) = 0;
   };
 }
 

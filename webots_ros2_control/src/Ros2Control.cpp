@@ -32,8 +32,6 @@ namespace webots_ros2_control
 
   void Ros2Control::step()
   {
-    std::cout << "Ros2Control::step()\n";
-
     mControllerManager->read();
     mControllerManager->update();
     mControllerManager->write();
@@ -41,7 +39,6 @@ namespace webots_ros2_control
 
   void Ros2Control::init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters)
   {
-    std::cout << "Ros2Control::init()\n";
     mNode = node;
 
     // Load hardware
@@ -74,18 +71,21 @@ namespace webots_ros2_control
       const std::string hardwareType = controlHardware[i].hardware_class_type;
       auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
           mHardwareLoader->createUnmanagedInstance(hardwareType));
-      webotsSystem->init(mNode);
+      webotsSystem->init(mNode, controlHardware[i]);
       resourceManager->import_component(std::move(webotsSystem));
     }
 
     // Controller Manager
-    rclcpp::executors::MultiThreadedExecutor::SharedPtr executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
-    RCLCPP_INFO(mNode->get_logger(), "Loading ControllerManager");
-    mControllerManager.reset(new controller_manager::ControllerManager(
-        std::move(resourceManager),
-        executor,
-        "controller_manager"));
-    executor->add_node(mControllerManager);
+    mExecutor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
+    mControllerManager.reset(new controller_manager::ControllerManager(std::move(resourceManager), mExecutor));
+    mExecutor->add_node(mControllerManager);
+    auto spin = [this]()
+    {
+      while (rclcpp::ok()) {
+        mExecutor->spin_once();
+      }
+    };
+    mThreadExecutor = std::thread(spin);
   }
 }
 

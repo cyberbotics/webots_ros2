@@ -53,7 +53,7 @@ namespace webots_ros2_control
   class Ros2ControlSystem : public Ros2ControlSystemInterface
   {
   public:
-    void init(webots_ros2::WebotsNode *node) override;
+    void init(webots_ros2::WebotsNode *node, const hardware_interface::HardwareInfo &info) override;
 
     hardware_interface::return_type configure(const hardware_interface::HardwareInfo &info) override;
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;

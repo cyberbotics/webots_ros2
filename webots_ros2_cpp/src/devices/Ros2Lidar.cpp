@@ -23,20 +23,9 @@ namespace webots_ros2
 {
   void Ros2Lidar::init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters)
   {
-    mNode = node;
+    Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
-    mLastUpdate = 0;
-
     mLidar = mNode->robot()->getLidar(parameters["name"]);
-
-    // Parameters
-    mTopicName = parameters.count("topicName") ? parameters["topicName"] : "/" + getFixedNameString(mLidar->getName());
-    mPublishTimestep = parameters.count("updateRate") ? 1.0 / atof(parameters["updateRate"].c_str()) : 0;
-    mAlwaysOn = parameters.count("alwaysOn") ? (parameters["alwaysOn"] == "true") : false;
-    mFrameName = parameters.count("frameName") ? parameters["frameName"] : getFixedNameString(mLidar->getName());
-
-    // Calcualte timestep
-    mPublishTimestepSyncedMs = getDeviceTimestepMsFromPublishTimestep(mPublishTimestep, mNode->robot()->getBasicTimeStep());
 
     // Laser publisher
     if (mLidar->getNumberOfLayers() == 1)
@@ -88,10 +77,8 @@ namespace webots_ros2
 
   void Ros2Lidar::step()
   {
-    // Update only if needed
-    if (mNode->robot()->getTime() - mLastUpdate < mPublishTimestep)
+    if (!preStep())
       return;
-    mLastUpdate = mNode->robot()->getTime();
 
     // Enable/Disable sensor
     const bool shouldBeEnabled = mAlwaysOn ||

@@ -20,12 +20,12 @@
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include <sensor_msgs/msg/nav_sat_status.hpp>
 #include <std_msgs/msg/float32.hpp>
-#include <webots_ros2_cpp/PluginInterface.hpp>
+#include <webots_ros2_cpp/devices/Ros2SensorPlugin.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 
 namespace webots_ros2
 {
-  class Ros2GPS : public PluginInterface
+  class Ros2GPS : public Ros2SensorPlugin
   {
   public:
     void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
@@ -36,7 +36,6 @@ namespace webots_ros2
     void publishGPS();
 
     webots::GPS *mGPS;
-    webots_ros2::WebotsNode *mNode;
 
     rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr mGPSPublisher;
     sensor_msgs::msg::NavSatFix mGPSMessage;
@@ -46,14 +45,7 @@ namespace webots_ros2
 
     rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr mVelocityPublisher;
 
-    double mLastUpdate;
     bool mIsEnabled;
-
-    std::string mTopicName;
-    std::string mFrameName;
-    double mPublishTimestep;
-    bool mAlwaysOn;
-    int mPublishTimestepSyncedMs;
   };
 
 }

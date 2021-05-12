@@ -25,12 +25,17 @@ namespace webots_ros2
     class PluginInterface
     {
     public:
-        // WebotsNode initializes the Robot/Supervisor class.
-        // Parameters are passed from the WebotsNode (in the initial phase) or some other source (e.g. URDF).
+        /// Prepare your plugin in this method.
+        /// Fired before the node is spinned.
+        /// Parameters are passed from the WebotsNode and/or from URDF.
+        /**
+         * \param[in] node WebotsNode inherited from `rclcpp::Node` with a few extra methods related 
+         * \param[in] parameters Parameters (key-value pairs) located under a <plugin> (dynamically loaded plugins) or <ros> (statically loaded plugins).
+         */
         virtual void init(WebotsNode *node, std::map<std::string, std::string> &parameters) = 0;
 
-        // This method is called on each timestep.
-        // Never call `robot.step()` in this method.
+        /// This method is called on each timestep.
+        /// You should not call `robot.step()` in this method as it is automatically called.
         virtual void step() = 0;
     };
 }

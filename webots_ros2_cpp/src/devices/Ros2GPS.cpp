@@ -21,20 +21,9 @@ namespace webots_ros2
 
   void Ros2GPS::init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters)
   {
-    mNode = node;
+    Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
-    mLastUpdate = 0;
-
     mGPS = mNode->robot()->getGPS(parameters["name"]);
-
-    // Parameters
-    mTopicName = parameters.count("topicName") ? parameters["topicName"] : "/" + getFixedNameString(mGPS->getName());
-    mPublishTimestep = parameters.count("updateRate") ? 1.0 / atof(parameters["updateRate"].c_str()) : 0;
-    mAlwaysOn = parameters.count("alwaysOn") ? (parameters["alwaysOn"] == "true") : false;
-    mFrameName = parameters.count("frameName") ? parameters["frameName"] : getFixedNameString(mGPS->getName());
-
-    // Calcualte timestep
-    mPublishTimestepSyncedMs = getDeviceTimestepMsFromPublishTimestep(mPublishTimestep, mNode->robot()->getBasicTimeStep());
 
     if (mGPS->getCoordinateSystem() == webots::GPS::WGS84)
     {
@@ -53,10 +42,8 @@ namespace webots_ros2
 
   void Ros2GPS::step()
   {
-    // Update only if needed
-    if (mNode->robot()->getTime() - mLastUpdate < mPublishTimestep)
+    if (!preStep())
       return;
-    mLastUpdate = mNode->robot()->getTime();
 
     // Enable/Disable sensor
     const bool pointSubscriptionsExist = mPointPublisher != nullptr && mPointPublisher->get_subscription_count() > 0;

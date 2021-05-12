@@ -19,14 +19,14 @@
 #include <webots/Lidar.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <webots_ros2_cpp/PluginInterface.hpp>
+#include <webots_ros2_cpp/devices/Ros2SensorPlugin.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 #include <tf2_ros/static_transform_broadcaster.h>
 
 
 namespace webots_ros2
 {
-  class Ros2Lidar : public webots_ros2::PluginInterface
+  class Ros2Lidar : public Ros2SensorPlugin
   {
   public:
     void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
@@ -37,7 +37,6 @@ namespace webots_ros2
     void publishLaserScan();
 
     webots::Lidar *mLidar;
-    webots_ros2::WebotsNode *mNode;
 
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr mLaserPublisher;
     sensor_msgs::msg::LaserScan mLaserMessage;
@@ -46,14 +45,7 @@ namespace webots_ros2
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr mPointCloudPublisher;
     sensor_msgs::msg::PointCloud2 mPointCloudMessage;
 
-    double mLastUpdate;
     bool mIsEnabled;
-
-    std::string mTopicName;
-    std::string mFrameName;
-    double mPublishTimestep;
-    bool mAlwaysOn;
-    int mPublishTimestepSyncedMs;
   };
 
 } // end namespace webots_ros2

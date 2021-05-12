@@ -1,9 +1,12 @@
 controller_manager:
   ros__parameters:
-    update_rate: 10
+    update_rate: 100
 
     diffdrive_controller:
       type: diff_drive_controller/DiffDriveController
+
+    joint_state_controller:
+      type: joint_state_controller/JointStateController
 
 diffdrive_controller:
   ros__parameters:

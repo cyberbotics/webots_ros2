@@ -16,9 +16,8 @@
 #define ROS2_RANGE_FINDER_HPP
 
 #include <map>
-#include <sensor_msgs/msg/camera_info.hpp>
-#include <sensor_msgs/msg/image.hpp>
-#include <webots/RangeFinder.hpp>
+#include <sensor_msgs/msg/range.hpp>
+#include <webots/DistanceSensor.hpp>
 #include <webots_ros2_cpp/devices/Ros2SensorPlugin.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 
@@ -26,21 +25,20 @@
 namespace webots_ros2
 {
 
-  class Ros2RangeFinder : public Ros2SensorPlugin
+  class Ros2DistanceSensor : public Ros2SensorPlugin
   {
   public:
     void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
     void step() override;
 
   private:
-    void publishImage();
+    void publishRange();
 
-    webots::RangeFinder* mRangeFinder;
+    webots::DistanceSensor* mDistanceSensor;
 
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
-    sensor_msgs::msg::Image mImageMessage;
-    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr mCameraInfoPublisher;
-    sensor_msgs::msg::CameraInfo mCameraInfoMessage;
+    rclcpp::Publisher<sensor_msgs::msg::Range>::SharedPtr mPublisher;
+    sensor_msgs::msg::Range mMessage;
+    std::vector<double> mLookupTable;
 
     bool mIsEnabled;
   };

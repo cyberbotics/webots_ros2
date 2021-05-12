@@ -20,6 +20,7 @@
 #include <webots_ros2_cpp/devices/Ros2Lidar.hpp>
 #include <webots_ros2_cpp/devices/Ros2Camera.hpp>
 #include <webots_ros2_cpp/devices/Ros2GPS.hpp>
+#include <webots_ros2_cpp/devices/Ros2RangeFinder.hpp>
 
 #include "webots_ros2_cpp/PluginInterface.hpp"
 
@@ -113,6 +114,9 @@ namespace webots_ros2
         break;
       case webots::Node::GPS:
         plugin = std::make_shared<webots_ros2::Ros2GPS>();
+        break;
+      case webots::Node::RANGE_FINDER:
+        plugin = std::make_shared<webots_ros2::Ros2RangeFinder>();
         break;
       }
       if (plugin)

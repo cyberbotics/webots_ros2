@@ -109,4 +109,55 @@ namespace webots_ros2
     axisAngle[1] = q.y * inv;
     axisAngle[2] = q.z * inv;
   }
+
+  double interpolateFunction(double value, double startX, double startY, double endX, double endY, bool ascending = false)
+  {
+    if (endX - startX == 0)
+      if ((ascending && value < startX) || (!ascending && value > startX))
+        return startY;
+      else if ((ascending && value > startX) || (!ascending && value < startX))
+        return endY;
+      else
+        return startY + (endY - startY) / 2;
+    const double slope = (endY - startY) / (endX - startX);
+    return slope * (value - startX) + startY;
+  }
+
+  double interpolateLookupTable(double value, double *table, int tableSize)
+  {
+    if (!tableSize)
+      return value;
+
+    // Interpolate
+    for (int i = 0; i < tableSize / 3 - 1; i++)
+    {
+      if ((value < table[i * 3 + 1] && value >= table[(i + 1) * 3 + 1]) ||
+          (value >= table[i * 3 + 1] && value < table[(i + 1) * 3 + 1]))
+        return interpolateFunction(
+            value,
+            table[i * 3 + 1],
+            table[i * 3],
+            table[(i + 1) * 3 + 1],
+            table[(i + 1) * 3]);
+    }
+
+    // Extrapolate (we assume that the table is sorted, order is irrelevant)
+    const bool ascending = (table[1] < table[tableSize - 1 * 3 + 1]);
+    if ((ascending && value >= table[1]) || (!ascending && value < table[1]))
+      return interpolateFunction(
+          value,
+          table[tableSize - 2 * 3 + 1],
+          table[tableSize - 2 * 3 + 0],
+          table[tableSize - 1 * 3 + 1],
+          table[tableSize - 1 * 3 + 0],
+          ascending);
+    else
+      return interpolateFunction(
+          value,
+          table[1],
+          table[0],
+          table[3 + 1],
+          table[3],
+          ascending);
+  }
 }

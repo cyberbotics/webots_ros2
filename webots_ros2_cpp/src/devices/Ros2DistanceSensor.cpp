@@ -14,7 +14,7 @@
 
 #include <webots_ros2_cpp/devices/Ros2DistanceSensor.hpp>
 
-#include <webots_ros2_cpp/utils/Utils.hpp>
+#include <webots_ros2_cpp/utils/Math.hpp>
 
 namespace webots_ros2
 {
@@ -59,12 +59,8 @@ namespace webots_ros2
 
   void Ros2DistanceSensor::publishRange()
   {
-    auto image = mDistanceSensor->getValue();
-    if (image)
-    {
-      mMessage.header.stamp = rclcpp::Clock().now();
-      mMessage.range = mDistanceSensor->getValue();
-      mPublisher->publish(mMessage);
-    }
+    mMessage.header.stamp = rclcpp::Clock().now();
+    mMessage.range = interpolateLookupTable(mDistanceSensor->getValue(), mLookupTable);
+    mPublisher->publish(mMessage);
   }
 }

@@ -39,6 +39,8 @@ namespace webots_ros2_control
       joint.sensor = (sensor) ? sensor : motor->getPositionSensor();
       if (joint.sensor)
         joint.sensor->enable(node->robot()->getBasicTimeStep());
+      if (!joint.sensor && !joint.motor)
+        throw std::runtime_error("Cannot find a Motor or PositionSensor with name " + joint.name);
 
       joint.controlPosition = false;
       joint.controlVelocity = false;

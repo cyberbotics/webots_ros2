@@ -21,12 +21,15 @@
 #include <webots_ros2_cpp/devices/Ros2Camera.hpp>
 #include <webots_ros2_cpp/devices/Ros2GPS.hpp>
 #include <webots_ros2_cpp/devices/Ros2RangeFinder.hpp>
+#include <webots_ros2_cpp/devices/Ros2DistanceSensor.hpp>
 
 #include "webots_ros2_cpp/PluginInterface.hpp"
 
-
 namespace webots_ros2
 {
+  const char *gDeviceRefferenceAttribute = "reference";
+  const char *gDeviceRosTag = "ros";
+
   typedef std::shared_ptr<PluginInterface> (*creatorFunction)(webots_ros2::WebotsNode *node, const std::map<std::string, std::string> &parameters);
 
   WebotsNode::WebotsNode() : Node("webots_ros2")
@@ -66,17 +69,19 @@ namespace webots_ros2
     tinyxml2::XMLElement *deviceChild = mWebotsXMLElement->FirstChildElement();
     while (deviceChild)
     {
-      if (deviceChild->Attribute("reference") != NULL && deviceChild->Attribute("reference") == name)
+            RCLCPP_INFO(get_logger(), deviceChild->Name());
+
+      if (deviceChild->Attribute(gDeviceRefferenceAttribute) && deviceChild->Attribute(gDeviceRefferenceAttribute) == name)
         break;
       deviceChild = deviceChild->NextSiblingElement();
     }
 
     // No properties found for the given device
-    if (deviceChild == NULL || deviceChild->FirstChildElement("ros") == NULL)
+    if (!deviceChild || !deviceChild->FirstChildElement(gDeviceRosTag))
       return properties;
 
     // Store ROS properties
-    tinyxml2::XMLElement *propertyChild = deviceChild->FirstChildElement("ros")->FirstChildElement();
+    tinyxml2::XMLElement *propertyChild = deviceChild->FirstChildElement(gDeviceRosTag)->FirstChildElement();
     while (propertyChild)
     {
       properties[propertyChild->Name()] = propertyChild->GetText();
@@ -99,6 +104,7 @@ namespace webots_ros2
 
       // Prepare parameters
       std::map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
+      continue;
       if (parameters["enabled"] == "false")
         continue;
       parameters["name"] = device->getName();
@@ -117,6 +123,9 @@ namespace webots_ros2
         break;
       case webots::Node::RANGE_FINDER:
         plugin = std::make_shared<webots_ros2::Ros2RangeFinder>();
+        break;
+      case webots::Node::DISTANCE_SENSOR:
+        plugin = std::make_shared<webots_ros2::Ros2DistanceSensor>();
         break;
       }
       if (plugin)

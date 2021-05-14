@@ -14,8 +14,6 @@
 
 #include <webots_ros2_cpp/devices/Ros2GPS.hpp>
 
-#include <webots_ros2_cpp/utils/Utils.hpp>
-
 namespace webots_ros2
 {
 

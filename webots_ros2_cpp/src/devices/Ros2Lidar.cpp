@@ -17,8 +17,6 @@
 #include <sensor_msgs/msg/point_field.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 
-#include <webots_ros2_cpp/utils/Utils.hpp>
-
 namespace webots_ros2
 {
   void Ros2Lidar::init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters)
@@ -26,6 +24,9 @@ namespace webots_ros2
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
     mLidar = mNode->robot()->getLidar(parameters["name"]);
+
+    RCLCPP_INFO(mNode->get_logger(), parameters["name"]);
+    assert(mLidar != NULL);
 
     // Laser publisher
     if (mLidar->getNumberOfLayers() == 1)

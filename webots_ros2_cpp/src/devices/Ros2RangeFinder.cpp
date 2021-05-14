@@ -16,7 +16,6 @@
 
 #include <sensor_msgs/image_encodings.hpp>
 #include <std_msgs/msg/color_rgba.hpp>
-#include <webots_ros2_cpp/utils/Utils.hpp>
 
 namespace webots_ros2
 {

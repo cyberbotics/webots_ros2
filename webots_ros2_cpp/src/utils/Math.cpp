@@ -21,6 +21,7 @@
 
 namespace webots_ros2
 {
+  static double interpolateFunction(double value, double startX, double startY, double endX, double endY, bool ascending = false);
 
   void matrixToQuaternion(const double *matrix, geometry_msgs::msg::Quaternion &q)
   {
@@ -110,7 +111,7 @@ namespace webots_ros2
     axisAngle[2] = q.z * inv;
   }
 
-  double interpolateFunction(double value, double startX, double startY, double endX, double endY, bool ascending = false)
+  double interpolateFunction(double value, double startX, double startY, double endX, double endY, bool ascending)
   {
     if (endX - startX == 0)
       if ((ascending && value < startX) || (!ascending && value > startX))
@@ -123,13 +124,13 @@ namespace webots_ros2
     return slope * (value - startX) + startY;
   }
 
-  double interpolateLookupTable(double value, double *table, int tableSize)
+  double interpolateLookupTable(double value, std::vector<double> &table)
   {
-    if (!tableSize)
+    if (!table.size())
       return value;
 
     // Interpolate
-    for (int i = 0; i < tableSize / 3 - 1; i++)
+    for (int i = 0; i < table.size() / 3 - 1; i++)
     {
       if ((value < table[i * 3 + 1] && value >= table[(i + 1) * 3 + 1]) ||
           (value >= table[i * 3 + 1] && value < table[(i + 1) * 3 + 1]))
@@ -142,14 +143,14 @@ namespace webots_ros2
     }
 
     // Extrapolate (we assume that the table is sorted, order is irrelevant)
-    const bool ascending = (table[1] < table[tableSize - 1 * 3 + 1]);
+    const bool ascending = (table[1] < table[table.size() - 1 * 3 + 1]);
     if ((ascending && value >= table[1]) || (!ascending && value < table[1]))
       return interpolateFunction(
           value,
-          table[tableSize - 2 * 3 + 1],
-          table[tableSize - 2 * 3 + 0],
-          table[tableSize - 1 * 3 + 1],
-          table[tableSize - 1 * 3 + 0],
+          table[table.size() - 2 * 3 + 1],
+          table[table.size() - 2 * 3 + 0],
+          table[table.size() - 1 * 3 + 1],
+          table[table.size() - 1 * 3 + 0],
           ascending);
     else
       return interpolateFunction(

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROS2_RANGE_FINDER_HPP
-#define ROS2_RANGE_FINDER_HPP
+#ifndef ROS2_DISTANCE_SENSOR_HPP
+#define ROS2_DISTANCE_SENSOR_HPP
 
 #include <map>
 #include <sensor_msgs/msg/range.hpp>

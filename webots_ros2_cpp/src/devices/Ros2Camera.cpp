@@ -14,8 +14,6 @@
 
 #include <webots_ros2_cpp/devices/Ros2Camera.hpp>
 
-#include <webots_ros2_cpp/utils/Utils.hpp>
-
 namespace webots_ros2
 {
   void Ros2Camera::init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters)

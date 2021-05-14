@@ -23,6 +23,8 @@ namespace webots_ros2
     mIsEnabled = false;
     mGPS = mNode->robot()->getGPS(parameters["name"]);
 
+    assert(mGPS != NULL);
+
     if (mGPS->getCoordinateSystem() == webots::GPS::WGS84)
     {
       mGPSPublisher = mNode->create_publisher<sensor_msgs::msg::NavSatFix>(mTopicName, rclcpp::SensorDataQoS().reliable());

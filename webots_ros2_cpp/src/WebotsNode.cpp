@@ -69,8 +69,6 @@ namespace webots_ros2
     tinyxml2::XMLElement *deviceChild = mWebotsXMLElement->FirstChildElement();
     while (deviceChild)
     {
-            RCLCPP_INFO(get_logger(), deviceChild->Name());
-
       if (deviceChild->Attribute(gDeviceRefferenceAttribute) && deviceChild->Attribute(gDeviceRefferenceAttribute) == name)
         break;
       deviceChild = deviceChild->NextSiblingElement();
@@ -104,7 +102,6 @@ namespace webots_ros2
 
       // Prepare parameters
       std::map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
-      continue;
       if (parameters["enabled"] == "false")
         continue;
       parameters["name"] = device->getName();

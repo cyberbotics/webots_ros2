@@ -24,6 +24,8 @@ namespace webots_ros2
     mIsEnabled = false;
     mDistanceSensor = mNode->robot()->getDistanceSensor(parameters["name"]);
 
+    assert(mDistanceSensor != NULL);
+
     mPublisher = mNode->create_publisher<sensor_msgs::msg::Range>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mMessage.header.frame_id = mFrameName;
     mMessage.field_of_view = mDistanceSensor->getAperture();

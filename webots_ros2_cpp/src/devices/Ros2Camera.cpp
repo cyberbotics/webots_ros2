@@ -22,6 +22,8 @@ namespace webots_ros2
     mIsEnabled = false;
     mCamera = mNode->robot()->getCamera(parameters["name"]);
 
+    assert(mCamera != NULL);
+
     // Image publisher
     mImagePublisher = mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mImageMessage.header.frame_id = mFrameName;

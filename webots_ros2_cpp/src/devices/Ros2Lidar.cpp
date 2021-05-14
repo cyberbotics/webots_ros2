@@ -25,7 +25,6 @@ namespace webots_ros2
     mIsEnabled = false;
     mLidar = mNode->robot()->getLidar(parameters["name"]);
 
-    RCLCPP_INFO(mNode->get_logger(), parameters["name"]);
     assert(mLidar != NULL);
 
     // Laser publisher

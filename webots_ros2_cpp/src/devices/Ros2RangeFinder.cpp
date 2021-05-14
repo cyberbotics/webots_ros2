@@ -25,6 +25,8 @@ namespace webots_ros2
     mIsEnabled = false;
     mRangeFinder = mNode->robot()->getRangeFinder(parameters["name"]);
 
+    assert(mRangeFinder != NULL);
+
     // Image publisher
     mImagePublisher = mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mImageMessage.header.frame_id = mFrameName;

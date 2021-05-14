@@ -26,28 +26,28 @@ namespace webots_ros2
     mGyro = NULL;
     mAccelerometer = NULL;
 
-    if (!parameters.count("inertial_unit_name") && !parameters.count("gyro_name") && !parameters.count("accelerometer_name"))
-      throw std::runtime_error("The IMU plugins has to contain at least of: <inertial_unit_name>, <gyro_name>, or <accelerometer_name>");
+    if (!parameters.count("inertialUnitName") && !parameters.count("gyroName") && !parameters.count("accelerometerName"))
+      throw std::runtime_error("The IMU plugins has to contain at least of: <inertialUnitName>, <gyroName>, or <accelerometerName>");
 
-    if (parameters.count("inertial_unit_name"))
+    if (parameters.count("inertialUnitName"))
     {
-      mInertialUnit = mNode->robot()->getInertialUnit(parameters["inertial_unit_name"]);
+      mInertialUnit = mNode->robot()->getInertialUnit(parameters["inertialUnitName"]);
       if (mInertialUnit == NULL)
-        throw std::runtime_error("Cannot find InertialUnit with name " + parameters["inertial_unit_name"]);
+        throw std::runtime_error("Cannot find InertialUnit with name " + parameters["inertialUnitName"]);
     }
 
-    if (parameters.count("gyro_name"))
+    if (parameters.count("gyroName"))
     {
-      mGyro = mNode->robot()->getGyro(parameters["gyro_name"]);
+      mGyro = mNode->robot()->getGyro(parameters["gyroName"]);
       if (mGyro == NULL)
-        throw std::runtime_error("Cannot find Gyro with name " + parameters["gyro_name"]);
+        throw std::runtime_error("Cannot find Gyro with name " + parameters["gyroName"]);
     }
 
-    if (parameters.count("accelerometer_name"))
+    if (parameters.count("accelerometerName"))
     {
-      mAccelerometer = mNode->robot()->getAccelerometer(parameters["accelerometer_name"]);
+      mAccelerometer = mNode->robot()->getAccelerometer(parameters["accelerometerName"]);
       if (mAccelerometer == NULL)
-        throw std::runtime_error("Cannot find Accelerometer with name " + parameters["accelerometer_name"]);
+        throw std::runtime_error("Cannot find Accelerometer with name " + parameters["accelerometerName"]);
     }
 
     mPublisher = mNode->create_publisher<sensor_msgs::msg::Imu>(mTopicName, rclcpp::SensorDataQoS().reliable());

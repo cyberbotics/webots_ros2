@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100
+    update_rate: 50.0
 
     diffdrive_controller:
       type: diff_drive_controller/DiffDriveController
@@ -14,12 +14,6 @@ diffdrive_controller:
     right_wheel_names: ["right wheel motor"]
 
     wheel_separation: 0.51
-    wheels_per_side: 2
     wheel_radius: 0.141
 
-    wheel_separation_multiplier: 1.0
-    left_wheel_radius_multiplier: 1.0
-    right_wheel_radius_multiplier: 1.0
-
     publish_rate: 50.0
-    enable_odom_tf: False

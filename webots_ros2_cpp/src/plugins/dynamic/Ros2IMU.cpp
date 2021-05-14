@@ -22,6 +22,9 @@ namespace webots_ros2
   {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
+    mInertialUnit = NULL;
+    mGyro = NULL;
+    mAccelerometer = NULL;
 
     if (!parameters.count("inertial_unit_name") && !parameters.count("gyro_name") && !parameters.count("accelerometer_name"))
       throw std::runtime_error("The IMU plugins has to contain at least of: <inertial_unit_name>, <gyro_name>, or <accelerometer_name>");

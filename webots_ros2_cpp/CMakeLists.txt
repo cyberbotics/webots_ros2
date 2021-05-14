@@ -39,6 +39,7 @@ add_executable(driver
   src/devices/Ros2GPS.cpp
   src/devices/Ros2RangeFinder.cpp
   src/devices/Ros2DistanceSensor.cpp
+  src/devices/Ros2LightSensor.cpp
   src/utils/Math.cpp
   src/utils/Utils.cpp
 )

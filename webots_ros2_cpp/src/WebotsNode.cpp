@@ -22,6 +22,7 @@
 #include <webots_ros2_cpp/devices/Ros2GPS.hpp>
 #include <webots_ros2_cpp/devices/Ros2RangeFinder.hpp>
 #include <webots_ros2_cpp/devices/Ros2DistanceSensor.hpp>
+#include <webots_ros2_cpp/devices/Ros2LightSensor.hpp>
 
 #include "webots_ros2_cpp/PluginInterface.hpp"
 
@@ -123,6 +124,9 @@ namespace webots_ros2
         break;
       case webots::Node::DISTANCE_SENSOR:
         plugin = std::make_shared<webots_ros2::Ros2DistanceSensor>();
+        break;
+      case webots::Node::LIGHT_SENSOR:
+        plugin = std::make_shared<webots_ros2::Ros2LightSensor>();
         break;
       }
       if (plugin)

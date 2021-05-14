@@ -17,3 +17,4 @@ diffdrive_controller:
     wheel_radius: 0.141
 
     publish_rate: 50.0
+    use_stamped_vel: false

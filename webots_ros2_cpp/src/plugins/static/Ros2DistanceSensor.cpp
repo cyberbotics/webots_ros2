@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <webots_ros2_cpp/devices/Ros2DistanceSensor.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2DistanceSensor.hpp>
 
 #include <webots_ros2_cpp/utils/Math.hpp>
 

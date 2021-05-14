@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <webots_ros2_cpp/devices/Ros2RangeFinder.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2RangeFinder.hpp>
 
 #include <sensor_msgs/image_encodings.hpp>
 #include <std_msgs/msg/color_rgba.hpp>

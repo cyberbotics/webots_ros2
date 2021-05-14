@@ -17,12 +17,12 @@
 #include <webots/Device.hpp>
 
 #include "webots_ros2_cpp/PluginInterface.hpp"
-#include <webots_ros2_cpp/devices/Ros2Lidar.hpp>
-#include <webots_ros2_cpp/devices/Ros2Camera.hpp>
-#include <webots_ros2_cpp/devices/Ros2GPS.hpp>
-#include <webots_ros2_cpp/devices/Ros2RangeFinder.hpp>
-#include <webots_ros2_cpp/devices/Ros2DistanceSensor.hpp>
-#include <webots_ros2_cpp/devices/Ros2LightSensor.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2Lidar.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2Camera.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2GPS.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2RangeFinder.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2DistanceSensor.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2LightSensor.hpp>
 
 #include "webots_ros2_cpp/PluginInterface.hpp"
 
@@ -97,6 +97,10 @@ namespace webots_ros2
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 
     // Load static plugins
+    // Static plugins are automatically configured based on the robot model.
+    // The static plugins will try to guess parameter based on the robot model,
+    // but one can overwrite the default behavior in the <webots> section.
+    // Typical static plugins are ROS 2 interfaces for Webots devices.
     for (int i = 0; i < mRobot->getNumberOfDevices(); i++)
     {
       webots::Device *device = mRobot->getDeviceByIndex(i);
@@ -137,6 +141,9 @@ namespace webots_ros2
     }
 
     // Load dynamic plugins
+    // Dynamic plugins are loaded only if specified in the <webots> section.
+    // Those are user contributed plugins or ROS 2 intefaces for which we cannot guess default configuration.
+    // Typical examples are ros2_control and IMU (there is not Webots IMU devices, but it is composed of three).
     tinyxml2::XMLElement *pluginElement = mWebotsXMLElement->FirstChildElement("plugin");
     while (pluginElement)
     {

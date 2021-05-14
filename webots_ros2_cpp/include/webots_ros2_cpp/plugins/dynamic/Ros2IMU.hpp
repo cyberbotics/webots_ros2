@@ -12,41 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROS2_GPS_HPP
-#define ROS2_GPS_HPP
+#ifndef ROS2_IMU_HPP
+#define ROS2_IMU_HPP
 
-#include <webots/GPS.hpp>
-#include <geometry_msgs/msg/point_stamped.hpp>
-#include <sensor_msgs/msg/nav_sat_fix.hpp>
-#include <sensor_msgs/msg/nav_sat_status.hpp>
-#include <std_msgs/msg/float32.hpp>
-#include <webots_ros2_cpp/devices/Ros2SensorPlugin.hpp>
+#include <map>
+
+#include <webots/InertialUnit.hpp>
+#include <webots/Gyro.hpp>
+#include <webots/Accelerometer.hpp>
+
+#include <sensor_msgs/msg/imu.hpp>
+
+#include <webots_ros2_cpp/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 
 namespace webots_ros2
 {
-  class Ros2GPS : public Ros2SensorPlugin
+
+  class Ros2IMU : public Ros2SensorPlugin
   {
   public:
     void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
     void step() override;
 
   private:
-    void pubishPoint();
-    void publishGPS();
+    void publishData();
+    void enable();
+    void disable();
 
-    webots::GPS *mGPS;
+    rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr mPublisher;
+    sensor_msgs::msg::Imu mMessage;
 
-    rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr mGPSPublisher;
-    sensor_msgs::msg::NavSatFix mGPSMessage;
-
-    rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr mPointPublisher;
-    geometry_msgs::msg::PointStamped mPointMessage;
-
-    rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr mVelocityPublisher;
+    webots::InertialUnit *mInertialUnit;
+    webots::Gyro *mGyro;
+    webots::Accelerometer *mAccelerometer;
 
     bool mIsEnabled;
   };
 
 }
+
 #endif

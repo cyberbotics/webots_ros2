@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <webots_ros2_cpp/devices/Ros2Lidar.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2Lidar.hpp>
 
 #include <sensor_msgs/msg/point_field.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>

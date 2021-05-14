@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <webots_ros2_cpp/devices/Ros2SensorPlugin.hpp>
+#include <webots_ros2_cpp/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_cpp/utils/Utils.hpp>
 
 namespace webots_ros2

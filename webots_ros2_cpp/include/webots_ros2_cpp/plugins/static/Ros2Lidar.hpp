@@ -19,7 +19,7 @@
 #include <webots/Lidar.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <webots_ros2_cpp/devices/Ros2SensorPlugin.hpp>
+#include <webots_ros2_cpp/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 #include <tf2_ros/static_transform_broadcaster.h>
 

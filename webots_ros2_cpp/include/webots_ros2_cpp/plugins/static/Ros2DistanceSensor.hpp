@@ -18,7 +18,7 @@
 #include <map>
 #include <sensor_msgs/msg/range.hpp>
 #include <webots/DistanceSensor.hpp>
-#include <webots_ros2_cpp/devices/Ros2SensorPlugin.hpp>
+#include <webots_ros2_cpp/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
 
 

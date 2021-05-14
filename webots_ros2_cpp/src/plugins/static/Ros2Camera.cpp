@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <webots_ros2_cpp/devices/Ros2Camera.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2Camera.hpp>
 
 namespace webots_ros2
 {

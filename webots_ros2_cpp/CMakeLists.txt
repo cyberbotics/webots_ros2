@@ -33,13 +33,13 @@ find_package(TinyXML2 REQUIRED)
 add_executable(driver 
   src/Driver.cpp
   src/WebotsNode.cpp
-  src/devices/Ros2SensorPlugin.cpp
-  src/devices/Ros2Lidar.cpp
-  src/devices/Ros2Camera.cpp
-  src/devices/Ros2GPS.cpp
-  src/devices/Ros2RangeFinder.cpp
-  src/devices/Ros2DistanceSensor.cpp
-  src/devices/Ros2LightSensor.cpp
+  src/plugins/Ros2SensorPlugin.cpp
+  src/plugins/static/Ros2Lidar.cpp
+  src/plugins/static/Ros2Camera.cpp
+  src/plugins/static/Ros2GPS.cpp
+  src/plugins/static/Ros2RangeFinder.cpp
+  src/plugins/static/Ros2DistanceSensor.cpp
+  src/plugins/static/Ros2LightSensor.cpp
   src/utils/Math.cpp
   src/utils/Utils.cpp
 )

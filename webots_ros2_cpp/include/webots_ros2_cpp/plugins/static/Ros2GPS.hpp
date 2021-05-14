@@ -12,39 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROS2_RANGE_FINDER_HPP
-#define ROS2_RANGE_FINDER_HPP
+#ifndef ROS2_GPS_HPP
+#define ROS2_GPS_HPP
 
-#include <map>
-#include <sensor_msgs/msg/camera_info.hpp>
-#include <sensor_msgs/msg/image.hpp>
-#include <webots/RangeFinder.hpp>
-#include <webots_ros2_cpp/devices/Ros2SensorPlugin.hpp>
+#include <webots/GPS.hpp>
+#include <geometry_msgs/msg/point_stamped.hpp>
+#include <sensor_msgs/msg/nav_sat_fix.hpp>
+#include <sensor_msgs/msg/nav_sat_status.hpp>
+#include <std_msgs/msg/float32.hpp>
+#include <webots_ros2_cpp/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_cpp/WebotsNode.hpp>
-
 
 namespace webots_ros2
 {
-
-  class Ros2RangeFinder : public Ros2SensorPlugin
+  class Ros2GPS : public Ros2SensorPlugin
   {
   public:
     void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
     void step() override;
 
   private:
-    void publishImage();
+    void pubishPoint();
+    void publishGPS();
 
-    webots::RangeFinder* mRangeFinder;
+    webots::GPS *mGPS;
 
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
-    sensor_msgs::msg::Image mImageMessage;
-    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr mCameraInfoPublisher;
-    sensor_msgs::msg::CameraInfo mCameraInfoMessage;
+    rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr mGPSPublisher;
+    sensor_msgs::msg::NavSatFix mGPSMessage;
+
+    rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr mPointPublisher;
+    geometry_msgs::msg::PointStamped mPointMessage;
+
+    rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr mVelocityPublisher;
 
     bool mIsEnabled;
   };
 
 }
-
 #endif

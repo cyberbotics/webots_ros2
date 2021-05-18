@@ -19,7 +19,7 @@ include_directories(
 
 # ROS2 Packages
 find_package(ament_cmake REQUIRED)
-find_package(action_msgs REQUIRED)
+find_package(rosgraph_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
@@ -48,7 +48,7 @@ add_executable(driver
 
 # Driver
 ament_target_dependencies(driver 
-  action_msgs
+  rosgraph_msgs
   rclcpp
   rclcpp_lifecycle
   sensor_msgs

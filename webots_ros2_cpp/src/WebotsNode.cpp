@@ -16,6 +16,7 @@
 
 #include <rcl_interfaces/srv/set_parameters.hpp>
 #include <rclcpp/parameter_value.hpp>
+#include <rclcpp/timer.hpp>
 
 #include <webots/Device.hpp>
 
@@ -55,6 +56,8 @@ namespace webots_ros2
     {
       RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
     }
+
+    mClockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
   }
 
   std::map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement)
@@ -194,6 +197,9 @@ namespace webots_ros2
     mRobot->step(mStep);
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
+
+    mClockMessage.clock = rclcpp::Time(mRobot->getTime() * 1e9);
+    mClockPublisher->publish(mClockMessage);
   }
 
   void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue)

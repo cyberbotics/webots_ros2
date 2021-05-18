@@ -11,7 +11,8 @@ data_files.append(('share/' + package_name, ['launch/robot_launch.py']))
 data_files.append(('share/' + package_name + '/resource', [
     'resource/turtlebot3_burger_example_map.pgm',
     'resource/turtlebot3_burger_example_map.yaml',
-    'resource/turtlebot_webots.urdf'
+    'resource/turtlebot_webots.urdf',
+    'resource/ros2control.yml'
 ]))
 data_files.append(('share/' + package_name + '/protos', [
     'protos/TurtleBot3Burger_enu.proto'

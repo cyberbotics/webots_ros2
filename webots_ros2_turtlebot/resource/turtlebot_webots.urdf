@@ -7,7 +7,7 @@
                 <updateRate>5</updateRate>
                 <topicName>/scan</topicName>
                 <alwaysOn>false</alwaysOn>
-                <frameName>lidar</frameName>
+                <frameName>LDS-01</frameName>
             </ros>
         </device>
 

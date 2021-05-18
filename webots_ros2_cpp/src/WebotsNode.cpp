@@ -14,6 +14,9 @@
 
 #include "webots_ros2_cpp/WebotsNode.hpp"
 
+#include <rcl_interfaces/srv/set_parameters.hpp>
+#include <rclcpp/parameter_value.hpp>
+
 #include <webots/Device.hpp>
 
 #include "webots_ros2_cpp/PluginInterface.hpp"
@@ -104,6 +107,8 @@ namespace webots_ros2
 
   void WebotsNode::init()
   {
+    setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
+
     mStep = mRobot->getBasicTimeStep();
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 
@@ -189,5 +194,18 @@ namespace webots_ros2
     mRobot->step(mStep);
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
+  }
+
+  void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue)
+  {
+    mClient = create_client<rcl_interfaces::srv::SetParameters>(get_namespace() + anotherNodeName + "/set_parameters");
+    mClient->wait_for_service(std::chrono::seconds(1));
+    rcl_interfaces::srv::SetParameters::Request::SharedPtr request = std::make_shared<rcl_interfaces::srv::SetParameters::Request>();
+    rcl_interfaces::msg::Parameter parameter;
+    parameter.name = parameterName;
+    parameter.value.string_value = parameterValue;
+    parameter.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
+    request->parameters.push_back(parameter);
+    mClient->async_send_request(request);
   }
 } // end namespace webots_ros2

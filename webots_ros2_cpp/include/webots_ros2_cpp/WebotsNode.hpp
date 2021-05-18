@@ -45,6 +45,8 @@ namespace webots_ros2
     void timerCallback();
     std::map<std::string, std::string> getDeviceRosProperties(const std::string &name);
     std::map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement);
+    void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);
+    rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
 
     std::string mRobotName;
     std::string mRobotDescription;

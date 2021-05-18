@@ -50,6 +50,15 @@ def generate_launch_description():
         ]
     )
 
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>'
+        }],
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -57,6 +66,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
         ),
         webots,
+        robot_state_publisher,
         turtlebot_driver,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

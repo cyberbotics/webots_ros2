@@ -36,7 +36,7 @@ namespace webots_ros2
   class WebotsNode : public rclcpp::Node
   {
   public:
-    WebotsNode();
+    WebotsNode(std::string name, webots::Supervisor *robot);
     void init();
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };

@@ -21,7 +21,9 @@ int main(int argc, char **argv)
   rclcpp::init(argc, argv);
 
   rclcpp::executors::MultiThreadedExecutor executor;
-  auto node = std::make_shared<webots_ros2::WebotsNode>();
+
+  webots::Supervisor* robot = new webots::Supervisor();
+  auto node = std::make_shared<webots_ros2::WebotsNode>(robot->getName(), robot);
   node->init();
 
   executor.add_node(node);

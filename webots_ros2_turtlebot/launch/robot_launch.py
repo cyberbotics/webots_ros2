@@ -20,6 +20,7 @@ from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
+from launch_ros.actions import Node
 import launch
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_core.webots_launcher import WebotsLauncher
@@ -33,12 +34,9 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    ure3_controller = ControllerLauncher(
-        package='webots_ros2_core',
-        executable='webots_robotic_arm_node',
-        arguments=['--webots-robot-name=UR3e'],
-        namespace='UR3e',
-        parameters=[{'synchronization': synchronization}],
+    turtlebot_driver = Node(
+        package='webots_ros2_cpp',
+        executable='driver',
         output='screen'
     )
 
@@ -49,6 +47,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
         ),
         webots,
+        turtlebot_driver,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,

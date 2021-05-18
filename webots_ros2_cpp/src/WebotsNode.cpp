@@ -33,7 +33,7 @@ namespace webots_ros2
 
   typedef std::shared_ptr<PluginInterface> (*creatorFunction)(webots_ros2::WebotsNode *node, const std::map<std::string, std::string> &parameters);
 
-  WebotsNode::WebotsNode() : Node("webots_ros2")
+  WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
     if (mRobotDescription != "")
@@ -92,7 +92,6 @@ namespace webots_ros2
 
   void WebotsNode::init()
   {
-    mRobot = new webots::Supervisor();
     mStep = mRobot->getBasicTimeStep();
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 
@@ -144,6 +143,9 @@ namespace webots_ros2
     // Dynamic plugins are loaded only if specified in the <webots> section.
     // Those are user contributed plugins or ROS 2 intefaces for which we cannot guess default configuration.
     // Typical examples are ros2_control and IMU (there is not Webots IMU devices, but it is composed of three).
+    if (!mWebotsXMLElement)
+      return;
+
     tinyxml2::XMLElement *pluginElement = mWebotsXMLElement->FirstChildElement("plugin");
     while (pluginElement)
     {

@@ -23,6 +23,7 @@
 #include <webots_ros2_cpp/plugins/static/Ros2RangeFinder.hpp>
 #include <webots_ros2_cpp/plugins/static/Ros2DistanceSensor.hpp>
 #include <webots_ros2_cpp/plugins/static/Ros2LightSensor.hpp>
+#include <webots_ros2_cpp/plugins/static/Ros2LED.hpp>
 
 #include "webots_ros2_cpp/PluginInterface.hpp"
 
@@ -57,7 +58,8 @@ namespace webots_ros2
   {
     std::map<std::string, std::string> properties;
 
-    if (pluginElement) {
+    if (pluginElement)
+    {
       tinyxml2::XMLElement *deviceChild = pluginElement->FirstChildElement();
       while (deviceChild)
       {
@@ -140,6 +142,9 @@ namespace webots_ros2
         break;
       case webots::Node::LIGHT_SENSOR:
         plugin = std::make_shared<webots_ros2::Ros2LightSensor>();
+        break;
+      case webots::Node::LED:
+        plugin = std::make_shared<webots_ros2::Ros2LED>();
         break;
       }
       if (plugin)

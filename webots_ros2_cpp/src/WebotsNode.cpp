@@ -56,6 +56,16 @@ namespace webots_ros2
   std::map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement)
   {
     std::map<std::string, std::string> properties;
+
+    if (pluginElement) {
+      tinyxml2::XMLElement *deviceChild = pluginElement->FirstChildElement();
+      while (deviceChild)
+      {
+        properties[deviceChild->Name()] = deviceChild->GetText();
+        deviceChild = deviceChild->NextSiblingElement();
+      }
+    }
+
     return properties;
   }
 

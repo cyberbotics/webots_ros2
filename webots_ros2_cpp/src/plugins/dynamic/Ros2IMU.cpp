@@ -15,6 +15,7 @@
 #include <webots_ros2_cpp/plugins/dynamic/Ros2IMU.hpp>
 
 #include <webots_ros2_cpp/utils/Math.hpp>
+#include "pluginlib/class_list_macros.hpp"
 
 namespace webots_ros2
 {
@@ -125,3 +126,5 @@ namespace webots_ros2
     mPublisher->publish(mMessage);
   }
 }
+
+PLUGINLIB_EXPORT_CLASS(webots_ros2::Ros2IMU, webots_ros2::PluginInterface)

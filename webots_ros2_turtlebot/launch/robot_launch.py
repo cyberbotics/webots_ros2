@@ -16,6 +16,7 @@
 
 """Launch Webots TurtleBot3 Burger driver."""
 
+import os
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
@@ -29,6 +30,7 @@ from webots_ros2_core.webots_launcher import WebotsLauncher
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
     world = LaunchConfiguration('world')
+    robot_description = open(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read()
 
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world])
@@ -37,7 +39,8 @@ def generate_launch_description():
     turtlebot_driver = Node(
         package='webots_ros2_cpp',
         executable='driver',
-        output='screen'
+        output='screen',
+        parameters=[{'robot_description': robot_description}]
     )
 
     return LaunchDescription([

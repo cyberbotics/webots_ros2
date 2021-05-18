@@ -21,6 +21,7 @@ include_directories(
 find_package(ament_cmake REQUIRED)
 find_package(action_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -43,6 +44,8 @@ add_executable(driver
   src/utils/Math.cpp
   src/utils/Utils.cpp
 )
+
+# Driver
 ament_target_dependencies(driver 
   action_msgs
   rclcpp
@@ -58,21 +61,46 @@ ament_target_dependencies(driver
 target_link_libraries(driver 
   ${WEBOTS_LIB}  
 )
-
 install(
   DIRECTORY include/
   DESTINATION include
 )
-
 install(TARGETS driver
   RUNTIME 
   DESTINATION lib/${PROJECT_NAME}
 )
 
+# Dynamic IMU
+add_library(
+  ${PROJECT_NAME}_imu
+  SHARED
+  src/plugins/dynamic/Ros2IMU.cpp
+  src/plugins/Ros2SensorPlugin.cpp
+  src/utils/Utils.cpp
+)
+ament_target_dependencies(${PROJECT_NAME}_imu 
+  rclcpp
+  sensor_msgs
+  pluginlib
+  tf2_ros
+)
+target_link_libraries(${PROJECT_NAME}_imu 
+  ${WEBOTS_LIB}  
+)
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+install(TARGETS ${PROJECT_NAME}_imu
+  RUNTIME 
+  DESTINATION lib/${PROJECT_NAME}
+)
+pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
+
+# Ament export
 ament_export_include_directories(
   include
 )
-
 ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
@@ -84,5 +112,4 @@ ament_export_dependencies(
   tinyxml2_vendor
   TinyXML2
 )
-
 ament_package()

@@ -59,6 +59,13 @@ def generate_launch_description():
         }],
     )
 
+    footprint_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -68,6 +75,7 @@ def generate_launch_description():
         webots,
         robot_state_publisher,
         turtlebot_driver,
+        footprint_publisher,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,

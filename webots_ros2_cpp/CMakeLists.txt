@@ -51,6 +51,7 @@ add_executable(driver
 ament_target_dependencies(driver 
   rosgraph_msgs
   rclcpp
+  pluginlib
   rclcpp_lifecycle
   sensor_msgs
   std_msgs

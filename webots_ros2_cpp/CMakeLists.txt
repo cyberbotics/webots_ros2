@@ -4,17 +4,18 @@ project(webots_ros2_cpp)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Webots
-link_directories($ENV{WEBOTS_HOME}/lib/controller)
+# Webots (WIN32, MSVC)
+if (UNIX)
+  link_directories(webots/upstream/lib/linux-gnu)
+endif (UNIX)
 set(WEBOTS_LIB
   ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
   ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}
 )
-
 include_directories(
   include
-  $ENV{WEBOTS_HOME}/include/controller/c
-  $ENV{WEBOTS_HOME}/include/controller/cpp
+  webots/upstream/include/c
+  webots/upstream/include/cpp
 )
 
 # ROS2 Packages
@@ -88,9 +89,18 @@ ament_target_dependencies(${PROJECT_NAME}_imu
 target_link_libraries(${PROJECT_NAME}_imu 
   ${WEBOTS_LIB}  
 )
+
 install(
-  DIRECTORY include/
-  DESTINATION include
+ DIRECTORY include/${PROJECT_NAME}
+ DESTINATION include/${PROJECT_NAME}
+)
+install(
+  DIRECTORY webots/upstream/include/c
+  DESTINATION include/webots
+)
+install(
+  DIRECTORY webots/upstream/include/cpp
+  DESTINATION include/webots
 )
 install(TARGETS ${PROJECT_NAME}_imu
   RUNTIME 
@@ -99,9 +109,7 @@ install(TARGETS ${PROJECT_NAME}_imu
 pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
 
 # Ament export
-ament_export_include_directories(
-  include
-)
+ament_export_include_directories(include)
 ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle

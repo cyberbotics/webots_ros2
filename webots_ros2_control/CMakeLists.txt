@@ -16,18 +16,15 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Dependencies
+message(STATUS "asdsad: ${webots_ros2_cpp_INCLUDE_DIRS}")
 find_package(ament_cmake REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(controller_manager REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(webots_ros2_cpp REQUIRED)
-
-# Webots
 include_directories(
-  include
-  $ENV{WEBOTS_HOME}/include/controller/c
-  $ENV{WEBOTS_HOME}/include/controller/cpp
+  webots_ros2_cpp_INCLUDE_DIRS/webots/cpp
 )
 
 # webots_ros2 Plugin

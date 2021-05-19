@@ -110,6 +110,7 @@ install(TARGETS ${PROJECT_NAME}_imu
 
 # Prevent pluginlib from using boost
 target_compile_definitions(driver PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+target_compile_definitions(${PROJECT_NAME}_imu PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
 
 # Ament export

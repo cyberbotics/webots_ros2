@@ -26,8 +26,8 @@
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #include "rclcpp/macros.hpp"
-#include "webots_ros2_cpp/PluginInterface.hpp"
-#include "webots_ros2_cpp/WebotsNode.hpp"
+#include "webots_ros2_interface/PluginInterface.hpp"
+#include "webots_ros2_interface/WebotsNode.hpp"
 
 #include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
 #include "webots/Motor.hpp"
@@ -53,7 +53,7 @@ namespace webots_ros2_control
   class Ros2ControlSystem : public Ros2ControlSystemInterface
   {
   public:
-    void init(webots_ros2::WebotsNode *node, const hardware_interface::HardwareInfo &info) override;
+    void init(webots_ros2_interface::WebotsNode *node, const hardware_interface::HardwareInfo &info) override;
 
     hardware_interface::return_type configure(const hardware_interface::HardwareInfo &info) override;
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
@@ -64,7 +64,7 @@ namespace webots_ros2_control
     hardware_interface::return_type write() override;
 
   private:
-    webots_ros2::WebotsNode *mNode;
+    webots_ros2_interface::WebotsNode *mNode;
     std::vector<Joint> mJoints;
   };
 }

@@ -11,7 +11,7 @@
   <depend>controller_manager</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
-  <depend>webots_ros2_cpp</depend>
+  <depend>webots_ros2_interface</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

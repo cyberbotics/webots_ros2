@@ -25,16 +25,16 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "hardware_interface/types/hardware_interface_status_values.hpp"
-#include "webots_ros2_cpp/PluginInterface.hpp"
+#include "webots_ros2_interface/PluginInterface.hpp"
 #include <webots/Supervisor.hpp>
-#include "webots_ros2_cpp/WebotsNode.hpp"
+#include "webots_ros2_interface/WebotsNode.hpp"
 
 namespace webots_ros2_control
 {
   class Ros2ControlSystemInterface : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
   {
   public:
-    virtual void init(webots_ros2::WebotsNode *node, const hardware_interface::HardwareInfo &info) = 0;
+    virtual void init(webots_ros2_interface::WebotsNode *node, const hardware_interface::HardwareInfo &info) = 0;
   };
 }
 

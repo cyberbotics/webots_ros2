@@ -28,20 +28,20 @@
 #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #include "controller_manager/controller_manager.hpp"
 #include "rclcpp/macros.hpp"
-#include "webots_ros2_cpp/PluginInterface.hpp"
-#include "webots_ros2_cpp/WebotsNode.hpp"
+#include "webots_ros2_interface/PluginInterface.hpp"
+#include "webots_ros2_interface/WebotsNode.hpp"
 #include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
 
 namespace webots_ros2_control
 {
-  class Ros2Control : public webots_ros2::PluginInterface
+  class Ros2Control : public webots_ros2_interface::PluginInterface
   {
   public:
     void step() override;
-    void init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
+    void init(webots_ros2_interface::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
 
     private:
-      webots_ros2::WebotsNode *mNode;
+      webots_ros2_interface::WebotsNode *mNode;
       std::shared_ptr<pluginlib::ClassLoader<Ros2ControlSystemInterface>> mHardwareLoader;
       std::shared_ptr<controller_manager::ControllerManager> mControllerManager;
 

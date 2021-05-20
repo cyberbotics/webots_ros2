@@ -39,7 +39,7 @@ def generate_launch_description():
     )
 
     turtlebot_driver = Node(
-        package='webots_ros2_cpp',
+        package='webots_ros2_interface',
         executable='driver',
         output='screen',
         parameters=[

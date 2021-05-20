@@ -37,7 +37,7 @@ namespace webots_ros2_control
     mControllerManager->write();
   }
 
-  void Ros2Control::init(webots_ros2::WebotsNode *node, std::map<std::string, std::string> &parameters)
+  void Ros2Control::init(webots_ros2_interface::WebotsNode *node, std::map<std::string, std::string> &parameters)
   {
     mNode = node;
 
@@ -89,4 +89,4 @@ namespace webots_ros2_control
   }
 }
 
-PLUGINLIB_EXPORT_CLASS(webots_ros2_control::Ros2Control, webots_ros2::PluginInterface)
+PLUGINLIB_EXPORT_CLASS(webots_ros2_control::Ros2Control, webots_ros2_interface::PluginInterface)

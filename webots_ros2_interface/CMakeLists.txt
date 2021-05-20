@@ -4,10 +4,15 @@ project(webots_ros2_interface)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Webots (WIN32, MSVC)
 if (UNIX)
   link_directories(webots/lib/linux-gnu)
 endif (UNIX)
+if (WIN32)
+  link_directories(webots/lib/msys)
+endif (WIN32)
+if (MSVC)
+  link_directories(webots/lib/darwin19)
+endif (MSVC)
 set(WEBOTS_LIB
   ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
   ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}

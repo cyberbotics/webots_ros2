@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Webots (WIN32, MSVC)
 if (UNIX)
-  link_directories(webots/upstream/lib/linux-gnu)
+  link_directories(webots/lib/linux-gnu)
 endif (UNIX)
 set(WEBOTS_LIB
   ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -14,8 +14,8 @@ set(WEBOTS_LIB
 )
 include_directories(
   include
-  webots/upstream/include/c
-  webots/upstream/include/cpp
+  webots/include/c
+  webots/include/cpp
 )
 
 # ROS2 Packages
@@ -96,11 +96,11 @@ install(
  DESTINATION include/${PROJECT_NAME}
 )
 install(
-  DIRECTORY webots/upstream/include/c
+  DIRECTORY webots/include/c
   DESTINATION include/webots
 )
 install(
-  DIRECTORY webots/upstream/include/cpp
+  DIRECTORY webots/include/cpp
   DESTINATION include/webots
 )
 install(TARGETS ${PROJECT_NAME}_imu

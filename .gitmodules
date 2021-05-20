@@ -1,6 +1,6 @@
 [submodule "webots_ros2_importer/webots_ros2_importer/urdf2webots"]
 	path = webots_ros2_importer/webots_ros2_importer/urdf2webots
 	url = https://github.com/cyberbotics/urdf2webots.git
-[submodule "webots_ros2_cpp/webots/upstream"]
-	path = webots_ros2_cpp/webots/upstream
+[submodule "webots_ros2_cpp/webots"]
+	path = webots_ros2_cpp/webots
 	url = https://github.com/cyberbotics/webots-controller.git

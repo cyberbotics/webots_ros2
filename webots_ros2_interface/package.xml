@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>webots_ros2_interface</name>
-  <version>0.0.1</version>
-  <description>The Webots-ROS2 interface </description>
+  <version>1.0.6</version>
+  <description>Implementation of the interface for Webots and ROS 2</description>
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
-  <license>BSD</license>
+  <license>Apache License 2.0</license>
   <url type="website">http://wiki.ros.org/webots_ros2</url>
   <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>

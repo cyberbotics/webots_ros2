@@ -36,8 +36,6 @@ namespace webots_ros2_interface
   const char *gDeviceRefferenceAttribute = "reference";
   const char *gDeviceRosTag = "ros";
 
-  typedef std::shared_ptr<PluginInterface> (*creatorFunction)(webots_ros2_interface::WebotsNode *node, const std::map<std::string, std::string> &parameters);
-
   WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");

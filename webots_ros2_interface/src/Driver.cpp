@@ -20,14 +20,11 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  rclcpp::executors::MultiThreadedExecutor executor;
-
   webots::Supervisor* robot = new webots::Supervisor();
   auto node = std::make_shared<webots_ros2_interface::WebotsNode>(robot->getName(), robot);
   node->init();
 
-  executor.add_node(node);
-  executor.spin();
+  rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
 }

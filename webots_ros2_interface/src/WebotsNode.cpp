@@ -35,8 +35,10 @@ namespace webots_ros2_interface
 {
   const char *gDeviceRefferenceAttribute = "reference";
   const char *gDeviceRosTag = "ros";
+  const char *gPluginInterface = "webots_ros2_interface::PluginInterface";
+  const char *gPluginInterfaceName = "webots_ros2_interface";
 
-  WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot)
+  WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
     if (mRobotDescription != "")
@@ -172,16 +174,10 @@ namespace webots_ros2_interface
     {
       if (!pluginElement->Attribute("type"))
         throw std::runtime_error("Invalid URDF, a plugin is missing a `type` property at line " + std::to_string(pluginElement->GetLineNum()));
-      if (!pluginElement->Attribute("package"))
-        throw std::runtime_error("Invalid URDF, a plugin is missing a `package` property at line " + std::to_string(pluginElement->GetLineNum()));
 
       const std::string type = pluginElement->Attribute("type");
-      const std::string package = pluginElement->Attribute("package");
 
-      pluginlib::ClassLoader<PluginInterface> *pluginLoader = new pluginlib::ClassLoader<PluginInterface>(package, "webots_ros2_interface::PluginInterface");
-      mPluginLoaders.push_back(std::shared_ptr<pluginlib::ClassLoader<PluginInterface>>(pluginLoader));
-
-      std::shared_ptr<PluginInterface> plugin(pluginLoader->createUnmanagedInstance(type));
+      std::shared_ptr<PluginInterface> plugin(mPluginLoader.createUnmanagedInstance(type));
       std::map<std::string, std::string> pluginProperties = getPluginProperties(pluginElement);
       plugin->init(this, pluginProperties);
       mPlugins.push_back(plugin);

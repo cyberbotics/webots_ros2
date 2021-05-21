@@ -50,7 +50,7 @@ ament_target_dependencies(
 
 # Prevent pluginlib from using boost
 target_compile_definitions(${PROJECT_NAME} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
-pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_control.xml)
+pluginlib_export_plugin_description_file(webots_ros2_interface webots_ros2_control.xml)
 
 # ros2_control System
 add_library(

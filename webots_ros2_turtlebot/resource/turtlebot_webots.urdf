@@ -11,7 +11,7 @@
             </ros>
         </device>
 
-        <plugin package="webots_ros2_interface" type="webots_ros2_interface::Ros2IMU">
+        <plugin type="webots_ros2_interface::Ros2IMU">
             <enabled>true</enabled>
             <updateRate>20</updateRate>
             <topicName>/imu</topicName>
@@ -22,7 +22,7 @@
             <accelerometerName>accelerometer</accelerometerName>
         </plugin>
 
-        <plugin package="webots_ros2_control" type="webots_ros2_control::Ros2Control" />
+        <plugin type="webots_ros2_control::Ros2Control" />
     </webots>
 
     <ros2_control name="WebotsControl" type="system">

@@ -30,6 +30,8 @@
 #include <rosgraph_msgs/msg/clock.hpp>
 #include <pluginlib/class_loader.hpp>
 
+#include "webots_ros2_interface/PluginInterface.hpp"
+
 namespace webots_ros2_interface
 {
   class PluginInterface;
@@ -56,7 +58,7 @@ namespace webots_ros2_interface
     int mStep;
     webots::Supervisor *mRobot;
     std::vector<std::shared_ptr<PluginInterface>> mPlugins;
-    std::vector<std::shared_ptr<pluginlib::ClassLoader<PluginInterface>>> mPluginLoaders;
+    pluginlib::ClassLoader<PluginInterface> mPluginLoader;
     tinyxml2::XMLElement *mWebotsXMLElement;
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;
 

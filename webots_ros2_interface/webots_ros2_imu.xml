@@ -1,9 +1,0 @@
-<library path="webots_ros2_interface_imu">
-  <class
-    type="webots_ros2_interface::Ros2IMU"
-    base_class_type="webots_ros2_interface::PluginInterface">
-    <description>
-      ROS 2 IMU plugin that fuses data from Webots Inertial Unit, Gyro, and Accelerometer.
-    </description>
-  </class>
-</library>

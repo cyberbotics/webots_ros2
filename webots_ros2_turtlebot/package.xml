@@ -13,7 +13,7 @@
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
-  <exec_depend>webots_ros2_interface</exec_depend>
+  <exec_depend>webots_ros2_driver</exec_depend>
   <exec_depend>webots_ros2_control</exec_depend>
 
   <!-- These test dependencies are optional

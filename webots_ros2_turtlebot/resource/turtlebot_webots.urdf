@@ -11,7 +11,7 @@
             </ros>
         </device>
 
-        <plugin type="webots_ros2_interface::Ros2IMU">
+        <plugin type="webots_ros2_driver::Ros2IMU">
             <enabled>true</enabled>
             <updateRate>20</updateRate>
             <topicName>/imu</topicName>

@@ -21,11 +21,11 @@ find_package(hardware_interface REQUIRED)
 find_package(controller_manager REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(webots_ros2_interface REQUIRED)
+find_package(webots_ros2_driver REQUIRED)
 
-list(GET webots_ros2_interface_INCLUDE_DIRS 0 webots_ros2_interface_INCLUDE)
+list(GET webots_ros2_driver_INCLUDE_DIRS 0 webots_ros2_driver_INCLUDE)
 include_directories(
-  ${webots_ros2_interface_INCLUDE}/webots/cpp
+  ${webots_ros2_driver_INCLUDE}/webots/cpp
 )
 
 # webots_ros2 Plugin
@@ -45,12 +45,12 @@ ament_target_dependencies(
   controller_manager
   pluginlib
   rclcpp
-  webots_ros2_interface
+  webots_ros2_driver
 )
 
 # Prevent pluginlib from using boost
 target_compile_definitions(${PROJECT_NAME} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
-pluginlib_export_plugin_description_file(webots_ros2_interface webots_ros2_control.xml)
+pluginlib_export_plugin_description_file(webots_ros2_driver webots_ros2_control.xml)
 
 # ros2_control System
 add_library(
@@ -68,7 +68,7 @@ ament_target_dependencies(
   hardware_interface
   pluginlib
   rclcpp
-  webots_ros2_interface
+  webots_ros2_driver
 )
 
 # Prevent pluginlib from using boost

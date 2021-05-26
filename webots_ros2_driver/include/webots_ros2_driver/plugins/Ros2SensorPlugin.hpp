@@ -30,13 +30,13 @@ namespace webots_ros2_driver
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
 
+  protected:
     /// Checks if a sensor has data ready and updates the last update time
     /**
     * \return Should publishing from the sensor be considered
     */
     bool preStep();
 
-  protected:
     webots_ros2_driver::WebotsNode *mNode;
 
     std::string mTopicName;

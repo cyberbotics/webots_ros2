@@ -17,7 +17,7 @@
 
 #include <memory>
 #include <chrono>
-#include <map>
+#include <unordered_map>
 
 #include <tinyxml2.h>
 
@@ -46,8 +46,8 @@ namespace webots_ros2_driver
 
   private:
     void timerCallback();
-    std::map<std::string, std::string> getDeviceRosProperties(const std::string &name);
-    std::map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement);
+    std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
+    std::unordered_map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement) const;
     void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);
     rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
 

@@ -15,7 +15,7 @@
 #ifndef PLUGIN_INTERFACE
 #define PLUGIN_INTERFACE
 
-#include <map>
+#include <unordered_map>
 #include <webots/Supervisor.hpp>
 
 namespace webots_ros2_driver
@@ -32,7 +32,7 @@ namespace webots_ros2_driver
          * \param[in] node WebotsNode inherited from `rclcpp::Node` with a few extra methods related 
          * \param[in] parameters Parameters (key-value pairs) located under a <plugin> (dynamically loaded plugins) or <ros> (statically loaded plugins).
          */
-        virtual void init(WebotsNode *node, std::map<std::string, std::string> &parameters) = 0;
+        virtual void init(WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) = 0;
 
         /// This method is called on each timestep.
         /// You should not call `robot.step()` in this method as it is automatically called.

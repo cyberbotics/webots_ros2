@@ -60,9 +60,9 @@ namespace webots_ros2_driver
     mClockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
   }
 
-  std::map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement)
+  std::unordered_map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement) const
   {
-    std::map<std::string, std::string> properties;
+    std::unordered_map<std::string, std::string> properties;
 
     if (pluginElement)
     {
@@ -77,9 +77,9 @@ namespace webots_ros2_driver
     return properties;
   }
 
-  std::map<std::string, std::string> WebotsNode::getDeviceRosProperties(const std::string &name)
+  std::unordered_map<std::string, std::string> WebotsNode::getDeviceRosProperties(const std::string &name) const
   {
-    std::map<std::string, std::string> properties({{"enabled", "true"}});
+    std::unordered_map<std::string, std::string> properties({{"enabled", "true"}});
 
     // No URDF file specified
     if (!mWebotsXMLElement)
@@ -125,7 +125,7 @@ namespace webots_ros2_driver
       webots::Device *device = mRobot->getDeviceByIndex(i);
 
       // Prepare parameters
-      std::map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
+      std::unordered_map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
       if (parameters["enabled"] == "false")
         continue;
       parameters["name"] = device->getName();
@@ -178,7 +178,7 @@ namespace webots_ros2_driver
       const std::string type = pluginElement->Attribute("type");
 
       std::shared_ptr<PluginInterface> plugin(mPluginLoader.createUnmanagedInstance(type));
-      std::map<std::string, std::string> pluginProperties = getPluginProperties(pluginElement);
+      std::unordered_map<std::string, std::string> pluginProperties = getPluginProperties(pluginElement);
       plugin->init(this, pluginProperties);
       mPlugins.push_back(plugin);
 

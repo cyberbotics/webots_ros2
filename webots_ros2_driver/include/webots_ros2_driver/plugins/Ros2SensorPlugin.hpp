@@ -15,7 +15,7 @@
 #ifndef ROS2_SENSOR_PLUGIN_HPP
 #define ROS2_SENSOR_PLUGIN_HPP
 
-#include <map>
+#include <unordered_map>
 #include <webots/RangeFinder.hpp>
 #include <webots_ros2_driver/PluginInterface.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
@@ -28,7 +28,7 @@ namespace webots_ros2_driver
   class Ros2SensorPlugin : public PluginInterface
   {
   public:
-    void init(webots_ros2_driver::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
+    void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
 
     /// Checks if a sensor has data ready and updates the last update time
     /**

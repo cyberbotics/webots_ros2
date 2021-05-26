@@ -17,7 +17,7 @@
 
 namespace webots_ros2_driver
 {
-  void Ros2SensorPlugin::init(webots_ros2_driver::WebotsNode *node, std::map<std::string, std::string> &parameters)
+  void Ros2SensorPlugin::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
   {
     mNode = node;
     mLastUpdate = 0;

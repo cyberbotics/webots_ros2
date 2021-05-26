@@ -15,7 +15,7 @@
 #ifndef ROS2_RANGE_FINDER_HPP
 #define ROS2_RANGE_FINDER_HPP
 
-#include <map>
+#include <unordered_map>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <webots/RangeFinder.hpp>
@@ -29,7 +29,7 @@ namespace webots_ros2_driver
   class Ros2RangeFinder : public Ros2SensorPlugin
   {
   public:
-    void init(webots_ros2_driver::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
+    void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
 
   private:

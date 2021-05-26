@@ -58,6 +58,8 @@ namespace webots_ros2_control
         }
         else if (commandInterface.name == "effort")
           joint.controlEffort = true;
+        else
+          throw std::runtime_error("Invalid hardware info name `" + commandInterface.name + "`");
       }
 
       mJoints.push_back(joint);

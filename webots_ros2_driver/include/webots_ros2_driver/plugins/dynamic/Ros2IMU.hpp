@@ -15,7 +15,7 @@
 #ifndef ROS2_IMU_HPP
 #define ROS2_IMU_HPP
 
-#include <map>
+#include <unordered_map>
 
 #include <webots/InertialUnit.hpp>
 #include <webots/Gyro.hpp>
@@ -32,7 +32,7 @@ namespace webots_ros2_driver
   class Ros2IMU : public Ros2SensorPlugin
   {
   public:
-    void init(webots_ros2_driver::WebotsNode *node, std::map<std::string, std::string> &parameters) override;
+    void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
 
   private:

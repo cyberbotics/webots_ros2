@@ -20,7 +20,7 @@ namespace webots_ros2_driver
 {
   const double gIrradianceToIlluminance = 120.0;
 
-  void Ros2LightSensor::init(webots_ros2_driver::WebotsNode *node, std::map<std::string, std::string> &parameters)
+  void Ros2LightSensor::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
   {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;

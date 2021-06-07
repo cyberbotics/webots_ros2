@@ -5,8 +5,8 @@ controller_manager:
     diffdrive_controller:
       type: diff_drive_controller/DiffDriveController
 
-    joint_state_controller:
-      type: joint_state_controller/JointStateController
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
 
 diffdrive_controller:
   ros__parameters:

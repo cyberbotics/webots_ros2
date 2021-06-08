@@ -15,7 +15,7 @@
 """LED device."""
 
 from std_msgs.msg import Int32
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import QoSReliabilityPolicy, qos_profile_sensor_data
 from .device import Device
 
 
@@ -48,12 +48,15 @@ class LEDDevice(Device):
         # Determine default params
         self._topic_name = self._get_param('topic_name', self._create_topic_name(wb_device))
 
+        qos_sensor_reliable = qos_profile_sensor_data
+        qos_sensor_reliable.reliability = QoSReliabilityPolicy.RELIABLE
+
         # Create subscribers
         self.__led_subscriber = self._node.create_subscription(
             Int32,
             self._topic_name,
             self.__callback,
-            qos_profile_sensor_data
+            qos_sensor_reliable
         )
 
     def __callback(self, msg):

@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2_core</name>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <description>Core interface between Webots and ROS2</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -13,6 +13,7 @@
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>vision_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>webots_ros2_msgs</exec_depend>
   <exec_depend>python3-tk</exec_depend>

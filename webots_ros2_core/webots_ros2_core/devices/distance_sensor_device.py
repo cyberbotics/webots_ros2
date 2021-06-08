@@ -14,7 +14,7 @@
 
 """Webots DistanceSensor device wrapper for ROS2."""
 
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import QoSReliabilityPolicy, qos_profile_sensor_data
 from sensor_msgs.msg import Range
 from webots_ros2_core.math.interpolation import interpolate_lookup_table
 from .sensor_device import SensorDevice
@@ -47,8 +47,11 @@ class DistanceSensorDevice(SensorDevice):
 
         # Create topics
         if not self._disable:
+            qos_sensor_reliable = qos_profile_sensor_data
+            qos_sensor_reliable.reliability = QoSReliabilityPolicy.RELIABLE
+
             self._publisher = self._node.create_publisher(Range, self._topic_name,
-                                                          qos_profile_sensor_data)
+                                                          qos_sensor_reliable)
 
     def __get_max_value(self):
         table = self._wb_device.getLookupTable()

@@ -24,7 +24,8 @@ from .distance_sensor_device import DistanceSensorDevice
 from .light_sensor_device import LightSensorDevice
 from .robot_device import RobotDevice
 from .imu_device import ImuDevice
-from webots_ros2_core.webots_controller import Node
+from .gps_device import GpsDevice
+from webots_ros2_core.webots.controller import Node
 
 
 class DeviceManager:
@@ -56,6 +57,8 @@ class DeviceManager:
                 device = DistanceSensorDevice(node, device_key, wb_device, self.__config.get(device_key, None))
             elif wb_device.getNodeType() == Node.LIGHT_SENSOR:
                 device = LightSensorDevice(node, device_key, wb_device, self.__config.get(device_key, None))
+            elif wb_device.getNodeType() == Node.GPS:
+                device = GpsDevice(node, device_key, wb_device, self.__config.get(device_key, None))
 
             # Add device to the list
             self.__wb_devices[device_key] = wb_device

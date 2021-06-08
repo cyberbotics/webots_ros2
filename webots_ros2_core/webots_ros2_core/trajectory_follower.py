@@ -20,7 +20,7 @@ from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 from rclpy.duration import Duration
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
-from webots_ros2_core.webots_controller import Node
+from webots_ros2_core.webots.controller import Node
 
 
 def to_s(duration):

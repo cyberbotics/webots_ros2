@@ -1,4 +1,4 @@
-#VRML_SIM R2020b utf8
+#VRML_SIM R2021a utf8
 WorldInfo {
   info [
     "Simple TurtleBot3 Burger simulation that can be controlled by a ROS."
@@ -6,8 +6,8 @@ WorldInfo {
   title "ROS2 simulation of the TurtleBot3 Burger robot"
 }
 Viewpoint {
-  orientation 0.10641236421720016 -0.25207787332085546 -0.9618384243331832 2.039170527287739
-  position -3.8306574674676366 4.499047968479621 23.02378266720472
+  orientation -0.1500994671353544 -0.4810853207937876 -0.8637285824160397 3.5119475446104667
+  position 9.974034902718383 6.242698326848728 4.5715004345304
   follow "TurtleBot3Burger:LDS-01"
 }
 TexturedBackground {
@@ -20,6 +20,14 @@ TurtleBot3Burger_enu {
   controller "<extern>"
   controllerArgs [
     ""
+  ]
+  extensionSlot [
+    InertialUnit {
+      rotation 0 1 0 3.14
+      name "inertial_unit"
+    }
+    RobotisLds01 {
+    }
   ]
 }
 PottedTree {

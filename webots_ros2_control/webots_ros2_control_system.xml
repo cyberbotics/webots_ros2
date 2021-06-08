@@ -1,0 +1,9 @@
+<library path="webots_ros2_control_system">
+  <class
+    type="webots_ros2_control::Ros2ControlSystem"
+    base_class_type="webots_ros2_control::Ros2ControlSystemInterface">
+    <description>
+      Default ros2_control Hardware Component to interface with Webots.
+    </description>
+  </class>
+</library>

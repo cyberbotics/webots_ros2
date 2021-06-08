@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
-<package format="3">
-  <name>webots_ros2</name>
-  <version>1.0.6</version>
-  <description>Interface between Webots and ROS2</description>
+<package format="2">
+  <name>webots_ros2_mavic</name>
+  <version>1.0.5</version>
+  <description>Mavic 2 Pro robot ROS2 interface for Webots.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
   <license>Apache License 2.0</license>
@@ -12,21 +12,8 @@
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
   <exec_depend>rclpy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
-  <exec_depend>webots_ros2_abb</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>
-  <exec_depend>webots_ros2_demos</exec_depend>
-  <exec_depend>webots_ros2_epuck</exec_depend>
-  <exec_depend>webots_ros2_examples</exec_depend>
-  <exec_depend>webots_ros2_importer</exec_depend>
-  <exec_depend>webots_ros2_mavic</exec_depend>
-  <exec_depend>webots_ros2_msgs</exec_depend>
-  <exec_depend>webots_ros2_tesla</exec_depend>
-  <exec_depend>webots_ros2_tiago</exec_depend>
-  <exec_depend>webots_ros2_turtlebot</exec_depend>
-  <exec_depend>webots_ros2_tutorials</exec_depend>
-  <exec_depend>webots_ros2_universal_robot</exec_depend>
 
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->

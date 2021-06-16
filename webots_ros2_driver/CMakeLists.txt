@@ -5,14 +5,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (UNIX)
-  link_directories(webots/lib/linux-gnu)
+  set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
 endif (UNIX)
 if (WIN32)
-  link_directories(webots/lib/msys)
+  set(WEBOTS_LIB_BASE webots/lib/msys)
 endif (WIN32)
 if (MSVC)
-  link_directories(webots/lib/darwin19)
+  set(WEBOTS_LIB_BASE webots/lib/darwin19)
 endif (MSVC)
+link_directories(${WEBOTS_LIB_BASE})
 set(WEBOTS_LIB
   ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
   ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -111,6 +112,10 @@ install(
 install(TARGETS ${PROJECT_NAME}_imu
   RUNTIME 
   DESTINATION lib/${PROJECT_NAME}
+)
+install(
+  DIRECTORY ${WEBOTS_LIB_BASE}/
+  DESTINATION lib/
 )
 
 # Prevent pluginlib from using boost

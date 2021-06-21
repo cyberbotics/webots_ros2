@@ -9,5 +9,5 @@ The main functionalities of the package:
 
 Please use the following links for more details:
 
-* [Tutorial: Creating Custom Package](https://github.com/cyberbotics/webots_ros2/wiki/Tutorial-Creating-Custom-Package)
-* [Tutorial: Creating Custom Plugin](https://github.com/cyberbotics/webots_ros2/wiki/Tutorial-Creating-Custom-Plugin)
+* [Tutorial: Creating a Custom Package](https://github.com/cyberbotics/webots_ros2/wiki/Tutorial-Creating-a-Custom-Package)
+* [Tutorial: Creating a Custom Plugin](https://github.com/cyberbotics/webots_ros2/wiki/Tutorial-Creating-a-Custom-Plugin)

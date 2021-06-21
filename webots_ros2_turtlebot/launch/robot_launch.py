@@ -38,15 +38,20 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    controller_spawner = Node(
+    diffdrive_controller_spawner = Node(
         package='controller_manager',
         executable='spawner.py',
         output='screen',
-        arguments=[
-            'joint_state_broadcaster',
-            '--controller-manager',
-            '/controller_manager'
-        ],
+        prefix="bash -c 'sleep 10; $0 $@' ",
+        arguments=['diffdrive_controller'],
+    )
+
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner.py',
+        output='screen',
+        prefix="bash -c 'sleep 10; $0 $@' ",
+        arguments=['joint_state_broadcaster'],
     )
 
     turtlebot_driver = Node(
@@ -84,7 +89,8 @@ def generate_launch_description():
             default_value='turtlebot3_burger_example.wbt',
             description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
         ),
-        controller_spawner,
+        joint_state_broadcaster_spawner,
+        diffdrive_controller_spawner,
         webots,
         robot_state_publisher,
         turtlebot_driver,

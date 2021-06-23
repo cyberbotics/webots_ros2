@@ -14,7 +14,6 @@ data_files.append(('share/' + package_name + '/resource', [
 data_files.append(('share/' + package_name + '/protos', [
     'protos/Khepera4_enu.proto'
 ]))
-data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/ros_example.wbt', 'worlds/.ros_example.wbproj',
     'worlds/khepera4_example.wbt', 'worlds/.khepera4_example.wbproj'

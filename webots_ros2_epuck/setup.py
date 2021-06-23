@@ -29,7 +29,6 @@ data_files.append(('share/' + package_name + '/protos', [
     'protos/LegoTallWall.proto'
 ]))
 data_files.append(('share/' + package_name + '/protos/icons', glob('protos/icons/*')))
-data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 data_files.append(('share/' + package_name + '/resource', [
     'resource/all.rviz',
     'resource/nav2_params.yaml',

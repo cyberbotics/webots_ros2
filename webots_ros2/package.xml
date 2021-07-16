@@ -20,6 +20,7 @@
   <exec_depend>webots_ros2_epuck</exec_depend>
   <exec_depend>webots_ros2_examples</exec_depend>
   <exec_depend>webots_ros2_importer</exec_depend>
+  <exec_depend>webots_ros2_mavic</exec_depend>
   <exec_depend>webots_ros2_msgs</exec_depend>
   <exec_depend>webots_ros2_tesla</exec_depend>
   <exec_depend>webots_ros2_tiago</exec_depend>

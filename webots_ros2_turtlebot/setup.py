@@ -1,6 +1,5 @@
 """webots_ros2 package setup file."""
 
-from glob import glob
 from setuptools import setup
 
 
@@ -17,7 +16,7 @@ data_files.append(('share/' + package_name + '/resource', [
 data_files.append(('share/' + package_name + '/protos', [
     'protos/TurtleBot3Burger_enu.proto'
 ]))
-data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
+
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/turtlebot3_burger_example.wbt', 'worlds/.turtlebot3_burger_example.wbproj',
 ]))

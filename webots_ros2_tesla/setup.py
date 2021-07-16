@@ -10,7 +10,6 @@ data_files.append(('share/' + package_name, ['launch/robot_launch.py']))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/tesla_world.wbt', 'worlds/.tesla_world.wbproj',
 ]))
-data_files.append(('share/' + package_name + '/worlds/textures', ['worlds/textures/ground.jpg']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 

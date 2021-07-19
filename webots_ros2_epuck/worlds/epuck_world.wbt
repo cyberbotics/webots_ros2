@@ -1,4 +1,4 @@
-#VRML_SIM R2020b utf8
+#VRML_SIM R2021b utf8
 WorldInfo {
   info [
     "Simple e-puck simulation that can be controlled with ROS2."

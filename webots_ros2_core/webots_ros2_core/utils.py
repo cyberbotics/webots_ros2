@@ -33,8 +33,8 @@ from launch.action import Action
 from launch.launch_context import LaunchContext
 
 
-MINIMUM_VERSION_STR = 'R2021a'
-TARGET_VERSION_STR = 'R2021a'
+MINIMUM_VERSION_STR = 'R2021b'
+TARGET_VERSION_STR = 'R2021b'
 
 
 @functools.total_ordering

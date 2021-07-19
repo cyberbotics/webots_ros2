@@ -33,6 +33,12 @@ def main(args=None):
         ],
         'points': [
             {
+                'positions': [0.0, 0.0, 0.0, 0., 0.0, 0.0, 0.0],
+                'velocities': [5] * 7,
+                'accelerations': [5] * 7,
+                'time_from_start': {'sec': 0, 'nanosec': 0}
+            },
+            {
                 'positions': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 'velocities': [5] * 7,
                 'accelerations': [5] * 7,

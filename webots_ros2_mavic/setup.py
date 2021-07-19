@@ -3,22 +3,12 @@
 from setuptools import setup
 
 
-package_name = 'webots_ros2_turtlebot'
+package_name = 'webots_ros2_mavic'
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name, ['launch/robot_launch.py']))
-data_files.append(('share/' + package_name + '/resource', [
-    'resource/turtlebot3_burger_example_map.pgm',
-    'resource/turtlebot3_burger_example_map.yaml',
-    'resource/turtlebot_webots.urdf',
-    'resource/ros2control.yml'
-]))
-data_files.append(('share/' + package_name + '/protos', [
-    'protos/TurtleBot3Burger_enu.proto'
-]))
-
 data_files.append(('share/' + package_name + '/worlds', [
-    'worlds/turtlebot3_burger_example.wbt', 'worlds/.turtlebot3_burger_example.wbproj',
+    'worlds/mavic_world.wbt', 'worlds/.mavic_world.wbproj',
 ]))
 data_files.append(('share/' + package_name, ['package.xml']))
 
@@ -41,10 +31,13 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='TurtleBot3 Burger robot ROS2 interface for Webots.',
+    description='Mavic 2 Pro robot ROS2 interface for Webots.',
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
+        'console_scripts': [
+            'mavic_driver = webots_ros2_mavic.mavic_driver:main'
+        ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

@@ -1,0 +1,154 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  info [
+    "This demonstration shows a DJI Mavic 2 PRO flying over a rural area by exposing the ROS2 Twist topic."
+  ]
+  title "ROS2 and DJI Mavic 2 PRO demo"
+  basicTimeStep 8
+  defaultDamping Damping {
+    linear 0.5
+    angular 0.5
+  }
+}
+Viewpoint {
+  orientation -0.5244397514318765 -0.5582238496202103 -0.6429222976637724 4.228321491131824
+  position 8.627987191418185 1.3611994470993425 2.1888478846560706
+  near 0.2
+  follow "Mavic 2 PRO"
+  followSmoothness 0.2
+}
+TexturedBackground {
+  luminosity 3
+}
+TexturedBackgroundLight {
+}
+Floor {
+  rotation 1 0 0 1.5707963267948966
+  size 400 400
+  tileSize 6 6
+  appearance SandyGround {
+  }
+}
+Road {
+  translation -43.8 9.2 0.01
+  rotation 0.726829660175909 0.485653500496276 0.485653500496276 1.884579782580257
+  width 3
+  numberOfLanes 1
+  rightBorder FALSE
+  leftBorder FALSE
+  wayPoints [
+    0 0 0
+    0 0 100
+    200 0 200
+  ]
+  splineSubdivision 8
+  appearance Pavement {
+    type "black stone"
+  }
+}
+Windmill {
+  translation -43.8656 -19.8433 0
+  rotation 0.774595793130572 -0.447214354233191 -0.447214354233191 1.823477677076078
+}
+Windmill {
+  translation -44.258 -27.3356 0
+  rotation 0.774595793130572 -0.447214354233191 -0.447214354233191 1.823477677076078
+  name "windmill(1)"
+}
+Windmill {
+  translation -46.2448 30.573 0
+  rotation 0.774595793130572 -0.447214354233191 -0.447214354233191 1.823477677076078
+  name "windmill(2)"
+}
+Windmill {
+  translation -38.75 23.4 0
+  rotation 0.577348855372322 -0.577350976096979 -0.577350976096979 2.094397223120449
+  name "windmill(3)"
+}
+SmallManor {
+  translation -50.35 11.25 0
+  rotation -0.427309395940913 0.639299100633112 0.639299100633112 3.949242852176833
+}
+SquareManhole {
+  translation 0 0 -0.03
+  rotation 1 0 0 1.5707963267948966
+}
+CardboardBox {
+  translation -0.730157 -1.22891 0.3
+  rotation 0.983106122056859 -0.129426335755756 -0.129426335755756 1.587833709818459
+}
+TeslaModel3Simple {
+  translation -41.5139 4.34169 0.31
+  rotation 0.67766031808056 0.519988698578611 0.519988698578611 1.95044260339299
+}
+Pine {
+  translation -14.0083 -14.4828 0
+  rotation 9.38185669e-07 0.707106781186236 0.707106781186236 3.141590777218456
+}
+Pine {
+  translation -19.6195 -24.3783 0
+  rotation 0.092692758261721 0.704062515891108 0.704062515891108 2.956735357534065
+  name "pine tree(1)"
+}
+Pine {
+  translation -22.0129 6.20205 0
+  rotation 1 0 0 1.5707963267948966
+  name "pine tree(3)"
+}
+Pine {
+  translation -10.6926 -25.1339 0
+  rotation 1 0 0 1.5707963267948966
+  name "pine tree(4)"
+}
+Pine {
+  translation -14.3441 14.5621 0
+  rotation 1 0 0 1.5707963267948966
+  name "pine tree(5)"
+}
+Pine {
+  translation -26.6328 -7.1707 0
+  rotation 1 0 0 1.5707963267948966
+  name "pine tree(6)"
+}
+Pine {
+  translation -9.37029 14.0209 0
+  rotation 0.18615458757881 -0.694746885391854 -0.694746885391854 2.77349682410255
+  name "pine tree(2)"
+}
+Forest {
+  translation 0 0 -0.01
+  rotation 1 0 0 1.5707963267948966
+  shape [
+    200 200
+    200 0
+    50 0
+    50 50
+    -50 50
+    -50 -50
+    50 -50
+    50 0
+    200 0
+    200 -200
+    -200 -200
+    -200 200
+  ]
+  density 0.01
+  type "cherry tree"
+  randomSeed 1
+  maxHeight 12
+  minHeight 6
+  maxRadius 6
+  minRadius 3
+}
+Mavic2Pro {
+  translation 0 0 0.1
+  rotation 0 0 1 3.141590777218456
+  controller "<extern>"
+  cameraSlot [
+    Camera {
+      width 400
+      height 240
+      near 0.2
+    }
+  ]
+}

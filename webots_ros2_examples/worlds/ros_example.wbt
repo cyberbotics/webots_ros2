@@ -1,4 +1,4 @@
-#VRML_SIM R2021b utf8
+#VRML_SIM R2021c utf8
 WorldInfo {
   info [
     "Simple Thymio II simulation controlled by a ROS node written in Python."

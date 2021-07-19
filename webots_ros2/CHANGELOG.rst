@@ -2,7 +2,20 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.1 (2020-XX-YY)
+1.1.0 (2021-07-19)
+------------------
+* Included the 'webots_ros2_driver' package as a C++ alternative to the 'webots_ros2_core' package.
+* Integrated ros2_control.
+* Included a Mavic drone simulation example
+
+1.0.5 (2021-01-08)
+------------------
+* Improved performance of the camera.
+* Replaced tkinter with simple command-line tools.
+* Fixed usage on Windows.
+* Introduced notion of minimum and target Webots versions.
+
+1.0.1 (2020-09-18)
 ------------------
 * Removed the 'webots_ros2_desktop' package.
 * Added missing 'webots_ros2_demos', 'webots_ros2_epuck' and 'webots_ros2_msgs' packages as dependencies.

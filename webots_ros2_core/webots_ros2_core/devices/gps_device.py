@@ -14,7 +14,7 @@
 
 """Webots GPS device wrapper for ROS2."""
 
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import QoSReliabilityPolicy, qos_profile_sensor_data
 from std_msgs.msg import Float32
 from sensor_msgs.msg import NavSatFix, NavSatStatus
 from geometry_msgs.msg import PointStamped
@@ -60,16 +60,19 @@ class GpsDevice(SensorDevice):
         # Change default timestep
         self._timestep = 128
 
+        qos_sensor_reliable = qos_profile_sensor_data
+        qos_sensor_reliable.reliability = QoSReliabilityPolicy.RELIABLE
+
         # Create topics
         self.__speed_publisher = node.create_publisher(
-            Float32, self._topic_name + '/speed', qos_profile_sensor_data)
+            Float32, self._topic_name + '/speed', qos_sensor_reliable)
 
         if self.__coordinate_system == GPS.WGS84:
             self.__gps_publisher = node.create_publisher(
-                NavSatFix, self._topic_name + '/gps', qos_profile_sensor_data)
+                NavSatFix, self._topic_name + '/gps', qos_sensor_reliable)
         else:
             self.__gps_publisher = node.create_publisher(
-                PointStamped, self._topic_name + '/gps', qos_profile_sensor_data)
+                PointStamped, self._topic_name + '/gps', qos_sensor_reliable)
 
     def step(self):
         stamp = super().step()

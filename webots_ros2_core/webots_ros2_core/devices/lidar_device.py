@@ -14,7 +14,7 @@
 
 """Lidar device."""
 
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import QoSReliabilityPolicy, qos_profile_sensor_data
 from sensor_msgs.msg import LaserScan, PointCloud2, PointField
 from tf2_ros import StaticTransformBroadcaster
 from geometry_msgs.msg import TransformStamped
@@ -60,14 +60,17 @@ class LidarDevice(SensorDevice):
         # Change default timestep
         self._timestep = 128
 
+        qos_sensor_reliable = qos_profile_sensor_data
+        qos_sensor_reliable.reliability = QoSReliabilityPolicy.RELIABLE
+
         # Create topics
         if wb_device.getNumberOfLayers() > 1:
             wb_device.enablePointCloud()
             self.__publisher = node.create_publisher(PointCloud2, self._topic_name,
-                                                     qos_profile_sensor_data)
+                                                     qos_sensor_reliable)
         else:
             self.__publisher = node.create_publisher(LaserScan, self._topic_name,
-                                                     qos_profile_sensor_data)
+                                                     qos_sensor_reliable)
             self.__static_broadcaster = StaticTransformBroadcaster(node)
             transform_stamped = TransformStamped()
             transform_stamped.header.frame_id = self._frame_id

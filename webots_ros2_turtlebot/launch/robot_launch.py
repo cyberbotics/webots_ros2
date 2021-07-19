@@ -17,28 +17,70 @@
 """Launch Webots TurtleBot3 Burger driver."""
 
 import os
+import pathlib
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch import LaunchDescription
+from launch_ros.actions import Node
+import launch
 from ament_index_python.packages import get_package_share_directory
+from webots_ros2_core.webots_launcher import WebotsLauncher
 
 
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
     world = LaunchConfiguration('world')
+    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
+    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
 
-    webots = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
-        ),
-        launch_arguments=[
-            ('package', 'webots_ros2_turtlebot'),
-            ('executable', 'turtlebot_driver'),
-            ('world', PathJoinSubstitution([package_dir, 'worlds', world])),
+    webots = WebotsLauncher(
+        world=PathJoinSubstitution([package_dir, 'worlds', world])
+    )
+
+    diffdrive_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner.py',
+        output='screen',
+        prefix="bash -c 'sleep 10; $0 $@' ",
+        arguments=['diffdrive_controller'],
+    )
+
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner.py',
+        output='screen',
+        prefix="bash -c 'sleep 10; $0 $@' ",
+        arguments=['joint_state_broadcaster'],
+    )
+
+    turtlebot_driver = Node(
+        package='webots_ros2_driver',
+        executable='driver',
+        output='screen',
+        parameters=[
+            {'robot_description': robot_description},
+            ros2_control_params
+        ],
+        remappings=[
+            ('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')
         ]
+    )
+
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>'
+        }],
+    )
+
+    footprint_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
     return LaunchDescription([
@@ -47,5 +89,16 @@ def generate_launch_description():
             default_value='turtlebot3_burger_example.wbt',
             description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
         ),
-        webots
+        joint_state_broadcaster_spawner,
+        diffdrive_controller_spawner,
+        webots,
+        robot_state_publisher,
+        turtlebot_driver,
+        footprint_publisher,
+        launch.actions.RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=webots,
+                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+            )
+        )
     ])

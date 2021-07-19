@@ -1,6 +1,5 @@
 """webots_ros2 package setup file."""
 
-from glob import glob
 from setuptools import setup
 
 
@@ -14,7 +13,6 @@ data_files.append(('share/' + package_name + '/resource', [
 data_files.append(('share/' + package_name + '/protos', [
     'protos/Khepera4_enu.proto'
 ]))
-data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/ros_example.wbt', 'worlds/.ros_example.wbproj',
     'worlds/khepera4_example.wbt', 'worlds/.khepera4_example.wbproj'
@@ -24,7 +22,7 @@ data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
     name=package_name,
-    version='1.0.6',
+    version='1.1.0',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

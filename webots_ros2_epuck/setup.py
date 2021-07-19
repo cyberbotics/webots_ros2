@@ -1,7 +1,6 @@
 """webots_ros2_epuck package setup file."""
 
 from setuptools import setup
-from glob import glob
 
 
 package_name = 'webots_ros2_epuck'
@@ -28,8 +27,6 @@ data_files.append(('share/' + package_name + '/protos', [
     'protos/LegoTallInterval.proto',
     'protos/LegoTallWall.proto'
 ]))
-data_files.append(('share/' + package_name + '/protos/icons', glob('protos/icons/*')))
-data_files.append(('share/' + package_name + '/protos/textures', glob('protos/textures/*')))
 data_files.append(('share/' + package_name + '/resource', [
     'resource/all.rviz',
     'resource/nav2_params.yaml',
@@ -46,7 +43,7 @@ data_files.append(('share/' + package_name, [
 
 setup(
     name=package_name,
-    version='1.0.6',
+    version='1.1.0',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

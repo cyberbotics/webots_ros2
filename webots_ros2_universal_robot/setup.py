@@ -1,9 +1,7 @@
 """webots_ros2 package setup file."""
 
-import os
-import fnmatch
-
 from setuptools import setup
+
 
 package_name = 'webots_ros2_universal_robot'
 worlds = [
@@ -29,24 +27,18 @@ config = [
     'config/ur5e.srdf',
     'config/kinematics.yaml'
 ]
-textures = []
-for rootPath, dirNames, fileNames in os.walk('worlds/textures'):
-    for fileName in fnmatch.filter(fileNames, '*.jpg'):
-        filePath = os.path.relpath(os.path.join(rootPath, fileName))
-        textures.append(filePath)
 
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name + '/launch', launchers))
 data_files.append(('share/' + package_name + '/config', config))
 data_files.append(('share/' + package_name + '/worlds', worlds))
-data_files.append(('share/' + package_name + '/worlds/textures', textures))
 data_files.append(('share/' + package_name, ['package.xml']))
 data_files.append(('share/' + package_name + '/resource', ['resource/view_robot_dynamic.rviz']))
 
 setup(
     name=package_name,
-    version='1.0.6',
+    version='1.1.0',
     packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

@@ -1,4 +1,4 @@
-#VRML_SIM R2020b utf8
+#VRML_SIM R2021b utf8
 # license: Copyright Cyberbotics Ltd. Licensed for use only with Webots.
 # license url: https://cyberbotics.com/webots_assets_license
 # tags: static
@@ -89,7 +89,7 @@ Robot {
                       roughness 0.4
                       baseColorMap ImageTexture {
                         url [
-                          "textures/gctronic_logo.png"
+                          "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/gctronic_logo.png"
                         ]
                       }
                     }
@@ -395,45 +395,45 @@ Robot {
             baseColorMap ImageTexture {
               url [
                 %{ if v2 then }%
-                  "textures/e-puck2_plate.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck2_plate.jpg"
                 %{ else }%
-                  "textures/e-puck1_plate_base_color.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_plate_base_color.jpg"
                 %{ end }%
               ]
             }
             roughnessMap ImageTexture {
               url [
                 %{ if v2 then }%
-                  "textures/e-puck2_plate.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck2_plate.jpg"
                 %{ else }%
-                  "textures/e-puck1_plate_roughness.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_plate_roughness.jpg"
                 %{ end }%
               ]
             }
             metalnessMap ImageTexture {
               url [
                 %{ if v2 then }%
-                  "textures/e-puck2_plate.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck2_plate.jpg"
                 %{ else }%
-                  "textures/e-puck1_plate_metalness.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_plate_metalness.jpg"
                 %{ end }%
               ]
             }
             normalMap ImageTexture {
               url [
                 %{ if v2 then }%
-                  "textures/e-puck2_plate.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck2_plate.jpg"
                 %{ else }%
-                  "textures/e-puck1_plate_normal.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_plate_normal.jpg"
                 %{ end }%
               ]
             }
             occlusionMap ImageTexture {
               url [
                 %{ if v2 then }%
-                  "textures/e-puck2_plate.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck2_plate.jpg"
                 %{ else }%
-                  "textures/e-puck1_plate_occlusion.jpg"
+                  "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_plate_occlusion.jpg"
                 %{ end }%
               ]
             }
@@ -525,27 +525,27 @@ Robot {
           appearance PBRAppearance {
             baseColorMap ImageTexture {
               url [
-                "textures/e-puck1_turret_base_color.jpg"
+                "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_turret_base_color.jpg"
               ]
             }
             roughnessMap ImageTexture {
               url [
-                "textures/e-puck1_turret_roughness.jpg"
+                "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_turret_roughness.jpg"
               ]
             }
             metalnessMap ImageTexture {
               url [
-                "textures/e-puck1_turret_metalness.jpg"
+                "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_turret_metalness.jpg"
               ]
             }
             normalMap ImageTexture {
               url [
-                "textures/e-puck1_turret_normal.jpg"
+                "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_turret_normal.jpg"
               ]
             }
             occlusionMap ImageTexture {
               url [
-                "textures/e-puck1_turret_occlusion.jpg"
+                "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/e-puck1_turret_occlusion.jpg"
               ]
             }
           }
@@ -1075,7 +1075,7 @@ Robot {
             metalness 0
             baseColorMap ImageTexture {
               url [
-                "textures/gctronic_logo.png"
+                "https://raw.githubusercontent.com/cyberbotics/webots/R2021b/projects/robots/gctronic/e-puck/protos/textures/gctronic_logo.png"
               ]
             }
           }

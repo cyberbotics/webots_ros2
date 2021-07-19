@@ -47,12 +47,15 @@ class CameraDevice(SensorDevice):
         self._recognition_webots_publisher = None
         self._image_publisher = None
 
+        qos_sensor_reliable = qos_profile_sensor_data
+        qos_sensor_reliable.reliability = QoSReliabilityPolicy.RELIABLE
+
         # Create topics
         if not self._disable:
             self._image_publisher = self._node.create_publisher(
                 Image,
                 self._topic_name + '/image_raw',
-                qos_profile_sensor_data
+                qos_sensor_reliable
             )
             self._camera_info_publisher = self._node.create_publisher(
                 CameraInfo,

@@ -23,7 +23,7 @@ from rclpy.qos import qos_profile_sensor_data
 from rclpy.node import Node
 
 
-CONTROL_COEFFICIENT = 0.002
+CONTROL_COEFFICIENT = 0.0005
 
 
 class LaneFollower(Node):
@@ -41,22 +41,26 @@ class LaneFollower(Node):
 
         # Segment the image by color in HSV color space
         img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-        mask = cv2.inRange(img, np.array([70, 120, 170]), np.array([120, 160, 210]))
+        mask = cv2.inRange(img, np.array([50, 110, 150]), np.array([120, 255, 255]))
 
         # Find the largest segmented contour
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+        command_message = AckermannDrive()
+        command_message.speed = 50.0
+        command_message.steering_angle = 0.0
+
         if contours:
             largest_contour = max(contours, key=cv2.contourArea)
             largest_contour_center = cv2.moments(largest_contour)
-            center_x = int(largest_contour_center['m10'] / largest_contour_center['m00'])
 
-            # Find error (the lane distance from the target distance)
-            error = center_x - 120
+            if largest_contour_center['m00'] != 0:
+                center_x = int(largest_contour_center['m10'] / largest_contour_center['m00'])
+                # Find error (the lane distance from the target distance)
+                error = center_x - 190
+                command_message.steering_angle = error*CONTROL_COEFFICIENT
 
-            command_message = AckermannDrive()
-            command_message.speed = 10.0
-            command_message.steering_angle = error * CONTROL_COEFFICIENT
-            self.__ackermann_publisher.publish(command_message)
+        self.__ackermann_publisher.publish(command_message)
 
 
 def main(args=None):

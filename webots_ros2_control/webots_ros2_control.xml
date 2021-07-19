@@ -1,0 +1,9 @@
+<library path="webots_ros2_control">
+  <class
+    type="webots_ros2_control::Ros2Control"
+    base_class_type="webots_ros2_driver::PluginInterface">
+    <description>
+      webots_ros2 plugin to support ros2_control
+    </description>
+  </class>
+</library>

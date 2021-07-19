@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>webots_ros2_driver</name>
+  <version>1.1.0</version>
+  <description>Implementation of the Webots - ROS 2 interface</description>
+  <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
+  <license>Apache License 2.0</license>
+  <url type="website">http://wiki.ros.org/webots_ros2</url>
+  <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
+  <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>vision_msgs</depend>
+  <depend>tinyxml2_vendor</depend>
+  <depend>webots_ros2_msgs</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>

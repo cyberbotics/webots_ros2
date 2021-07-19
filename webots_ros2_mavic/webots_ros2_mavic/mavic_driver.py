@@ -14,6 +14,7 @@
 
 """ROS2 Mavic 2 Pro driver."""
 
+import math
 import rclpy
 from geometry_msgs.msg import Twist
 from webots_ros2_core.webots_node import WebotsNode
@@ -40,7 +41,8 @@ class MavicDriver(WebotsNode):
         super().__init__('mavic_driver', args)
         self.start_device_manager({
             'gyro': {'always_publish': True},
-            'inertial unit': {'always_publish': True}
+            'inertial unit': {'always_publish': True},
+            'gps': {'always_publish': True}
         })
 
         # Sensors
@@ -86,6 +88,8 @@ class MavicDriver(WebotsNode):
         _, _, vertical = self.__gps.getValues()
         roll_acceleration, pitch_acceleraiton, twist_yaw = self.__gyro.getValues()
         velocity = self.__gps.getSpeed()
+        if math.isnan(velocity):
+            return
 
         # Allow high level control once the drone is lifted
         if vertical > 0.2:

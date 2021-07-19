@@ -2,6 +2,6 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.6 (2021-05-21)
+1.1.0 (2021-05-21)
 ------------------
 * Initial version

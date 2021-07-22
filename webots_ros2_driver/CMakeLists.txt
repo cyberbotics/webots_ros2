@@ -38,7 +38,7 @@ find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
 
-add_executable(driver 
+add_executable(driver
   src/Driver.cpp
   src/WebotsNode.cpp
   src/plugins/Ros2SensorPlugin.cpp
@@ -54,7 +54,7 @@ add_executable(driver
 )
 
 # Driver
-ament_target_dependencies(driver 
+ament_target_dependencies(driver
   rosgraph_msgs
   rclcpp
   pluginlib
@@ -67,15 +67,15 @@ ament_target_dependencies(driver
   tinyxml2_vendor
   TinyXML2
 )
-target_link_libraries(driver 
-  ${WEBOTS_LIB}  
+target_link_libraries(driver
+  ${WEBOTS_LIB}
 )
 install(
   DIRECTORY include/
   DESTINATION include
 )
 install(TARGETS driver
-  RUNTIME 
+  RUNTIME
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -87,14 +87,14 @@ add_library(
   src/plugins/Ros2SensorPlugin.cpp
   src/utils/Utils.cpp
 )
-ament_target_dependencies(${PROJECT_NAME}_imu 
+ament_target_dependencies(${PROJECT_NAME}_imu
   rclcpp
   sensor_msgs
   pluginlib
   tf2_ros
 )
-target_link_libraries(${PROJECT_NAME}_imu 
-  ${WEBOTS_LIB}  
+target_link_libraries(${PROJECT_NAME}_imu
+  ${WEBOTS_LIB}
 )
 
 install(
@@ -110,8 +110,7 @@ install(
   DESTINATION include/webots
 )
 install(TARGETS ${PROJECT_NAME}_imu
-  RUNTIME 
-  DESTINATION lib/${PROJECT_NAME}
+  LIBRARY DESTINATION lib/${PROJECT_NAME}
 )
 install(
   DIRECTORY ${WEBOTS_LIB_BASE}/

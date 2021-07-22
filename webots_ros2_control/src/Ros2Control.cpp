@@ -40,6 +40,7 @@ namespace webots_ros2_control
   void Ros2Control::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
   {
     mNode = node;
+    (void)parameters;
 
     // Load hardware
     try

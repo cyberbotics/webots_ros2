@@ -110,7 +110,7 @@ install(
   DESTINATION include/webots
 )
 install(TARGETS ${PROJECT_NAME}_imu
-  LIBRARY DESTINATION lib/${PROJECT_NAME}
+  LIBRARY DESTINATION lib
 )
 install(
   DIRECTORY ${WEBOTS_LIB_BASE}/

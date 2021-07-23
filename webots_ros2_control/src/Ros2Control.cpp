@@ -37,7 +37,7 @@ namespace webots_ros2_control
     mControllerManager->write();
   }
 
-  void Ros2Control::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
+  void Ros2Control::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &)
   {
     mNode = node;
 

@@ -403,10 +403,6 @@ RectangularPanel {
 DirectionPanel {
   translation 8 5 1.5
   rotation -1 0 0 4.71238898038469
-  textSize 0.175
-  text "Fresh beer :)"
-  right FALSE
-  left TRUE
 }
 BunchOfSunFlowers {
   translation 7.68 -0.52 0.5

@@ -142,6 +142,13 @@ install(
   DIRECTORY ${WEBOTS_LIB_BASE}/
   DESTINATION lib/
 )
+if (MSVC OR MSYS OR MINGW OR WIN32)
+  # Windows requires the library to be placed with executable
+  install(
+    FILES "${WEBOTS_LIB_BASE}/${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    DESTINATION lib/${PROJECT_NAME}
+  )
+endif()
 
 # Prevent pluginlib from using boost
 target_compile_definitions(driver PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

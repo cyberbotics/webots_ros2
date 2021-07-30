@@ -38,20 +38,24 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
+    # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
+    controller_manager_timeout = ['--controller-manager-timeout', '50'] if os.name == 'nt' else []
+    controller_manager_prefix = 'python.exe' if os.name == 'nt' else "bash -c 'sleep 10; $0 $@' "
+
     diffdrive_controller_spawner = Node(
         package='controller_manager',
         executable='spawner.py',
         output='screen',
-        prefix="bash -c 'sleep 10; $0 $@' ",
-        arguments=['diffdrive_controller'],
+        prefix=controller_manager_prefix,
+        arguments=['diffdrive_controller'] + controller_manager_timeout,
     )
 
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner.py',
         output='screen',
-        prefix="bash -c 'sleep 10; $0 $@' ",
-        arguments=['joint_state_broadcaster'],
+        prefix=controller_manager_prefix,
+        arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
 
     turtlebot_driver = Node(

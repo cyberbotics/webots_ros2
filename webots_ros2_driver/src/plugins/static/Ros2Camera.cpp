@@ -134,7 +134,6 @@ namespace webots_ros2_driver
       // Object Info -> Detection2D
       vision_msgs::msg::Detection2D detection;
       vision_msgs::msg::ObjectHypothesisWithPose hypothesis;
-      hypothesis.id = std::string(objects[i].model);
       hypothesis.pose.pose.position = position;
       hypothesis.pose.pose.orientation = orientation;
       detection.results.push_back(hypothesis);

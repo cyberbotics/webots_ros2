@@ -4,26 +4,6 @@ project(webots_ros2_driver)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (UNIX)
-  set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
-endif (UNIX)
-if (WIN32)
-  set(WEBOTS_LIB_BASE webots/lib/msys)
-endif (WIN32)
-if (MSVC)
-  set(WEBOTS_LIB_BASE webots/lib/darwin19)
-endif (MSVC)
-link_directories(${WEBOTS_LIB_BASE})
-set(WEBOTS_LIB
-  ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
-  ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}
-)
-include_directories(
-  include
-  webots/include/c
-  webots/include/cpp
-)
-
 # ROS2 Packages
 find_package(ament_cmake REQUIRED)
 find_package(rosgraph_msgs REQUIRED)
@@ -37,6 +17,52 @@ find_package(vision_msgs REQUIRED)
 find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
+
+if (UNIX AND NOT APPLE)
+  set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
+endif ()
+if (APPLE)
+  set(WEBOTS_LIB_BASE webots/lib/darwin19)
+endif ()
+if (MSVC OR MSYS OR MINGW OR WIN32)
+  set(WEBOTS_LIB_BASE webots/lib/msys)
+endif ()
+
+include_directories(
+  include
+  webots/include/c
+  webots/include/cpp
+)
+link_directories(${WEBOTS_LIB_BASE})
+
+if (MSVC OR MSYS OR MINGW OR WIN32)
+  # Windows requires the libController C++ part to be compiled.
+  # See more here: https://cyberbotics.com/doc/guide/using-your-ide#visual-studio
+
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+  file(GLOB CppController_SRC CONFIGURE_DEPENDS "webots/source/cpp/*.cpp")
+  add_library(
+    CppController
+    SHARED
+    ${CppController_SRC}
+  )
+  target_link_libraries(CppController
+    ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
+  )
+  install(TARGETS CppController
+    LIBRARY DESTINATION lib
+  )
+  set(WEBOTS_LIB
+    ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
+    CppController
+  )
+  ament_export_libraries(CppController)
+else()
+  set(WEBOTS_LIB
+    ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}
+  )
+endif()
 
 add_executable(driver
   src/Driver.cpp
@@ -116,6 +142,13 @@ install(
   DIRECTORY ${WEBOTS_LIB_BASE}/
   DESTINATION lib/
 )
+if (MSVC OR MSYS OR MINGW OR WIN32)
+  # Windows requires the library to be placed with executable
+  install(
+    FILES "${WEBOTS_LIB_BASE}/${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    DESTINATION lib/${PROJECT_NAME}
+  )
+endif()
 
 # Prevent pluginlib from using boost
 target_compile_definitions(driver PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

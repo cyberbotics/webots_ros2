@@ -136,6 +136,8 @@ install(
   DESTINATION include/webots
 )
 install(TARGETS ${PROJECT_NAME}_imu
+  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
 )
 install(

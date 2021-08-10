@@ -74,7 +74,7 @@ namespace webots_ros2_driver
 
   void Ros2GPS::pubishPoint()
   {
-    mPointMessage.header.stamp = rclcpp::Clock().now();
+    mPointMessage.header.stamp = mNode->get_clock()->now();
     const double *values = mGPS->getValues();
     mPointMessage.point.x = values[0];
     mPointMessage.point.y = values[1];
@@ -84,7 +84,7 @@ namespace webots_ros2_driver
 
   void Ros2GPS::publishGPS()
   {
-    mGPSMessage.header.stamp = rclcpp::Clock().now();
+    mGPSMessage.header.stamp = mNode->get_clock()->now();
     const double *values = mGPS->getValues();
     mGPSMessage.latitude = values[0];
     mGPSMessage.longitude = values[1];

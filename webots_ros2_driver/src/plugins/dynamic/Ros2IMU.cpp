@@ -100,7 +100,7 @@ namespace webots_ros2_driver
 
   void Ros2IMU::publishData()
   {
-    mMessage.header.stamp = rclcpp::Clock().now();
+    mMessage.header.stamp = mNode->get_clock()->now();
     if (mAccelerometer)
     {
       const double *values = mAccelerometer->getValues();

@@ -168,4 +168,7 @@ ament_export_dependencies(
   tinyxml2_vendor
   TinyXML2
 )
+ament_export_libraries(
+  ${PROJECT_NAME}_imu
+)
 ament_package()

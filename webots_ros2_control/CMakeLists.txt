@@ -87,10 +87,6 @@ ament_export_include_directories(
   include
 )
 
-if(BUILD_TESTING)
-  find_package(ament_cmake_gtest REQUIRED)
-endif()
-
 ament_export_dependencies(
   hardware_interface
   pluginlib

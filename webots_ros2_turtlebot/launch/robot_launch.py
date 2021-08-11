@@ -33,6 +33,7 @@ def generate_launch_description():
     world = LaunchConfiguration('world')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world])
@@ -63,7 +64,8 @@ def generate_launch_description():
         executable='driver',
         output='screen',
         parameters=[
-            {'robot_description': robot_description},
+            {'robot_description': robot_description,
+             'use_sim_time': use_sim_time},
             ros2_control_params
         ],
         remappings=[

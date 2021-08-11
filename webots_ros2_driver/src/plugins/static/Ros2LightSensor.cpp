@@ -60,7 +60,7 @@ namespace webots_ros2_driver
   void Ros2LightSensor::publishValue()
   {
     const double value = mLightSensor->getValue();
-    mMessage.header.stamp = rclcpp::Clock().now();
+    mMessage.header.stamp = mNode->get_clock()->now();
     mMessage.illuminance = interpolateLookupTable(value, mLookupTable);
     mMessage.variance = findVariance(value);
     mPublisher->publish(mMessage);

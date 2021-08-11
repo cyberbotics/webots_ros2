@@ -61,7 +61,7 @@ namespace webots_ros2_driver
 
   void Ros2DistanceSensor::publishRange()
   {
-    mMessage.header.stamp = rclcpp::Clock().now();
+    mMessage.header.stamp = mNode->get_clock()->now();
     mMessage.range = interpolateLookupTable(mDistanceSensor->getValue(), mLookupTable);
     mPublisher->publish(mMessage);
   }

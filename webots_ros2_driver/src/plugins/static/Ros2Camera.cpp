@@ -40,7 +40,7 @@ namespace webots_ros2_driver
     cameraInfoQos.transient_local();
     cameraInfoQos.keep_last(1);
     mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", cameraInfoQos);
-    mCameraInfoMessage.header.stamp = rclcpp::Clock().now();
+    mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = mCamera->getHeight();
     mCameraInfoMessage.width = mCamera->getWidth();
@@ -106,7 +106,7 @@ namespace webots_ros2_driver
     auto image = mCamera->getImage();
     if (image)
     {
-      mImageMessage.header.stamp = rclcpp::Clock().now();
+      mImageMessage.header.stamp = mNode->get_clock()->now();
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
       mImagePublisher->publish(mImageMessage);
     }
@@ -118,8 +118,8 @@ namespace webots_ros2_driver
       return;
 
     auto objects = mCamera->getRecognitionObjects();
-    mRecogntionMessage.header.stamp = rclcpp::Clock().now();
-    mWebotsRecognitionMessage.header.stamp = rclcpp::Clock().now();
+    mRecogntionMessage.header.stamp = mNode->get_clock()->now();
+    mWebotsRecognitionMessage.header.stamp = mNode->get_clock()->now();
 
     for (size_t i = 0; i < mCamera->getRecognitionNumberOfObjects(); i++)
     {

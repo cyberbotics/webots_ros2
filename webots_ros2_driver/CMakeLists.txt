@@ -136,6 +136,8 @@ install(
   DESTINATION include/webots
 )
 install(TARGETS ${PROJECT_NAME}_imu
+  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
 )
 install(
@@ -167,5 +169,8 @@ ament_export_dependencies(
   webots_ros2_msgs
   tinyxml2_vendor
   TinyXML2
+)
+ament_export_libraries(
+  ${PROJECT_NAME}_imu
 )
 ament_package()

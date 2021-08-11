@@ -111,7 +111,7 @@ namespace webots_ros2_driver
     auto data = mLidar->getPointCloud();
     if (data)
     {
-      mPointCloudMessage.header.stamp = rclcpp::Clock().now();
+      mPointCloudMessage.header.stamp = mNode->get_clock()->now();
 
       mPointCloudMessage.width = mLidar->getNumberOfPoints();
       mPointCloudMessage.row_step = 20 * mLidar->getNumberOfPoints();
@@ -129,7 +129,7 @@ namespace webots_ros2_driver
     if (rangeImage)
     {
       memcpy(mLaserMessage.ranges.data(), rangeImage, mLaserMessage.ranges.size() * sizeof(float));
-      mLaserMessage.header.stamp = rclcpp::Clock().now();
+      mLaserMessage.header.stamp = mNode->get_clock()->now();
       mLaserPublisher->publish(mLaserMessage);
     }
   }

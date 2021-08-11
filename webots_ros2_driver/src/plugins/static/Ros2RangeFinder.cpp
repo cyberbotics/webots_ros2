@@ -43,7 +43,7 @@ namespace webots_ros2_driver
     cameraInfoQos.transient_local();
     cameraInfoQos.keep_last(1);
     mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", cameraInfoQos);
-    mCameraInfoMessage.header.stamp = rclcpp::Clock().now();
+    mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = mRangeFinder->getHeight();
     mCameraInfoMessage.width = mRangeFinder->getWidth();
@@ -90,7 +90,7 @@ namespace webots_ros2_driver
     auto image = mRangeFinder->getRangeImage();
     if (image)
     {
-      mImageMessage.header.stamp = rclcpp::Clock().now();
+      mImageMessage.header.stamp = mNode->get_clock()->now();
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
       mImagePublisher->publish(mImageMessage);
     }

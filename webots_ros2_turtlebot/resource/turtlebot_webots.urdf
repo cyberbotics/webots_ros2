@@ -23,6 +23,8 @@
         </plugin>
 
         <plugin type="webots_ros2_control::Ros2Control" />
+
+        <plugin type="webots_ros2_turtlebot.plugin_example.PluginExample" />
     </webots>
 
     <ros2_control name="WebotsControl" type="system">

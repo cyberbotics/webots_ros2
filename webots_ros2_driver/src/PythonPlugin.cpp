@@ -1,17 +1,45 @@
 #include "webots_ros2_driver/PythonPlugin.hpp"
 
+static PyObject *gPyWebotsNode = NULL;
+
 namespace webots_ros2_driver
 {
     PythonPlugin::PythonPlugin(PyObject *pyPlugin) : mPyPlugin(pyPlugin){};
 
     void PythonPlugin::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
     {
-        PyObject_CallMethod(mPyPlugin, "init", "");
+        PyObject_CallMethod(mPyPlugin, "init", "O", getPyWebotsNodeInstance());
     }
 
     void PythonPlugin::step()
     {
         PyObject_CallMethod(mPyPlugin, "step", "");
+    }
+
+    PyObject *PythonPlugin::getPyWebotsNodeInstance()
+    {
+        if (gPyWebotsNode)
+            return gPyWebotsNode;
+
+        PyObject *pyWebotsExtraModuleSource = Py_CompileString(
+            R"EOT(
+# from controller import Supervisor
+
+class WebotsNode:
+    @property
+    def robot(self):
+        return None
+        # return Supervisor.getInstance()
+
+    def test(self):
+        print('WebotsNode.test()')
+)EOT",
+            "webots_extra", Py_file_input);
+        PyObject *pyWebotsExtraModule = PyImport_ExecCodeModule("webots_extra", pyWebotsExtraModuleSource);
+        PyObject *pyDict = PyModule_GetDict(pyWebotsExtraModule);
+        PyObject *pyClass = PyDict_GetItemString(pyDict, "WebotsNode");
+        gPyWebotsNode = PyObject_CallObject(pyClass, nullptr);
+        return gPyWebotsNode;
     }
 
     std::shared_ptr<PythonPlugin> PythonPlugin::createFromType(std::string &type)
@@ -23,7 +51,7 @@ namespace webots_ros2_driver
 
         PyObject *pyName = PyUnicode_FromString(moduleName.c_str());
         PyObject *pyModule = PyImport_Import(pyName);
-   
+
         // If the module cannot be find the error should be handled in the upper level (e.g. try loading C++ plugin)
         if (!pyModule)
             return NULL;

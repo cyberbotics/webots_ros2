@@ -35,6 +35,7 @@ namespace webots_ros2_driver
 
     private:
         PyObject *mPyPlugin;
+        PyObject *getPyWebotsNodeInstance();
     };
 
 }

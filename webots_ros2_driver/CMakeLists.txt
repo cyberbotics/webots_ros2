@@ -17,6 +17,7 @@ find_package(vision_msgs REQUIRED)
 find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
+find_package(PythonLibs 3.8 EXACT REQUIRED)
 
 if (UNIX AND NOT APPLE)
   set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
@@ -32,6 +33,7 @@ include_directories(
   include
   webots/include/c
   webots/include/cpp
+  ${PYTHON_INCLUDE_DIRS}
 )
 link_directories(${WEBOTS_LIB_BASE})
 
@@ -67,6 +69,7 @@ endif()
 add_executable(driver
   src/Driver.cpp
   src/WebotsNode.cpp
+  src/PythonPlugin.cpp
   src/plugins/Ros2SensorPlugin.cpp
   src/plugins/static/Ros2Lidar.cpp
   src/plugins/static/Ros2LED.cpp
@@ -95,6 +98,7 @@ ament_target_dependencies(driver
 )
 target_link_libraries(driver
   ${WEBOTS_LIB}
+  ${PYTHON_LIBRARIES}
 )
 install(
   DIRECTORY include/

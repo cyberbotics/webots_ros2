@@ -21,16 +21,14 @@ int main(int argc, char **argv)
         std::cout << "Python module found\n";
 
         PyObject *pDict = PyModule_GetDict(pModule);
-        PyObject *pFunc = PyDict_GetItem(pDict, PyUnicode_FromString("my_func"));
-
-        if (pFunc != NULL)
-        {
-            PyObject_CallObject(pFunc, NULL);
-        }
-        else
-        {
+        PyObject *pClass = PyDict_GetItemString(pDict, "MyPlugin");
+        if (!pClass) {
             std::cout << "Couldn't find func\n";
+            return 1;
         }
+        PyObject *pObject = PyObject_CallObject(pClass, nullptr);
+
+        PyObject_CallMethod(pObject, "my_func", "");
     }
     else
         std::cout << "Python Module not found\n";

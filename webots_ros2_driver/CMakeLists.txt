@@ -151,9 +151,13 @@ install(TARGETS ${PROJECT_NAME}_imu
 install(
   DIRECTORY ${WEBOTS_LIB_BASE}/
   DESTINATION lib
-  FILES_MATCHING 
-  PATTERN "*CppController*"
+  FILES_MATCHING
   PATTERN "*Controller*"
+  PATTERN "*CppController*"
+  PATTERN "*car*"
+  PATTERN "*CppCar*"
+  PATTERN "*driver*"
+  PATTERN "*CppDriver*"
 )
 if (MSVC OR MSYS OR MINGW OR WIN32)
   # Windows requires the library to be placed with executable

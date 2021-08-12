@@ -38,7 +38,13 @@ class WebotsNode:
         print('WebotsNode.test()')
 )EOT",
             "webots_extra", Py_file_input);
+        if (!pyWebotsExtraModuleSource)
+            throw std::runtime_error("Error: The Python module with the WebotsNode class cannot be compiled.");
+
         PyObject *pyWebotsExtraModule = PyImport_ExecCodeModule("webots_extra", pyWebotsExtraModuleSource);
+        if (!pyWebotsExtraModule)
+            throw std::runtime_error("Error: The Python module with the WebotsNode class cannot be executed.");
+
         PyObject *pyDict = PyModule_GetDict(pyWebotsExtraModule);
         PyObject *pyClass = PyDict_GetItemString(pyDict, "WebotsNode");
         gPyWebotsNode = PyObject_CallObject(pyClass, nullptr);
@@ -61,6 +67,7 @@ class WebotsNode:
 
         PyObject *pyDict = PyModule_GetDict(pyModule);
         PyObject *pyClass = PyDict_GetItemString(pyDict, className.c_str());
+        PyErr_Print();
         if (!pyClass)
             throw std::runtime_error("Error in plugin " + type + ": The class " + className + " cannot be found.");
 

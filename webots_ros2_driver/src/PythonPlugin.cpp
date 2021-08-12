@@ -8,7 +8,11 @@ namespace webots_ros2_driver
 
     void PythonPlugin::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
     {
-        PyObject_CallMethod(mPyPlugin, "init", "O", getPyWebotsNodeInstance());
+        PyObject *pyParameters = PyDict_New();
+        for (const std::pair<std::string, std::string> &parameter : parameters)
+            PyDict_SetItem(pyParameters, PyUnicode_FromString(parameter.first.c_str()), PyUnicode_FromString(parameter.second.c_str()));
+
+        PyObject_CallMethod(mPyPlugin, "init", "OO", getPyWebotsNodeInstance(), pyParameters);
     }
 
     void PythonPlugin::step()

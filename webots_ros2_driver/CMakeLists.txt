@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ROS2 Packages
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 find_package(rosgraph_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
@@ -65,6 +66,9 @@ else()
     ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}
   )
 endif()
+
+ament_python_install_package(${PROJECT_NAME}
+  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python38)
 
 add_executable(driver
   src/Driver.cpp
@@ -146,7 +150,10 @@ install(TARGETS ${PROJECT_NAME}_imu
 )
 install(
   DIRECTORY ${WEBOTS_LIB_BASE}/
-  DESTINATION lib/
+  DESTINATION lib
+  FILES_MATCHING 
+  PATTERN "*CppController*"
+  PATTERN "*Controller*"
 )
 if (MSVC OR MSYS OR MINGW OR WIN32)
   # Windows requires the library to be placed with executable
@@ -166,6 +173,7 @@ ament_export_include_directories(include)
 ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
+  rclpy
   sensor_msgs
   std_msgs
   tf2_ros

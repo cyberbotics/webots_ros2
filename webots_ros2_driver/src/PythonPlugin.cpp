@@ -13,11 +13,13 @@ namespace webots_ros2_driver
             PyDict_SetItem(pyParameters, PyUnicode_FromString(parameter.first.c_str()), PyUnicode_FromString(parameter.second.c_str()));
 
         PyObject_CallMethod(mPyPlugin, "init", "OO", getPyWebotsNodeInstance(), pyParameters);
+        PyErr_Print();
     }
 
     void PythonPlugin::step()
     {
         PyObject_CallMethod(mPyPlugin, "step", "");
+        PyErr_Print();
     }
 
     PyObject *PythonPlugin::getPyWebotsNodeInstance()
@@ -32,9 +34,6 @@ from webots_ros2_driver.webots.controller import Supervisor
 class WebotsNode:
     def __init__(self):
         self.robot = Supervisor.internalGetInstance()
-
-    def test(self):
-        print('WebotsNode.test()')
 )EOT",
             "webots_extra", Py_file_input);
         if (!pyWebotsExtraModuleSource)
@@ -59,6 +58,7 @@ class WebotsNode:
 
         PyObject *pyName = PyUnicode_FromString(moduleName.c_str());
         PyObject *pyModule = PyImport_Import(pyName);
+        PyErr_Print();
 
         // If the module cannot be find the error should be handled in the upper level (e.g. try loading C++ plugin)
         if (!pyModule)

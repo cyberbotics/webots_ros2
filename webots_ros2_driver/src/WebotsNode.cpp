@@ -176,7 +176,7 @@ namespace webots_ros2_driver
       if (!pluginElement->Attribute("type"))
         throw std::runtime_error("Invalid URDF, a plugin is missing a `type` property at line " + std::to_string(pluginElement->GetLineNum()));
 
-      std::string type = pluginElement->Attribute("type");
+      const std::string type = pluginElement->Attribute("type");
 
       std::shared_ptr<PluginInterface> plugin = loadPlugin(type);
       std::unordered_map<std::string, std::string> pluginProperties = getPluginProperties(pluginElement);
@@ -187,15 +187,20 @@ namespace webots_ros2_driver
     }
   }
 
-  std::shared_ptr<PluginInterface> WebotsNode::loadPlugin(std::string &type) {
+  std::shared_ptr<PluginInterface> WebotsNode::loadPlugin(const std::string &type)
+  {
     // First, we assume the plugin is C++
-    try {
+    try
+    {
       std::shared_ptr<PluginInterface> plugin(mPluginLoader.createUnmanagedInstance(type));
       return plugin;
-    } catch (const pluginlib::LibraryLoadException& e) {
+    }
+    catch (const pluginlib::LibraryLoadException &e)
+    {
       // It may be a Python plugin
     }
-    catch (const pluginlib::CreateClassException& e) {
+    catch (const pluginlib::CreateClassException &e)
+    {
       throw std::runtime_error("The " + type + " class cannot be initialized.");
     }
 

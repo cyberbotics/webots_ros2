@@ -49,7 +49,7 @@ class WebotsNode:
         return gPyWebotsNode;
     }
 
-    std::shared_ptr<PythonPlugin> PythonPlugin::createFromType(std::string &type)
+    std::shared_ptr<PythonPlugin> PythonPlugin::createFromType(const std::string &type)
     {
         const std::string moduleName = type.substr(0, type.find_last_of("."));
         const std::string className = type.substr(type.find_last_of(".") + 1);

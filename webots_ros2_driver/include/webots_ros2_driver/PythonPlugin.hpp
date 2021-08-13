@@ -29,7 +29,7 @@ namespace webots_ros2_driver
         void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
         void step() override;
 
-        static std::shared_ptr<PythonPlugin> createFromType(std::string &type);
+        static std::shared_ptr<PythonPlugin> createFromType(const std::string &type);
 
     private:
         PythonPlugin(PyObject *pyPlugin);

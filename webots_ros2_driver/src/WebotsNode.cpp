@@ -200,9 +200,8 @@ namespace webots_ros2_driver
     }
 
     std::shared_ptr<PluginInterface> plugin = PythonPlugin::createFromType(type);
-    if (plugin == NULL) {
+    if (plugin == NULL)
       throw std::runtime_error("The " + type + " plugin cannot be found (C++ or Python).");
-    }
 
     return plugin;
   }

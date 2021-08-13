@@ -60,7 +60,7 @@ class WebotsNode:
         PyObject *pyModule = PyImport_Import(pyName);
         PyErr_Print();
 
-        // If the module cannot be find the error should be handled in the upper level (e.g. try loading C++ plugin)
+        // If the module cannot be found the error should be handled in the upper level (e.g. try loading C++ plugin)
         if (!pyModule)
             return NULL;
 

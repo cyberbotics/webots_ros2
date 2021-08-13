@@ -23,7 +23,6 @@
 
 namespace webots_ros2_driver
 {
-
     class PythonPlugin : public PluginInterface
     {
     public:
@@ -31,13 +30,13 @@ namespace webots_ros2_driver
         void step() override;
 
         static std::shared_ptr<PythonPlugin> createFromType(std::string &type);
-        PythonPlugin(PyObject *pyPlugin);
 
     private:
+        PythonPlugin(PyObject *pyPlugin);
+
         PyObject *mPyPlugin;
         PyObject *getPyWebotsNodeInstance();
     };
-
 }
 
 #endif

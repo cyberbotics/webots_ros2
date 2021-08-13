@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""A simple dummy plugin that demonstrates a usage of Python plugins."""
+"""A simple dummy plugin that demonstrates the usage of Python plugins."""
 
 from webots_ros2_driver.webots.controller import Node
 from std_msgs.msg import Float32

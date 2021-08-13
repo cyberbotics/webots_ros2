@@ -61,6 +61,7 @@ namespace webots_ros2_driver
     pluginlib::ClassLoader<PluginInterface> mPluginLoader;
     tinyxml2::XMLElement *mWebotsXMLElement;
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;
+    std::shared_ptr<PluginInterface> loadPlugin(const std::string &type);
 
     rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr mClockPublisher;
     rosgraph_msgs::msg::Clock mClockMessage;

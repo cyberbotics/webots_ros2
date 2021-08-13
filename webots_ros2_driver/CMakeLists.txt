@@ -45,21 +45,21 @@ if (MSVC OR MSYS OR MINGW OR WIN32)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
   file(GLOB CppController_SRC CONFIGURE_DEPENDS "webots/source/cpp/*.cpp")
   add_library(
-    CppController
+    CppControllerRos
     SHARED
     ${CppController_SRC}
   )
-  target_link_libraries(CppController
+  target_link_libraries(CppControllerRos
     ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
   )
-  install(TARGETS CppController
+  install(TARGETS CppControllerRos
     LIBRARY DESTINATION lib
   )
   set(WEBOTS_LIB
     ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
-    CppController
+    CppControllerRos
   )
-  ament_export_libraries(CppController)
+  ament_export_libraries(CppControllerRos)
 else()
   set(WEBOTS_LIB
     ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -148,22 +148,29 @@ install(TARGETS ${PROJECT_NAME}_imu
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
 )
-install(
-  DIRECTORY ${WEBOTS_LIB_BASE}/
-  DESTINATION lib
-  FILES_MATCHING
-  PATTERN "*Controller*"
-  PATTERN "*CppController*"
-  PATTERN "*car*"
-  PATTERN "*CppCar*"
-  PATTERN "*driver*"
-  PATTERN "*CppDriver*"
-)
 if (MSVC OR MSYS OR MINGW OR WIN32)
   # Windows requires the library to be placed with executable
   install(
     FILES "${WEBOTS_LIB_BASE}/${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}"
     DESTINATION lib/${PROJECT_NAME}
+  )
+
+  # Windows requires the C++ library to be placed with the Python module
+  install(
+    FILES "${WEBOTS_LIB_BASE}/${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}/webots/"
+  )
+else()
+  install(
+    DIRECTORY ${WEBOTS_LIB_BASE}/
+    DESTINATION lib
+    FILES_MATCHING
+    PATTERN "*Controller*"
+    PATTERN "*CppController*"
+    PATTERN "*car*"
+    PATTERN "*CppCar*"
+    PATTERN "*driver*"
+    PATTERN "*CppDriver*"
   )
 endif()
 

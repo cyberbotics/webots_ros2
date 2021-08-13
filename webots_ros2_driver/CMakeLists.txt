@@ -67,7 +67,7 @@ else()
   )
 endif()
 
-ament_python_install_package(${PROJECT_NAME}
+ament_python_install_package(${PROJECT_NAME}/webots
   PACKAGE_DIR ${WEBOTS_LIB_BASE}/python38)
 
 add_executable(driver

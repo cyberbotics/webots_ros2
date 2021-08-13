@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ROS2 Packages
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 find_package(rosgraph_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
@@ -17,6 +18,7 @@ find_package(vision_msgs REQUIRED)
 find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
+find_package(PythonLibs 3.8 EXACT REQUIRED)
 
 if (UNIX AND NOT APPLE)
   set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
@@ -32,6 +34,7 @@ include_directories(
   include
   webots/include/c
   webots/include/cpp
+  ${PYTHON_INCLUDE_DIRS}
 )
 link_directories(${WEBOTS_LIB_BASE})
 
@@ -42,21 +45,21 @@ if (MSVC OR MSYS OR MINGW OR WIN32)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
   file(GLOB CppController_SRC CONFIGURE_DEPENDS "webots/source/cpp/*.cpp")
   add_library(
-    CppController
+    CppControllerRos
     SHARED
     ${CppController_SRC}
   )
-  target_link_libraries(CppController
+  target_link_libraries(CppControllerRos
     ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
   )
-  install(TARGETS CppController
+  install(TARGETS CppControllerRos
     LIBRARY DESTINATION lib
   )
   set(WEBOTS_LIB
     ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
-    CppController
+    CppControllerRos
   )
-  ament_export_libraries(CppController)
+  ament_export_libraries(CppControllerRos)
 else()
   set(WEBOTS_LIB
     ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -64,9 +67,13 @@ else()
   )
 endif()
 
+ament_python_install_package(${PROJECT_NAME}/webots
+  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python38)
+
 add_executable(driver
   src/Driver.cpp
   src/WebotsNode.cpp
+  src/PythonPlugin.cpp
   src/plugins/Ros2SensorPlugin.cpp
   src/plugins/static/Ros2Lidar.cpp
   src/plugins/static/Ros2LED.cpp
@@ -95,6 +102,7 @@ ament_target_dependencies(driver
 )
 target_link_libraries(driver
   ${WEBOTS_LIB}
+  ${PYTHON_LIBRARIES}
 )
 install(
   DIRECTORY include/
@@ -140,15 +148,29 @@ install(TARGETS ${PROJECT_NAME}_imu
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
 )
-install(
-  DIRECTORY ${WEBOTS_LIB_BASE}/
-  DESTINATION lib/
-)
 if (MSVC OR MSYS OR MINGW OR WIN32)
   # Windows requires the library to be placed with executable
   install(
     FILES "${WEBOTS_LIB_BASE}/${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}"
     DESTINATION lib/${PROJECT_NAME}
+  )
+
+  # Windows requires the C++ library to be placed with the Python module
+  install(
+    FILES "${WEBOTS_LIB_BASE}/${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}/webots/"
+  )
+else()
+  install(
+    DIRECTORY ${WEBOTS_LIB_BASE}/
+    DESTINATION lib
+    FILES_MATCHING
+    PATTERN "*Controller*"
+    PATTERN "*CppController*"
+    PATTERN "*car*"
+    PATTERN "*CppCar*"
+    PATTERN "*driver*"
+    PATTERN "*CppDriver*"
   )
 endif()
 
@@ -162,6 +184,7 @@ ament_export_include_directories(include)
 ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
+  rclpy
   sensor_msgs
   std_msgs
   tf2_ros

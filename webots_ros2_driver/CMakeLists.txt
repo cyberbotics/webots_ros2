@@ -67,7 +67,7 @@ else()
   )
 endif()
 
-ament_python_install_package(${PROJECT_NAME}/webots
+ament_python_install_package(${PROJECT_NAME}_webots
   PACKAGE_DIR ${WEBOTS_LIB_BASE}/python38)
 
 add_executable(driver
@@ -158,13 +158,13 @@ if (MSVC OR MSYS OR MINGW OR WIN32)
   # Windows requires the C++ library to be placed with the Python module
   install(
     FILES "${WEBOTS_LIB_BASE}/${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}/webots/"
+    DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}_webots/"
   )
 else()
   install(
     DIRECTORY ${WEBOTS_LIB_BASE}/
     DESTINATION lib
-    FILES_MATCHING
+    PATTERN "python*" EXCLUDE
     PATTERN "*Controller*"
     PATTERN "*CppController*"
     PATTERN "*car*"

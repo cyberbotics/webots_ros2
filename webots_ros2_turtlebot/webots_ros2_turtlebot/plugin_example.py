@@ -14,7 +14,7 @@
 
 """A simple dummy plugin that demonstrates the usage of Python plugins."""
 
-from webots_ros2_driver.webots.controller import Node
+from webots_ros2_driver_webots.controller import Node
 from std_msgs.msg import Float32
 import rclpy
 import rclpy.node

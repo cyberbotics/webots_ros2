@@ -21,7 +21,12 @@ int main(int argc, char **argv)
   rclcpp::init(argc, argv);
 
   webots::Supervisor* robot = new webots::Supervisor();
-  auto node = std::make_shared<webots_ros2_driver::WebotsNode>(robot->getName(), robot);
+  
+  std::string robotName = robot->getName();
+  for (char notAllowedChar : " -.)(")
+    std::replace(robotName.begin(), robotName.end(), notAllowedChar, '_');
+
+  auto node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
   node->init();
 
   rclcpp::spin(node);

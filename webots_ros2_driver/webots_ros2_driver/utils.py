@@ -220,7 +220,7 @@ def handle_webots_installation():
         f'Webots {target_version} was not found in your system.\n'
         f'- If you want to manually install Webots {target_version} please download '
         f'it from {webots_release_url}.\n'
-        f'- If you already have installed Webots {target_version} installed please specify the '
+        f'- If you already have Webots {target_version} installed please then specify the '
         f'`WEBOTS_HOME` environment variable.\n'
     )
 

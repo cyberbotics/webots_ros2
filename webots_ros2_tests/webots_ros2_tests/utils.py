@@ -41,7 +41,7 @@ class TestWebots(unittest.TestCase):
                 if len(received_messages) >= messages_to_receive:
                     break
 
-            self.assertGreaterEqual(len(received_messages), messages_to_receive)
+            self.assertGreaterEqual(len(received_messages), messages_to_receive, 'Not enough messages have been received')
         finally:
             node.destroy_subscription(subscription)
 

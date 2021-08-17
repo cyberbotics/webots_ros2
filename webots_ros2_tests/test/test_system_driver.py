@@ -22,7 +22,7 @@ import os
 import time
 import pathlib
 import rclpy
-from sensor_msgs.msg import Range
+from sensor_msgs.msg import Range, Image
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
@@ -38,7 +38,7 @@ def generate_test_description():
 
     webots = WebotsLauncher(
         world=os.path.join(package_dir, 'worlds', 'driver_test.wbt'),
-        gui=False,
+        # gui=False,
     )
 
     webots_driver = Node(
@@ -73,6 +73,15 @@ class TestDriver(TestWebots):
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
         self.wait_for_clock(self.__node)
+
+    def testRangeFinder(self):
+        def on_image_received(message):
+            self.assertEqual(message.height, 190)
+            self.assertEqual(message.width, 320)
+            image = message.data
+            return image[160 * message.step + 95] > 10
+
+        self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/kinect_range', condition=on_image_received)
 
     def testDistanceSensor(self):
         self.wait_for_messages(self.__node, Range, '/Pioneer_3_AT/so4',

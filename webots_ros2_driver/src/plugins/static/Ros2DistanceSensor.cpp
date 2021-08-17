@@ -26,14 +26,22 @@ namespace webots_ros2_driver
 
     assert(mDistanceSensor != NULL);
 
+    mLookupTable.assign(mDistanceSensor->getLookupTable(), mDistanceSensor->getLookupTable() + mDistanceSensor->getLookupTableSize() * 3);
+
+    const int size = mLookupTable.size();
+    const double maxValue = std::max(mLookupTable[0], mLookupTable[size - 3]);
+    const double minValue = std::min(mLookupTable[0], mLookupTable[size - 3]);
+    const double lowerStd = (mLookupTable[0] < mLookupTable[size - 3]) ? mLookupTable[2] * mLookupTable[0] : mLookupTable[size - 1] * mLookupTable[size - 3];
+    const double upperStd = (mLookupTable[0] > mLookupTable[size - 3]) ? mLookupTable[2] * mLookupTable[0] : mLookupTable[size - 1] * mLookupTable[size - 3];
+    const double minRange = minValue + lowerStd;
+    const double maxRange = maxValue - upperStd;
+
     mPublisher = mNode->create_publisher<sensor_msgs::msg::Range>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mMessage.header.frame_id = mFrameName;
     mMessage.field_of_view = mDistanceSensor->getAperture();
-    mMessage.min_range = mDistanceSensor->getMinValue();
-    mMessage.max_range = mDistanceSensor->getMaxValue();
+    mMessage.min_range = minRange;
+    mMessage.max_range = maxRange;
     mMessage.radiation_type = sensor_msgs::msg::Range::INFRARED;
-
-    mLookupTable.assign(mDistanceSensor->getLookupTable(), mDistanceSensor->getLookupTable() + mDistanceSensor->getLookupTableSize());
   }
 
   void Ros2DistanceSensor::step()
@@ -42,27 +50,32 @@ namespace webots_ros2_driver
       return;
 
     // Enable/Disable sensor
-    const bool imageSubscriptionsExist = mPublisher->get_subscription_count() > 0;
-    const bool shouldBeEnabled = mAlwaysOn || imageSubscriptionsExist;
-
-    if (shouldBeEnabled != mIsEnabled)
+    if (mAlwaysOn && !mIsEnabled)
     {
-      if (shouldBeEnabled)
-        mDistanceSensor->enable(mPublishTimestepSyncedMs);
-      else
-        mDistanceSensor->disable();
-      mIsEnabled = shouldBeEnabled;
+      mDistanceSensor->enable(mPublishTimestepSyncedMs);
+      mIsEnabled = true;
+      publishRange();
+      return;
     }
 
-    // Publish data
-    if (mAlwaysOn || imageSubscriptionsExist)
+    const bool subscriberExists = mPublisher->get_subscription_count() > 0;
+    if (subscriberExists)
+      mDistanceSensor->enable(mPublishTimestepSyncedMs);
+    else
+      mDistanceSensor->disable();
+    mIsEnabled = subscriberExists;
+
+    if (mIsEnabled)
       publishRange();
   }
 
   void Ros2DistanceSensor::publishRange()
   {
+    const double value = mDistanceSensor->getValue();
+    if (std::isnan(value))
+      return;
     mMessage.header.stamp = mNode->get_clock()->now();
-    mMessage.range = interpolateLookupTable(mDistanceSensor->getValue(), mLookupTable);
+    mMessage.range = interpolateLookupTable(value, mLookupTable);
     mPublisher->publish(mMessage);
   }
 }

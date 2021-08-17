@@ -6,7 +6,6 @@ data_files = [
     ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
     ('share/' + package_name, ['package.xml']),
 
-    ('share/' + package_name, ['launch/driver_test_launch.py']),
     ('share/' + package_name + '/worlds', ['worlds/driver_test.wbt', 'worlds/.driver_test.wbproj']),
     ('share/' + package_name + '/resource', ['resource/driver_test.urdf'])
 ]
@@ -29,10 +28,10 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development',
     ],
-    description='TurtleBot3 Burger robot ROS2 interface for Webots.',
+    description='System tests for `webots_ros2` packages',
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'launch.frontend.launch_extension': ['launch_ros = launch_ros']
+        'pytest11': ['launch_ros = launch_testing_ros.pytest.hooks'],
     }
 )

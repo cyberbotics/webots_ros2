@@ -23,7 +23,7 @@ Pioneer3at {
       translation 0 0 0.29
     }
     Kinect {
-      translation 0.109998 9e-07 0.47
+      translation 0.109998 0 0.47
       rotation -0.5773519358547601 0.5773499358549823 0.5773489358550934 -2.094395307179586
     }
     Gyro {

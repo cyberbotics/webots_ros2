@@ -59,7 +59,6 @@ class WebotsLauncher(ExecuteProcess):
         xvfb_run_prefix = []
         if 'WEBOTS_OFFSCREEN' in os.environ:
             xvfb_run_prefix.append('xvfb-run')
-            xvfb_run_prefix.append('--auto-servernum')
 
         # no_rendering, stdout, stderr, no_sandbox, minimize
         super().__init__(

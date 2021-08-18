@@ -10,6 +10,9 @@ data_files.append(('share/' + package_name, ['launch/robot_launch.py']))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/mavic_world.wbt', 'worlds/.mavic_world.wbproj',
 ]))
+data_files.append(('share/' + package_name + '/resource', [
+    'resource/mavic_webots.urdf'
+]))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 

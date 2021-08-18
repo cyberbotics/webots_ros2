@@ -37,7 +37,7 @@ class WebotsVersion:
         self.version = version
 
         # Parse
-        parts = re.findall(r'R(\d*)([a-b]{1})(\s((revision)|(rev))\s(\d){1}){0,1}', version)
+        parts = re.findall(r'R(\d*)([a-d]{1})(\s((revision)|(rev))\s(\d){1}){0,1}', version)
         self.year = int(parts[0][0])
         self.release = parts[0][1].lower()
         self.revision = 0

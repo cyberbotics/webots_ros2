@@ -23,7 +23,8 @@ import time
 import pathlib
 import rclpy
 from std_srvs.srv import Trigger
-from sensor_msgs.msg import Range, Image
+from sensor_msgs.msg import Range, Image, Imu
+from std_msgs.msg import ColorRGBA
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
@@ -103,17 +104,43 @@ class TestDriver(TestWebots):
         request = Trigger.Request()
         response_future = client.call_async(request)
 
-        wait_start = time.time()
+        check_start_time = time.time()
         while response_future.done() is False:
             rclpy.spin_once(self.__node, timeout_sec=0.1)
-            if time.time() - wait_start > 5:
+            if time.time() - check_start_time > 5:
                 self.assertTrue(False, 'The plugin service is not responding')
 
         response = response_future.result()
         self.assertEqual(response.success, True)
 
     def testLED(self):
-        self.wait_for_messages(self.__node, Range, '/Pioneer_3_AT/led')
+        publisher = self.__node.create_publisher(ColorRGBA, '/Pioneer_3_AT/led', 1)
+        check_start_time = time.time()
+        while publisher.get_subscription_count() == 0:
+            rclpy.spin_once(self.__node, timeout_sec=0.1)
+            if time.time() - check_start_time > 5:
+                self.assertTrue(False, 'The LED topic doesn\'t exist')
+
+    def testIMU(self):
+        def on_message_received(message):
+            self.assertEquals(message.header.frame_id, 'imu_link')
+
+            self.assertAlmostEquals(message.orientation.x, 0.0, delta=0.01)
+            self.assertAlmostEquals(message.orientation.y, 0.0, delta=0.01)
+            self.assertAlmostEquals(message.orientation.z, 0.0, delta=0.01)
+            self.assertAlmostEquals(message.orientation.w, 1.0, delta=0.01)
+
+            self.assertAlmostEquals(message.angular_velocity.x, 0.0, delta=0.001)
+            self.assertAlmostEquals(message.angular_velocity.y, 0.0, delta=0.001)
+            self.assertAlmostEquals(message.angular_velocity.z, 0.0, delta=0.001)
+
+            # The robot might be moving forward/backward so we don't check the linear acceleration along the x axis
+            self.assertAlmostEquals(message.linear_acceleration.y, 0.0, delta=0.001)
+            self.assertAlmostEquals(message.linear_acceleration.z, 9.81, delta=0.001)
+
+            return True
+
+        self.wait_for_messages(self.__node, Imu, '/imu', condition=on_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

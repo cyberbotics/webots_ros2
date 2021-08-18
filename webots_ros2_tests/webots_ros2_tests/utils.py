@@ -20,8 +20,11 @@ import rclpy
 from rosgraph_msgs.msg import Clock
 
 
+DEFAULT_TIMEOUT = 90.0
+
+
 class TestWebots(unittest.TestCase):
-    def wait_for_messages(self, node, message_type, topic, timeout=60.0, condition=None, qos=1, messages_to_receive=1):
+    def wait_for_messages(self, node, message_type, topic, timeout=DEFAULT_TIMEOUT, condition=None, qos=1, messages_to_receive=1):
         received_messages = []
 
         def on_message(message):
@@ -45,5 +48,5 @@ class TestWebots(unittest.TestCase):
         finally:
             node.destroy_subscription(subscription)
 
-    def wait_for_clock(self, node, timeout=20.0, messages_to_receive=5):
+    def wait_for_clock(self, node, timeout=DEFAULT_TIMEOUT, messages_to_receive=5):
         self.wait_for_messages(node, Clock, 'clock', timeout=timeout, messages_to_receive=messages_to_receive)

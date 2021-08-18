@@ -146,7 +146,7 @@ class TestDriver(TestWebots):
         self.wait_for_messages(self.__node, PointStamped, '/Pioneer_3_AT/gps', condition=on_position_message_received)
 
         def on_velocity_message_received(message):
-            self.assertAlmostEqual(message.data, 0.0, delta=0.01)
+            self.assertAlmostEqual(message.data, 0.0, delta=0.2)
             return True
 
         self.wait_for_messages(self.__node, Float32, '/Pioneer_3_AT/gps/velocity', condition=on_velocity_message_received)

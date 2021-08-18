@@ -174,7 +174,7 @@ def __install_webots(installation_directory):
     target_version = WebotsVersion.target()
 
     def on_download_progress_changed(count, block_size, total_size):
-        percent = count*block_size*100/total_size
+        percent = count * block_size * 100 / total_size
         sys.stdout.write(f'\rDownloading... {percent:.2f}%')
         sys.stdout.flush()
 

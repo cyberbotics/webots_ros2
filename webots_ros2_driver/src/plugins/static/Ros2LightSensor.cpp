@@ -31,7 +31,7 @@ namespace webots_ros2_driver
     mPublisher = mNode->create_publisher<sensor_msgs::msg::Illuminance>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mMessage.header.frame_id = mFrameName;
 
-    mLookupTable.assign(mLightSensor->getLookupTable(), mLightSensor->getLookupTable() + mLightSensor->getLookupTableSize());
+    mLookupTable.assign(mLightSensor->getLookupTable(), mLightSensor->getLookupTable() + mLightSensor->getLookupTableSize() * 3);
 
     if (mAlwaysOn) {
       mLightSensor->enable(mPublishTimestepSyncedMs);

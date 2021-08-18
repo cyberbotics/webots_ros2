@@ -23,8 +23,9 @@ import time
 import pathlib
 import rclpy
 from std_srvs.srv import Trigger
-from sensor_msgs.msg import Range, Image, Imu
-from std_msgs.msg import ColorRGBA
+from sensor_msgs.msg import Range, Image, Imu, Illuminance
+from std_msgs.msg import ColorRGBA, Float32
+from geometry_msgs.msg import PointStamped
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
@@ -141,6 +142,24 @@ class TestDriver(TestWebots):
             return True
 
         self.wait_for_messages(self.__node, Imu, '/imu', condition=on_message_received)
+
+    def testGPS(self):
+        def on_position_message_received(message):
+            self.assertAlmostEquals(message.point.x, 0.0, delta=0.01)
+            self.assertAlmostEquals(message.point.y, 0.0, delta=0.01)
+            self.assertAlmostEquals(message.point.z, 0.0, delta=0.01)
+            return True
+
+        self.wait_for_messages(self.__node, PointStamped, '/Pioneer_3_AT/gps', condition=on_position_message_received)
+
+        def on_velocity_message_received(message):
+            self.assertAlmostEquals(message.data, 0.0, delta=0.01)
+            return True
+
+        self.wait_for_messages(self.__node, Float32, '/Pioneer_3_AT/gps/velocity', condition=on_velocity_message_received)
+
+    def testLightSensor(self):
+        self.wait_for_messages(self.__node, Illuminance, '/Pioneer_3_AT/light_sensor', condition=lambda msg: msg.illuminance > 0.1)
 
     def tearDown(self):
         self.__node.destroy_node()

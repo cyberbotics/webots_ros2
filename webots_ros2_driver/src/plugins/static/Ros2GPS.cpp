@@ -38,6 +38,11 @@ namespace webots_ros2_driver
       mPointMessage.header.frame_id = mFrameName;
     }
     mVelocityPublisher = mNode->create_publisher<std_msgs::msg::Float32>(mTopicName + "/velocity", rclcpp::SensorDataQoS().reliable());
+
+    if (mAlwaysOn) {
+      mGPS->enable(mPublishTimestepSyncedMs);
+      mIsEnabled = true;
+    }
   }
 
   void Ros2GPS::step()
@@ -45,11 +50,27 @@ namespace webots_ros2_driver
     if (!preStep())
       return;
 
+    if (mIsEnabled) {
+      if (mPointPublisher != nullptr)
+        pubishPoint();
+      else if (mGPSPublisher != nullptr)
+        publishGPS();
+      else 
+        assert(false);
+
+      std_msgs::msg::Float32 mSpeedMessage;
+      mSpeedMessage.data = mGPS->getSpeed();
+      mVelocityPublisher->publish(mSpeedMessage);
+    }
+
+    if (mAlwaysOn)
+      return;
+
     // Enable/Disable sensor
     const bool pointSubscriptionsExist = mPointPublisher != nullptr && mPointPublisher->get_subscription_count() > 0;
     const bool gpsSubscriptionsExist = mGPSPublisher != nullptr && mGPSPublisher->get_subscription_count() > 0;
     const bool velocitySubscriptionsExist = mVelocityPublisher->get_subscription_count() > 0;
-    const bool shouldBeEnabled = mAlwaysOn || pointSubscriptionsExist || gpsSubscriptionsExist || velocitySubscriptionsExist;
+    const bool shouldBeEnabled = pointSubscriptionsExist || gpsSubscriptionsExist || velocitySubscriptionsExist;
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
@@ -57,18 +78,6 @@ namespace webots_ros2_driver
       else
         mGPS->disable();
       mIsEnabled = shouldBeEnabled;
-    }
-
-    // Publish data
-    if (mPointPublisher && (mAlwaysOn || pointSubscriptionsExist))
-      pubishPoint();
-    if (mGPSPublisher && (mAlwaysOn || gpsSubscriptionsExist))
-      publishGPS();
-    if (mAlwaysOn || velocitySubscriptionsExist)
-    {
-      std_msgs::msg::Float32 mSpeedMessage;
-      mSpeedMessage.data = mGPS->getSpeed();
-      mVelocityPublisher->publish(mSpeedMessage);
     }
   }
 

@@ -13,7 +13,7 @@ jobs:
         ROS_DISTRO: [foxy, rolling]
     runs-on: ubuntu-latest
     env:
-      BEFORE_INIT: export WEBOTS_VERSION=2021b && export WEBOTS_OFFSCREEN=1 && wget https://github.com/cyberbotics/webots/releases/download/R${WEBOTS_VERSION}/webots_${WEBOTS_VERSION}_amd64.deb -O /tmp/webots.deb && apt update && apt install -y /tmp/webots.deb xvfb
+      BEFORE_INIT: export WEBOTS_VERSION=2021b && export WEBOTS_OFFSCREEN=1 && apt update && apt install wget && wget https://github.com/cyberbotics/webots/releases/download/R${WEBOTS_VERSION}/webots_${WEBOTS_VERSION}_amd64.deb -O /tmp/webots.deb && apt install -y /tmp/webots.deb xvfb
     steps:
       - uses: actions/checkout@v1
         with:

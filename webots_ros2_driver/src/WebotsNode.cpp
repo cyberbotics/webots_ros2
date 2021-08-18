@@ -213,7 +213,10 @@ namespace webots_ros2_driver
 
   void WebotsNode::timerCallback()
   {
-    mRobot->step(mStep);
+    if (mRobot->step(mStep) == -1) {
+      mTimer->cancel();
+      return;
+    }
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
 

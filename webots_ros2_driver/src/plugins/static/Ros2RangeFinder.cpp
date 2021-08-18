@@ -60,6 +60,11 @@ namespace webots_ros2_driver
         0.0, focalLength, (double)mRangeFinder->getHeight() / 2, 0.0,
         0.0, 0.0, 1.0, 0.0};
     mCameraInfoPublisher->publish(mCameraInfoMessage);
+
+    if (mAlwaysOn) {
+      mRangeFinder->enable(mPublishTimestepSyncedMs);
+      mIsEnabled = true;
+    }
   }
 
   void Ros2RangeFinder::step()
@@ -67,10 +72,14 @@ namespace webots_ros2_driver
     if (!preStep())
       return;
 
-    // Enable/Disable sensor
-    const bool imageSubscriptionsExist = mImagePublisher->get_subscription_count() > 0;
-    const bool shouldBeEnabled = mAlwaysOn || imageSubscriptionsExist;
+    if (mIsEnabled)
+      publishImage();
 
+    if (mAlwaysOn)
+      return;
+
+    // Enable/Disable sensor
+    const bool shouldBeEnabled = mImagePublisher->get_subscription_count() > 0;
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
@@ -79,10 +88,6 @@ namespace webots_ros2_driver
         mRangeFinder->disable();
       mIsEnabled = shouldBeEnabled;
     }
-
-    // Publish data
-    if (mAlwaysOn || imageSubscriptionsExist)
-      publishImage();
   }
 
   void Ros2RangeFinder::publishImage()

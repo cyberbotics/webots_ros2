@@ -45,7 +45,8 @@ namespace webots_ros2_driver
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr mPointCloudPublisher;
     sensor_msgs::msg::PointCloud2 mPointCloudMessage;
 
-    bool mIsEnabled;
+    bool mIsSensorEnabled;
+    bool mIsPointCloudEnabled;
   };
 
 } // end namespace webots_ros2_driver

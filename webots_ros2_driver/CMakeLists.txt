@@ -70,6 +70,9 @@ endif()
 ament_python_install_package(${PROJECT_NAME}_webots
   PACKAGE_DIR ${WEBOTS_LIB_BASE}/python38)
 
+ament_python_install_package(${PROJECT_NAME}
+  PACKAGE_DIR ${PROJECT_NAME})
+
 add_executable(driver
   src/Driver.cpp
   src/WebotsNode.cpp

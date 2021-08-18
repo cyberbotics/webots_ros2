@@ -53,6 +53,11 @@ namespace webots_ros2_driver
 
     mPublisher = mNode->create_publisher<sensor_msgs::msg::Imu>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mMessage.header.frame_id = mFrameName;
+
+    if (mAlwaysOn) {
+      enable();
+      mIsEnabled = true;
+    }
   }
 
   void Ros2IMU::enable()
@@ -80,10 +85,14 @@ namespace webots_ros2_driver
     if (!preStep())
       return;
 
-    // Enable/Disable sensor
-    const bool imageSubscriptionsExist = mPublisher->get_subscription_count() > 0;
-    const bool shouldBeEnabled = mAlwaysOn || imageSubscriptionsExist;
+    if (mIsEnabled)
+      publishData();
 
+    if (mAlwaysOn)
+      return;
+
+    // Enable/Disable sensor
+    const bool shouldBeEnabled = mPublisher->get_subscription_count() > 0;
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
@@ -92,10 +101,6 @@ namespace webots_ros2_driver
         disable();
       mIsEnabled = shouldBeEnabled;
     }
-
-    // Publish data
-    if (mAlwaysOn || imageSubscriptionsExist)
-      publishData();
   }
 
   void Ros2IMU::publishData()

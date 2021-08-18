@@ -12,10 +12,17 @@ jobs:
         ROS_REPO: [main, testing]
         ROS_DISTRO: [foxy, rolling]
     runs-on: ubuntu-latest
+    env:
+      WEBOTS_OFFSCREEN: 1
+      WEBOTS_VERSION: 2021b
     steps:
       - uses: actions/checkout@v1
         with:
          submodules: recursive
+      - name: Install dependencies
+        run: |
+          wget https://github.com/cyberbotics/webots/releases/download/R${WEBOTS_VERSION}/webots_${WEBOTS_VERSION}_amd64.deb -O /tmp/webots.deb
+          apt install -y /tmp/webots.deb xvfb
       - uses: 'ros-industrial/industrial_ci@master'
         env: 
           ROS_REPO: ${{matrix.ROS_REPO}}

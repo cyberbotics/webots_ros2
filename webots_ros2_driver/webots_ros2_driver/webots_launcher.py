@@ -56,9 +56,23 @@ class WebotsLauncher(ExecuteProcess):
         no_sandbox = _ConditionalSubstitution(condition=gui, false_value='--no-sandbox')
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
 
+        xvfb_run_prefix = []
+        if 'WEBOTS_OFFSCREEN' in os.environ:
+            xvfb_run_prefix.append('xvfb-run')
+
         # no_rendering, stdout, stderr, no_sandbox, minimize
         super().__init__(
             output=output,
-            cmd=[webots_path, no_rendering, stdout, stderr, no_sandbox, minimize, world, '--batch', ['--mode=', mode]],
+            cmd=xvfb_run_prefix + [
+                webots_path,
+                no_rendering,
+                stdout,
+                stderr,
+                no_sandbox,
+                minimize,
+                world,
+                '--batch',
+                ['--mode=', mode]
+            ],
             **kwargs
         )

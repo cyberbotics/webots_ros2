@@ -31,7 +31,7 @@ class PluginTest:
 
     def on_service_call(self, _, response):
         for motor_name in ['back left wheel', 'back right wheel', 'front left wheel', 'front right wheel']:
-            motor = self.__robot.getMotor(motor_name)
+            motor = self.__robot.getDevice(motor_name)
             motor.setPosition(1)
 
         response.success = True

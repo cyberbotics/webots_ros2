@@ -21,7 +21,7 @@ from rosgraph_msgs.msg import Clock
 
 
 class TestWebots(unittest.TestCase):
-    def wait_for_messages(self, node, message_type, topic, timeout=30.0, condition=None, qos=1, messages_to_receive=1):
+    def wait_for_messages(self, node, message_type, topic, timeout=60.0, condition=None, qos=1, messages_to_receive=1):
         received_messages = []
 
         def on_message(message):

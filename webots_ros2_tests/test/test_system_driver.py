@@ -92,6 +92,14 @@ class TestDriver(TestWebots):
         self.wait_for_messages(self.__node, Range, '/Pioneer_3_AT/so4',
                                condition=lambda msg: msg.range > 0.1 and msg.range < 1.0)
 
+    def testCamera(self):
+        def on_image_received(message):
+            self.assertEqual(message.height, 190)
+            self.assertEqual(message.width, 320)
+            return True
+
+        self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/kinect_color', condition=on_image_received)
+
     def testPythonPluginService(self):
         client = self.__node.create_client(Trigger, 'move_forward')
         if not client.wait_for_service(timeout_sec=1.0):

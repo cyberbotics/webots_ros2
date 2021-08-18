@@ -24,7 +24,14 @@ DEFAULT_TIMEOUT = 90.0
 
 
 class TestWebots(unittest.TestCase):
-    def wait_for_messages(self, node, message_type, topic, timeout=DEFAULT_TIMEOUT, condition=None, qos=1, messages_to_receive=1):
+    def wait_for_messages(self,
+                          node,
+                          message_type,
+                          topic,
+                          timeout=DEFAULT_TIMEOUT,
+                          condition=None,
+                          qos=1,
+                          messages_to_receive=1):
         received_messages = []
 
         def on_message(message):

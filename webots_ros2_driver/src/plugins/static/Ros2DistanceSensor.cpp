@@ -42,6 +42,11 @@ namespace webots_ros2_driver
     mMessage.min_range = minRange;
     mMessage.max_range = maxRange;
     mMessage.radiation_type = sensor_msgs::msg::Range::INFRARED;
+
+    if (mAlwaysOn) {
+      mDistanceSensor->enable(mPublishTimestepSyncedMs);
+      mIsEnabled = true;
+    }
   }
 
   void Ros2DistanceSensor::step()
@@ -49,24 +54,22 @@ namespace webots_ros2_driver
     if (!preStep())
       return;
 
-    // Enable/Disable sensor
-    if (mAlwaysOn && !mIsEnabled)
-    {
-      mDistanceSensor->enable(mPublishTimestepSyncedMs);
-      mIsEnabled = true;
-      publishRange();
-      return;
-    }
-
-    const bool subscriberExists = mPublisher->get_subscription_count() > 0;
-    if (subscriberExists)
-      mDistanceSensor->enable(mPublishTimestepSyncedMs);
-    else
-      mDistanceSensor->disable();
-    mIsEnabled = subscriberExists;
-
     if (mIsEnabled)
       publishRange();
+
+    if (mAlwaysOn)
+      return;
+
+    // Enable/Disable sensor
+    const bool shouldBeEnabled = mPublisher->get_subscription_count() > 0;
+    if (shouldBeEnabled != mIsEnabled)
+    {
+      if (shouldBeEnabled)
+        mDistanceSensor->enable(mPublishTimestepSyncedMs);
+      else
+        mDistanceSensor->disable();
+      mIsEnabled = shouldBeEnabled;
+    }
   }
 
   void Ros2DistanceSensor::publishRange()

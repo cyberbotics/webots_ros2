@@ -32,6 +32,11 @@ namespace webots_ros2_driver
     mMessage.header.frame_id = mFrameName;
 
     mLookupTable.assign(mLightSensor->getLookupTable(), mLightSensor->getLookupTable() + mLightSensor->getLookupTableSize());
+
+    if (mAlwaysOn) {
+      mLightSensor->enable(mPublishTimestepSyncedMs);
+      mIsEnabled = true;
+    }
   }
 
   void Ros2LightSensor::step()
@@ -39,10 +44,14 @@ namespace webots_ros2_driver
     if (!preStep())
       return;
 
-    // Enable/Disable sensor
-    const bool imageSubscriptionsExist = mPublisher->get_subscription_count() > 0;
-    const bool shouldBeEnabled = mAlwaysOn || imageSubscriptionsExist;
+    if (mIsEnabled)
+      publishValue();
 
+    if (mAlwaysOn)
+      return;
+
+    // Enable/Disable sensor
+    const bool shouldBeEnabled = mPublisher->get_subscription_count() > 0;
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
@@ -51,10 +60,6 @@ namespace webots_ros2_driver
         mLightSensor->disable();
       mIsEnabled = shouldBeEnabled;
     }
-
-    // Publish data
-    if (mAlwaysOn || imageSubscriptionsExist)
-      publishValue();
   }
 
   void Ros2LightSensor::publishValue()

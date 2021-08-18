@@ -13,8 +13,7 @@ jobs:
         ROS_DISTRO: [foxy, rolling]
     runs-on: ubuntu-latest
     env:
-      WEBOTS_OFFSCREEN: 1
-      WEBOTS_VERSION: 2021b
+      BEFORE_INIT: export WEBOTS_VERSION=2021b && export WEBOTS_OFFSCREEN=1 && wget https://github.com/cyberbotics/webots/releases/download/R${WEBOTS_VERSION}/webots_${WEBOTS_VERSION}_amd64.deb -O /tmp/webots.deb && apt update && apt install -y /tmp/webots.deb xvfb
     steps:
       - uses: actions/checkout@v1
         with:
@@ -23,11 +22,6 @@ jobs:
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ matrix.env.ROS_DISTRO }}-${{ matrix.env.ROS_REPO }}
-      - name: Install dependencies
-        run: |
-          wget https://github.com/cyberbotics/webots/releases/download/R${WEBOTS_VERSION}/webots_${WEBOTS_VERSION}_amd64.deb -O /tmp/webots.deb
-          sudo apt update
-          sudo apt install -y /tmp/webots.deb xvfb
       - uses: 'ros-industrial/industrial_ci@master'
         env: 
           ROS_REPO: ${{matrix.ROS_REPO}}

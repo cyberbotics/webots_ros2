@@ -128,9 +128,10 @@ namespace webots_ros2_driver
   {
     if (!table.size())
       return value;
+    const int size = table.size();
 
     // Interpolate
-    for (int i = 0; i < table.size() / 3 - 1; i++)
+    for (int i = 0; i < size / 3 - 1; i++)
     {
       if ((value < table[i * 3 + 1] && value >= table[(i + 1) * 3 + 1]) ||
           (value >= table[i * 3 + 1] && value < table[(i + 1) * 3 + 1]))
@@ -143,14 +144,14 @@ namespace webots_ros2_driver
     }
 
     // Extrapolate (we assume that the table is sorted, order is irrelevant)
-    const bool ascending = (table[1] < table[table.size() - 1 * 3 + 1]);
+    const bool ascending = (table[1] < table[size - 1 * 3 + 1]);
     if ((ascending && value >= table[1]) || (!ascending && value < table[1]))
       return interpolateFunction(
           value,
-          table[table.size() - 2 * 3 + 1],
-          table[table.size() - 2 * 3 + 0],
-          table[table.size() - 1 * 3 + 1],
-          table[table.size() - 1 * 3 + 0],
+          table[size - 2 * 3 + 1],
+          table[size - 2 * 3 + 0],
+          table[size - 1 * 3 + 1],
+          table[size - 1 * 3 + 0],
           ascending);
     else
       return interpolateFunction(

@@ -21,6 +21,7 @@
 import os
 import time
 import pathlib
+import pytest
 import rclpy
 from std_srvs.srv import Trigger
 from sensor_msgs.msg import Range, Image, Imu, Illuminance
@@ -35,13 +36,14 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_tests.utils import TestWebots
 
 
+@pytest.mark.rostest
 def generate_test_description():
     package_dir = get_package_share_directory('webots_ros2_tests')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'driver_test.urdf')).read_text()
 
     webots = WebotsLauncher(
         world=os.path.join(package_dir, 'worlds', 'driver_test.wbt'),
-        # gui=False,
+        gui=False,
     )
 
     webots_driver = Node(
@@ -124,20 +126,20 @@ class TestDriver(TestWebots):
 
     def testIMU(self):
         def on_message_received(message):
-            self.assertEquals(message.header.frame_id, 'imu_link')
+            self.assertEqual(message.header.frame_id, 'imu_link')
 
-            self.assertAlmostEquals(message.orientation.x, 0.0, delta=0.01)
-            self.assertAlmostEquals(message.orientation.y, 0.0, delta=0.01)
-            self.assertAlmostEquals(message.orientation.z, 0.0, delta=0.01)
-            self.assertAlmostEquals(message.orientation.w, 1.0, delta=0.01)
+            self.assertAlmostEqual(message.orientation.x, 0.0, delta=0.01)
+            self.assertAlmostEqual(message.orientation.y, 0.0, delta=0.01)
+            self.assertAlmostEqual(message.orientation.z, 0.0, delta=0.01)
+            self.assertAlmostEqual(message.orientation.w, 1.0, delta=0.01)
 
-            self.assertAlmostEquals(message.angular_velocity.x, 0.0, delta=0.001)
-            self.assertAlmostEquals(message.angular_velocity.y, 0.0, delta=0.001)
-            self.assertAlmostEquals(message.angular_velocity.z, 0.0, delta=0.001)
+            self.assertAlmostEqual(message.angular_velocity.x, 0.0, delta=0.001)
+            self.assertAlmostEqual(message.angular_velocity.y, 0.0, delta=0.001)
+            self.assertAlmostEqual(message.angular_velocity.z, 0.0, delta=0.001)
 
             # The robot might be moving forward/backward so we don't check the linear acceleration along the x axis
-            self.assertAlmostEquals(message.linear_acceleration.y, 0.0, delta=0.001)
-            self.assertAlmostEquals(message.linear_acceleration.z, 9.81, delta=0.001)
+            self.assertAlmostEqual(message.linear_acceleration.y, 0.0, delta=0.001)
+            self.assertAlmostEqual(message.linear_acceleration.z, 9.81, delta=0.001)
 
             return True
 
@@ -145,21 +147,22 @@ class TestDriver(TestWebots):
 
     def testGPS(self):
         def on_position_message_received(message):
-            self.assertAlmostEquals(message.point.x, 0.0, delta=0.01)
-            self.assertAlmostEquals(message.point.y, 0.0, delta=0.01)
-            self.assertAlmostEquals(message.point.z, 0.0, delta=0.01)
+            self.assertAlmostEqual(message.point.x, 0.0, delta=0.01)
+            self.assertAlmostEqual(message.point.y, 0.0, delta=0.01)
+            self.assertAlmostEqual(message.point.z, 0.0, delta=0.01)
             return True
 
         self.wait_for_messages(self.__node, PointStamped, '/Pioneer_3_AT/gps', condition=on_position_message_received)
 
         def on_velocity_message_received(message):
-            self.assertAlmostEquals(message.data, 0.0, delta=0.01)
+            self.assertAlmostEqual(message.data, 0.0, delta=0.01)
             return True
 
         self.wait_for_messages(self.__node, Float32, '/Pioneer_3_AT/gps/velocity', condition=on_velocity_message_received)
 
     def testLightSensor(self):
-        self.wait_for_messages(self.__node, Illuminance, '/Pioneer_3_AT/light_sensor', condition=lambda msg: msg.illuminance > 0.1)
+        self.wait_for_messages(self.__node, Illuminance, '/Pioneer_3_AT/light_sensor',
+                               condition=lambda msg: msg.illuminance > 0.1)
 
     def tearDown(self):
         self.__node.destroy_node()

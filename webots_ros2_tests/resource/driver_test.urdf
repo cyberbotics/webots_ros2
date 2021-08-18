@@ -22,7 +22,7 @@
             <accelerometerName>accelerometer</accelerometerName>
         </plugin>
 
-        <plugin type="webots_ros2_turtlebot.plugin_example.PluginExample">
+        <plugin type="webots_ros2_tests.plugin_test.PluginTest">
             <parameterExample>someValue</parameterExample>
         </plugin>
     </webots>

@@ -22,6 +22,7 @@ import os
 import time
 import pathlib
 import rclpy
+from std_srvs.srv import Trigger
 from sensor_msgs.msg import Range, Image
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -72,7 +73,7 @@ class TestDriver(TestWebots):
 
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
-        self.wait_for_clock(self.__node)
+        self.wait_for_clock(self.__node, messages_to_receive=20)
 
     def testRangeFinder(self):
         def on_image_received(message):
@@ -86,6 +87,30 @@ class TestDriver(TestWebots):
     def testDistanceSensor(self):
         self.wait_for_messages(self.__node, Range, '/Pioneer_3_AT/so4',
                                condition=lambda msg: msg.range > 0.1 and msg.range < 1.0)
+
+    def testCamera(self):
+        def on_image_received(message):
+            self.assertEqual(message.height, 190)
+            self.assertEqual(message.width, 320)
+            return True
+
+        self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/kinect_color', condition=on_image_received)
+
+    def testPythonPluginService(self):
+        client = self.__node.create_client(Trigger, 'move_forward')
+        if not client.wait_for_service(timeout_sec=1.0):
+            self.assertTrue(False, 'The plugin service is not found')
+        request = Trigger.Request()
+        response_future = client.call_async(request)
+
+        wait_start = time.time()
+        while response_future.done() is False:
+            rclpy.spin_once(self.__node, timeout_sec=0.1)
+            if time.time() - wait_start > 5:
+                self.assertTrue(False, 'The plugin service is not responding')
+
+        response = response_future.result()
+        self.assertEqual(response.success, True)
 
     def tearDown(self):
         self.__node.destroy_node()

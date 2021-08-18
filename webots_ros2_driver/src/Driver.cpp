@@ -26,10 +26,11 @@ int main(int argc, char **argv)
   for (char notAllowedChar : " -.)(")
     std::replace(robotName.begin(), robotName.end(), notAllowedChar, '_');
 
-  auto node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
+  std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
   node->init();
 
   rclcpp::spin(node);
+  delete robot;
   rclcpp::shutdown();
   return 0;
 }

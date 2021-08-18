@@ -112,5 +112,8 @@ class TestDriver(TestWebots):
         response = response_future.result()
         self.assertEqual(response.success, True)
 
+    def testLED(self):
+        self.wait_for_messages(self.__node, Range, '/Pioneer_3_AT/led')
+
     def tearDown(self):
         self.__node.destroy_node()

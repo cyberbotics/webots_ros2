@@ -54,6 +54,9 @@ class WebotsLauncher(ExecuteProcess):
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
         stderr = _ConditionalSubstitution(condition=gui, false_value='--stderr')
         no_sandbox = _ConditionalSubstitution(condition=gui, false_value='--no-sandbox')
+        if sys.platform == 'win32':
+            # Windows doesn't have the sandbox argument
+            no_sandbox = ''
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
 
         xvfb_run_prefix = []

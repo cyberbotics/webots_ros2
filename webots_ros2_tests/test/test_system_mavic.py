@@ -27,11 +27,13 @@ import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
-from webots_ros2_tests.utils import TestWebots
+from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 
 @pytest.mark.rostest
 def generate_test_description():
+    initialize_webots_test()
+
     mavic_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('webots_ros2_mavic'), 'launch', 'robot_launch.py')

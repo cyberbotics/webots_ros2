@@ -33,11 +33,13 @@ import launch
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
-from webots_ros2_tests.utils import TestWebots
+from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 
 @pytest.mark.rostest
 def generate_test_description():
+    initialize_webots_test()
+
     package_dir = get_package_share_directory('webots_ros2_tests')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'driver_test.urdf')).read_text()
 

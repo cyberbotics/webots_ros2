@@ -15,6 +15,7 @@ worlds = [
     'worlds/.universal_robot_lidar.wbproj'
 ]
 launchers = [
+    'launch/robot_launch.py',
     'launch/universal_robot.launch.py',
     'launch/universal_robot_multiple.launch.py',
     'launch/universal_robot_rviz.launch.py',
@@ -22,19 +23,21 @@ launchers = [
     'launch/universal_robot_moveit2.launch.py',
     'launch/universal_robot_moveit2.rviz'
 ]
-config = [
-    'config/controllers.yaml',
-    'config/ur5e.srdf',
-    'config/kinematics.yaml'
-]
 
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name + '/launch', launchers))
-data_files.append(('share/' + package_name + '/config', config))
 data_files.append(('share/' + package_name + '/worlds', worlds))
 data_files.append(('share/' + package_name, ['package.xml']))
-data_files.append(('share/' + package_name + '/resource', ['resource/view_robot_dynamic.rviz']))
+data_files.append(('share/' + package_name + '/resource', [
+    'resource/view_robot_dynamic.rviz',
+    'resource/webots_ur5e_description.urdf',
+    'resource/ros2_control_config.yaml',
+    'resource/moveit_ur5e_description.urdf',
+    'resource/moveit_controllers.yaml',
+    'resource/moveit_ur5e.srdf',
+    'resource/moveit_kinematics.yaml',
+]))
 
 setup(
     name=package_name,

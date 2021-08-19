@@ -55,7 +55,8 @@ class TestMavic(TestWebots):
 
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
-        self.wait_for_clock(self.__node, messages_to_receive=20)
+        # This is heavy simulation and we need to wait a bit more
+        self.wait_for_clock(self.__node, messages_to_receive=20, timeout=240)
 
     def testMovement(self):
         publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)

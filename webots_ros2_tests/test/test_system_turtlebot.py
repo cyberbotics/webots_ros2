@@ -56,8 +56,7 @@ class TestTurtlebot(TestWebots):
 
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
-        # This is heavy simulation and we need to wait a bit more
-        self.wait_for_clock(self.__node, messages_to_receive=20, timeout=240)
+        self.wait_for_clock(self.__node, messages_to_receive=20)
 
     def testMovement(self):
         publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)

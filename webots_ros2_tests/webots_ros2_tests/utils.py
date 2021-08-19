@@ -21,6 +21,7 @@ from rosgraph_msgs.msg import Clock
 
 
 DEFAULT_TIMEOUT = 90.0
+DEFAULT_CLOCK_TIMEOUT = 5 * DEFAULT_TIMEOUT
 
 
 class TestWebots(unittest.TestCase):
@@ -55,5 +56,5 @@ class TestWebots(unittest.TestCase):
         finally:
             node.destroy_subscription(subscription)
 
-    def wait_for_clock(self, node, timeout=DEFAULT_TIMEOUT, messages_to_receive=5):
+    def wait_for_clock(self, node, timeout=DEFAULT_CLOCK_TIMEOUT, messages_to_receive=5):
         self.wait_for_messages(node, Clock, 'clock', timeout=timeout, messages_to_receive=messages_to_receive)

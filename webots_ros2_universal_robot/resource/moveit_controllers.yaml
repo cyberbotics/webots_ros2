@@ -1,7 +1,7 @@
 controller_names:
-  - webots_controller
+  - ur_joint_trajectory_controller
 
-webots_controller:
+ur_joint_trajectory_controller:
   action_ns: follow_joint_trajectory
   type: FollowJointTrajectory
   default: true

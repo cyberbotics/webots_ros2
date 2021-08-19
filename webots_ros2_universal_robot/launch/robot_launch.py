@@ -32,7 +32,7 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher
 PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 
-def get_moveit_node(condition):
+def get_moveit_nodes(condition):
     package_dir = get_package_share_directory(PACKAGE_NAME)
 
     def load_file(filename):
@@ -62,7 +62,23 @@ def get_moveit_node(condition):
         ],
         condition=launch.conditions.IfCondition(condition)
     )
-    return run_move_group_node
+
+    rviz_config_file = os.path.join(package_dir, 'launch', 'universal_robot_moveit2.rviz')
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', rviz_config_file],
+        parameters=[
+            description,
+            description_semantic,
+            description_kinematics,
+            sim_time
+        ],
+        condition=launch.conditions.IfCondition(condition)
+    )
+
+    return [run_move_group_node, rviz_node]
 
 
 def generate_launch_description():
@@ -140,5 +156,5 @@ def generate_launch_description():
             'use_moveit',
             default_value='false',
         ),
-        get_moveit_node(use_moveit)
-    ])
+
+    ] + get_moveit_nodes(use_moveit))

@@ -6,7 +6,7 @@ from setuptools import setup
 package_name = 'webots_ros2_mavic'
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
-data_files.append(('share/' + package_name, ['launch/robot_launch.py']))
+data_files.append(('share/' + package_name + '/launch', ['launch/robot_launch.py']))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/mavic_world.wbt', 'worlds/.mavic_world.wbproj',
 ]))

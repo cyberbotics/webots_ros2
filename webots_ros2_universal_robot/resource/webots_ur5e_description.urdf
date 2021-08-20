@@ -28,7 +28,6 @@
         </joint>
         <joint name="wrist_2_joint">
             <state_interface name="position"/>
-            <state_interface name="velocity"/>
             <command_interface name="position"/>
         </joint>
         <joint name="wrist_3_joint">

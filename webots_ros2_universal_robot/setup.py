@@ -20,8 +20,7 @@ launchers = [
     'launch/universal_robot_multiple.launch.py',
     'launch/universal_robot_rviz.launch.py',
     'launch/universal_robot_rviz_dynamic.launch.py',
-    'launch/universal_robot_moveit2.launch.py',
-    'launch/universal_robot_moveit2.rviz'
+    'launch/universal_robot_moveit2.launch.py'
 ]
 
 data_files = []
@@ -37,6 +36,8 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/moveit_controllers.yaml',
     'resource/moveit_ur5e.srdf',
     'resource/moveit_kinematics.yaml',
+    'resource/moveit_movegroup.yaml',
+    'resource/moveit_visualization.rviz',
 ]))
 
 setup(

@@ -32,7 +32,7 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher
 PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 
-def get_moveit_nodes(condition):
+def get_moveit_nodes(use_moveit, use_rviz):
     package_dir = get_package_share_directory(PACKAGE_NAME)
 
     def load_file(filename):
@@ -44,6 +44,7 @@ def get_moveit_nodes(condition):
     description = {'robot_description': load_file('moveit_ur5e_description.urdf')}
     description_semantic = {'robot_description_semantic': load_file('moveit_ur5e.srdf')}
     description_kinematics = {'robot_description_kinematics': load_yaml('moveit_kinematics.yaml')}
+    movegroup = {'move_group': load_yaml('moveit_movegroup.yaml')}
     moveit_controllers = {
         'moveit_controller_manager': 'moveit_simple_controller_manager/MoveItSimpleControllerManager',
         'moveit_simple_controller_manager': load_yaml('moveit_controllers.yaml')
@@ -58,12 +59,13 @@ def get_moveit_nodes(condition):
             description_semantic,
             description_kinematics,
             moveit_controllers,
+            movegroup,
             sim_time
         ],
-        condition=launch.conditions.IfCondition(condition)
+        condition=launch.conditions.IfCondition(use_moveit)
     )
 
-    rviz_config_file = os.path.join(package_dir, 'launch', 'universal_robot_moveit2.rviz')
+    rviz_config_file = os.path.join(package_dir, 'resource', 'moveit_visualization.rviz')
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -75,7 +77,7 @@ def get_moveit_nodes(condition):
             description_kinematics,
             sim_time
         ],
-        condition=launch.conditions.IfCondition(condition)
+        condition=launch.conditions.IfCondition(use_rviz)
     )
 
     return [run_move_group_node, rviz_node]
@@ -84,6 +86,7 @@ def get_moveit_nodes(condition):
 def generate_launch_description():
     world = LaunchConfiguration('world')
     use_moveit = LaunchConfiguration('use_moveit')
+    use_rviz = LaunchConfiguration('use_rviz')
 
     package_dir = get_package_share_directory(PACKAGE_NAME)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_ur5e_description.urdf')).read_text()
@@ -156,5 +159,9 @@ def generate_launch_description():
             'use_moveit',
             default_value='false',
         ),
+        DeclareLaunchArgument(
+            'use_rviz',
+            default_value='false',
+        ),
 
-    ] + get_moveit_nodes(use_moveit))
+    ] + get_moveit_nodes(use_moveit, use_rviz))

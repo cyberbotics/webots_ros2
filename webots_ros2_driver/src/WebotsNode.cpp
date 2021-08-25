@@ -55,6 +55,7 @@ namespace webots_ros2_driver
     }
     else
     {
+      mWebotsXMLElement = NULL;
       RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
     }
 

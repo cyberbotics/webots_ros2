@@ -22,7 +22,7 @@
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pycodestyle</test_depend>
-  <test_depend>python3-pil</test_depend>
+  <test_depend>python3-pillow</test_depend>
   <test_depend>python3-numpy</test_depend>
   <test_depend>python3-pytest</test_depend>
 

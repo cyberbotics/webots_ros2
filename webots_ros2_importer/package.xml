@@ -24,7 +24,7 @@
   <test_depend>python3-pycodestyle</test_depend>
   <test_depend>python3-pil</test_depend>
   <test_depend>python3-numpy</test_depend>
-  <test_depend>python3-imaging</test_depend>
+  <test_depend>python-imaging</test_depend>
   <test_depend>python3-pytest</test_depend>
 
   <export>

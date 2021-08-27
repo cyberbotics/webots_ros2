@@ -28,6 +28,10 @@ include_directories(
   ${webots_ros2_driver_INCLUDE}/webots/cpp
 )
 
+if (MSVC OR MSYS OR MINGW OR WIN32)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
+
 # webots_ros2 Plugin
 add_library(
   ${PROJECT_NAME}

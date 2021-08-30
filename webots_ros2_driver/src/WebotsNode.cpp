@@ -112,7 +112,7 @@ namespace webots_ros2_driver
 
   void WebotsNode::init()
   {
-    std::vector<std::string> nodeNames = this->get_node_names();
+    const std::vector<std::string> nodeNames = this->get_node_names();
     for (int k = 0; k < nodeNames.size(); ++k)
     {
       if (nodeNames[k] == "/robot_state_publisher")

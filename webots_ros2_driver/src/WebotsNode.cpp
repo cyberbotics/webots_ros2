@@ -121,7 +121,7 @@ namespace webots_ros2_driver
         break;
       }
       if (k == nodeNames.size() - 1) 
-        RCLCPP_INFO(get_logger(), "No robot_state_publisher node and joint state publisher is not available.");
+        RCLCPP_INFO(get_logger(), "There is no the `robot_state_publisher` node, the `robot_description` parameter is not set.");
     }
     
     mStep = mRobot->getBasicTimeStep();

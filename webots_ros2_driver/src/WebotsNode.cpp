@@ -112,8 +112,17 @@ namespace webots_ros2_driver
 
   void WebotsNode::init()
   {
-    setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
-
+    for (int k = 0; k < nodeNames.size(); ++k)
+    {
+      if (nodeNames[k] == "/robot_state_publisher")
+      {
+        setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
+        break;
+      }
+      if (k == nodeNames.size() - 1) 
+        RCLCPP_INFO(get_logger(), "No robot_state_publisher node and joint state publisher is not available.");
+    }
+    
     mStep = mRobot->getBasicTimeStep();
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 

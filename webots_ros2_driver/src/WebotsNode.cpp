@@ -112,8 +112,18 @@ namespace webots_ros2_driver
 
   void WebotsNode::init()
   {
-    setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
-
+    const std::vector<std::string> nodeNames = this->get_node_names();
+    for (int k = 0; k < nodeNames.size(); ++k)
+    {
+      if (nodeNames[k] == "/robot_state_publisher")
+      {
+        setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
+        break;
+      }
+      if (k == nodeNames.size() - 1) 
+        RCLCPP_INFO(get_logger(), "There is no the `robot_state_publisher` node, the `robot_description` parameter is not set.");
+    }
+    
     mStep = mRobot->getBasicTimeStep();
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 

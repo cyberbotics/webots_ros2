@@ -27,6 +27,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/clock.hpp>
+#include <std_srvs/srv/empty.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
 #include <pluginlib/class_loader.hpp>
 
@@ -65,6 +66,9 @@ namespace webots_ros2_driver
 
     rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr mClockPublisher;
     rosgraph_msgs::msg::Clock mClockMessage;
+
+    rclcpp::Service<std_srvs::srv::Empty>::SharedPtr mSrvRobotDescription;
+    void setRobotDescription();
   };
 
 } // end namespace webots_ros2_driver

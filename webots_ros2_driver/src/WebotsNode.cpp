@@ -60,6 +60,10 @@ namespace webots_ros2_driver
     }
 
     mClockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
+
+    //test: ros2 service call /Mavic_2_PRO/set_robot_description std_srvs/srv/Empty "{}"
+    mSrvRobotDescription = this->create_service<std_srvs::srv::Empty>(get_fully_qualified_name() + std::string("/set_robot_description"),
+      [this](const std_srvs::srv::Empty::Request::SharedPtr req, std_srvs::srv::Empty::Response::SharedPtr res)->void { setRobotDescription(); });
   }
 
   std::unordered_map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement) const
@@ -112,18 +116,8 @@ namespace webots_ros2_driver
 
   void WebotsNode::init()
   {
-    const std::vector<std::string> nodeNames = this->get_node_names();
-    for (int k = 0; k < nodeNames.size(); ++k)
-    {
-      if (nodeNames[k] == "/robot_state_publisher")
-      {
-        setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
-        break;
-      }
-      if (k == nodeNames.size() - 1) 
-        RCLCPP_INFO(get_logger(), "There is no the `robot_state_publisher` node, the `robot_description` parameter is not set.");
-    }
-    
+    setRobotDescription();
+
     mStep = mRobot->getBasicTimeStep();
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 
@@ -246,5 +240,20 @@ namespace webots_ros2_driver
     parameter.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
     request->parameters.push_back(parameter);
     mClient->async_send_request(request);
+  }
+
+  void WebotsNode::setRobotDescription()
+  {
+    const std::vector<std::string> nodeNames = this->get_node_names();
+    for (int k = 0; k < nodeNames.size(); ++k)
+    {
+      if (nodeNames[k] == "/robot_state_publisher")
+      {
+        setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
+        break;
+      }
+      if (k == nodeNames.size() - 1) 
+        RCLCPP_INFO(get_logger(), "There is no the `robot_state_publisher` node, the `robot_description` parameter is not set.");
+    }
   }
 } // end namespace webots_ros2_driver

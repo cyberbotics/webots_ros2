@@ -15,12 +15,17 @@
 # limitations under the License.
 
 import time
+import os
+import tempfile
+import random
+import string
 import unittest
 import rclpy
 from rosgraph_msgs.msg import Clock
 
 
 DEFAULT_TIMEOUT = 90.0
+DEFAULT_CLOCK_TIMEOUT = 5 * DEFAULT_TIMEOUT
 
 
 class TestWebots(unittest.TestCase):
@@ -55,5 +60,16 @@ class TestWebots(unittest.TestCase):
         finally:
             node.destroy_subscription(subscription)
 
-    def wait_for_clock(self, node, timeout=DEFAULT_TIMEOUT, messages_to_receive=5):
+    def wait_for_clock(self, node, timeout=DEFAULT_CLOCK_TIMEOUT, messages_to_receive=5):
         self.wait_for_messages(node, Clock, 'clock', timeout=timeout, messages_to_receive=messages_to_receive)
+
+
+def initialize_webots_test():
+    """Ensure a Webots and controller pair are isolated from the other instances."""
+    if 'WEBOTS_OFFSCREEN' in os.environ:
+        os.system('killall -9 webots-bin')
+
+    random_string = ''.join(random.choice(string.ascii_lowercase) for i in range(10))
+    directory = os.path.join(tempfile.gettempdir(), f'webots_{random_string}')
+    os.mkdir(directory)
+    os.environ['WEBOTS_TMPDIR'] = directory

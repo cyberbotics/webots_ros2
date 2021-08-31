@@ -28,6 +28,8 @@ TurtleBot3Burger_enu {
     }
     RobotisLds01 {
     }
+    GPS {
+    }
   ]
 }
 PottedTree {

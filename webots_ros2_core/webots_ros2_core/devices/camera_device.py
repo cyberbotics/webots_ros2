@@ -36,6 +36,7 @@ class CameraDevice(SensorDevice):
     - Publishes intrinsic camera parameters of type `sensor_msgs/CameraInfo` (latched topic)
 
     Args:
+    ----
         node (WebotsNode): The ROS2 node.
         device_key (str): Unique identifier of the device used for configuration.
         wb_device (Camera): Webots node of type Camera.

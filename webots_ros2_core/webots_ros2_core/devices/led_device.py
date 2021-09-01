@@ -29,6 +29,7 @@ class LEDDevice(Device):
     - Subscribes to `std_msgs/Int32` and controls LEDs on the robot
 
     Args:
+    ----
         node (WebotsNode): The ROS2 node.
         device_key (str): Unique identifier of the device used for configuration.
         wb_device (LED): Webots node of type LED.

@@ -24,7 +24,8 @@ from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSReliabilit
 from .sensor_device import SensorDevice
 from webots_ros2_core.math.quaternions import axangle2quat
 
-
+# first pep257 error:
+# ./webots_ros2_core/devices/camera_device.py:30 in public class `CameraDevice`: D407: Missing dashed underline after section (&apos;Args&apos;)
 class CameraDevice(SensorDevice):
     """
     ROS2 wrapper for Webots Camera node.

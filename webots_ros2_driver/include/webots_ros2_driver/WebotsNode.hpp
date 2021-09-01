@@ -44,7 +44,7 @@ namespace webots_ros2_driver
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
 
-  private:
+  protected:
     void timerCallback();
     std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
     std::unordered_map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement) const;

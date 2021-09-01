@@ -24,8 +24,7 @@ from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSReliabilit
 from .sensor_device import SensorDevice
 from webots_ros2_core.math.quaternions import axangle2quat
 
-# first pep257 error:
-# ./webots_ros2_core/devices/camera_device.py:30 in public class `CameraDevice`: D407: Missing dashed underline after section (&apos;Args&apos;)
+
 class CameraDevice(SensorDevice):
     """
     ROS2 wrapper for Webots Camera node.
@@ -35,8 +34,9 @@ class CameraDevice(SensorDevice):
     It allows the following functinalities:
     - Publishes raw image of type `sensor_msgs/Image`
     - Publishes intrinsic camera parameters of type `sensor_msgs/CameraInfo` (latched topic)
-
+    
     Args:
+    ----
         node (WebotsNode): The ROS2 node.
         device_key (str): Unique identifier of the device used for configuration.
         wb_device (Camera): Webots node of type Camera.
@@ -45,7 +45,7 @@ class CameraDevice(SensorDevice):
         params (dict): Inherited from `SensorDevice`
 
     """
-
+    
     def __init__(self, node, device_key, wb_device, params=None):
         super().__init__(node, device_key, wb_device, params)
         self._camera_info_publisher = None

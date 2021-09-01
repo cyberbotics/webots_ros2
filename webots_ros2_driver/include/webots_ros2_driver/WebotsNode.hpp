@@ -45,18 +45,19 @@ namespace webots_ros2_driver
     std::string urdf() const { return mRobotDescription; };
 
   protected:
+      webots::Supervisor* mRobot;
+      std::string mRobotName;
+      std::string mRobotDescription;
+
+  private:
     void timerCallback();
     std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
     std::unordered_map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement) const;
     void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);
     rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
 
-    std::string mRobotName;
-    std::string mRobotDescription;
-
-    rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;
-    webots::Supervisor *mRobot;
+    rclcpp::TimerBase::SharedPtr mTimer;
     std::vector<std::shared_ptr<PluginInterface>> mPlugins;
     pluginlib::ClassLoader<PluginInterface> mPluginLoader;
     tinyxml2::XMLElement *mWebotsXMLElement;

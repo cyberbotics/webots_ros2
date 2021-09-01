@@ -49,12 +49,13 @@ namespace webots_ros2_driver
       std::string mRobotName;
       std::string mRobotDescription;
 
+      rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
+      void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);
+
   private:
     void timerCallback();
     std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
     std::unordered_map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement) const;
-    void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);
-    rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
 
     int mStep;
     rclcpp::TimerBase::SharedPtr mTimer;

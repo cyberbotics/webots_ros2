@@ -34,7 +34,7 @@ class CameraDevice(SensorDevice):
     It allows the following functinalities:
     - Publishes raw image of type `sensor_msgs/Image`
     - Publishes intrinsic camera parameters of type `sensor_msgs/CameraInfo` (latched topic)
-    
+
     Args:
     ----
         node (WebotsNode): The ROS2 node.
@@ -45,7 +45,7 @@ class CameraDevice(SensorDevice):
         params (dict): Inherited from `SensorDevice`
 
     """
-    
+
     def __init__(self, node, device_key, wb_device, params=None):
         super().__init__(node, device_key, wb_device, params)
         self._camera_info_publisher = None

@@ -28,7 +28,7 @@ class WebotsRoboticArmNode(WebotsNode):
         name (WebotsNode): Webots Robot node.
         args (dict): Arguments passed to ROS2 base node.
         prefix (str): Prefix passed to JointStatePublisher.
-        
+
     """
 
     def __init__(self, name, args, prefix='', controller_name=''):

@@ -42,7 +42,7 @@ class WebotsNode(Node):
     ----
         name (str): Webots Robot node.
         args (dict): Arguments passed to ROS2 base node.
-        
+
     """
 
     def __init__(self, name, args=None, controller_class=Supervisor):

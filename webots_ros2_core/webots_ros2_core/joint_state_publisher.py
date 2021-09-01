@@ -31,7 +31,7 @@ class JointStatePublisher:
         robot (WebotsNode): Webots Robot node.
         jointPrefix (str): Prefix to all joint names.
         node (Node): ROS2 node.
-        
+
     """
 
     def __init__(self, robot, joint_prefix, node, frame_id='joint_states'):

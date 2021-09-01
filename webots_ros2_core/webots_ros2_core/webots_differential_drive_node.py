@@ -47,7 +47,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
             messages are published.
         odometry_frame (str): Name of odometry frame.
         robot_base_frame (str): Name of robot's base link.
-        
+
     """
 
     def __init__(self,

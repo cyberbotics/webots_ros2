@@ -15,6 +15,7 @@
   <build_depend>webots_ros2_driver</build_depend>
 
   <test_depend>webots_ros2_turtlebot</test_depend>
+  <test_depend>turtlebot3_cartographer</test_depend>
   <test_depend>webots_ros2_mavic</test_depend>
   <test_depend>std_msgs</test_depend>
   <test_depend>sensor_msgs</test_depend>

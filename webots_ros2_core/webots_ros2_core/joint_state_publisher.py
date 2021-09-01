@@ -27,9 +27,11 @@ class JointStatePublisher:
     [`sensor_msgs/JointState`](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/JointState.msg).
 
     Args:
+    ----
         robot (WebotsNode): Webots Robot node.
         jointPrefix (str): Prefix to all joint names.
         node (Node): ROS2 node.
+
     """
 
     def __init__(self, robot, joint_prefix, node, frame_id='joint_states'):

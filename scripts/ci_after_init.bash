@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 ROS_DISTRO=$1
+ROS_REPO=$2
 
 apt update
 apt install -y wget dialog apt-utils psmisc

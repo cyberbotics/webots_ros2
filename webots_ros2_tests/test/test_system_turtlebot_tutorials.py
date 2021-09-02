@@ -109,34 +109,5 @@ class TestTurtlebotTutorials(TestWebots):
 
         self.wait_for_messages(self.__node, SubmapList, '/submap_list', condition=on_map_message_received)
 
-    def testNavigation(self):
-        # Set the initial pose
-        publisher = self.__node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
-        pose_message = PoseWithCovarianceStamped()
-        pose_message.header.frame_id = "map"
-
-        initial_point = Point()
-        initial_point.x = 0.0
-        initial_point.y = 0.0
-        initial_point.z = 0.0
-        pose_message.pose.pose.position = initial_point
-
-        initial_orientation = Quaternion()
-        initial_orientation.x = 0.0
-        initial_orientation.y = 0.0
-        initial_orientation.z = 0.0
-        initial_orientation.w = 1.0
-        pose_message.pose.pose.orientation = initial_orientation
-
-        # Wait for Webots before sending the message
-        self.wait_for_clock(self.__node)
-        publisher.publish(pose_message)
-
-        # Check if the cost map is updated -> local map for navigation is working
-        def on_cost_map_message_received(message):
-            return 1
-
-        self.wait_for_messages(self.__node, OccupancyGrid, '/global_costmap/costmap', condition=on_cost_map_message_received)
-
     def tearDown(self):
         self.__node.destroy_node()

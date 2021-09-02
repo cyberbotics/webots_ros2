@@ -45,7 +45,7 @@ def generate_test_description():
     )
 
     # Rviz SLAM
-    turtlebot_SLAM = IncludeLaunchDescription(
+    turtlebot_slam = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('turtlebot3_cartographer'), 'launch', 'cartographer.launch.py')
         ),

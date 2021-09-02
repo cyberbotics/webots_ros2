@@ -77,7 +77,10 @@ class TestTurtlebotTutorials(TestWebots):
 
         def on_map_message_received(message):
             # There should be an update the map
-            return True
+            for value in message.data:
+                if value > -1:
+                    return True
+            return False
 
         self.wait_for_messages(self.__node, OccupancyGrid, '/map', condition=on_map_message_received)
 

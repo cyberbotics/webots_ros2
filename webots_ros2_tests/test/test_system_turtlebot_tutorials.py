@@ -20,7 +20,6 @@
 
 import os
 import pytest
-import sys
 import rclpy
 from launch import LaunchDescription
 import launch_testing.actions
@@ -33,14 +32,14 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 list_pkg = get_packages_with_prefixes()
 if 'turtlebot3_cartographer' not in list_pkg:
     print("Missing package 'turtlebot3_cartographer' exit")
-    sys.exit()
+    quit()
 else:
     from nav_msgs.msg import OccupancyGrid
 
 # If ROS_REPO is testing or ROS_DISTRO is rolling, skip test so CI succeed
 if "${ROS_REPO}" == "testing" or "${ROS_Distro}" == "rolling":
     print("ROS_REPO testing or ROS_DISTRO rolling exit")
-    sys.exit()
+    quit()
 
 
 @pytest.mark.rostest

@@ -75,7 +75,6 @@ def generate_test_description():
         return LaunchDescription([
             turtlebot_webots,
             turtlebot_SLAM,
-            turtlebot_navigation,
             launch_testing.actions.ReadyToTest(),
         ])
     # Packages not installed -> don't do the tests

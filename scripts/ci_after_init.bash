@@ -8,6 +8,5 @@ wget https://github.com/cyberbotics/webots/releases/download/R${WEBOTS_VERSION}/
 apt install -y /tmp/webots.deb xvfb
 
 if [ "${ROS_DISTRO}" = "foxy" ]; then
-    apt install ros-foxy-turtlebot3-cartographer
-    apt install ros-foxy-turtlebot3-navigation2
+    #apt install -y ros-foxy-turtlebot3-cartographer ros-foxy-turtlebot3-navigation2
 fi

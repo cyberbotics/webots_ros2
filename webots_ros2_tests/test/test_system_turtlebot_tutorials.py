@@ -19,10 +19,8 @@
 # Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_turtlebot_tutorials.py
 
 import os
-import sys
 import pytest
 import rclpy
-import rospkg
 from cartographer_ros_msgs.msg import SubmapList
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from geometry_msgs.msg import Point
@@ -30,7 +28,7 @@ from geometry_msgs.msg import Quaternion
 from nav_msgs.msg import OccupancyGrid
 from launch import LaunchDescription
 import launch_testing.actions
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
@@ -43,46 +41,47 @@ turtle_navi_pkg_name = 'turtlebot3_navigation2'
 def generate_test_description():
     initialize_webots_test()
 
-    rospack = rospkg.RosPack()
-    for pkg_name in rospack.list():
-        print(f"{pkg_name!r} already in sys.modules \n \n")
-        if pkg_name == turtle_carto_pkg_name:
-            print(f"{turtle_carto_pkg_name!r} already in sys.modules")
-        if pkg_name == turtle_navi_pkg_name:
-            print(f"{turtle_navi_pkg_name!r} already in sys.modules")
-
-    # Webots
-    turtlebot_webots = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'launch', 'robot_launch.py')
+    # Check if packages are installed
+    list_pkg = get_packages_with_prefixes()
+    if turtle_carto_pkg_name in list_pkg and turtle_navi_pkg_name in list_pkg:
+        # Webots
+        turtlebot_webots = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'launch', 'robot_launch.py')
+            )
         )
-    )
-    
-    # Rviz SLAM
-    turtlebot_SLAM = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('turtlebot3_cartographer'), 'launch', 'cartographer.launch.py')
-        ),
-        launch_arguments={'use_sim_time': 'true'}.items(),
-    )
+        
+        # Rviz SLAM
+        turtlebot_SLAM = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('turtlebot3_cartographer'), 'launch', 'cartographer.launch.py')
+            ),
+            launch_arguments={'use_sim_time': 'true'}.items(),
+        )
 
-    #Rviz Navigation
-    os.environ["TURTLEBOT3_MODEL"] = "burger"
-    
-    turtlebot_navigation = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')
-        ),
-        launch_arguments={'use_sim_time': 'true',
-        'map': os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', 'turtlebot3_burger_example_map.yaml')}.items(),
-    )
+        #Rviz Navigation
+        os.environ["TURTLEBOT3_MODEL"] = "burger"
+        
+        turtlebot_navigation = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')
+            ),
+            launch_arguments={'use_sim_time': 'true',
+            'map': os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', 'turtlebot3_burger_example_map.yaml')}.items(),
+        )
 
-    return LaunchDescription([
-        turtlebot_webots,
-        turtlebot_SLAM,
-        turtlebot_navigation,
-        launch_testing.actions.ReadyToTest(),
-    ])
+        return LaunchDescription([
+            turtlebot_webots,
+            turtlebot_SLAM,
+            turtlebot_navigation,
+            launch_testing.actions.ReadyToTest(),
+        ])
+    # Packages not installed -> don't do the tests
+    else:
+        print(f"Missing {turtle_carto_pkg_name!r} and {turtle_navi_pkg_name!r} packages, skip tests on those packages")
+        return LaunchDescription([
+            launch_testing.actions.ReadyToTest(),
+        ])
         
 
 class TestTurtlebotTutorials(TestWebots):

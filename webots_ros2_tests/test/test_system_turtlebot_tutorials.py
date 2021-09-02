@@ -68,7 +68,7 @@ def generate_test_description():
                 os.path.join(get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')
             ),
             launch_arguments={'use_sim_time': 'true',
-                'map': os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', turtlebot3_map)}.items(),
+                              'map': os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', turtlebot3_map)}.items(),
         )
 
         return LaunchDescription([

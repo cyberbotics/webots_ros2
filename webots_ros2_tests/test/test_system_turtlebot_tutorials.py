@@ -35,6 +35,7 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 turtle_carto_pkg_name = 'turtlebot3_cartographer'
 turtle_navi_pkg_name = 'turtlebot3_navigation2'
+turtlebot3_map = 'turtlebot3_burger_example_map.yaml'
 
 
 @pytest.mark.rostest
@@ -50,7 +51,7 @@ def generate_test_description():
                 os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'launch', 'robot_launch.py')
             )
         )
-        
+
         # Rviz SLAM
         turtlebot_SLAM = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
@@ -59,15 +60,15 @@ def generate_test_description():
             launch_arguments={'use_sim_time': 'true'}.items(),
         )
 
-        #Rviz Navigation
+        # Rviz Navigation
         os.environ["TURTLEBOT3_MODEL"] = "burger"
-        
+
         turtlebot_navigation = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')
             ),
             launch_arguments={'use_sim_time': 'true',
-            'map': os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', 'turtlebot3_burger_example_map.yaml')}.items(),
+            'map': os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', turtlebot3_map)}.items(),
         )
 
         return LaunchDescription([
@@ -82,7 +83,7 @@ def generate_test_description():
         return LaunchDescription([
             launch_testing.actions.ReadyToTest(),
         ])
-        
+
 
 class TestTurtlebotTutorials(TestWebots):
     @classmethod
@@ -96,7 +97,7 @@ class TestTurtlebotTutorials(TestWebots):
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
         self.wait_for_clock(self.__node, messages_to_receive=20)
-        
+
     def testSLAM(self):
         def on_map_message_received(message):
             # There should be an update of the submap
@@ -135,7 +136,7 @@ class TestTurtlebotTutorials(TestWebots):
         def on_cost_map_message_received(message):
             return 1
 
-        self.wait_for_messages(self.__node, OccupancyGrid, '/global_costmap/costmap',condition=on_cost_map_message_received)
+        self.wait_for_messages(self.__node, OccupancyGrid, '/global_costmap/costmap', condition=on_cost_map_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

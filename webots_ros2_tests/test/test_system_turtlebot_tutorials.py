@@ -62,13 +62,14 @@ def generate_test_description():
 
         # Rviz Navigation
         os.environ["TURTLEBOT3_MODEL"] = "burger"
+        map_path = os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', turtlebot3_map)
 
         turtlebot_navigation = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')
             ),
             launch_arguments={'use_sim_time': 'true',
-                              'map': os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', turtlebot3_map)}.items(),
+                              'map': map_path}.items(),
         )
 
         return LaunchDescription([

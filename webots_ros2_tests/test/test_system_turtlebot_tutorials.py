@@ -22,10 +22,6 @@ import os
 import pytest
 import rclpy
 from cartographer_ros_msgs.msg import SubmapList
-from geometry_msgs.msg import PoseWithCovarianceStamped
-from geometry_msgs.msg import Point
-from geometry_msgs.msg import Quaternion
-from nav_msgs.msg import OccupancyGrid
 from launch import LaunchDescription
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
@@ -35,7 +31,6 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 turtle_carto_pkg_name = 'turtlebot3_cartographer'
 turtle_navi_pkg_name = 'turtlebot3_navigation2'
-turtlebot3_map = 'turtlebot3_burger_example_map.yaml'
 
 
 @pytest.mark.rostest
@@ -58,18 +53,6 @@ def generate_test_description():
                 os.path.join(get_package_share_directory('turtlebot3_cartographer'), 'launch', 'cartographer.launch.py')
             ),
             launch_arguments={'use_sim_time': 'true'}.items(),
-        )
-
-        # Rviz Navigation
-        os.environ["TURTLEBOT3_MODEL"] = "burger"
-        map_path = os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', turtlebot3_map)
-
-        turtlebot_navigation = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')
-            ),
-            launch_arguments={'use_sim_time': 'true',
-                              'map': map_path}.items(),
         )
 
         return LaunchDescription([
@@ -103,7 +86,7 @@ class TestTurtlebotTutorials(TestWebots):
             # There should be an update of the submap
             update_found = 0
             for submap in message.submap:
-                if submap.submap_version > 1:
+                if submap.submap_version > 0:
                     update_found = 1
             return update_found
 

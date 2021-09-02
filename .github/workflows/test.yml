@@ -15,7 +15,7 @@ jobs:
     env:
       AFTER_INIT: ./scripts/ci_after_init.bash
       BEFORE_INIT_EMBED: source scripts/ci_before_init_embed.bash
-      AFTER_INSTALL_TARGET_DEPENDENCIES: ./script/ci_after_install_target_dependencies.bash
+      AFTER_INSTALL_TARGET_DEPENDENCIES: ./scripts/ci_after_install_target_dependencies.bash
     steps:
       - uses: actions/checkout@v1
         with:

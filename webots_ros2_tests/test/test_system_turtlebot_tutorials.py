@@ -23,28 +23,19 @@ import pytest
 import rclpy
 from launch import LaunchDescription
 import launch_testing.actions
-from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
+from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
-
-# Check if packages are installed
-list_pkg = get_packages_with_prefixes()
-if 'turtlebot3_cartographer' not in list_pkg:
-    print("Missing package 'turtlebot3_cartographer' exit")
-    quit()
-else:
-    from nav_msgs.msg import OccupancyGrid
-
-# If ROS_REPO is testing or ROS_DISTRO is rolling, skip test so CI succeed
-if "${ROS_REPO}" == "testing" or "${ROS_Distro}" == "rolling":
-    print("ROS_REPO testing or ROS_DISTRO rolling exit")
-    quit()
 
 
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()
+    # If ROS_REPO is testing or ROS_DISTRO is rolling, skip test so CI succeed
+    if ('ROS_REPO' in os.environ and os.environ['ROS_REPO'] == 'testing') or \
+            ('ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'):
+        pytest.skip('ROS_REPO testing or ROS_DISTRO rolling exit')
 
     # Webots
     turtlebot_webots = IncludeLaunchDescription(
@@ -82,6 +73,8 @@ class TestTurtlebotTutorials(TestWebots):
         self.wait_for_clock(self.__node, messages_to_receive=20)
 
     def testSLAM(self):
+        from nav_msgs.msg import OccupancyGrid
+
         def on_map_message_received(message):
             # There should be an update the map
             return True

@@ -45,15 +45,16 @@ DISTANCE_SENSOR_ANGLE = [
 
 
 def interpolate_function(value, start_x, start_y, end_x, end_y, ascending=None):
-        if end_x - start_x == 0:
-            if (ascending and value < start_x) or (not ascending and value > start_x):
-                return start_y
-            elif (ascending and value > start_x) or (not ascending and value < start_x):
-                return end_y
-            else:
-                return start_y + (end_y - start_y) / 2
-        slope = (end_y - start_y) / (end_x - start_x)
-        return slope * (value - start_x) + start_y
+    if end_x - start_x == 0:
+        if (ascending and value < start_x) or (not ascending and value > start_x):
+            return start_y
+        elif (ascending and value > start_x) or (not ascending and value < start_x):
+            return end_y
+        else:
+            return start_y + (end_y - start_y) / 2
+    slope = (end_y - start_y) / (end_x - start_x)
+    return slope * (value - start_x) + start_y
+
 
 def interpolate_lookup_table(value, table):
     if not table:
@@ -93,7 +94,7 @@ def interpolate_lookup_table(value, table):
         )
 
 
-class EPuckDriver:
+class EpuckDriver:
     def init(self, webots_node, properties):
         self.__robot = webots_node.robot
         self.__timestep = int(self.__robot.getBasicTimeStep())
@@ -101,12 +102,11 @@ class EPuckDriver:
         # Intialize distance sensors for LaserScan topic
         self.distance_sensors = {}
         for i in range(NB_INFRARED_SENSORS):
-            sensor = self.__robot.getDistanceSensor('ps{}'.format(i))
+            sensor = self.__robot.getDevice('ps{}'.format(i))
             sensor.enable(self.__timestep)
             self.distance_sensors['ps{}'.format(i)] = sensor
 
-        self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
-        self.tof_sensor = self.__robot.getDistanceSensor('tof')
+        self.tof_sensor = self.__robot.getDevice('tof')
         if self.tof_sensor:
             self.tof_sensor.enable(self.__timestep)
         else:
@@ -124,15 +124,16 @@ class EPuckDriver:
         laser_transform.transform.translation.y = 0.0
         laser_transform.transform.translation.z = 0.033
 
-        self.static_broadcaster = StaticTransformBroadcaster(self)
-        self.static_broadcaster.sendTransform(laser_transform)
-
-        # Main loop - ROS interface
+        # ROS interface
         rclpy.init(args=None)
         self.__node = rclpy.create_node('epuck_driver')
-        self.__node.create_timer(self.__timestep / 1000, self.__publish_laserscan_data)
 
-    def __publish_laserscan_data(self):
+        self.static_broadcaster = StaticTransformBroadcaster(self.__node)
+        self.static_broadcaster.sendTransform(laser_transform)
+
+        self.__publisher_laserscan_data = self.__node.create_publisher(LaserScan, '/laserscan_data', 1)
+
+    def step(self):
         stamp = Time(seconds=self.__robot.getTime()).to_msg()
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
@@ -181,4 +182,4 @@ class EPuckDriver:
             OUT_OF_RANGE,                               # 135
             laser_dists[4] + SENSOR_DIST_FROM_CENTER,   # 150
         ]
-        self.laser_publisher.publish(msg)
+        self.__publisher_laserscan_data.publish(msg)

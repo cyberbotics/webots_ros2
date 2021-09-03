@@ -8,7 +8,7 @@ data_files = []
 data_files.append(('share/ament_index/resource_index/packages', [
     'resource/' + package_name
 ]))
-data_files.append(('share/' + package_name + '/launch',[
+data_files.append(('share/' + package_name + '/launch', [
     'launch/robot_launch.py',
     'launch/robot_tools_launch.py',
     'launch/robot_with_tools_launch.py',
@@ -65,7 +65,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'driver = webots_ros2_epuck.driver:main',
+            'driver = webots_ros2_epuck.epuck_driver:main',
             'drive_calibrator = webots_ros2_epuck.drive_calibrator:main',
             'simple_mapper = webots_ros2_epuck.simple_mapper:main'
         ],

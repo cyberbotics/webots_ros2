@@ -20,8 +20,6 @@ from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import TransformStamped
-from webots_ros2_core.math.interpolation import interpolate_lookup_table
-from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
 
 
 OUT_OF_RANGE = 0.0
@@ -46,47 +44,76 @@ DISTANCE_SENSOR_ANGLE = [
 ]
 
 
-DEVICE_CONFIG = {
-    'camera': {'topic_name': ''},
-    'robot': {'publish_base_footprint': True},
-    'ps0': {'always_publish': True},
-    'ps1': {'always_publish': True},
-    'ps2': {'always_publish': True},
-    'ps3': {'always_publish': True},
-    'ps4': {'always_publish': True},
-    'ps5': {'always_publish': True},
-    'ps6': {'always_publish': True},
-    'ps7': {'always_publish': True},
-    'tof': {'always_publish': True}
-}
+def interpolate_function(value, start_x, start_y, end_x, end_y, ascending=None):
+        if end_x - start_x == 0:
+            if (ascending and value < start_x) or (not ascending and value > start_x):
+                return start_y
+            elif (ascending and value > start_x) or (not ascending and value < start_x):
+                return end_y
+            else:
+                return start_y + (end_y - start_y) / 2
+        slope = (end_y - start_y) / (end_x - start_x)
+        return slope * (value - start_x) + start_y
 
+def interpolate_lookup_table(value, table):
+    if not table:
+        return value
 
-class EPuckDriver(WebotsDifferentialDriveNode):
-    def __init__(self, args):
-        super().__init__(
-            'epuck_driver',
-            args,
-            wheel_distance=DEFAULT_WHEEL_DISTANCE,
-            wheel_radius=DEFAULT_WHEEL_RADIUS
+    # Interpolate
+    for i in range(int(len(table) / 3) - 1):
+        if (value < table[i * 3 + 1] and value >= table[(i + 1) * 3 + 1]) or \
+                (value >= table[i * 3 + 1] and value < table[(i + 1) * 3 + 1]):
+            return interpolate_function(
+                value,
+                table[i * 3 + 1],
+                table[i * 3],
+                table[(i + 1) * 3 + 1],
+                table[(i + 1) * 3]
+            )
+
+    # Extrapolate (we assume that the table is sorted, order is irrelevant)
+    ascending = (table[1] < table[len(table) - 1*3 + 1])
+    if (ascending and value >= table[1]) or (not ascending and value < table[1]):
+        return interpolate_function(
+            value,
+            table[len(table) - 2 * 3 + 1],
+            table[len(table) - 2 * 3 + 0],
+            table[len(table) - 1 * 3 + 1],
+            table[len(table) - 1 * 3 + 0],
+            ascending
         )
-        self.start_device_manager(DEVICE_CONFIG)
+    else:
+        return interpolate_function(
+            value,
+            table[1],
+            table[0],
+            table[3 + 1],
+            table[3],
+            ascending
+        )
+
+
+class EPuckDriver:
+    def init(self, webots_node, properties):
+        self.__robot = webots_node.robot
+        self.__timestep = int(self.__robot.getBasicTimeStep())
 
         # Intialize distance sensors for LaserScan topic
         self.distance_sensors = {}
         for i in range(NB_INFRARED_SENSORS):
-            sensor = self.robot.getDistanceSensor('ps{}'.format(i))
-            sensor.enable(self.timestep)
+            sensor = self.__robot.getDistanceSensor('ps{}'.format(i))
+            sensor.enable(self.__timestep)
             self.distance_sensors['ps{}'.format(i)] = sensor
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
-        self.tof_sensor = self.robot.getDistanceSensor('tof')
+        self.tof_sensor = self.__robot.getDistanceSensor('tof')
         if self.tof_sensor:
-            self.tof_sensor.enable(self.timestep)
+            self.tof_sensor.enable(self.__timestep)
         else:
             self.get_logger().info('ToF sensor is not present for this e-puck version')
 
         laser_transform = TransformStamped()
-        laser_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
+        laser_transform.header.stamp = Time(seconds=self.__robot.getTime()).to_msg()
         laser_transform.header.frame_id = 'base_link'
         laser_transform.child_frame_id = 'laser_scanner'
         laser_transform.transform.rotation.x = 0.0
@@ -100,11 +127,13 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.static_broadcaster = StaticTransformBroadcaster(self)
         self.static_broadcaster.sendTransform(laser_transform)
 
-        # Main loop
-        self.create_timer(self.timestep / 1000, self.__publish_laserscan_data)
+        # Main loop - ROS interface
+        rclpy.init(args=None)
+        self.__node = rclpy.create_node('epuck_driver')
+        self.__node.create_timer(self.__timestep / 1000, self.__publish_laserscan_data)
 
     def __publish_laserscan_data(self):
-        stamp = Time(seconds=self.robot.getTime()).to_msg()
+        stamp = Time(seconds=self.__robot.getTime()).to_msg()
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
 
@@ -153,16 +182,3 @@ class EPuckDriver(WebotsDifferentialDriveNode):
             laser_dists[4] + SENSOR_DIST_FROM_CENTER,   # 150
         ]
         self.laser_publisher.publish(msg)
-
-
-def main(args=None):
-    rclpy.init(args=args)
-
-    epuck_controller = EPuckDriver(args=args)
-
-    rclpy.spin(epuck_controller)
-    rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()

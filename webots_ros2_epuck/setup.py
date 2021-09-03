@@ -8,7 +8,7 @@ data_files = []
 data_files.append(('share/ament_index/resource_index/packages', [
     'resource/' + package_name
 ]))
-data_files.append(('share/' + package_name, [
+data_files.append(('share/' + package_name + '/launch',[
     'launch/robot_launch.py',
     'launch/robot_tools_launch.py',
     'launch/robot_with_tools_launch.py',
@@ -34,7 +34,8 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/map_rats_life.yaml',
     'resource/nav2_rats_life_waypoints.yaml',
     'resource/epuck_world_map.pgm',
-    'resource/epuck_world_map.yaml'
+    'resource/epuck_world_map.yaml',
+    'resource/epuck_webots.urdf'
 ]))
 data_files.append(('share/' + package_name, [
     'package.xml'

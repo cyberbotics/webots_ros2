@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<robot name="Epuck Webots">
+    <webots>
+        <device reference="camera" type="Camera">
+            <ros>
+                <enabled>true</enabled>
+                <topicName></topicName>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+
+        <device reference="robot" type="Robot">
+            <ros>
+                <enabled>true</enabled>
+                <base_footprint>true</base_footprint>
+            </ros>
+        </device>
+
+        <device reference="ps0" type="DistanceSensor">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps1" type="DistanceSensor">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps2" type="DistanceSensor">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps3" type="DistanceSensor">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps4" type="DistanceSensor">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps5" type="DistanceSensor">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps6" type="DistanceSensor">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps7" type="DistanceSensor">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+
+        <device reference="tof" type="DistanceSensor">
+            <ros>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+
+        <plugin type="webots_ros2_epuck.epuck_driver.EpuckDriver" />
+    </webots>
+</robot>

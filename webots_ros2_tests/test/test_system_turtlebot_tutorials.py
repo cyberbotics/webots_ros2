@@ -54,7 +54,7 @@ def generate_test_description():
 
     return LaunchDescription([
         turtlebot_webots,
-        turtlebot_SLAM,
+        turtlebot_slam,
         launch_testing.actions.ReadyToTest(),
     ])
 

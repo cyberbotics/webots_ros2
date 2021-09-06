@@ -18,6 +18,7 @@
 
 import os
 import pathlib
+import launch
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
@@ -31,7 +32,6 @@ def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_epuck')
     world = LaunchConfiguration('world')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'epuck_webots.urdf')).read_text()
-
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
@@ -45,6 +45,22 @@ def generate_launch_description():
         ]
     )
 
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>'
+        }],
+    )
+
+    footprint_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -52,5 +68,15 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_epuck/world` directory'
         ),
         webots,
-        epuck_driver
+        robot_state_publisher,
+        epuck_driver,
+        footprint_publisher,
+
+        # This action will kill all nodes once the Webots simulation has exited
+        launch.actions.RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=webots,
+                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+            )
+        )
     ])

@@ -9,13 +9,6 @@
             </ros>
         </device>
 
-        <device reference="robot" type="Robot">
-            <ros>
-                <enabled>true</enabled>
-                <base_footprint>true</base_footprint>
-            </ros>
-        </device>
-
         <device reference="ps0" type="DistanceSensor">
             <ros>
                 <enabled>true</enabled>

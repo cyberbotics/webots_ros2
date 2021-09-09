@@ -22,9 +22,9 @@ import os
 import pytest
 import rclpy
 from tf2_msgs.msg import TFMessage
-from sensor_msgs.msg import Range, Image
+from sensor_msgs.msg import Range, Image, LaserScan
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import LaserScan
+from nav_msgs.msg import Odometry
 from launch import LaunchDescription
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
@@ -65,12 +65,11 @@ class TestEpuck(TestWebots):
     def testCamera(self):
         def on_image_message_received(message):
             # There should be data values between 0 and 255 included
-            for value in message.data:
-                if value >= 0 and value <= 255:
-                    return True
-                return False
+            if message.data[0] > 0 and message.data[0] < 255:
+                return True
+            return False
 
-        self.wait_for_messages(self.__node, Image, '/epuck_/camera', condition=on_image_message_received)
+        self.wait_for_messages(self.__node, Image, '/e_puck/camera', condition=on_image_message_received)
 
     def testPs0(self):
         def on_range_message_received(message):
@@ -79,7 +78,7 @@ class TestEpuck(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, Range, '/epuck_/ps0', condition=on_range_message_received)
+        self.wait_for_messages(self.__node, Range, '/e_puck/ps0', condition=on_range_message_received)
 
     def testToF(self):
         def on_range_message_received(message):
@@ -88,14 +87,12 @@ class TestEpuck(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, Range, '/epuck_/tof', condition=on_range_message_received)
-
-    
+        self.wait_for_messages(self.__node, Range, '/e_puck/tof', condition=on_range_message_received)
 
     def testFootPrint(self):
         def on_position_message_received(message):
-            # There should be an transform object
-            if message.transform is None:
+            # There should be transform msg
+            if message.transforms[0] is None:
                 return False
             return True
 
@@ -109,10 +106,26 @@ class TestEpuck(TestWebots):
             twist_message.linear.x = 0.1
             publisher.publish(twist_message)
 
-            # E_puck should mvoe forward
-            return message.transform.translation.x > 0.5
+            # E_puck should move forward
+            if message.pose.pose.position.x > 0.5:
+                return True
+            return False
 
-        self.wait_for_messages(self.__node, TFMessage, '/tf_static', condition=on_position_message_received)
+        self.wait_for_messages(self.__node, Odometry, '/odom', condition=on_position_message_received)
+
+    def testScan(self):
+        def on_scan_message_received(message):
+            # There should be at least 1 range bigger than 0 and some = 0
+            number_of_zeroes = 0
+            number_of_non_zeroes = 0
+            for value in message.ranges:
+                if value == 0.:
+                    number_of_zeroes += 1
+                elif value > 0.:
+                    number_of_non_zeroes += 1
+            return number_of_zeroes > 0 and number_of_non_zeroes > 0
+
+        self.wait_for_messages(self.__node, LaserScan, '/scan', condition=on_scan_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

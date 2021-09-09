@@ -16,11 +16,11 @@
 
 from math import pi
 import rclpy
-from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster
 from sensor_msgs.msg import LaserScan, Range
 from geometry_msgs.msg import TransformStamped
 from rclpy.node import Node
+
 
 OUT_OF_RANGE = 0.0
 INFRARED_MAX_RANGE = 0.04
@@ -42,74 +42,25 @@ DISTANCE_SENSOR_ANGLE = [
 ]
 
 
-def interpolate_function(value, start_x, start_y, end_x, end_y, ascending=None):
-    if end_x - start_x == 0:
-        if (ascending and value < start_x) or (not ascending and value > start_x):
-            return start_y
-        elif (ascending and value > start_x) or (not ascending and value < start_x):
-            return end_y
-        else:
-            return start_y + (end_y - start_y) / 2
-    slope = (end_y - start_y) / (end_x - start_x)
-    return slope * (value - start_x) + start_y
-
-
-def interpolate_lookup_table(value, table):
-    if not table:
-        return value
-
-    # Interpolate
-    for i in range(int(len(table) / 3) - 1):
-        if (value < table[i * 3 + 1] and value >= table[(i + 1) * 3 + 1]) or \
-                (value >= table[i * 3 + 1] and value < table[(i + 1) * 3 + 1]):
-            return interpolate_function(
-                value,
-                table[i * 3 + 1],
-                table[i * 3],
-                table[(i + 1) * 3 + 1],
-                table[(i + 1) * 3]
-            )
-
-    # Extrapolate (we assume that the table is sorted, order is irrelevant)
-    ascending = (table[1] < table[len(table) - 1*3 + 1])
-    if (ascending and value >= table[1]) or (not ascending and value < table[1]):
-        return interpolate_function(
-            value,
-            table[len(table) - 2 * 3 + 1],
-            table[len(table) - 2 * 3 + 0],
-            table[len(table) - 1 * 3 + 1],
-            table[len(table) - 1 * 3 + 0],
-            ascending
-        )
-    else:
-        return interpolate_function(
-            value,
-            table[1],
-            table[0],
-            table[3 + 1],
-            table[3],
-            ascending
-        )
-
 class EPuckNode(Node):
     def __init__(self):
         super().__init__('epuck_node')
         self.get_logger().info("Epuck node has been started.")
 
         # Intialize distance sensors for LaserScan topic
-        self.__subscriber_distance_sensors = {}
+        self.__subscriber_dist_sensors = {}
         self.__dists = {}
         for i in range(NB_INFRARED_SENSORS):
             self.__dists['ps{}'.format(i)] = OUT_OF_RANGE
 
-        self.__subscriber_distance_sensors['ps0'] = self.create_subscription(Range,'/e_puck/ps0', self.__process_dist_sens_0, 1)
-        self.__subscriber_distance_sensors['ps1'] = self.create_subscription(Range,'/e_puck/ps1', self.__process_dist_sens_1, 1)
-        self.__subscriber_distance_sensors['ps2'] = self.create_subscription(Range,'/e_puck/ps2', self.__process_dist_sens_2, 1)
-        self.__subscriber_distance_sensors['ps3'] = self.create_subscription(Range,'/e_puck/ps3', self.__process_dist_sens_3, 1)
-        self.__subscriber_distance_sensors['ps4'] = self.create_subscription(Range,'/e_puck/ps4', self.__process_dist_sens_4, 1)
-        self.__subscriber_distance_sensors['ps5'] = self.create_subscription(Range,'/e_puck/ps5', self.__process_dist_sens_5, 1)
-        self.__subscriber_distance_sensors['ps6'] = self.create_subscription(Range,'/e_puck/ps6', self.__process_dist_sens_6, 1)
-        self.__subscriber_distance_sensors['ps7'] = self.create_subscription(Range,'/e_puck/ps7', self.__process_dist_sens_7, 1)
+        self.__subscriber_dist_sensors['ps0'] = self.create_subscription(Range, '/e_puck/ps0', self.__process_dist_sens_0, 1)
+        self.__subscriber_dist_sensors['ps1'] = self.create_subscription(Range, '/e_puck/ps1', self.__process_dist_sens_1, 1)
+        self.__subscriber_dist_sensors['ps2'] = self.create_subscription(Range, '/e_puck/ps2', self.__process_dist_sens_2, 1)
+        self.__subscriber_dist_sensors['ps3'] = self.create_subscription(Range, '/e_puck/ps3', self.__process_dist_sens_3, 1)
+        self.__subscriber_dist_sensors['ps4'] = self.create_subscription(Range, '/e_puck/ps4', self.__process_dist_sens_4, 1)
+        self.__subscriber_dist_sensors['ps5'] = self.create_subscription(Range, '/e_puck/ps5', self.__process_dist_sens_5, 1)
+        self.__subscriber_dist_sensors['ps6'] = self.create_subscription(Range, '/e_puck/ps6', self.__process_dist_sens_6, 1)
+        self.__subscriber_dist_sensors['ps7'] = self.create_subscription(Range, '/e_puck/ps7', self.__process_dist_sens_7, 1)
 
         self.__subscriber_tof = self.create_subscription(Range, '/e_puck/tof', self.__process_tof, 1)
         self.__new_tof_data = False
@@ -226,6 +177,7 @@ def main(args=None):
     epuck_controller.destroy_node()
 
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()

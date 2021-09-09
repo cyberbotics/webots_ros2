@@ -81,7 +81,7 @@ class EPuckNode(Node):
         self.static_broadcaster.sendTransform(laser_transform)
 
         # Main loop self.get_clock
-        self.create_timer(100 / 1000, self.__publish_laserscan_data)
+        self.create_timer(500 / 1000, self.__publish_laserscan_data)
 
     def __on_distance_sensor_message(self, msg, i):
         self.__distances[f'ps{i}'] = msg.range

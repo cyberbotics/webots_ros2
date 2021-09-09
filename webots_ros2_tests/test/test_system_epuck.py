@@ -92,9 +92,10 @@ class TestEpuck(TestWebots):
     def testFootPrint(self):
         def on_position_message_received(message):
             # There should be transform msg
-            if message.transforms[0] is None:
-                return False
-            return True
+            for transformStamped in message.transforms:
+                if transformStamped.transform is not None:
+                    return True
+            return False
 
         self.wait_for_messages(self.__node, TFMessage, '/tf_static', condition=on_position_message_received)
 

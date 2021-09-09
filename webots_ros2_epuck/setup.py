@@ -66,7 +66,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'epuck_process = webots_ros2_epuck.epuck_node:main',
+            'epuck_node = webots_ros2_epuck.epuck_node:main',
             'drive_calibrator = webots_ros2_epuck.drive_calibrator:main',
             'simple_mapper = webots_ros2_epuck.simple_mapper:main'
         ],

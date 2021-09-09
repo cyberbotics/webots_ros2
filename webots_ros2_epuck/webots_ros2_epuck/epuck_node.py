@@ -49,11 +49,12 @@ class EPuckNode(Node):
 
         # Intialize distance sensors for LaserScan topic
         self.__subscriber_dist_sensors = {}
-        self.__dists = {}
+        self.__distances = {}
         for i in range(NB_INFRARED_SENSORS):
             self.__dists['ps{}'.format(i)] = OUT_OF_RANGE
 
-        self.__subscriber_dist_sensors['ps0'] = self.create_subscription(Range, '/e_puck/ps0', self.__process_dist_sens_0, 1)
+        for i in range(7):
+            self.__subscriber_dist_sensors[f'ps{i}'] = self.create_subscription(Range, f'/e_puck/ps{i}', lambda message: self.__on_distance_sensor_message(message, i), 1)
         self.__subscriber_dist_sensors['ps1'] = self.create_subscription(Range, '/e_puck/ps1', self.__process_dist_sens_1, 1)
         self.__subscriber_dist_sensors['ps2'] = self.create_subscription(Range, '/e_puck/ps2', self.__process_dist_sens_2, 1)
         self.__subscriber_dist_sensors['ps3'] = self.create_subscription(Range, '/e_puck/ps3', self.__process_dist_sens_3, 1)

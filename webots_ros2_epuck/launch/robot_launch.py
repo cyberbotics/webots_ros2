@@ -80,7 +80,7 @@ def generate_launch_description():
 
     epuck_process = Node(
         package='webots_ros2_epuck',
-        executable='epuck_process',
+        executable='epuck_node',
         output='screen',
     )
 

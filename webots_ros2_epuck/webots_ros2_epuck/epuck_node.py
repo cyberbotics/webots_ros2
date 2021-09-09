@@ -50,21 +50,18 @@ class EPuckNode(Node):
         # Intialize distance sensors for LaserScan topic
         self.__subscriber_dist_sensors = {}
         self.__distances = {}
+        self.__tof_value = OUT_OF_RANGE
         for i in range(NB_INFRARED_SENSORS):
-            self.__dists['ps{}'.format(i)] = OUT_OF_RANGE
+            self.__distances['ps{}'.format(i)] = OUT_OF_RANGE
 
-        for i in range(7):
-            self.__subscriber_dist_sensors[f'ps{i}'] = self.create_subscription(Range, f'/e_puck/ps{i}', lambda message: self.__on_distance_sensor_message(message, i), 1)
-        self.__subscriber_dist_sensors['ps1'] = self.create_subscription(Range, '/e_puck/ps1', self.__process_dist_sens_1, 1)
-        self.__subscriber_dist_sensors['ps2'] = self.create_subscription(Range, '/e_puck/ps2', self.__process_dist_sens_2, 1)
-        self.__subscriber_dist_sensors['ps3'] = self.create_subscription(Range, '/e_puck/ps3', self.__process_dist_sens_3, 1)
-        self.__subscriber_dist_sensors['ps4'] = self.create_subscription(Range, '/e_puck/ps4', self.__process_dist_sens_4, 1)
-        self.__subscriber_dist_sensors['ps5'] = self.create_subscription(Range, '/e_puck/ps5', self.__process_dist_sens_5, 1)
-        self.__subscriber_dist_sensors['ps6'] = self.create_subscription(Range, '/e_puck/ps6', self.__process_dist_sens_6, 1)
-        self.__subscriber_dist_sensors['ps7'] = self.create_subscription(Range, '/e_puck/ps7', self.__process_dist_sens_7, 1)
+        for i in range(NB_INFRARED_SENSORS):
+            self.__subscriber_dist_sensors[f'ps{i}'] = \
+                self.create_subscription(Range,
+                                         f'/e_puck/ps{i}',
+                                         lambda message: self.__on_distance_sensor_message(message, i),
+                                         1)
 
         self.__subscriber_tof = self.create_subscription(Range, '/e_puck/tof', self.__process_tof, 1)
-        self.__new_tof_data = False
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
@@ -86,32 +83,10 @@ class EPuckNode(Node):
         # Main loop self.get_clock
         self.create_timer(100 / 1000, self.__publish_laserscan_data)
 
-    def __process_dist_sens_0(self, msg):
-        self.__dists["ps0"] = msg.range
-
-    def __process_dist_sens_1(self, msg):
-        self.__dists["ps1"] = msg.range
-
-    def __process_dist_sens_2(self, msg):
-        self.__dists["ps2"] = msg.range
-
-    def __process_dist_sens_3(self, msg):
-        self.__dists["ps3"] = msg.range
-
-    def __process_dist_sens_4(self, msg):
-        self.__dists["ps4"] = msg.range
-
-    def __process_dist_sens_5(self, msg):
-        self.__dists["ps5"] = msg.range
-
-    def __process_dist_sens_6(self, msg):
-        self.__dists["ps6"] = msg.range
-
-    def __process_dist_sens_7(self, msg):
-        self.__dists["ps7"] = msg.range
+    def __on_distance_sensor_message(self, msg, i):
+        self.__distances[f'ps{i}'] = msg.range
 
     def __process_tof(self, msg):
-        self.__new_tof_data = True
         self.__tof_value = msg.range
 
     def __publish_laserscan_data(self):
@@ -120,19 +95,16 @@ class EPuckNode(Node):
         dist_tof = OUT_OF_RANGE
 
         # Calculate distances
-        for i, key in enumerate(self.__dists):
-            dists[i] = self.__dists[key]
+        for i, key in enumerate(self.__distances):
+            dists[i] = self.__distances[key]
 
         # Publish range: ToF
-        if self.__new_tof_data:
-            dist_tof = self.__tof_value
-            self.__new_tof_data = False
-        else:
-            dist_tof = OUT_OF_RANGE
+        dist_tof = self.__tof_value
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
         laser_dists = [OUT_OF_RANGE if dist > INFRARED_MAX_RANGE else dist for dist in dists]
+        dist_tof = OUT_OF_RANGE if dist_tof > TOF_MAX_RANGE else dist_tof
         msg = LaserScan()
         msg.header.frame_id = 'laser_scanner'
         msg.header.stamp = stamp

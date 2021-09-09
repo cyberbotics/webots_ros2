@@ -5,7 +5,6 @@
         <device reference="camera" type="Camera">
             <ros>
                 <enabled>true</enabled>
-                <alwaysOn>true</alwaysOn>
             </ros>
         </device>
 

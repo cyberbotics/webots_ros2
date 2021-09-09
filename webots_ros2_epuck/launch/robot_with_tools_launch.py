@@ -36,7 +36,7 @@ def generate_launch_description():
     # Webots
     webots_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'robot_launch.py')
+            os.path.join(package_dir, 'launch', 'robot_launch.py')
         ),
         launch_arguments={
             'synchronization': synchronization,
@@ -47,7 +47,7 @@ def generate_launch_description():
     # Base configuration
     tools_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'robot_tools_launch.py')
+            os.path.join(package_dir, 'launch', 'robot_tools_launch.py')
         ),
         launch_arguments={
             'nav': use_nav,

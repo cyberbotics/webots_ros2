@@ -81,7 +81,7 @@ class EPuckNode(Node):
         self.static_broadcaster.sendTransform(laser_transform)
 
         # Main loop self.get_clock
-        self.create_timer(500 / 1000, self.__publish_laserscan_data)
+        self.create_timer(100 / 1000, self.__publish_laserscan_data)
 
     def __on_distance_sensor_message(self, msg, i):
         self.__distances[f'ps{i}'] = msg.range
@@ -90,7 +90,6 @@ class EPuckNode(Node):
         self.__tof_value = msg.range
 
     def __publish_laserscan_data(self):
-        stamp = self.get_clock().now().to_msg()
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
 
@@ -107,7 +106,7 @@ class EPuckNode(Node):
         dist_tof = OUT_OF_RANGE if dist_tof > TOF_MAX_RANGE else dist_tof
         msg = LaserScan()
         msg.header.frame_id = 'laser_scanner'
-        msg.header.stamp = stamp
+        msg.header.stamp = self.get_clock().now().to_msg()
         msg.angle_min = - 150 * pi / 180
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180

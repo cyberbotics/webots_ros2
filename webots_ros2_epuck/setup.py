@@ -35,7 +35,8 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/nav2_rats_life_waypoints.yaml',
     'resource/epuck_world_map.pgm',
     'resource/epuck_world_map.yaml',
-    'resource/epuck_webots.urdf'
+    'resource/epuck_webots.urdf',
+    'resource/ros2_control.yml',
 ]))
 data_files.append(('share/' + package_name, [
     'package.xml'
@@ -65,7 +66,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'driver = webots_ros2_epuck.epuck_driver:main',
+            'epuck_process = webots_ros2_epuck.epuck_node:main',
             'drive_calibrator = webots_ros2_epuck.drive_calibrator:main',
             'simple_mapper = webots_ros2_epuck.simple_mapper:main'
         ],

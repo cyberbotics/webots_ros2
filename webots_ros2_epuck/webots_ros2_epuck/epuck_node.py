@@ -18,16 +18,14 @@ from math import pi
 import rclpy
 from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster
-from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import LaserScan, Range
 from geometry_msgs.msg import TransformStamped
-
+from rclpy.node import Node
 
 OUT_OF_RANGE = 0.0
 INFRARED_MAX_RANGE = 0.04
 INFRARED_MIN_RANGE = 0.009
 TOF_MAX_RANGE = 1.0
-DEFAULT_WHEEL_RADIUS = 0.02
-DEFAULT_WHEEL_DISTANCE = 0.05685
 NB_INFRARED_SENSORS = 8
 SENSOR_DIST_FROM_CENTER = 0.035
 
@@ -93,27 +91,33 @@ def interpolate_lookup_table(value, table):
             ascending
         )
 
-
-class EpuckDriver:
-    def init(self, webots_node, properties):
-        self.__robot = webots_node.robot
-        self.__timestep = int(self.__robot.getBasicTimeStep())
+class EPuckNode(Node):
+    def __init__(self):
+        super().__init__('epuck_node')
+        self.get_logger().info("Epuck node has been started.")
 
         # Intialize distance sensors for LaserScan topic
-        self.distance_sensors = {}
+        self.__subscriber_distance_sensors = {}
+        self.__dists = {}
         for i in range(NB_INFRARED_SENSORS):
-            sensor = self.__robot.getDevice('ps{}'.format(i))
-            sensor.enable(self.__timestep)
-            self.distance_sensors['ps{}'.format(i)] = sensor
+            self.__dists['ps{}'.format(i)] = OUT_OF_RANGE
 
-        self.tof_sensor = self.__robot.getDevice('tof')
-        if self.tof_sensor:
-            self.tof_sensor.enable(self.__timestep)
-        else:
-            self.get_logger().info('ToF sensor is not present for this e-puck version')
+        self.__subscriber_distance_sensors['ps0'] = self.create_subscription(Range,'/e_puck/ps0', self.__process_dist_sens_0, 1)
+        self.__subscriber_distance_sensors['ps1'] = self.create_subscription(Range,'/e_puck/ps1', self.__process_dist_sens_1, 1)
+        self.__subscriber_distance_sensors['ps2'] = self.create_subscription(Range,'/e_puck/ps2', self.__process_dist_sens_2, 1)
+        self.__subscriber_distance_sensors['ps3'] = self.create_subscription(Range,'/e_puck/ps3', self.__process_dist_sens_3, 1)
+        self.__subscriber_distance_sensors['ps4'] = self.create_subscription(Range,'/e_puck/ps4', self.__process_dist_sens_4, 1)
+        self.__subscriber_distance_sensors['ps5'] = self.create_subscription(Range,'/e_puck/ps5', self.__process_dist_sens_5, 1)
+        self.__subscriber_distance_sensors['ps6'] = self.create_subscription(Range,'/e_puck/ps6', self.__process_dist_sens_6, 1)
+        self.__subscriber_distance_sensors['ps7'] = self.create_subscription(Range,'/e_puck/ps7', self.__process_dist_sens_7, 1)
+
+        self.__subscriber_tof = self.create_subscription(Range, '/e_puck/tof', self.__process_tof, 1)
+        self.__new_tof_data = False
+
+        self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
         laser_transform = TransformStamped()
-        laser_transform.header.stamp = Time(seconds=self.__robot.getTime()).to_msg()
+        laser_transform.header.stamp = self.get_clock().now().to_msg()
         laser_transform.header.frame_id = 'base_link'
         laser_transform.child_frame_id = 'laser_scanner'
         laser_transform.transform.rotation.x = 0.0
@@ -124,29 +128,55 @@ class EpuckDriver:
         laser_transform.transform.translation.y = 0.0
         laser_transform.transform.translation.z = 0.033
 
-        # ROS interface
-        rclpy.init(args=None)
-        self.__node = rclpy.create_node('epuck_driver')
-
-        self.static_broadcaster = StaticTransformBroadcaster(self.__node)
+        self.static_broadcaster = StaticTransformBroadcaster(self)
         self.static_broadcaster.sendTransform(laser_transform)
 
-        self.__publisher_laserscan_data = self.__node.create_publisher(LaserScan, '/laserscan_data', 1)
+        # Main loop self.get_clock
+        self.create_timer(100 / 1000, self.__publish_laserscan_data)
 
-    def step(self):
-        stamp = Time(seconds=self.__robot.getTime()).to_msg()
+    def __process_dist_sens_0(self, msg):
+        self.__dists["ps0"] = msg.range
+
+    def __process_dist_sens_1(self, msg):
+        self.__dists["ps1"] = msg.range
+
+    def __process_dist_sens_2(self, msg):
+        self.__dists["ps2"] = msg.range
+
+    def __process_dist_sens_3(self, msg):
+        self.__dists["ps3"] = msg.range
+
+    def __process_dist_sens_4(self, msg):
+        self.__dists["ps4"] = msg.range
+
+    def __process_dist_sens_5(self, msg):
+        self.__dists["ps5"] = msg.range
+
+    def __process_dist_sens_6(self, msg):
+        self.__dists["ps6"] = msg.range
+
+    def __process_dist_sens_7(self, msg):
+        self.__dists["ps7"] = msg.range
+
+    def __process_tof(self, msg):
+        self.__new_tof_data = True
+        self.__tof_value = msg.range
+
+    def __publish_laserscan_data(self):
+        stamp = self.get_clock().now().to_msg()
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
 
         # Calculate distances
-        for i, key in enumerate(self.distance_sensors):
-            dists[i] = interpolate_lookup_table(
-                self.distance_sensors[key].getValue(), self.distance_sensors[key].getLookupTable()
-            )
+        for i, key in enumerate(self.__dists):
+            dists[i] = self.__dists[key]
 
         # Publish range: ToF
-        if self.tof_sensor:
-            dist_tof = interpolate_lookup_table(self.tof_sensor.getValue(), self.tof_sensor.getLookupTable())
+        if self.__new_tof_data:
+            dist_tof = self.__tof_value
+            self.__new_tof_data = False
+        else:
+            dist_tof = OUT_OF_RANGE
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
@@ -182,4 +212,20 @@ class EpuckDriver:
             OUT_OF_RANGE,                               # 135
             laser_dists[4] + SENSOR_DIST_FROM_CENTER,   # 150
         ]
-        self.__publisher_laserscan_data.publish(msg)
+        self.laser_publisher.publish(msg)
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    epuck_controller = EPuckNode()
+    rclpy.spin(epuck_controller)
+
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
+    epuck_controller.destroy_node()
+
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

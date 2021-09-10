@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <robot name="ABB Webots">
     <webots>
+        <plugin type="webots_ros2_universal_robot.can_tracker_plugin.CanTrackerPlugin" />
         <plugin type="webots_ros2_control::Ros2Control" />
     </webots>
 

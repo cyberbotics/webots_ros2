@@ -9,8 +9,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.7767591298970877 0.44941159206073483 0.44121930493004824 4.470138150016758
-  position -5.8033947217040405 -2.9837032552933542 1.2327459221791577
+  orientation -0.7774315354883973 0.41026351873656 0.47674317281115747 4.639012972610539
+  position -1.9204412639370114 -1.920462514995726 1.1616202295230065
 }
 TexturedBackground {
   texture "factory"
@@ -159,6 +159,7 @@ Irb4600-40 {
   rotation 0 0 1 3.14159
   name "abbirb4600"
   controller "<extern>"
+  supervisor TRUE
   handSlot [
     Robotiq3fGripper {
       translation 0 0 -0.0100001
@@ -191,12 +192,12 @@ ConveyorBelt {
   borderHeight -0.005
   speed -0.17
 }
-Can {
+DEF CAN_1 Can {
   translation -0.002660813923593048 0.6124808572294808 0.6410656652293695
   rotation 1 0 0 1.5708
   name "can(1)"
 }
-Can {
+DEF CAN_2 Can {
   translation 1 -0.8 0.67
   rotation 1 0 0 1.5708
 }

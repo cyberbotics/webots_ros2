@@ -7,7 +7,9 @@ package_name = 'webots_ros2_universal_robot'
 data_files = [
     ('share/' + package_name + '/worlds', [
         'worlds/universal_robot.wbt',
-        'worlds/.universal_robot.wbproj'
+        'worlds/.universal_robot.wbproj',
+        'worlds/armed_robots.wbt',
+        'worlds/.armed_robots.wbproj'
     ]),
     ('share/' + package_name + '/resource', [
         'resource/view_robot_dynamic.rviz',
@@ -19,9 +21,12 @@ data_files = [
         'resource/moveit_kinematics.yaml',
         'resource/moveit_movegroup.yaml',
         'resource/moveit_visualization.rviz',
+        'resource/ros2_control_abb_config.yaml',
+        'resource/webots_abb_description.urdf'
     ]),
     ('share/' + package_name + '/launch', [
         'launch/robot_launch.py',
+        'launch/multirobot_launch.py',
         'launch/moveit_demo_launch.py',
     ]),
     ('share/' + package_name, ['package.xml']),

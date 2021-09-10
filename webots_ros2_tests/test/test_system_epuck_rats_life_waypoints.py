@@ -16,7 +16,7 @@
 
 """Test the `webots_ros2_epuck` package on the rats life waypoints scenario."""
 
-# Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_epuck_rats_life.py
+# Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_epuck_rats_life_waypoints.py
 
 import os
 import pytest
@@ -75,7 +75,7 @@ class TestEpuck(TestWebots):
         # Check if the cost map is updated -> local map for navigation is working
         def on_cmd_message_received(message):
             # Should be an update of the map
-            if message.linear.x != 0:
+            if message.angular.z != 0:
                 return True
             return False
 

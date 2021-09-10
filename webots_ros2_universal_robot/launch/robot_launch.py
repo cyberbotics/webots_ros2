@@ -67,6 +67,7 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'robot_description': robot_description},
+            {'use_sim_time': True},
             ros2_control_params
         ]
     )

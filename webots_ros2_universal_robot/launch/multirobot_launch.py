@@ -17,7 +17,9 @@
 """Launch Webots and the controllers."""
 
 import os
+import collections
 import pathlib
+import yaml
 import launch
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
@@ -47,8 +49,10 @@ def generate_launch_description():
         executable='driver',
         output='screen',
         additional_env={'WEBOTS_ROBOT_NAME': 'UR5e'},
+        namespace='ur5e',
         parameters=[
             {'robot_description': ur5e_description},
+            {'use_sim_time': True},
             ur5e_control_params
         ]
     )
@@ -57,36 +61,73 @@ def generate_launch_description():
         executable='driver',
         output='screen',
         additional_env={'WEBOTS_ROBOT_NAME': 'abbirb4600'},
+        namespace='abb',
         parameters=[
             {'robot_description': abb_description},
+            {'use_sim_time': True},
             abb_control_params
         ]
     )
 
+    controller_manager_timeout = ['--controller-manager-timeout', '50']
+    controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
+    ur5e_trajectory_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner.py',
+        output='screen',
+        prefix=controller_manager_prefix,
+        arguments=['ur_joint_trajectory_controller', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
+    )
+    ur5e_joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner.py',
+        output='screen',
+        prefix=controller_manager_prefix,
+        arguments=['ur_joint_state_broadcaster', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
+    )
+    abb_trajectory_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner.py',
+        output='screen',
+        prefix=controller_manager_prefix,
+        arguments=['abb_joint_trajectory_controller', '-c', 'abb/controller_manager'] + controller_manager_timeout,
+    )
+    abb_joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner.py',
+        output='screen',
+        prefix=controller_manager_prefix,
+        arguments=['abb_joint_state_broadcaster', '-c', 'abb/controller_manager'] + controller_manager_timeout,
+    )
+
     # Control nodes
-    """
     ur5e_controller = Node(
-        package='webots_ros2_driver',
-        executable='armed_robots_ur',
+        package=PACKAGE_NAME,
+        executable='ur5e_controller',
+        namespace='ur5e',
         output='screen'
     )
     abb_controller = Node(
-        package='webots_ros2_driver',
-        executable='armed_robots_abb',
+        package=PACKAGE_NAME,
+        executable='abb_controller',
+        namespace='abb',
         output='screen'
     )
-    """
 
     return launch.LaunchDescription([
         webots,
-        # abb_controller,
-        # ur5e_controller,
+        abb_controller,
+        ur5e_controller,
         ur5e_driver,
         abb_driver,
+        ur5e_trajectory_controller_spawner,
+        ur5e_joint_state_broadcaster_spawner,
+        abb_trajectory_controller_spawner,
+        abb_joint_state_broadcaster_spawner,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
                 on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
             )
-        ),
+        )
     ])

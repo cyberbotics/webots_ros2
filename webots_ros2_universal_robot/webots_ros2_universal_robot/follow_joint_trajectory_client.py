@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Generic client for the FollowJointTrajectory action."""
+"""Generic client for the FollowJointTrajectory action used for multi-robot demonstration."""
 
-from types import TracebackType
 from action_msgs.msg import GoalStatus
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -23,78 +22,6 @@ from builtin_interfaces.msg import Duration
 import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
-
-
-TRAJECTORIES = {
-    'abb': {
-        'action_name': '/abb/follow_joint_trajectory',
-        'joint_names': [
-            'A motor',
-            'B motor',
-            'C motor',
-            'E motor',
-            'finger_1_joint_1',
-            'finger_2_joint_1',
-            'finger_middle_joint_1'
-        ],
-        'points': [
-            {
-                'positions': [0.0, 0.0, 0.0, 0., 0.0, 0.0, 0.0],
-                'velocities': [5] * 7,
-                'accelerations': [5] * 7,
-                'time_from_start': {'sec': 0, 'nanosec': 0}
-            },
-            {
-                'positions': [-0.025, 0.0, 0.82, -0.86, 0.0, 0.0, 0.0],
-                'velocities': [5] * 7,
-                'accelerations': [5] * 7,
-                'time_from_start': {'sec': 1, 'nanosec': 0}
-            },
-            {
-                'positions': [-0.025, 0.1, 0.82, -0.86, 0.0, 0.0, 0.0],
-                'velocities': [5] * 7,
-                'accelerations': [5] * 7,
-                'time_from_start': {'sec': 2, 'nanosec': 0}
-            },
-            {
-                'positions': [-0.025, 0.1, 0.82, -0.86, 0.85, 0.85, 0.6],
-                'velocities': [5] * 7,
-                'accelerations': [5] * 7,
-                'time_from_start': {'sec': 3, 'nanosec': 0}
-            },
-            {
-                'positions': [-0.025, -0.44, 0.82, -0.86, 0.85, 0.85, 0.6],
-                'velocities': [5] * 7,
-                'accelerations': [5] * 7,
-                'time_from_start': {'sec': 4, 'nanosec': 0}
-            },
-            {
-                'positions': [1.57, -0.1, 0.95, -0.71, 0.85, 0.85, 0.6],
-                'velocities': [5] * 7,
-                'accelerations': [5] * 7,
-                'time_from_start': {'sec': 5, 'nanosec': 0}
-            },
-            {
-                'positions': [1.57, -0.1, 0.8, -0.81, 0.0, 0.0, 0.0],
-                'velocities': [5] * 7,
-                'accelerations': [5] * 7,
-                'time_from_start': {'sec': 6, 'nanosec': 0}
-            },
-            {
-                'positions': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                'velocities': [5] * 7,
-                'accelerations': [5] * 7,
-                'time_from_start': {'sec': 7, 'nanosec': 0}
-            },
-            {
-                'positions': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                'velocities': [5] * 7,
-                'accelerations': [5] * 7,
-                'time_from_start': {'sec': 9, 'nanosec': 0}
-            }
-        ]
-    }
-}
 
 
 class FollowJointTrajectoryClient(Node):
@@ -116,9 +43,6 @@ class FollowJointTrajectoryClient(Node):
         self.__get_result_future = goal_handle.get_result_async()
         self.__get_result_future.add_done_callback(self.__on_get_result_callback)
 
-    def __on_feedback_callback(self, _):
-        self.get_logger().info('Received feedback from action server.')
-
     def __on_get_result_callback(self, future):
         status = future.result().status
         if status == GoalStatus.STATUS_SUCCEEDED:
@@ -129,7 +53,6 @@ class FollowJointTrajectoryClient(Node):
         if self.__remaining_iteration > 0:
             self.send_goal(self.__current_trajectory, self.__remaining_iteration - 1)
         else:
-            # Shutdown after receiving a result
             rclpy.shutdown()
 
     def send_goal(self, trajectory, iteration=1):
@@ -139,30 +62,21 @@ class FollowJointTrajectoryClient(Node):
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1
 
-        goal_msg = FollowJointTrajectory.Goal()
-        goal_msg.trajectory.joint_names = trajectory['joint_names']
+        goal_message = FollowJointTrajectory.Goal()
+        goal_message.trajectory.joint_names = trajectory['joint_names']
         for point in trajectory['points']:
             trajectory_point = JointTrajectoryPoint(
                 positions=point['positions'],
-                velocities=point['velocities'],
-                accelerations=point['accelerations'],
                 time_from_start=Duration(
                     sec=point['time_from_start']['sec'],
                     nanosec=point['time_from_start']['nanosec']
                 )
             )
-            goal_msg.trajectory.points.append(trajectory_point)
+            goal_message.trajectory.points.append(trajectory_point)
 
         self.get_logger().info('Sending goal request...')
 
         self.__send_goal_future = self.__client.send_goal_async(
-            goal_msg,
-            feedback_callback=self.__on_feedback_callback
+            goal_message
         )
         self.__send_goal_future.add_done_callback(self.__on_goal_response_callback)
-
-
-def main(args=None):
-    rclpy.init(args=args)
-    trajectory_client = TRAJECTORIES[]
-    client = FollowJointTrajectoryClient('armed_robots_abb', '/abb/follow_joint_trajectory')

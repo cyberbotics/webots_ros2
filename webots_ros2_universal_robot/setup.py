@@ -35,8 +35,8 @@ data_files = [
 
 setup(
     name=package_name,
-    version='1.1.1',
-    packages=[],
+    version='1.1.2',
+    packages=['webots_ros2_universal_robot'],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],
     zip_safe=True,
@@ -55,6 +55,10 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'launch.frontend.launch_extension': ['launch_ros = launch_ros']
+        'launch.frontend.launch_extension': ['launch_ros = launch_ros'],
+        'console_scripts': [
+            'ur5e_controller = webots_ros2_universal_robot.ur5e_controller:main',
+            'abb_controller = webots_ros2_universal_robot.abb_controller:main'
+        ]
     }
 )

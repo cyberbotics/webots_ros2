@@ -38,6 +38,10 @@ def generate_launch_description():
     webots = WebotsLauncher(world=os.path.join(package_dir, 'worlds', 'armed_robots.wbt'))
 
     # Driver nodes
+    # When having multiple robot it is enough to specify the `additional_env` argument.
+    # The `WEBOTS_ROBOT_NAME` has to match the robot name in the world file.
+    # You can check for more information at:
+    # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#single-simulation-and-multiple-extern-robot-controllers
     ur5e_driver = Node(
         package='webots_ros2_driver',
         executable='driver',

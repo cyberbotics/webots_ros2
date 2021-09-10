@@ -21,7 +21,6 @@
 import os
 import pytest
 import rclpy
-from tf2_msgs.msg import TFMessage
 from sensor_msgs.msg import Range, Image, LaserScan
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
@@ -88,16 +87,6 @@ class TestEpuck(TestWebots):
             return False
 
         self.wait_for_messages(self.__node, Range, '/e_puck/tof', condition=on_range_message_received)
-
-    def testFootPrint(self):
-        def on_position_message_received(message):
-            # There should be transform msg
-            for transformStamped in message.transforms:
-                if transformStamped.transform is not None:
-                    return True
-            return False
-
-        self.wait_for_messages(self.__node, TFMessage, '/tf_static', condition=on_position_message_received)
 
     def testMovement(self):
         publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)

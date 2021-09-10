@@ -28,7 +28,7 @@ def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_epuck')
 
     use_nav = LaunchConfiguration('nav', default=False)
-    use_rviz = LaunchConfiguration('rviz', default=False)
+    use_rviz = LaunchConfiguration('rviz', default=True)
     use_mapper = LaunchConfiguration('mapper', default=False)
     synchronization = LaunchConfiguration('synchronization', default=False)
     world = LaunchConfiguration('world', default='epuck_world.wbt')

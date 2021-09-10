@@ -104,7 +104,7 @@ class TestDriver(TestWebots):
 
     def testPythonPluginService(self):
         client = self.__node.create_client(Trigger, 'move_forward')
-        if not client.wait_for_service(timeout_sec=1.0):
+        if not client.wait_for_service(timeout_sec=10.0):
             self.assertTrue(False, 'The plugin service is not found')
         request = Trigger.Request()
         response_future = client.call_async(request)

@@ -20,6 +20,7 @@ from tf2_ros import StaticTransformBroadcaster
 from sensor_msgs.msg import LaserScan, Range
 from geometry_msgs.msg import TransformStamped
 from rclpy.node import Node
+from functools import partial
 
 
 OUT_OF_RANGE = 0.0
@@ -55,18 +56,20 @@ class EPuckNode(Node):
             self.__distances['ps{}'.format(i)] = OUT_OF_RANGE
 
         for i in range(NB_INFRARED_SENSORS):
-            self.__subscriber_dist_sensors[f'ps{i}'] = \
+            self.__subscriber_dist_sensors['ps{}'.format(i)] = \
                 self.create_subscription(Range,
-                                         f'/e_puck/ps{i}',
-                                         lambda message: self.__on_distance_sensor_message(message, i),
+                                         '/e_puck/ps{}'.format(i),
+                                         partial(self.__on_distance_sensor_message, i),
                                          1)
 
         self.__subscriber_tof = self.create_subscription(Range, '/e_puck/tof', self.__process_tof, 1)
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 
+        self.__now = self.get_clock().now().to_msg()
+
         laser_transform = TransformStamped()
-        laser_transform.header.stamp = self.get_clock().now().to_msg()
+        laser_transform.header.stamp = self.__now
         laser_transform.header.frame_id = 'base_link'
         laser_transform.child_frame_id = 'laser_scanner'
         laser_transform.transform.rotation.x = 0.0
@@ -81,10 +84,13 @@ class EPuckNode(Node):
         self.static_broadcaster.sendTransform(laser_transform)
 
         # Main loop self.get_clock
-        self.create_timer(100 / 1000, self.__publish_laserscan_data)
+        self.create_timer(50 / 1000, self.__publish_laserscan_data)
 
-    def __on_distance_sensor_message(self, msg, i):
-        self.__distances[f'ps{i}'] = msg.range
+    def __on_distance_sensor_message(self, i, msg):
+        self.__distances['ps{}'.format(i)] = msg.range
+
+        if i == 0:
+            self.__now = msg.header.stamp
 
     def __process_tof(self, msg):
         self.__tof_value = msg.range
@@ -106,7 +112,7 @@ class EPuckNode(Node):
         dist_tof = OUT_OF_RANGE if dist_tof > TOF_MAX_RANGE else dist_tof
         msg = LaserScan()
         msg.header.frame_id = 'laser_scanner'
-        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.stamp = self.__now
         msg.angle_min = - 150 * pi / 180
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180

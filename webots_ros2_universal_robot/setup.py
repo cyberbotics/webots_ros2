@@ -4,41 +4,29 @@ from setuptools import setup
 
 
 package_name = 'webots_ros2_universal_robot'
-worlds = [
-    'worlds/universal_robot_multiple.wbt',
-    'worlds/universal_robot_rviz.wbt',
-    'worlds/universal_robot.wbt',
-    'worlds/universal_robot_lidar.wbt',
-    'worlds/.universal_robot_multiple.wbproj',
-    'worlds/.universal_robot_rviz.wbproj',
-    'worlds/.universal_robot.wbproj',
-    'worlds/.universal_robot_lidar.wbproj'
+data_files = [
+    ('share/' + package_name + '/worlds', [
+        'worlds/universal_robot.wbt',
+        'worlds/.universal_robot.wbproj'
+    ]),
+    ('share/' + package_name + '/resource', [
+        'resource/view_robot_dynamic.rviz',
+        'resource/webots_ur5e_description.urdf',
+        'resource/ros2_control_config.yaml',
+        'resource/moveit_ur5e_description.urdf',
+        'resource/moveit_controllers.yaml',
+        'resource/moveit_ur5e.srdf',
+        'resource/moveit_kinematics.yaml',
+        'resource/moveit_movegroup.yaml',
+        'resource/moveit_visualization.rviz',
+    ]),
+    ('share/' + package_name + '/launch', [
+        'launch/robot_launch.py',
+        'launch/moveit_demo_launch.py',
+    ]),
+    ('share/' + package_name, ['package.xml']),
+    ('share/ament_index/resource_index/packages', ['resource/' + package_name])
 ]
-launchers = [
-    'launch/robot_launch.py',
-    'launch/universal_robot.launch.py',
-    'launch/universal_robot_multiple.launch.py',
-    'launch/universal_robot_rviz.launch.py',
-    'launch/universal_robot_rviz_dynamic.launch.py',
-    'launch/universal_robot_moveit2.launch.py'
-]
-
-data_files = []
-data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
-data_files.append(('share/' + package_name + '/launch', launchers))
-data_files.append(('share/' + package_name + '/worlds', worlds))
-data_files.append(('share/' + package_name, ['package.xml']))
-data_files.append(('share/' + package_name + '/resource', [
-    'resource/view_robot_dynamic.rviz',
-    'resource/webots_ur5e_description.urdf',
-    'resource/ros2_control_config.yaml',
-    'resource/moveit_ur5e_description.urdf',
-    'resource/moveit_controllers.yaml',
-    'resource/moveit_ur5e.srdf',
-    'resource/moveit_kinematics.yaml',
-    'resource/moveit_movegroup.yaml',
-    'resource/moveit_visualization.rviz',
-]))
 
 setup(
     name=package_name,

@@ -84,6 +84,9 @@ def generate_launch_description():
         package='webots_ros2_epuck',
         executable='epuck_node',
         output='screen',
+        parameters=[
+            {'use_sim_time': use_sim_time},
+        ],
     )
 
     robot_state_publisher = Node(

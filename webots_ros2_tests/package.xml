@@ -17,6 +17,7 @@
   <test_depend>webots_ros2_epuck</test_depend>
   <test_depend>webots_ros2_turtlebot</test_depend>
   <test_depend>webots_ros2_mavic</test_depend>
+  <test_depend>tf2_ros</test_depend>
   <test_depend>std_msgs</test_depend>
   <test_depend>sensor_msgs</test_depend>
   <test_depend>std_srvs</test_depend>

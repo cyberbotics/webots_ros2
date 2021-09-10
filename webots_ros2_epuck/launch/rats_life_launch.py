@@ -17,9 +17,7 @@
 """Launch Rat's Life world with navigation."""
 
 import os
-import launch
 from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch import LaunchDescription
@@ -29,22 +27,24 @@ from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
-    use_sim_time = LaunchConfiguration('use_sim_time')
-
     package_dir = get_package_share_directory('webots_ros2_epuck')
-    nav2_map = os.path.join(package_dir, 'resource', 'map_rats_life.yaml')
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+    synchronization = LaunchConfiguration('synchronization', default=True)
+    world = LaunchConfiguration('world', default='rats_life_benchmark.wbt')
 
-    webots = IncludeLaunchDescription(
+    # Webots
+    webots_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
+            os.path.join(package_dir, 'launch', 'robot_launch.py')
         ),
-        launch_arguments=[
-            ('package', 'webots_ros2_epuck'),
-            ('executable', 'driver'),
-            ('world', os.path.join(package_dir, 'worlds', 'rats_life_benchmark.wbt')),
-        ],
-        condition=launch.conditions.IfCondition(use_sim_time)
+        launch_arguments={
+            'synchronization': synchronization,
+            'use_sim_time': 'true',
+            'world': world
+        }.items()
     )
+
+    nav2_map = os.path.join(package_dir, 'resource', 'map_rats_life.yaml')
 
     # Launch complete Navigation2 with `amcl` (particle filter to track the pose of a robot)
     nav2 = IncludeLaunchDescription(
@@ -86,13 +86,8 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        webots,
+        webots_launch,
         nav2,
         rviz,
         initial_position,
-        DeclareLaunchArgument(
-            'use_sim_time',
-            default_value='true',
-            description='Use simulation (Webots) clock if true'
-        )
     ])

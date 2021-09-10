@@ -21,6 +21,7 @@ from sensor_msgs.msg import LaserScan, Range
 from geometry_msgs.msg import TransformStamped
 from rclpy.node import Node
 from functools import partial
+from nav_msgs.msg import Odometry
 
 
 OUT_OF_RANGE = 0.0
@@ -84,7 +85,8 @@ class EPuckNode(Node):
         self.static_broadcaster.sendTransform(laser_transform)
 
         # Main loop self.get_clock
-        self.create_timer(50 / 1000, self.__publish_laserscan_data)
+        # self.create_timer(50 / 1000, self.__publish_laserscan_data)
+        self.__subscriber_tof = self.create_subscription(Odometry, '/odom', self.__publish_laserscan_data, 1)
 
     def __on_distance_sensor_message(self, i, msg):
         self.__distances['ps{}'.format(i)] = msg.range
@@ -95,7 +97,7 @@ class EPuckNode(Node):
     def __process_tof(self, msg):
         self.__tof_value = msg.range
 
-    def __publish_laserscan_data(self):
+    def __publish_laserscan_data(self, msg_odom):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
 
@@ -112,7 +114,7 @@ class EPuckNode(Node):
         dist_tof = OUT_OF_RANGE if dist_tof > TOF_MAX_RANGE else dist_tof
         msg = LaserScan()
         msg.header.frame_id = 'laser_scanner'
-        msg.header.stamp = self.__now
+        msg.header.stamp = msg_odom.header.stamp
         msg.angle_min = - 150 * pi / 180
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180

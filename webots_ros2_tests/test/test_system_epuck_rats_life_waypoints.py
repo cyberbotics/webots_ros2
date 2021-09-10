@@ -78,7 +78,7 @@ class TestEpuck(TestWebots):
                 return False
             return True
 
-        self.wait_for_messages(self.__node, Path, '/received_global_plan', condition=on_plan_message_received)
+        self.wait_for_messages(self.__node, Path, '/received_global_plan', timeout = 90 * 10, condition=on_plan_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

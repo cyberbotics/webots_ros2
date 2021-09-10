@@ -21,8 +21,7 @@
 import os
 import pytest
 import rclpy
-from geometry_msgs.msg import Twist
-from nav_msgs.msg import OccupancyGrid
+from nav_msgs.msg import OccupancyGrid, Path
 from launch import LaunchDescription
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
@@ -73,13 +72,13 @@ class TestEpuck(TestWebots):
 
     def testPlan(self):
         # Check if the cost map is updated -> local map for navigation is working
-        def on_cmd_message_received(message):
-            # Should be an update of the map
-            if message.angular.z != 0:
-                return True
-            return False
+        def on_plan_message_received(message):
+            # Should be several poses to go
+            if message.poses[0] is None:
+                return False
+            return True
 
-        self.wait_for_messages(self.__node, Twist, '/cmd_vel', condition=on_cmd_message_received)
+        self.wait_for_messages(self.__node, Path, '/received_global_plan', condition=on_plan_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

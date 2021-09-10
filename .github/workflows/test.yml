@@ -13,8 +13,8 @@ jobs:
         ROS_DISTRO: [foxy, rolling]
     runs-on: ubuntu-latest
     env:
-      AFTER_INIT: ./scripts/ci_before_init.bash
-      BEFORE_INIT_EMBED: source scripts/ci_environment.bash
+      AFTER_INIT: ./scripts/ci_after_init.bash ${ROS_DISTRO} ${ROS_REPO}
+      BEFORE_INIT_EMBED: source scripts/ci_before_init_embed.bash
     steps:
       - uses: actions/checkout@v1
         with:

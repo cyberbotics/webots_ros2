@@ -30,6 +30,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
     Extends WebotsNode to allow easy integration with differential drive robots.
 
     Args:
+    ----
         name (WebotsNode): Webots Robot node.
         args (dict): Arguments passed to ROS2 base node.
         wheel_distance (float): Distance between two wheels (axle length) in meters.
@@ -46,6 +47,7 @@ class WebotsDifferentialDriveNode(WebotsNode):
             messages are published.
         odometry_frame (str): Name of odometry frame.
         robot_base_frame (str): Name of robot's base link.
+
     """
 
     def __init__(self,

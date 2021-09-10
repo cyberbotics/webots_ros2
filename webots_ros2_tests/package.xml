@@ -11,9 +11,11 @@
   <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
-  <exec_depend>rclpy</exec_depend>
-  <exec_depend>webots_ros2_driver</exec_depend>
+  <build_depend>rclpy</build_depend>
+  <build_depend>webots_ros2_driver</build_depend>
 
+  <test_depend>webots_ros2_turtlebot</test_depend>
+  <test_depend>webots_ros2_mavic</test_depend>
   <test_depend>std_msgs</test_depend>
   <test_depend>sensor_msgs</test_depend>
   <test_depend>std_srvs</test_depend>

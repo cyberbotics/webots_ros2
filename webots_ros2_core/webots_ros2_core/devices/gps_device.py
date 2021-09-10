@@ -34,6 +34,7 @@ class GpsDevice(SensorDevice):
     - Publishes position measurements of type `geometry_msgs::PointStamped` if LOCAL
 
     Args:
+    ----
         node (WebotsNode): The ROS2 node.
         device_key (str): Unique identifier of the device used for configuration.
         wb_device (Gps): Webots node of type GPS.

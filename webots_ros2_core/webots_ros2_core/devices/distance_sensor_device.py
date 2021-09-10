@@ -30,6 +30,7 @@ class DistanceSensorDevice(SensorDevice):
     - Publishes range measurements of type `sensor_msgs/Range`
 
     Args:
+    ----
         node (WebotsNode): The ROS2 node.
         device_key (str): Unique identifier of the device used for configuration.
         wb_device (DistanceSensor): Webots node of type DistanceSensor.

@@ -147,74 +147,73 @@ class CameraDevice(SensorDevice):
                 seconds=self._node.robot.getTime()).to_msg()
             self._camera_info_publisher.publish(self.__message_info)
 
-            if self._wb_device.hasRecognition() and (
-                    self._recognition_publisher.get_subscription_count() > 0 or
-                    self._recognition_webots_publisher.get_subscription_count() > 0):
-                self._wb_device.recognitionEnable(self._timestep)
-                objects = self._wb_device.getRecognitionObjects()
+            if self._wb_device.hasRecognition():
+                if (self._recognition_publisher.get_subscription_count() > 0 or
+                        self._recognition_webots_publisher.get_subscription_count() > 0):
+                    self._wb_device.recognitionEnable(self._timestep)
+                    objects = self._wb_device.getRecognitionObjects()
 
-                if objects is None:
-                    return
+                    if objects is None:
+                        return
 
-                # Recognition data
-                reco_msg = Detection2DArray()
-                reco_msg_webots = WbCameraRecognitionObjects()
-                reco_msg.header.stamp = stamp
-                reco_msg_webots.header.stamp = stamp
-                reco_msg.header.frame_id = self._frame_id
-                reco_msg_webots.header.frame_id = self._frame_id
-                for obj in objects:
-                    # Getting Object Info
-                    position = Point()
-                    orientation = Quaternion()
-                    position.x = obj.get_position()[0]
-                    position.y = obj.get_position()[1]
-                    position.z = obj.get_position()[2]
-                    axangle = obj.get_orientation()
-                    quat = axangle2quat(axangle[:-1], axangle[-1])
-                    orientation.w = quat[0]
-                    orientation.x = quat[1]
-                    orientation.y = quat[2]
-                    orientation.z = quat[3]
-                    obj_model = obj.get_model().decode('UTF-8')
-                    obj_center = [float(i)
-                                  for i in obj.get_position_on_image()]
-                    obj_size = [float(i) for i in obj.get_size_on_image()]
-                    obj_id = obj.get_id()
-                    obj_colors = obj.get_colors()
-                    # Object Info -> Detection2D
-                    reco_obj = Detection2D()
-                    hyp = ObjectHypothesisWithPose()
-                    hyp.id = obj_model
-                    hyp.pose.pose.position = position
-                    hyp.pose.pose.orientation = orientation
-                    reco_obj.results.append(hyp)
-                    reco_obj.bbox.center.x = obj_center[0]
-                    reco_obj.bbox.center.y = obj_center[1]
-                    reco_obj.bbox.size_x = obj_size[0]
-                    reco_obj.bbox.size_y = obj_size[1]
-                    reco_msg.detections.append(reco_obj)
+                    # Recognition data
+                    reco_msg = Detection2DArray()
+                    reco_msg_webots = WbCameraRecognitionObjects()
+                    reco_msg.header.stamp = stamp
+                    reco_msg_webots.header.stamp = stamp
+                    reco_msg.header.frame_id = self._frame_id
+                    reco_msg_webots.header.frame_id = self._frame_id
+                    for obj in objects:
+                        # Getting Object Info
+                        position = Point()
+                        orientation = Quaternion()
+                        position.x = obj.get_position()[0]
+                        position.y = obj.get_position()[1]
+                        position.z = obj.get_position()[2]
+                        axangle = obj.get_orientation()
+                        quat = axangle2quat(axangle[:-1], axangle[-1])
+                        orientation.w = quat[0]
+                        orientation.x = quat[1]
+                        orientation.y = quat[2]
+                        orientation.z = quat[3]
+                        obj_model = obj.get_model().decode('UTF-8')
+                        obj_center = [float(i) for i in obj.get_position_on_image()]
+                        obj_size = [float(i) for i in obj.get_size_on_image()]
+                        obj_id = obj.get_id()
+                        obj_colors = obj.get_colors()
+                        # Object Info -> Detection2D
+                        reco_obj = Detection2D()
+                        hyp = ObjectHypothesisWithPose()
+                        hyp.id = obj_model
+                        hyp.pose.pose.position = position
+                        hyp.pose.pose.orientation = orientation
+                        reco_obj.results.append(hyp)
+                        reco_obj.bbox.center.x = obj_center[0]
+                        reco_obj.bbox.center.y = obj_center[1]
+                        reco_obj.bbox.size_x = obj_size[0]
+                        reco_obj.bbox.size_y = obj_size[1]
+                        reco_msg.detections.append(reco_obj)
 
-                    # Object Info -> WbCameraRecognitionObject
-                    reco_webots_obj = WbCameraRecognitionObject()
-                    reco_webots_obj.id = obj_id
-                    reco_webots_obj.model = obj_model
-                    reco_webots_obj.pose.pose.position = position
-                    reco_webots_obj.pose.pose.orientation = orientation
-                    reco_webots_obj.bbox.center.x = obj_center[0]
-                    reco_webots_obj.bbox.center.y = obj_center[1]
-                    reco_webots_obj.bbox.size_x = obj_size[0]
-                    reco_webots_obj.bbox.size_y = obj_size[1]
-                    for i in range(0, obj.get_number_of_colors()):
-                        color = ColorRGBA()
-                        color.r = obj_colors[3 * i]
-                        color.g = obj_colors[3 * i + 1]
-                        color.b = obj_colors[3 * i + 2]
-                        reco_webots_obj.colors.append(color)
-                    reco_msg_webots.objects.append(reco_webots_obj)
-                self._recognition_webots_publisher.publish(reco_msg_webots)
-                self._recognition_publisher.publish(reco_msg)
-            else:
-                self._wb_device.recognitionDisable()
+                        # Object Info -> WbCameraRecognitionObject
+                        reco_webots_obj = WbCameraRecognitionObject()
+                        reco_webots_obj.id = obj_id
+                        reco_webots_obj.model = obj_model
+                        reco_webots_obj.pose.pose.position = position
+                        reco_webots_obj.pose.pose.orientation = orientation
+                        reco_webots_obj.bbox.center.x = obj_center[0]
+                        reco_webots_obj.bbox.center.y = obj_center[1]
+                        reco_webots_obj.bbox.size_x = obj_size[0]
+                        reco_webots_obj.bbox.size_y = obj_size[1]
+                        for i in range(0, obj.get_number_of_colors()):
+                            color = ColorRGBA()
+                            color.r = obj_colors[3 * i]
+                            color.g = obj_colors[3 * i + 1]
+                            color.b = obj_colors[3 * i + 2]
+                            reco_webots_obj.colors.append(color)
+                        reco_msg_webots.objects.append(reco_webots_obj)
+                    self._recognition_webots_publisher.publish(reco_msg_webots)
+                    self._recognition_publisher.publish(reco_msg)
+                else:
+                    self._wb_device.recognitionDisable()
         else:
             self._wb_device.disable()

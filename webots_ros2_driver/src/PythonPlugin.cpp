@@ -29,11 +29,11 @@ namespace webots_ros2_driver
 
         PyObject *pyWebotsExtraModuleSource = Py_CompileString(
             R"EOT(
-from webots_ros2_driver_webots.controller import Supervisor
+from webots_ros2_driver_webots.controller import Driver
 
 class WebotsNode:
     def __init__(self):
-        self.robot = Supervisor.internalGetInstance()
+        self.robot = Driver.internalGetInstanceDriver()
 )EOT",
             "webots_extra", Py_file_input);
         if (!pyWebotsExtraModuleSource)

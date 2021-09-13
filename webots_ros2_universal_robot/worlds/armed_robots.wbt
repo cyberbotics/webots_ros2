@@ -150,6 +150,11 @@ UR5e {
   controller "<extern>"
   selfCollision FALSE
   toolSlot [
+    DistanceSensor {
+      translation 3.67321e-08 0.09 -0.02
+      rotation 0 0 1 1.5708
+      name "object_present_sensor"
+    }
     Robotiq3fGripper {
     }
   ]
@@ -160,6 +165,11 @@ Irb4600-40 {
   name "abbirb4600"
   controller "<extern>"
   handSlot [
+    DistanceSensor {
+      translation 0 0 0.05
+      rotation 0 1 0 -1.5707953071795862
+      name "object_present_sensor"
+    }
     Robotiq3fGripper {
       translation 0 0 -0.0100001
       rotation 0 0.70710528118436 0.707108281185553 3.14159

@@ -37,7 +37,11 @@ def generate_test_description():
     epuck_with_tools_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('webots_ros2_epuck'), 'launch', 'robot_with_tools_launch.py')
-        )
+        ),
+        launch_arguments={'nav': 'true',
+                          'rviz': 'true',
+                          'mapper': 'true',
+                          'synchronization': 'true'}.items(),
     )
 
     return LaunchDescription([

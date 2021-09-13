@@ -21,8 +21,6 @@
 import os
 import pytest
 import rclpy
-from geometry_msgs.msg import PointStamped, Twist
-from sensor_msgs.msg import LaserScan
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -47,7 +45,7 @@ def generate_test_description():
     ])
 
 
-class TestTurtlebot(TestWebots):
+class TestUniversalRobot(TestWebots):
     @classmethod
     def setUpClass(cls):
         rclpy.init()

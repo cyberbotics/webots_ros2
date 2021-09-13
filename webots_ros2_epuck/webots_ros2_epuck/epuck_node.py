@@ -16,20 +16,18 @@
 
 from math import pi
 import rclpy
-from rclpy.time import Time
 from tf2_ros import StaticTransformBroadcaster
-from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import LaserScan, Range
 from geometry_msgs.msg import TransformStamped
-from webots_ros2_core.math.interpolation import interpolate_lookup_table
-from webots_ros2_core.webots_differential_drive_node import WebotsDifferentialDriveNode
+from rclpy.node import Node
+from functools import partial
+from nav_msgs.msg import Odometry
 
 
 OUT_OF_RANGE = 0.0
 INFRARED_MAX_RANGE = 0.04
 INFRARED_MIN_RANGE = 0.009
 TOF_MAX_RANGE = 1.0
-DEFAULT_WHEEL_RADIUS = 0.02
-DEFAULT_WHEEL_DISTANCE = 0.05685
 NB_INFRARED_SENSORS = 8
 SENSOR_DIST_FROM_CENTER = 0.035
 
@@ -46,47 +44,33 @@ DISTANCE_SENSOR_ANGLE = [
 ]
 
 
-DEVICE_CONFIG = {
-    'camera': {'topic_name': ''},
-    'robot': {'publish_base_footprint': True},
-    'ps0': {'always_publish': True},
-    'ps1': {'always_publish': True},
-    'ps2': {'always_publish': True},
-    'ps3': {'always_publish': True},
-    'ps4': {'always_publish': True},
-    'ps5': {'always_publish': True},
-    'ps6': {'always_publish': True},
-    'ps7': {'always_publish': True},
-    'tof': {'always_publish': True}
-}
-
-
-class EPuckDriver(WebotsDifferentialDriveNode):
-    def __init__(self, args):
-        super().__init__(
-            'epuck_driver',
-            args,
-            wheel_distance=DEFAULT_WHEEL_DISTANCE,
-            wheel_radius=DEFAULT_WHEEL_RADIUS
-        )
-        self.start_device_manager(DEVICE_CONFIG)
+class EPuckNode(Node):
+    def __init__(self):
+        super().__init__('epuck_node')
+        self.get_logger().info("Epuck node has been started.")
 
         # Intialize distance sensors for LaserScan topic
-        self.distance_sensors = {}
+        self.__subscriber_dist_sensors = {}
+        self.__distances = {}
+        self.__tof_value = OUT_OF_RANGE
         for i in range(NB_INFRARED_SENSORS):
-            sensor = self.robot.getDistanceSensor('ps{}'.format(i))
-            sensor.enable(self.timestep)
-            self.distance_sensors['ps{}'.format(i)] = sensor
+            self.__distances['ps{}'.format(i)] = OUT_OF_RANGE
+
+        for i in range(NB_INFRARED_SENSORS):
+            self.__subscriber_dist_sensors['ps{}'.format(i)] = \
+                self.create_subscription(Range,
+                                         '/ps{}'.format(i),
+                                         partial(self.__on_distance_sensor_message, i),
+                                         1)
+
+        self.__subscriber_tof = self.create_subscription(Range, '/tof', self.__process_tof, 1)
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
-        self.tof_sensor = self.robot.getDistanceSensor('tof')
-        if self.tof_sensor:
-            self.tof_sensor.enable(self.timestep)
-        else:
-            self.get_logger().info('ToF sensor is not present for this e-puck version')
+
+        self.__now = self.get_clock().now().to_msg()
 
         laser_transform = TransformStamped()
-        laser_transform.header.stamp = Time(seconds=self.robot.getTime()).to_msg()
+        laser_transform.header.stamp = self.__now
         laser_transform.header.frame_id = 'base_link'
         laser_transform.child_frame_id = 'laser_scanner'
         laser_transform.transform.rotation.x = 0.0
@@ -100,30 +84,37 @@ class EPuckDriver(WebotsDifferentialDriveNode):
         self.static_broadcaster = StaticTransformBroadcaster(self)
         self.static_broadcaster.sendTransform(laser_transform)
 
-        # Main loop
-        self.create_timer(self.timestep / 1000, self.__publish_laserscan_data)
+        # Main loop self.get_clock
+        # self.create_timer(50 / 1000, self.__publish_laserscan_data)
+        self.__subscriber_tof = self.create_subscription(Odometry, '/odom', self.__publish_laserscan_data, 1)
 
-    def __publish_laserscan_data(self):
-        stamp = Time(seconds=self.robot.getTime()).to_msg()
+    def __on_distance_sensor_message(self, i, msg):
+        self.__distances['ps{}'.format(i)] = msg.range
+
+        if i == 0:
+            self.__now = msg.header.stamp
+
+    def __process_tof(self, msg):
+        self.__tof_value = msg.range
+
+    def __publish_laserscan_data(self, msg_odom):
         dists = [OUT_OF_RANGE] * NB_INFRARED_SENSORS
         dist_tof = OUT_OF_RANGE
 
         # Calculate distances
-        for i, key in enumerate(self.distance_sensors):
-            dists[i] = interpolate_lookup_table(
-                self.distance_sensors[key].getValue(), self.distance_sensors[key].getLookupTable()
-            )
+        for i, key in enumerate(self.__distances):
+            dists[i] = self.__distances[key]
 
         # Publish range: ToF
-        if self.tof_sensor:
-            dist_tof = interpolate_lookup_table(self.tof_sensor.getValue(), self.tof_sensor.getLookupTable())
+        dist_tof = self.__tof_value
 
         # Max range of ToF sensor is 2m so we put it as maximum laser range.
         # Therefore, for all invalid ranges we put 0 so it get deleted by rviz
         laser_dists = [OUT_OF_RANGE if dist > INFRARED_MAX_RANGE else dist for dist in dists]
+        dist_tof = OUT_OF_RANGE if dist_tof > TOF_MAX_RANGE else dist_tof
         msg = LaserScan()
         msg.header.frame_id = 'laser_scanner'
-        msg.header.stamp = stamp
+        msg.header.stamp = msg_odom.header.stamp
         msg.angle_min = - 150 * pi / 180
         msg.angle_max = 150 * pi / 180
         msg.angle_increment = 15 * pi / 180
@@ -157,10 +148,14 @@ class EPuckDriver(WebotsDifferentialDriveNode):
 
 def main(args=None):
     rclpy.init(args=args)
-
-    epuck_controller = EPuckDriver(args=args)
-
+    epuck_controller = EPuckNode()
     rclpy.spin(epuck_controller)
+
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
+    epuck_controller.destroy_node()
+
     rclpy.shutdown()
 
 

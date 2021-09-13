@@ -20,6 +20,7 @@ jobs:
         with:
          submodules: recursive
       - uses: 'ros-industrial/industrial_ci@master'
+        continue-on-error: true
         env: 
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}

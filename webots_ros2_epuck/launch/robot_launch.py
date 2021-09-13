@@ -39,8 +39,8 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    controller_manager_timeout = ['--controller-manager-timeout', '50'] 
-    controller_manager_prefix = 'python.exe' if os.name == 'nt' else '' 
+    controller_manager_timeout = ['--controller-manager-timeout', '50']
+    controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
 
     diffdrive_controller_spawner = Node(
         package='controller_manager',

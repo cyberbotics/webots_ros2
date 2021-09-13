@@ -1,13 +1,6 @@
 <?xml version="1.0" ?>
 <robot name="Epuck Webots">
     <webots>
-
-        <device reference="camera" type="Camera">
-            <ros>
-                <enabled>true</enabled>
-            </ros>
-        </device>
-
         <device reference="ps0" type="DistanceSensor">
             <ros>
                 <enabled>true</enabled>

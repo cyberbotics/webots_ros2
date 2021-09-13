@@ -24,7 +24,6 @@
 #include <webots/Robot.hpp>
 #include <webots/Node.hpp>
 #include <webots/Supervisor.hpp>
-#include <webots/Vehicle/Driver.hpp>>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/clock.hpp>

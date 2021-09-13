@@ -16,15 +16,14 @@
 
 import rclpy
 from ackermann_msgs.msg import AckermannDrive
-from geometry_msgs.msg import Twist
-#from webots_ros2_core.webots_node import WebotsNode
-#from webots_ros2_core.webots.vehicle import Driver
-from rclpy.node import Node
+from webots_ros2_core.webots_node import WebotsNode
+from webots_ros2_core.webots.vehicle import Driver
 
 
-class TeslaDriver(Node):
+class TeslaDriver(WebotsNode):
     def __init__(self, args):
         super().__init__('tesla_driver', args, controller_class=Driver)
+        self.start_device_manager()
 
         # ROS interface
         self.create_subscription(AckermannDrive, 'cmd_ackermann', self.__cmd_ackermann_callback, 1)
@@ -38,12 +37,6 @@ def main(args=None):
     rclpy.init(args=args)
     driver = TeslaDriver(args=args)
     rclpy.spin(driver)
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
-    driver.destroy_node()
-
     rclpy.shutdown()
 
 

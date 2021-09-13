@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  webots::Driver* robot = new webots::Driver();
+  webots::Supervisor* robot = new webots::Supervisor();
   
   std::string robotName = robot->getName();
   for (char notAllowedChar : " -.)(")

@@ -46,7 +46,10 @@ def main(args=None):
 
         sys.argv = [sys.argv[0]] + xacro_opts + [file]
     else:
-        print('Input file not specified with the "--input" argument, using the last arguments as input to the xacro to urdf converter.')
+        print(
+            'Input file not specified with the "--input" argument, '
+            'using the last arguments as input to the xacro to urdf converter.'
+        )
 
         # remove arguments specific to the urdf2proto converter
         args_for_urdf2proto = [
@@ -64,7 +67,6 @@ def main(args=None):
                 if arg.startswith(arg_for_urdf2proto):
                     sys.argv.remove(arg)
                     break
-
 
     # redirect stdout to temporary urdf file
     orig_stdout = sys.stdout

@@ -59,11 +59,11 @@ class EPuckNode(Node):
         for i in range(NB_INFRARED_SENSORS):
             self.__subscriber_dist_sensors['ps{}'.format(i)] = \
                 self.create_subscription(Range,
-                                         '/e_puck/ps{}'.format(i),
+                                         '/ps{}'.format(i),
                                          partial(self.__on_distance_sensor_message, i),
                                          1)
 
-        self.__subscriber_tof = self.create_subscription(Range, '/e_puck/tof', self.__process_tof, 1)
+        self.__subscriber_tof = self.create_subscription(Range, '/tof', self.__process_tof, 1)
 
         self.laser_publisher = self.create_publisher(LaserScan, '/scan', 1)
 

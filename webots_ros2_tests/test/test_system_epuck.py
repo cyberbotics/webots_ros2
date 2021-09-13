@@ -68,7 +68,7 @@ class TestEpuck(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, Image, '/e_puck/camera', condition=on_image_message_received)
+        self.wait_for_messages(self.__node, Image, '/camera', condition=on_image_message_received)
 
     def testPs0(self):
         def on_range_message_received(message):
@@ -77,7 +77,7 @@ class TestEpuck(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, Range, '/e_puck/ps0', condition=on_range_message_received)
+        self.wait_for_messages(self.__node, Range, '/ps0', condition=on_range_message_received)
 
     def testToF(self):
         def on_range_message_received(message):
@@ -86,7 +86,7 @@ class TestEpuck(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, Range, '/e_puck/tof', condition=on_range_message_received)
+        self.wait_for_messages(self.__node, Range, '/tof', condition=on_range_message_received)
 
     def testMovement(self):
         publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)

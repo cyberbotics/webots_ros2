@@ -23,3 +23,9 @@ jobs:
         env: 
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: artifacts
+          retention-days: 5

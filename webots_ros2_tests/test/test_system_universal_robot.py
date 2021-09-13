@@ -26,7 +26,7 @@ from sensor_msgs.msg import Range
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, ExecuteProcess
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 
@@ -40,8 +40,14 @@ def generate_test_description():
         )
     )
 
+    rosbag = ExecuteProcess(
+        cmd=['ros2', 'bag', 'record', '-a', '-o', os.path.join('artifacts', 'bag_universal_robot_multirobot')],
+        output='screen'
+    )
+
     return LaunchDescription([
         simulation,
+        rosbag,
         launch_testing.actions.ReadyToTest(),
     ])
 

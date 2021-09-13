@@ -59,15 +59,15 @@ class TestUniversalRobot(TestWebots):
         self.__node = rclpy.create_node('driver_tester')
         self.wait_for_clock(self.__node, messages_to_receive=20)
 
-    def testAbbCaughtCan(self):
-        # The robot should catch the can in the simulation.
-        self.wait_for_messages(self.__node,  Range, '/abb/abbirb4600/object_present_sensor',
-                               condition=lambda message: message.range < 0.04)
-
     def testURCaughtCan(self):
         # The robot should catch the can in the simulation.
         self.wait_for_messages(self.__node,  Range, '/ur5e/UR5e/object_present_sensor',
-                               condition=lambda message: message.range < 0.04)
+                               condition=lambda message: message.range < 0.03)
+
+    def testAbbCaughtCan(self):
+        # The robot should catch the can in the simulation.
+        self.wait_for_messages(self.__node,  Range, '/abb/abbirb4600/object_present_sensor',
+                               condition=lambda message: message.range < 0.03)
 
     def tearDown(self):
         self.__node.destroy_node()

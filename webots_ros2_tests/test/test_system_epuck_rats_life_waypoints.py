@@ -59,7 +59,8 @@ class TestEpuck(TestWebots):
         self.__node = rclpy.create_node('driver_tester')
         self.wait_for_clock(self.__node, messages_to_receive=20)
 
-    def testMap(self):
+    # This scenario should be removed, thus tests are not needed
+    """def testMap(self):
         # Check if the cost map is updated -> local map for navigation is working
         def on_cost_map_message_received(message):
             # Should be an update of the map
@@ -78,7 +79,7 @@ class TestEpuck(TestWebots):
                 return False
             return True
 
-        self.wait_for_messages(self.__node, Path, '/received_global_plan', timeout=90*10, condition=on_plan_message_received)
+        self.wait_for_messages(self.__node, Path, '/received_global_plan', timeout=90*10, condition=on_plan_message_received)"""
 
     def tearDown(self):
         self.__node.destroy_node()

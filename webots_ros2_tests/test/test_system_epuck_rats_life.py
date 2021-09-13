@@ -21,7 +21,6 @@
 import os
 import pytest
 import rclpy
-from nav_msgs.msg import OccupancyGrid
 from launch import LaunchDescription
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
@@ -60,6 +59,7 @@ class TestEpuck(TestWebots):
         self.wait_for_clock(self.__node, messages_to_receive=20)
 
     # This scenario should be removed, thus tests are not needed
+    """from nav_msgs.msg import OccupancyGrid"""
     """def testMap(self):
         # Check if the cost map is updated -> local map for navigation is working
         def on_cost_map_message_received(message):

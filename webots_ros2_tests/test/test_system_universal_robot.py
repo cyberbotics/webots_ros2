@@ -79,7 +79,7 @@ class TestUniversalRobot(TestWebots):
 
     def testAbbCaughtCan(self):
         # The robot should catch the can in the simulation.
-        self.wait_for_messages(self.__node, Range, '/abb/abbirb4600/object_present_sensor', timeout=250,
+        self.wait_for_messages(self.__node, Range, '/abb/abbirb4600/object_present_sensor', timeout=350,
                                condition=lambda message: message.range < 0.07)
 
     def tearDown(self):

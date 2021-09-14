@@ -37,7 +37,7 @@ class _ConditionalSubstitution(Substitution):
 
 
 class WebotsLauncher(ExecuteProcess):
-    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream='', **kwargs):
+    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
         # Find Webots executable
         webots_path = get_webots_home(show_warning=True)
         if webots_path is None:
@@ -49,6 +49,7 @@ class WebotsLauncher(ExecuteProcess):
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
         world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
+        stream = stream if isinstance(stream, Substitution) else TextSubstitution(text=stream)
 
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')

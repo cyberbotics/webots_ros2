@@ -19,6 +19,7 @@
 # Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_universal_robot.py
 
 import os
+import time
 import tempfile
 import pytest
 import rclpy
@@ -41,10 +42,18 @@ def generate_test_description():
         )
     )
 
+    # To debug simulations in CI it is recommended to use `rosbag`.
+    # All files stored to `/tmp/artifacts` are later uploaded to the CI server.
+    # Therefore, make sure to store all bag files under the `/tmp/artifacts`.
     rosbag = ExecuteProcess(
         cmd=[
             'ros2', 'bag', 'record', '-a',
-            '-o', os.path.join(tempfile.gettempdir(), 'artifacts', 'bag_universal_robot_multirobot')],
+            '-o', os.path.join(
+                tempfile.gettempdir(),
+                'artifacts',
+                f'bag_universal_robot_multirobot_{time.strftime("%Y%m%d_%H%M%S")}'
+            )
+        ],
         output='screen'
     )
 

@@ -21,16 +21,13 @@ jobs:
         with:
          submodules: recursive
       - uses: 'ros-industrial/industrial_ci@master'
-        # To debug simulations in CI it is recommended to use `rosbag`.
-        # The bag files are stored the `/artifacts` directory.
-        # To retrieve them, this step has to pass so you may want to uncomment the line below.
-        # continue-on-error: true
         env: 
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}
       - name: Upload Artifact
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v2
         with:
-          name: generic_artifacts
+          name: generic_artifacts_${{matrix.ROS_REPO}}_${{matrix.ROS_DISTRO}}
           path: /artifacts
           retention-days: 5

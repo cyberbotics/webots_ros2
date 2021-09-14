@@ -44,7 +44,7 @@ def generate_launch_description():
         ]
     )"""
 
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'mavic_webots.urdf')).read_text()
+    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tesla_webots.urdf')).read_text()
 
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world])
@@ -59,7 +59,6 @@ def generate_launch_description():
         ]
     )
     
-
     lane_follower = Node(
         package='webots_ros2_tesla',
         executable='lane_follower',
@@ -73,6 +72,5 @@ def generate_launch_description():
         ),
         webots,
         lane_follower,
-
         tesla_driver,
     ])

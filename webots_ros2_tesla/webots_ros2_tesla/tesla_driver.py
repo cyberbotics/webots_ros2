@@ -16,14 +16,40 @@
 
 import rclpy
 from ackermann_msgs.msg import AckermannDrive
-from geometry_msgs.msg import Twist
-#from webots_ros2_core.webots_node import WebotsNode
-#from webots_ros2_core.webots.vehicle import Driver
 from webots_ros2_driver import Driver
 from rclpy.node import Node
+from webots_ros2_core.webots_node import WebotsNode
+
+class TeslaDriver:
+    def init(self, webots_node, properties):
+        self.__robot = webots_node.robot
+
+        # ROS interface
+        self.create_subscription(AckermannDrive, 'cmd_ackermann', self.__cmd_ackermann_callback, 1)
+
+    def __cmd_ackermann_callback(self, message):
+        self.__robot.setCruisingSpeed(message.speed)
+        self.__robot.setSteeringAngle(message.steering_angle)
 
 
-class TeslaDriver(Node):
+def main(args=None):
+    rclpy.init(args=args)
+    driver = TeslaDriver(args=args)
+    rclpy.spin(driver)
+
+    # Destroy the node explicitly
+    # (optional - otherwise it will be done automatically
+    # when the garbage collector destroys the node object)
+    driver.destroy_node()
+
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
+
+
+"""class TeslaDriver(Node):
     def __init__(self, args):
         super().__init__('tesla_driver', args, controller_class=Driver)
 
@@ -49,4 +75,4 @@ def main(args=None):
 
 
 if __name__ == '__main__':
-    main()
+    main()"""

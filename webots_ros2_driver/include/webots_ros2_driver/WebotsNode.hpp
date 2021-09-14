@@ -24,7 +24,7 @@
 #include <webots/Robot.hpp>
 #include <webots/Node.hpp>
 #include <webots/Supervisor.hpp>
-#include <webots/Vehicle/Driver.hpp>>
+#include <webots/vehicle/Driver.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/clock.hpp>
@@ -40,9 +40,9 @@ namespace webots_ros2_driver
   class WebotsNode : public rclcpp::Node
   {
   public:
-    WebotsNode(std::string name, webots::Supervisor *robot);
+    WebotsNode(std::string name, webots::Driver *robot);
     void init();
-    webots::Supervisor *robot() { return mRobot; }
+    webots::Driver *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
 
   private:
@@ -57,7 +57,7 @@ namespace webots_ros2_driver
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;
-    webots::Supervisor *mRobot;
+    webots::Driver *mRobot;
     std::vector<std::shared_ptr<PluginInterface>> mPlugins;
     pluginlib::ClassLoader<PluginInterface> mPluginLoader;
     tinyxml2::XMLElement *mWebotsXMLElement;

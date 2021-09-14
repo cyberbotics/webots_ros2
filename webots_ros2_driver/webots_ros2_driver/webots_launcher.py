@@ -49,7 +49,6 @@ class WebotsLauncher(ExecuteProcess):
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
         world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
-        stream = stream if isinstance(stream, Substitution) else TextSubstitution(text=stream)
 
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')

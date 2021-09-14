@@ -15,7 +15,7 @@ jobs:
     env:
       AFTER_INIT: ./scripts/ci_after_init.bash ${ROS_DISTRO} ${ROS_REPO}
       BEFORE_INIT_EMBED: source scripts/ci_before_init_embed.bash
-      DOCKER_RUN_OPTS: -v /artifacts:/artifacts
+      DOCKER_RUN_OPTS: -v /artifacts:/root/target_ws/artifacts
     steps:
       - uses: actions/checkout@v1
         with:

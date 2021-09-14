@@ -19,6 +19,7 @@
 # Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_universal_robot.py
 
 import os
+import tempfile
 import pytest
 import rclpy
 import launch_testing.actions
@@ -41,7 +42,9 @@ def generate_test_description():
     )
 
     rosbag = ExecuteProcess(
-        cmd=['ros2', 'bag', 'record', '-a', '-o', os.path.join('artifacts', 'bag_universal_robot_multirobot')],
+        cmd=[
+            'ros2', 'bag', 'record', '-a',
+            '-o', os.path.join(tempfile.gettempdir(), 'artifacts', 'bag_universal_robot_multirobot')],
         output='screen'
     )
 

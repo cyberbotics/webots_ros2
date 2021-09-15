@@ -22,6 +22,15 @@ int main(int argc, char **argv)
 
   webots::Driver* robot = new webots::Driver();
 
+
+    //webots::Supervisor* robot = new webots::Car();
+
+/*
+  webots::Driver* driver = dynamic_cast<webots::Driver*>(robot);
+  if (driver)
+*/
+
+
   std::string robotName = robot->getName();
   for (char notAllowedChar : " -.)(")
     std::replace(robotName.begin(), robotName.end(), notAllowedChar, '_');

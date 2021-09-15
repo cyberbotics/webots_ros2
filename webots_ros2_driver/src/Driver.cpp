@@ -21,7 +21,7 @@ int main(int argc, char **argv)
   rclcpp::init(argc, argv);
 
   webots::Driver* robot = new webots::Driver();
-  
+
   std::string robotName = robot->getName();
   for (char notAllowedChar : " -.)(")
     std::replace(robotName.begin(), robotName.end(), notAllowedChar, '_');

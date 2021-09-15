@@ -29,13 +29,15 @@ namespace webots_ros2_driver
 
         PyObject *pyWebotsExtraModuleSource = Py_CompileString(
             R"EOT(
-from webots_ros2_driver_webots.controller import Driver
+from webots_ros2_driver_webots.controller import Supervisor
 
 class WebotsNode:
     def __init__(self):
         self.robot = Driver.internalGetInstanceDriver()
 )EOT",
             "webots_extra", Py_file_input);
+
+        PyErr_Print();
         if (!pyWebotsExtraModuleSource)
             throw std::runtime_error("Error: The Python module with the WebotsNode class cannot be compiled.");
 

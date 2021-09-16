@@ -1,0 +1,539 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  title "ROS2-Webots Armed Robots Demo"
+  basicTimeStep 16
+  contactProperties [
+    ContactProperties {
+      bounce 0.3
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.7767591298970877 0.44941159206073483 0.44121930493004824 4.470138150016758
+  position -5.8033947217040405 -2.9837032552933542 1.2327459221791577
+}
+TexturedBackground {
+  texture "factory"
+}
+Floor {
+  translation 0.79 0.69 0
+  rotation 1 0 0 1.5707996938995747
+  size 8.2 5.8
+  appearance BakelitePlastic {
+  }
+}
+Radiator {
+  translation 4.73328 -1.4201 0.32
+  rotation 9.381857096790023e-07 -0.7071067811862364 -0.7071067811862364 3.14159
+}
+Desk {
+  translation 4.42337 -0.582508 0
+  rotation 0.5773509358554485 0.5773509358554485 0.5773489358556708 2.0944
+}
+Cabinet {
+  translation 4.87225 1.00053 0
+  rotation -0.577349935856137 0.577349935856137 0.5773509358560258 -2.094395307179586
+  name "cabinet(1)"
+  rowsHeights [
+    0.24, 0.4, 0.2, 0.4, 0.4
+  ]
+  columnsWidths [
+    0.6, 0.17, 0.17
+  ]
+  layout [
+    "RightSidedDoor (1, 1, 1, 5, 1.5)"
+    "LeftSidedDoor (2, 1, 2, 5, 1.5)"
+  ]
+  primaryAppearance GlossyPaint {
+    baseColor 0.729 0.741 0.713
+  }
+  secondaryAppearance GlossyPaint {
+    baseColor 0.729 0.741 0.713
+  }
+}
+PlatformCart {
+  translation 2.68945 2.60593 0
+  rotation 1 0 0 1.5708
+}
+OfficeTelephone {
+  translation 4.7683 0.26 0.87294
+  rotation -0.5773489358550934 0.5773499358549823 0.5773519358547601 -2.094395307179586
+  enablePhysics FALSE
+}
+Monitor {
+  translation 4.63225 -0.299468 0.71
+  rotation 0.5773509358554485 0.5773509358554485 0.5773489358556708 2.0944
+}
+Keyboard {
+  translation 4.39098 -0.251797 0.71
+  rotation 0.6215149473343795 0.6215149473343795 0.4769049595882678 2.25159
+}
+DesktopComputer {
+  translation 4.32631 -0.294636 0
+  rotation 0.5773509358554485 0.5773509358554485 0.5773489358556708 2.0944
+}
+CardboardBox {
+  translation 4.42049 -0.768876 0.3
+  rotation 1 0 0 1.5708
+}
+FireExtinguisher {
+  translation 3.41236 3.34174 0
+  rotation 9.381857096790023e-07 -0.7071067811862364 -0.7071067811862364 3.14159
+}
+ElectricalCabinet {
+  translation 0.284835 3.31581 0
+  rotation 9.381857096790023e-07 -0.7071067811862364 -0.7071067811862364 3.14159
+}
+SquareManhole {
+  translation 3.24031 1.59301 -0.04
+  rotation 1 0 0 1.5708
+}
+PipeSection {
+  translation 4.79 1.93 0.610012
+  rotation 1 0 0 1.5708
+  height 1.3
+  radius 0.05
+  appearance HammeredCopper {
+    textureTransform TextureTransform {
+      scale 1 6
+    }
+  }
+}
+PipeSection {
+  translation 4.79 2.674 1.425
+  rotation 1 0 0 -3.1415853071795863
+  name "pipe section(1)"
+  height 1.16
+  radius 0.05
+  appearance HammeredCopper {
+    textureTransform TextureTransform {
+      scale 1 3
+    }
+  }
+}
+PipeSection {
+  translation 0.87 3.419 1.425
+  rotation 0.5773509358554485 -0.5773509358554485 0.5773489358556708 2.0944
+  name "pipe section(2)"
+  height 7.5
+  radius 0.05
+  appearance HammeredCopper {
+    textureTransform TextureTransform {
+      scale 1 19
+    }
+  }
+}
+LJoint {
+  translation 4.79 1.995 1.36001
+  rotation -0.5773506025225371 0.5773506025225371 -0.5773496025232256 2.09439
+  scale 1.5 1.5 1.5
+  appearance HammeredCopper {
+  }
+}
+LJoint {
+  translation 4.724 3.355 1.426
+  rotation -3.47129999996395e-06 2.9530699999693316e-06 -0.9999999999896148 -1.5707953071795862
+  name "L joint pipe(1)"
+  scale 1.5 1.5 1.5
+  appearance HammeredCopper {
+  }
+}
+Radiator {
+  translation 1.53956 3.46023 0.32
+  rotation -0.577349935856137 0.577349935856137 0.5773509358560258 -2.094395307179586
+  name "radiator(1)"
+  numberOfFins 19
+}
+UR5e {
+  translation 0 0 0.6
+  rotation -2.39745e-09 5.67193e-08 -1 1.5708
+  controller "<extern>"
+  selfCollision FALSE
+  toolSlot [
+    DistanceSensor {
+      translation 3.67321e-08 0.09 -0.02
+      rotation 0 0 1 1.5708
+      name "object_present_sensor"
+      lookupTable [
+        0 0 0
+        0.2 0.2 0
+      ]
+    }
+    Robotiq3fGripper {
+    }
+  ]
+}
+Irb4600-40 {
+  translation 1.48 0.58 -0.02
+  rotation 0 0 1 3.14159
+  name "abbirb4600"
+  controller "<extern>"
+  handSlot [
+    DistanceSensor {
+      translation 0 0 0.05
+      rotation 0 1 0 -1.5707953071795862
+      name "object_present_sensor"
+      lookupTable [
+        0 0 0
+        0.2 0.2 0
+      ]
+    }
+    Robotiq3fGripper {
+      translation 0 0 -0.0100001
+      rotation 0 0.70710528118436 0.707108281185553 3.14159
+    }
+  ]
+  staticBase TRUE
+}
+Solid {
+  translation 1.48 0.58 0.005
+  rotation 1 0 0 1.5708
+  children [
+    Shape {
+      appearance RustyMetal {
+      }
+      geometry DEF BOX Box {
+        size 0.6 0.01 0.6
+      }
+    }
+  ]
+  name "box(1)"
+  model "box"
+  boundingObject USE BOX
+}
+ConveyorBelt {
+  translation 1.37 -0.82 0
+  rotation 0.9997750406735088 0.014997800610150434 -0.014997800610150434 1.57102
+  size 2 0.6 0.4
+  borderThickness 0.04
+  borderHeight -0.005
+  speed -0.17
+}
+Can {
+  translation -0.002660813923593048 0.6124808572294808 0.6410656652293695
+  rotation 1 0 0 1.5708
+  name "can(1)"
+}
+Can {
+  translation 1 -0.8 0.67
+  rotation 1 0 0 1.5708
+}
+Table {
+  translation -0.14 0.16 0
+  rotation 1 0 0 1.5708
+  size 0.6 0.58 1.5
+  feetSize 0.06 0.06
+  trayAppearance BrushedSteel {
+    textureTransform TextureTransform {
+      scale 2 3
+    }
+  }
+  legAppearance OldSteel {
+  }
+}
+SolidBox {
+  translation 0 0 0.59
+  rotation 1 0 0 1.5708
+  size 0.2 0.03 0.2
+  appearance BrushedAluminium {
+  }
+}
+DEF WALL Transform {
+  translation 0.79 3.59 1.5
+  rotation 1 0 0 3.14159
+  children [
+    Shape {
+      appearance FormedConcrete {
+        textureTransform TextureTransform {
+          scale 4.7 1
+        }
+      }
+      geometry Plane {
+        size 8.2 3
+      }
+    }
+  ]
+}
+DEF WALL Transform {
+  translation 0.79 -2.21 1.5
+  rotation 9.38186e-07 1 -6.99915e-07 3.14159
+  children [
+    Shape {
+      appearance FormedConcrete {
+        textureTransform TextureTransform {
+          scale 4.7 1
+        }
+      }
+      geometry Plane {
+        size 8.2 3
+      }
+    }
+  ]
+}
+DEF WALL Transform {
+  translation 4.89 0.690011 1.5
+  rotation -0.7071057811860196 0.7071077811854006 -6.072858120753227e-07 -3.1415853071795863
+  children [
+    Shape {
+      appearance Roughcast {
+        textureTransform TextureTransform {
+          scale 4 3
+        }
+      }
+      geometry Plane {
+        size 5.8 3
+      }
+    }
+  ]
+}
+DEF WALL Transform {
+  translation -3.31 0.69 1.5
+  rotation 0.707108781180976 0.7071047811822139 -2.4511892414648896e-06 -3.1415853071795863
+  children [
+    Shape {
+      appearance Roughcast {
+        textureTransform TextureTransform {
+          scale 4 3
+        }
+      }
+      geometry Plane {
+        size 5.8 3
+      }
+    }
+  ]
+}
+DEF ROOF Transform {
+  translation 0.79 0.69 3
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    Shape {
+      appearance CorrugatedPlates {
+        textureTransform TextureTransform {
+          scale 4 3
+        }
+      }
+      geometry Plane {
+        size 8.2 5.8
+      }
+    }
+  ]
+}
+DEF POLE Solid {
+  translation 4.73 3.59 0
+  rotation 1 0 0 1.5708
+  children [
+    DEF POLE_SHAPE Shape {
+      appearance CorrodedMetal {
+        textureTransform TextureTransform {
+          scale 3 1
+        }
+      }
+      geometry Extrusion {
+        crossSection [
+          0.1 -0.1
+          0.1 -0.05
+          0.049751243781095 -0.05
+          0.049875311720698 0.05
+          0.1 0.05
+          0.1 0.1
+          -0.1 0.1
+          -0.1 0.05
+          -0.049751243781095 0.05
+          -0.049875311720698 -0.05
+          -0.1 -0.05
+          -0.1 -0.1
+          0.1 -0.1
+        ]
+        spine [
+          0 0 0
+          0 3 0
+        ]
+        ccw FALSE
+        splineSubdivision 0
+      }
+    }
+  ]
+  name "solid(2)"
+}
+DEF POLE Solid {
+  translation 4.73 3.59 2.9
+  rotation 9.381859999974619e-07 2.1285099999942413e-06 -0.9999999999972946 3.14159
+  children [
+    DEF ROOF_POLE_SHAPE Shape {
+      appearance CorrodedMetal {
+        textureTransform TextureTransform {
+          scale 3 1
+        }
+      }
+      geometry Extrusion {
+        crossSection [
+          0.1 -0.1
+          0.1 -0.05
+          0.049751243781095 -0.05
+          0.049875311720698 0.05
+          0.1 0.05
+          0.1 0.1
+          -0.1 0.1
+          -0.1 0.05
+          -0.049751243781095 0.05
+          -0.049875311720698 -0.05
+          -0.1 -0.05
+          -0.1 -0.1
+          0.1 -0.1
+        ]
+        spine [
+          0 0 0
+          0 5.8 0
+        ]
+        ccw FALSE
+        splineSubdivision 0
+      }
+    }
+  ]
+  name "solid(10)"
+}
+DEF POLE Solid {
+  translation 2.93 3.59 0
+  rotation 1 0 0 1.5708
+  children [
+    USE POLE_SHAPE
+  ]
+  name "solid(1)"
+}
+DEF POLE Solid {
+  translation 2.93 3.59 2.9
+  rotation 1 0 0 -3.1415853071795863
+  children [
+    USE ROOF_POLE_SHAPE
+  ]
+  name "solid(6)"
+}
+DEF POLE Solid {
+  translation 1.13 3.59 0
+  rotation 1 0 0 1.5708
+  children [
+    USE POLE_SHAPE
+  ]
+  name "solid(3)"
+}
+DEF POLE Solid {
+  translation 1.13 3.59 2.9
+  rotation 1 0 0 -3.1415853071795863
+  children [
+    USE ROOF_POLE_SHAPE
+  ]
+  name "solid(7)"
+}
+DEF POLE Solid {
+  translation -0.67 3.59 0
+  rotation 1 0 0 1.5708
+  children [
+    USE POLE_SHAPE
+  ]
+  name "solid(4)"
+}
+DEF POLE Solid {
+  translation -0.67 3.59 2.9
+  rotation 1 0 0 -3.1415853071795863
+  children [
+    USE ROOF_POLE_SHAPE
+  ]
+  name "solid(8)"
+}
+DEF POLE Solid {
+  translation -2.47 3.59 0
+  rotation 1 0 0 1.5708
+  children [
+    USE POLE_SHAPE
+  ]
+  name "solid(5)"
+}
+DEF POLE Solid {
+  translation -2.47 3.59 2.9
+  rotation 1 0 0 -3.1415853071795863
+  children [
+    USE ROOF_POLE_SHAPE
+  ]
+  name "solid(9)"
+}
+WoodenPalletStack {
+  translation 4.27993 2.83696 0
+  rotation 1 0 0 1.5708
+}
+ConstructionLamp {
+  translation 3.86242 2.61396 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(1)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 2.06242 2.61396 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(4)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 0.26242 2.61396 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(5)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation -1.54758 2.61396 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(6)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 3.86242 1.11396 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(2)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 2.06242 1.11396 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(7)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 0.26242 1.11396 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(8)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation -1.53758 1.11396 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(9)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 3.86242 -0.38604 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(3)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 2.06242 -0.38604 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(10)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation 0.26242 -0.38604 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(11)"
+  spotLightIntensity 5
+}
+ConstructionLamp {
+  translation -1.53758 -0.38604 3
+  rotation 1 0 0 -3.1415853071795863
+  name "construction lamp(12)"
+  spotLightIntensity 5
+}
+PlasticCrate {
+  translation 0.0761897 -0.810725 0
+  rotation 0.9999000083987113 0.009999330083989885 -0.009999330083989885 1.5709
+  size 0.5 0.4 0.4
+}

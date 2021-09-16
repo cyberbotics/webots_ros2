@@ -12,8 +12,10 @@
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
   <build_depend>rclpy</build_depend>
+  <build_depend>ros2bag</build_depend>
+  <build_depend>rosbag2_storage_default_plugins</build_depend>
   <build_depend>webots_ros2_driver</build_depend>
-
+  <test_depend>webots_ros2_universal_robot</test_depend>
   <test_depend>webots_ros2_epuck</test_depend>
   <test_depend>webots_ros2_turtlebot</test_depend>
   <test_depend>webots_ros2_mavic</test_depend>

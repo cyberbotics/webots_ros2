@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  webots::Driver* robot = new webots::Driver();
+  webots::Car* robot = new webots::Car();
 
 
     //webots::Supervisor* robot = new webots::Car();

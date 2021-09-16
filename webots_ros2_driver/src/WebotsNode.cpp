@@ -39,7 +39,7 @@ namespace webots_ros2_driver
   const char *gPluginInterface = "webots_ros2_driver::PluginInterface";
   const char *gPluginInterfaceName = "webots_ros2_driver";
 
-  WebotsNode::WebotsNode(std::string name, webots::Driver *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
+  WebotsNode::WebotsNode(std::string name, webots::Car *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
     if (mRobotDescription != "")

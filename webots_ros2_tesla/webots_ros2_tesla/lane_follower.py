@@ -32,7 +32,7 @@ class LaneFollower(Node):
 
         # ROS interface
         self.__ackermann_publisher = self.create_publisher(AckermannDrive, 'cmd_ackermann', 1)
-        self.create_subscription(Image, 'camera/image_raw', self.__on_camera_image, qos_profile_sensor_data)
+        self.create_subscription(Image, 'vehicle/camera', self.__on_camera_image, qos_profile_sensor_data)
 
     def __on_camera_image(self, message):
         img = message.data

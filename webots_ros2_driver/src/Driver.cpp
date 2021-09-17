@@ -16,20 +16,29 @@
 #include <rclcpp/rclcpp.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 
+#include <string>
+#include <iostream>
+
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  webots::Car* robot = new webots::Car();
+  //webots::Car* robot = new webots::Car();
 
+  std::cout << "Before robot";
 
-    //webots::Supervisor* robot = new webots::Car();
+  webots::Supervisor* robot = new webots::Driver();
 
-/*
-  webots::Driver* driver = dynamic_cast<webots::Driver*>(robot);
-  if (driver)
-*/
+  // Check if the robot can be a driver, if not create a simple Supervisor
+  if (!robot){
+    robot = new webots::Supervisor();
+  }
 
+  std::cout << "After robot";
+
+  //webots::Car* car = dynamic_cast<webots::Car*>(robot);
+  //if(car)
+    //robot = car;
 
   std::string robotName = robot->getName();
   for (char notAllowedChar : " -.)(")

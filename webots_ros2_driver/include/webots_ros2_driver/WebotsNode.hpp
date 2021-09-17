@@ -41,9 +41,9 @@ namespace webots_ros2_driver
   class WebotsNode : public rclcpp::Node
   {
   public:
-    WebotsNode(std::string name, webots::Car *robot);
+    WebotsNode(std::string name, webots::Supervisor *robot);
     void init();
-    webots::Car *robot() { return mRobot; }
+    webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
 
   private:
@@ -58,7 +58,7 @@ namespace webots_ros2_driver
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;
-    webots::Car *mRobot;
+    webots::Supervisor *mRobot;
     std::vector<std::shared_ptr<PluginInterface>> mPlugins;
     pluginlib::ClassLoader<PluginInterface> mPluginLoader;
     tinyxml2::XMLElement *mWebotsXMLElement;

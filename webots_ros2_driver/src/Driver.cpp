@@ -23,22 +23,12 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  //webots::Car* robot = new webots::Car();
-
-  std::cout << "Before robot";
-
   webots::Supervisor* robot = new webots::Driver();
 
   // Check if the robot can be a driver, if not create a simple Supervisor
   if (!robot){
     robot = new webots::Supervisor();
   }
-
-  std::cout << "After robot";
-
-  //webots::Car* car = dynamic_cast<webots::Car*>(robot);
-  //if(car)
-    //robot = car;
 
   std::string robotName = robot->getName();
   for (char notAllowedChar : " -.)(")

@@ -20,8 +20,6 @@
 
 import tempfile
 import time
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
-
 import os
 import pytest
 import rclpy
@@ -31,8 +29,8 @@ from launch import LaunchDescription
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import IncludeLaunchDescription
-from webots_ros2_tests.utils import DEFAULT_TIMEOUT, TestWebots, initialize_webots_test
+from launch.actions import IncludeLaunchDescription, ExecuteProcess
+from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 
 @pytest.mark.rostest

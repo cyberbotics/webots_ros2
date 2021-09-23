@@ -76,8 +76,7 @@ class TestTesla(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, AckermannDrive, '/cmd_ackermann',
-                               timeout=DEFAULT_TIMEOUT * 5, condition=on_cmd_message_received)
+        self.wait_for_messages(self.__node, AckermannDrive, '/cmd_ackermann', DEFAULT_TIMEOUT * 10, on_cmd_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

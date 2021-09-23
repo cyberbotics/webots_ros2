@@ -28,7 +28,7 @@ import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
-from webots_ros2_tests.utils import TestWebots, initialize_webots_test
+from webots_ros2_tests.utils import DEFAULT_TIMEOUT, TestWebots, initialize_webots_test
 
 
 @pytest.mark.rostest
@@ -76,7 +76,8 @@ class TestTesla(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, AckermannDrive, '/cmd_ackermann', condition=on_cmd_message_received)
+        self.wait_for_messages(self.__node, AckermannDrive, '/cmd_ackermann',
+                               timeout=DEFAULT_TIMEOUT * 5, condition=on_cmd_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

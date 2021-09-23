@@ -18,6 +18,10 @@
 
 # Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_tesla.py
 
+import tempfile
+import time
+from launch.actions import IncludeLaunchDescription, ExecuteProcess
+
 import os
 import pytest
 import rclpy
@@ -35,6 +39,21 @@ from webots_ros2_tests.utils import DEFAULT_TIMEOUT, TestWebots, initialize_webo
 def generate_test_description():
     initialize_webots_test()
 
+    # To debug simulations in CI it is recommended to use `rosbag`.
+    # All files stored to `/tmp/artifacts` are later uploaded to the CI server.
+    # Therefore, make sure to store all bag files under the `/tmp/artifacts`.
+    rosbag = ExecuteProcess(
+        cmd=[
+            'ros2', 'bag', 'record', '-a',
+            '-o', os.path.join(
+                tempfile.gettempdir(),
+                'artifacts',
+                f'bag_universal_robot_multirobot_{time.strftime("%Y%m%d_%H%M%S")}'
+            )
+        ],
+        output='screen'
+    )
+
     tesla_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('webots_ros2_tesla'), 'launch', 'robot_launch.py')
@@ -43,6 +62,7 @@ def generate_test_description():
 
     return LaunchDescription([
         tesla_webots,
+        rosbag,
         launch_testing.actions.ReadyToTest(),
     ])
 
@@ -76,7 +96,7 @@ class TestTesla(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, AckermannDrive, '/cmd_ackermann', DEFAULT_TIMEOUT * 10, on_cmd_message_received)
+        self.wait_for_messages(self.__node, AckermannDrive, '/cmd_ackermann', condition=on_cmd_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

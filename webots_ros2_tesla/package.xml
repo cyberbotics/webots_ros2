@@ -12,7 +12,8 @@
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
   <exec_depend>rclpy</exec_depend>
-  <exec_depend>cv2</exec_depend>
+  <exec_depend>python3-cv2</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>ackermann_msgs</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>

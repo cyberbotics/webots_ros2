@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<robot name="ABB Webots">
+    <webots>
+        <plugin type="webots_ros2_control::Ros2Control" />
+    </webots>
+
+    <ros2_control name="WebotsControl" type="system">
+        <hardware>
+            <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
+        </hardware>
+
+        <!-- ABB -->
+        <joint name="A motor">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="B motor">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="C motor">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="D motor">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="E motor">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="F motor">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+
+        <!-- ROBOTIQ 3F Gripper -->
+        <joint name="palm_finger_1_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="finger_1_joint_1">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="finger_1_joint_2">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="finger_1_joint_3">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="palm_finger_2_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="finger_2_joint_1">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="finger_2_joint_2">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="finger_2_joint_3">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="finger_middle_joint_1">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="finger_middle_joint_2">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="finger_middle_joint_3">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+
+    </ros2_control>
+</robot>

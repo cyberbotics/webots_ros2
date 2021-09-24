@@ -16,9 +16,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 
-#include <string>
-#include <iostream>
-
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);

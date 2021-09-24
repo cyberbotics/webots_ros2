@@ -27,7 +27,6 @@ set(msg_files
   "msg/WbCameraRecognitionObjects.msg"
 )
 set(srv_files
-  "srv/SetDifferentialWheelSpeed.srv"
   "srv/SetInt.srv"
 )
 

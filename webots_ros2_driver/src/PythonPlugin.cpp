@@ -33,10 +33,9 @@ import os
 import sys
 import webots_ros2_driver_webots
 
-path = os.path.dirname(webots_ros2_driver_webots.__file__)
-
-sys.path.insert(1, path)
-
+# As Driver need the controller library, we extend the path here
+# to avoid to load another library named "controller"
+sys.path.insert(1, os.path.dirname(webots_ros2_driver_webots.__file__))
 from vehicle import Driver
 
 class WebotsNode:

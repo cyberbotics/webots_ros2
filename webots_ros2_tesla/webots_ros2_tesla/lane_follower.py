@@ -19,7 +19,7 @@ import numpy as np
 import rclpy
 from sensor_msgs.msg import Image
 from ackermann_msgs.msg import AckermannDrive
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import qos_profile_sensor_data, QoSReliabilityPolicy
 from rclpy.node import Node
 
 
@@ -32,7 +32,10 @@ class LaneFollower(Node):
 
         # ROS interface
         self.__ackermann_publisher = self.create_publisher(AckermannDrive, 'cmd_ackermann', 1)
-        self.create_subscription(Image, 'vehicle/camera', self.__on_camera_image, qos_profile_sensor_data)
+
+        qos_camera_data = qos_profile_sensor_data
+        qos_camera_data.reliability = QoSReliabilityPolicy.RELIABLE
+        self.create_subscription(Image, 'vehicle/camera', self.__on_camera_image, qos_camera_data)
 
     def __on_camera_image(self, message):
         img = message.data

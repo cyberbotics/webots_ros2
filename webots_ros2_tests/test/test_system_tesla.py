@@ -18,8 +18,6 @@
 
 # Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_tesla.py
 
-import tempfile
-import time
 import os
 import pytest
 import rclpy
@@ -29,28 +27,13 @@ from launch import LaunchDescription
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
+from launch.actions import IncludeLaunchDescription
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()
-
-    # To debug simulations in CI it is recommended to use `rosbag`.
-    # All files stored to `/tmp/artifacts` are later uploaded to the CI server.
-    # Therefore, make sure to store all bag files under the `/tmp/artifacts`.
-    rosbag = ExecuteProcess(
-        cmd=[
-            'ros2', 'bag', 'record', '-a',
-            '-o', os.path.join(
-                tempfile.gettempdir(),
-                'artifacts',
-                f'bag_tesla_test_{time.strftime("%Y%m%d_%H%M%S")}'
-            )
-        ],
-        output='screen'
-    )
 
     tesla_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -60,7 +43,6 @@ def generate_test_description():
 
     return LaunchDescription([
         tesla_webots,
-        rosbag,
         launch_testing.actions.ReadyToTest(),
     ])
 

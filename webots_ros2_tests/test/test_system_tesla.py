@@ -46,7 +46,7 @@ def generate_test_description():
             '-o', os.path.join(
                 tempfile.gettempdir(),
                 'artifacts',
-                f'bag_universal_robot_multirobot_{time.strftime("%Y%m%d_%H%M%S")}'
+                f'bag_tesla_test_{time.strftime("%Y%m%d_%H%M%S")}'
             )
         ],
         output='screen'

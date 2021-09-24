@@ -13,6 +13,8 @@
 
   <build_depend>rclpy</build_depend>
   <build_depend>webots_ros2_driver</build_depend>
+  <build_depend>ros2bag</build_depend>
+  <build_depend>rosbag2_storage_default_plugins</build_depend>
 
   <test_depend>webots_ros2_turtlebot</test_depend>
   <test_depend>webots_ros2_tesla</test_depend>

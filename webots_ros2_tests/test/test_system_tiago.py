@@ -21,23 +21,32 @@
 import os
 import pytest
 import rclpy
-from geometry_msgs.msg import PointStamped, Twist
+from geometry_msgs.msg import PointStamped
 from launch import LaunchDescription
-import launch_testing.actions
-from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+import launch_testing.actions
 from launch.actions import IncludeLaunchDescription
+from rclpy.action import ActionClient
+from nav2_msgs.action import NavigateToPose
+from geometry_msgs.msg import PoseWithCovarianceStamped
+from ament_index_python.packages import get_package_share_directory
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()
+    if ('ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'):
+        pytest.skip('Tests are not support for ROS Rolling')
 
     tiago_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('webots_ros2_tiago'), 'launch', 'robot_launch.py')
-        )
+            os.path.join(get_package_share_directory('webots_ros2_tiago'), 'launch', 'robot_launch.py'),
+        ),
+        launch_arguments={
+            'mode': 'fast',
+            'nav': 'true'
+        }.items()
     )
 
     return LaunchDescription([
@@ -46,7 +55,7 @@ def generate_test_description():
     ])
 
 
-class TestTurtlebot(TestWebots):
+class TestTiago(TestWebots):
     @classmethod
     def setUpClass(cls):
         rclpy.init()
@@ -60,16 +69,31 @@ class TestTurtlebot(TestWebots):
         self.wait_for_clock(self.__node, messages_to_receive=20)
 
     def testMovement(self):
-        publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
+        initial_pose_publisher = self.__node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
+        pose_message = PoseWithCovarianceStamped()
+        pose_message.header.stamp = self.get_clock().now().to_msg()
+        pose_message.header.frame_id = 'map'
+        pose_message.pose.pose.orientation.w = 1.0
+        initial_pose_publisher.publish(pose_message)
 
-        def on_position_message_received(message):
-            twist_message = Twist()
-            twist_message.linear.x = 0.1
-            publisher.publish(twist_message)
+        self.wait_for_clock(self.__node, messages_to_receive=20)
 
-            return message.point.x > 6.7
+        goal_action = ActionClient(self.__node, NavigateToPose, 'navigate_to_pose')
+        goal_message = NavigateToPose.Goal()
+        goal_message.pose.header.stamp = self.get_clock().now().to_msg()
+        goal_message.pose.header.frame_id = 'map'
+        goal_message.pose.pose.position.x = -9.38
+        goal_message.pose.pose.position.y = 4.3
+        goal_message.pose.pose.orientation.z = 0.373
+        goal_message.pose.pose.orientation.w = 0.928
+        goal_action.wait_for_server()
+        goal_action.send_goal_async(goal_message)
 
-        self.wait_for_messages(self.__node, PointStamped, '/TurtleBot3Burger/gps', condition=on_position_message_received)
+        def on_message_received(message):
+            print(message)
+            return True
+
+        self.wait_for_messages(self.__node, PointStamped, '/odom', condition=on_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

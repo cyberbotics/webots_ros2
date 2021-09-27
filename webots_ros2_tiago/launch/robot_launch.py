@@ -34,6 +34,9 @@ def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_tiago')
     world = LaunchConfiguration('world')
     mode = LaunchConfiguration('mode')
+    use_rviz = LaunchConfiguration('rviz')
+    use_nav = LaunchConfiguration('nav')
+    use_slam = LaunchConfiguration('slam')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
@@ -93,7 +96,6 @@ def generate_launch_description():
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
-    use_rviz = launch.substitutions.LaunchConfiguration('rviz', default=True)
     rviz_config = os.path.join(get_package_share_directory('webots_ros2_tiago'), 'resource', 'default.rviz')
     rviz = Node(
         package='rviz2',
@@ -104,7 +106,6 @@ def generate_launch_description():
         condition=launch.conditions.IfCondition(use_rviz)
     )
 
-    use_nav = launch.substitutions.LaunchConfiguration('nav', default=True)
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
         launch_arguments=[
@@ -114,7 +115,6 @@ def generate_launch_description():
         condition=launch.conditions.IfCondition(use_nav)
     )
 
-    use_slam = launch.substitutions.LaunchConfiguration('slam', default=False)
     slam_toolbox = Node(
         parameters=[{'use_sim_time': use_sim_time}],
         package='slam_toolbox',
@@ -134,6 +134,21 @@ def generate_launch_description():
             'mode',
             default_value='realtime',
             description='Webots startup mode'
+        ),
+        DeclareLaunchArgument(
+            'rviz',
+            default_value='false',
+            description='Launch RViz'
+        ),
+        DeclareLaunchArgument(
+            'nav',
+            default_value='false',
+            description='Launch Navigation2 (requires the `nav2_bringup` package)'
+        ),
+        DeclareLaunchArgument(
+            'slam',
+            default_value='false',
+            description='Launch SLAM (requires the `slam_toolbox` package)'
         ),
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,

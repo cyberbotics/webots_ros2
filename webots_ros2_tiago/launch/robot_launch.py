@@ -34,9 +34,9 @@ def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_tiago')
     world = LaunchConfiguration('world')
     mode = LaunchConfiguration('mode')
-    use_rviz = LaunchConfiguration('rviz')
-    use_nav = LaunchConfiguration('nav')
-    use_slam = LaunchConfiguration('slam')
+    use_rviz = LaunchConfiguration('rviz', default=False)
+    use_nav = LaunchConfiguration('nav', default=False)
+    use_slam = LaunchConfiguration('slam', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
@@ -134,21 +134,6 @@ def generate_launch_description():
             'mode',
             default_value='realtime',
             description='Webots startup mode'
-        ),
-        DeclareLaunchArgument(
-            'rviz',
-            default_value='false',
-            description='Launch RViz'
-        ),
-        DeclareLaunchArgument(
-            'nav',
-            default_value='false',
-            description='Launch Navigation2 (requires the `nav2_bringup` package)'
-        ),
-        DeclareLaunchArgument(
-            'slam',
-            default_value='false',
-            description='Launch SLAM (requires the `slam_toolbox` package)'
         ),
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,

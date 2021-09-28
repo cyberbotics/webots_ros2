@@ -93,7 +93,7 @@ class TestTiago(TestWebots):
         def on_message_received(message):
             return message.transforms[0].header.frame_id == 'map' and message.transforms[0].transform.translation.x > 2
 
-        self.wait_for_messages(self.__node, TFMessage, '/tf', condition=on_message_received)
+        self.wait_for_messages(self.__node, TFMessage, '/tf', condition=on_message_received, timeout=60*5)
 
     def tearDown(self):
         self.__node.destroy_node()

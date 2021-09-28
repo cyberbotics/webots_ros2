@@ -27,7 +27,6 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing.actions
 from launch.actions import IncludeLaunchDescription
 from rclpy.action import ActionClient
-from nav2_msgs.action import NavigateToPose
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
@@ -70,6 +69,8 @@ class TestTiago(TestWebots):
         self.wait_for_clock(self.__node, messages_to_receive=100)
 
     def testMovement(self):
+        from nav2_msgs.action import NavigateToPose
+
         initial_pose_publisher = self.__node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
         pose_message = PoseWithCovarianceStamped()
         pose_message.header.stamp = self.__node.get_clock().now().to_msg()

@@ -57,7 +57,10 @@ namespace webots_ros2_control
         {
           joint.controlVelocity = true;
           if (joint.motor)
+          {
             joint.motor->setPosition(INFINITY);
+            joint.motor->setVelocity(0.0);
+          }
         }
         else if (commandInterface.name == "effort")
           joint.controlEffort = true;

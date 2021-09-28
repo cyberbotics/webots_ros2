@@ -21,7 +21,7 @@
 import os
 import pytest
 import rclpy
-from geometry_msgs.msg import PointStamped
+from tf2_msgs.msg import TFMessage
 from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing.actions
@@ -45,7 +45,8 @@ def generate_test_description():
         ),
         launch_arguments={
             'mode': 'fast',
-            'nav': 'true'
+            'nav': 'true',
+            'rviz': 'true'
         }.items()
     )
 
@@ -66,21 +67,20 @@ class TestTiago(TestWebots):
 
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
-        self.wait_for_clock(self.__node, messages_to_receive=20)
+        self.wait_for_clock(self.__node, messages_to_receive=100)
 
     def testMovement(self):
         initial_pose_publisher = self.__node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
         pose_message = PoseWithCovarianceStamped()
-        pose_message.header.stamp = self.get_clock().now().to_msg()
+        pose_message.header.stamp = self.__node.get_clock().now().to_msg()
         pose_message.header.frame_id = 'map'
         pose_message.pose.pose.orientation.w = 1.0
         initial_pose_publisher.publish(pose_message)
-
-        self.wait_for_clock(self.__node, messages_to_receive=20)
+        self.wait_for_clock(self.__node, messages_to_receive=1000)
 
         goal_action = ActionClient(self.__node, NavigateToPose, 'navigate_to_pose')
         goal_message = NavigateToPose.Goal()
-        goal_message.pose.header.stamp = self.get_clock().now().to_msg()
+        goal_message.pose.header.stamp = self.__node.get_clock().now().to_msg()
         goal_message.pose.header.frame_id = 'map'
         goal_message.pose.pose.position.x = -9.38
         goal_message.pose.pose.position.y = 4.3
@@ -90,10 +90,9 @@ class TestTiago(TestWebots):
         goal_action.send_goal_async(goal_message)
 
         def on_message_received(message):
-            print(message)
-            return True
+            return message.transforms[0].header.frame_id == 'map' and message.transforms[0].transform.translation.x > 2
 
-        self.wait_for_messages(self.__node, PointStamped, '/odom', condition=on_message_received)
+        self.wait_for_messages(self.__node, TFMessage, '/tf', condition=on_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

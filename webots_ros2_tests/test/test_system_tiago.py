@@ -21,7 +21,7 @@
 import os
 import pytest
 import rclpy
-from tf2_msgs.msg import TFMessage
+from nav_msgs.msg import Odometry
 from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing.actions
@@ -44,8 +44,7 @@ def generate_test_description():
         ),
         launch_arguments={
             'mode': 'fast',
-            'nav': 'true',
-            'rviz': 'true'
+            'nav': 'true'
         }.items()
     )
 
@@ -91,9 +90,9 @@ class TestTiago(TestWebots):
         goal_action.send_goal_async(goal_message)
 
         def on_message_received(message):
-            return message.transforms[0].header.frame_id == 'map' and message.transforms[0].transform.translation.x > 2
+            return message.pose.pose.position.x > -1.4
 
-        self.wait_for_messages(self.__node, TFMessage, '/tf', condition=on_message_received, timeout=60*5)
+        self.wait_for_messages(self.__node, Odometry, '/odom', condition=on_message_received, timeout=60*5)
 
     def tearDown(self):
         self.__node.destroy_node()

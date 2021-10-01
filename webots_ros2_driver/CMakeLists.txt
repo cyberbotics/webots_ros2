@@ -45,20 +45,25 @@ if (MSVC OR MSYS OR MINGW OR WIN32)
 
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
   file(GLOB CppController_SRC CONFIGURE_DEPENDS "webots/source/cpp/*.cpp")
-  file(GLOB CppCarDriver_SRC CONFIGURE_DEPENDS "webots/source/cpp/*.cpp")
+  file(GLOB CppCarDriver_SRC CONFIGURE_DEPENDS "webots/source/cpp/vehicle/*.cpp")
   add_library(
     CppControllerRos
     SHARED
     ${CppController_SRC}
+    ${CppCarDriver_SRC}
   )
   target_link_libraries(CppControllerRos
     ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}car${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}driver${CMAKE_SHARED_LIBRARY_SUFFIX}
   )
   install(TARGETS CppControllerRos
     LIBRARY DESTINATION lib
   )
   set(WEBOTS_LIB
     ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}car${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}driver${CMAKE_SHARED_LIBRARY_SUFFIX}
     CppControllerRos
   )
   ament_export_libraries(CppControllerRos)

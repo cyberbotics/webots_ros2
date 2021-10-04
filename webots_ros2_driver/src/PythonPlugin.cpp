@@ -34,7 +34,7 @@ import sys
 import webots_ros2_driver_webots
 
 # As Driver need the controller library, we extend the path here
-# to avoid to load another library named "controller"
+# to avoid to load another library named "controller" when loading vehicle library
 sys.path.insert(1, os.path.dirname(webots_ros2_driver_webots.__file__))
 from vehicle import Driver
 

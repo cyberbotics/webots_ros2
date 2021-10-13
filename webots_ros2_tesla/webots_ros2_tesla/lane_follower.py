@@ -38,8 +38,6 @@ class LaneFollower(Node):
         self.create_subscription(Image, 'vehicle/camera', self.__on_camera_image, qos_camera_data)
 
     def __on_camera_image(self, message):
-        self.get_logger().info("Tesla camera has receive new image.")
-
         img = message.data
         img = np.frombuffer(img, dtype=np.uint8).reshape((message.height, message.width, 4))
         img = img[380:420, :]

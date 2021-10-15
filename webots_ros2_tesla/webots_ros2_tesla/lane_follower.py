@@ -20,7 +20,7 @@ import numpy as np
 import rclpy
 from sensor_msgs.msg import Image
 from ackermann_msgs.msg import AckermannDrive
-from rclpy.qos import qos_profile_sensor_data, QoSReliabilityPolicy, QoSHistoryPolicy
+from rclpy.qos import qos_profile_sensor_data, QoSReliabilityPolicy
 from rclpy.node import Node
 
 

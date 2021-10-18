@@ -17,7 +17,6 @@
 
 #include <unordered_map>
 
-
 namespace webots_ros2_driver
 {
     class WebotsNode;

@@ -20,12 +20,13 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  webots::Supervisor* robot = new webots::Driver();
+  webots::Supervisor* robot;
 
   // Check if the robot can be a driver, if not create a simple Supervisor
-  if (!robot){
+  if (webots::Driver::getInitialisationPossible())
+    robot = new webots::Driver();
+  else
     robot = new webots::Supervisor();
-  }
 
   std::string robotName = robot->getName();
   for (char notAllowedChar : " -.)(")

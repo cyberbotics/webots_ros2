@@ -21,11 +21,8 @@
 
 #include <tinyxml2.h>
 
-#include <webots/Robot.hpp>
 #include <webots/Node.hpp>
 #include <webots/Supervisor.hpp>
-#include <webots/vehicle/Driver.hpp>
-#include <webots/vehicle/Car.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/clock.hpp>

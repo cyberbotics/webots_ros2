@@ -40,10 +40,8 @@ from vehicle import Driver
 
 class WebotsNode:
     def __init__(self):
-        if Driver.getInitialisationPossible():
+        if Driver.isInitialisationPossible():
             self.robot = Driver.getDriverInstance()
-
-        # Driver.internalGetInstance == Robot.internalGetInstance
         else:
             self.robot = Driver.internalGetInstance()
 )EOT",

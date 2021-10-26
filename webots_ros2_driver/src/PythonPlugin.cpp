@@ -46,12 +46,12 @@ class WebotsNode:
             self.robot = Driver.internalGetInstance()
 )EOT",
             "webots_extra", Py_file_input);
-        PyErr_Print();
+
         if (!pyWebotsExtraModuleSource)
             throw std::runtime_error("Error: The Python module with the WebotsNode class cannot be compiled.");
 
         PyObject *pyWebotsExtraModule = PyImport_ExecCodeModule("webots_extra", pyWebotsExtraModuleSource);
-        PyErr_Print();
+
         if (!pyWebotsExtraModule)
             throw std::runtime_error("Error: The Python module with the WebotsNode class cannot be executed.");
 

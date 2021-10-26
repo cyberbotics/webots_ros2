@@ -15,6 +15,7 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
+#include <webots/vehicle/Driver.hpp>
 
 int main(int argc, char **argv)
 {

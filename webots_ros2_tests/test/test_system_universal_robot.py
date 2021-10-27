@@ -19,8 +19,6 @@
 # Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_universal_robot.py
 
 import os
-import time
-import tempfile
 import pytest
 import rclpy
 import launch_testing.actions
@@ -28,7 +26,7 @@ from sensor_msgs.msg import Range
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
+from launch.actions import IncludeLaunchDescription
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 

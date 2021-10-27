@@ -58,13 +58,13 @@ class FollowJointTrajectoryClient(Node):
 
     def send_goal(self, trajectory, iteration=1):
         self.get_logger().info('Waiting for action server...')
-        if not self.__client.wait_for_server():
-            self.get_logger().info('Action server timout !!!')
+        self.__client.wait_for_server()
 
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1
 
-        time.sleep(5)
+        # Need to be sur that trajectory_controller is ready
+        time.sleep(0.5)
 
         goal_message = FollowJointTrajectory.Goal()
         goal_message.trajectory.joint_names = trajectory['joint_names']

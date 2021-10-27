@@ -63,7 +63,8 @@ class FollowJointTrajectoryClient(Node):
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1
 
-        # Need to be sur that trajectory_controller is ready
+        # Need to be sur that trajectory_controller is ready (issue from ros2_control spawner.py).
+        # Only for slow machines, see https://github.com/ros-controls/ros2_control/issues/475
         time.sleep(0.5)
 
         goal_message = FollowJointTrajectory.Goal()

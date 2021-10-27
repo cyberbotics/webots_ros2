@@ -20,7 +20,6 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 from builtin_interfaces.msg import Duration
 
 import rclpy
-import time
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
@@ -62,10 +61,6 @@ class FollowJointTrajectoryClient(Node):
 
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1
-
-        # Need to be sur that trajectory_controller is ready (only for slow machines).
-        # https://docs.ros2.org/crystal/api/rcl_action/action__client_8h.html#a5929e9b0b4b08e5c484fb94455e18d87
-        time.sleep(2)
 
         goal_message = FollowJointTrajectory.Goal()
         goal_message.trajectory.joint_names = trajectory['joint_names']

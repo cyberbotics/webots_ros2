@@ -72,7 +72,7 @@ GOAL = {
 def main(args=None):
     rclpy.init(args=args)
     controller = FollowJointTrajectoryClient('abb_controller', '/abb/abb_joint_trajectory_controller/follow_joint_trajectory')
-    rclpy.spin_once()
+    rclpy.spin_once(controller)
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)
 

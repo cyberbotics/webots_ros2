@@ -27,7 +27,7 @@ namespace webots_ros2_driver
     mAlwaysOn = parameters.count("alwaysOn") ? (parameters["alwaysOn"] == "true") : false;
     mFrameName = parameters.count("frameName") ? parameters["frameName"] : getFixedNameString(parameters["name"]);
 
-    // Calcualte timestep
+    // Calculate timestep
     mPublishTimestepSyncedMs = getDeviceTimestepMsFromPublishTimestep(mPublishTimestep, mNode->robot()->getBasicTimeStep());
   }
 

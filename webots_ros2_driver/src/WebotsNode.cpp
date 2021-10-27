@@ -30,10 +30,11 @@
 #include <webots_ros2_driver/plugins/static/Ros2LED.hpp>
 
 #include "webots_ros2_driver/PluginInterface.hpp"
+#include "webots_ros2_driver/PythonPlugin.hpp"
 
 namespace webots_ros2_driver
 {
-  const char *gDeviceRefferenceAttribute = "reference";
+  const char *gDeviceReferenceAttribute = "reference";
   const char *gDeviceRosTag = "ros";
   const char *gPluginInterface = "webots_ros2_driver::PluginInterface";
   const char *gPluginInterfaceName = "webots_ros2_driver";
@@ -54,6 +55,7 @@ namespace webots_ros2_driver
     }
     else
     {
+      mWebotsXMLElement = NULL;
       RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
     }
 
@@ -88,7 +90,7 @@ namespace webots_ros2_driver
     tinyxml2::XMLElement *deviceChild = mWebotsXMLElement->FirstChildElement();
     while (deviceChild)
     {
-      if (deviceChild->Attribute(gDeviceRefferenceAttribute) && deviceChild->Attribute(gDeviceRefferenceAttribute) == name)
+      if (deviceChild->Attribute(gDeviceReferenceAttribute) && deviceChild->Attribute(gDeviceReferenceAttribute) == name)
         break;
       deviceChild = deviceChild->NextSiblingElement();
     }
@@ -177,7 +179,7 @@ namespace webots_ros2_driver
 
       const std::string type = pluginElement->Attribute("type");
 
-      std::shared_ptr<PluginInterface> plugin(mPluginLoader.createUnmanagedInstance(type));
+      std::shared_ptr<PluginInterface> plugin = loadPlugin(type);
       std::unordered_map<std::string, std::string> pluginProperties = getPluginProperties(pluginElement);
       plugin->init(this, pluginProperties);
       mPlugins.push_back(plugin);
@@ -186,9 +188,37 @@ namespace webots_ros2_driver
     }
   }
 
+  std::shared_ptr<PluginInterface> WebotsNode::loadPlugin(const std::string &type)
+  {
+    // First, we assume the plugin is C++
+    try
+    {
+      std::shared_ptr<PluginInterface> plugin(mPluginLoader.createUnmanagedInstance(type));
+      return plugin;
+    }
+    catch (const pluginlib::LibraryLoadException &e)
+    {
+      // It may be a Python plugin
+    }
+    catch (const pluginlib::CreateClassException &e)
+    {
+      throw std::runtime_error("The " + type + " class cannot be initialized.");
+    }
+
+    std::shared_ptr<PluginInterface> plugin = PythonPlugin::createFromType(type);
+    if (plugin == NULL)
+      throw std::runtime_error("The " + type + " plugin cannot be found (C++ or Python).");
+
+    return plugin;
+  }
+
   void WebotsNode::timerCallback()
   {
-    mRobot->step(mStep);
+    if (mRobot->step(mStep) == -1) {
+      mTimer->cancel();
+      exit(0);
+      return;
+    }
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
 

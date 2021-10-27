@@ -28,6 +28,10 @@ include_directories(
   ${webots_ros2_driver_INCLUDE}/webots/cpp
 )
 
+if (MSVC OR MSYS OR MINGW OR WIN32)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
+
 # webots_ros2 Plugin
 add_library(
   ${PROJECT_NAME}
@@ -86,10 +90,6 @@ install(TARGETS
 ament_export_include_directories(
   include
 )
-
-if(BUILD_TESTING)
-  find_package(ament_cmake_gtest REQUIRED)
-endif()
 
 ament_export_dependencies(
   hardware_interface

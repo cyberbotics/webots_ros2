@@ -54,7 +54,8 @@ class _WebotsCommandSubstitution(Substitution):
                 '--stderr',
                 '--batch',
                 '--no-sandbox',
-                '--minimize'
+                '--minimize',
+                '--no-rendering'
             ]
 
         # Add mode

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>webots_ros2_tests</name>
+  <version>1.2.0</version>
+  <description>System tests for `webots_ros2` packages.</description>
+
+  <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
+  <license>Apache License 2.0</license>
+  <url type="website">http://wiki.ros.org/webots_ros2</url>
+  <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
+  <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
+
+  <build_depend>rclpy</build_depend>
+  <build_depend>ros2bag</build_depend>
+  <build_depend>rosbag2_storage_default_plugins</build_depend>
+  <build_depend>webots_ros2_driver</build_depend>
+
+  <test_depend>webots_ros2_universal_robot</test_depend>
+  <test_depend>webots_ros2_epuck</test_depend>
+  <test_depend>webots_ros2_turtlebot</test_depend>
+  <test_depend>webots_ros2_tesla</test_depend>
+  <test_depend>webots_ros2_mavic</test_depend>
+  <test_depend>webots_ros2_tiago</test_depend>
+  <test_depend>tf2_ros</test_depend>
+  <test_depend>std_msgs</test_depend>
+  <test_depend>sensor_msgs</test_depend>
+  <test_depend>std_srvs</test_depend>
+  <test_depend>geometry_msgs</test_depend>
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+  <test_depend>launch</test_depend>
+  <test_depend>launch_testing</test_depend>
+  <test_depend>launch_testing_ament_cmake</test_depend>
+  <test_depend>launch_testing_ros</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

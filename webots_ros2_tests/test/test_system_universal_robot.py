@@ -75,7 +75,7 @@ class TestUniversalRobot(TestWebots):
 
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
-        self.wait_for_clock(self.__node, messages_to_receive=120)
+        self.wait_for_clock(self.__node, messages_to_receive=150)
 
     def testAbbCaughtCan(self):
         # The robot should catch the can in the simulation.

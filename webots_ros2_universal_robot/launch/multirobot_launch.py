@@ -114,14 +114,14 @@ def generate_launch_description():
 
     return launch.LaunchDescription([
         webots,
-        ur5e_trajectory_controller_spawner,
-        ur5e_joint_state_broadcaster_spawner,
-        abb_trajectory_controller_spawner,
-        abb_joint_state_broadcaster_spawner,
         abb_controller,
         ur5e_controller,
         ur5e_driver,
         abb_driver,
+        ur5e_trajectory_controller_spawner,
+        ur5e_joint_state_broadcaster_spawner,
+        abb_trajectory_controller_spawner,
+        abb_joint_state_broadcaster_spawner,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,

@@ -20,6 +20,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 from builtin_interfaces.msg import Duration
 
 import rclpy
+import time
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
@@ -62,6 +63,8 @@ class FollowJointTrajectoryClient(Node):
 
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1
+
+        time.sleep(5)
 
         goal_message = FollowJointTrajectory.Goal()
         goal_message.trajectory.joint_names = trajectory['joint_names']

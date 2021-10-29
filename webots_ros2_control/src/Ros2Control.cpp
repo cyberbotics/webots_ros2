@@ -33,7 +33,8 @@ namespace webots_ros2_control
   void Ros2Control::step()
   {
     mControllerManager->read();
-    mControllerManager->update();
+    auto dt = rclcpp::Duration::from_nanoseconds(mNode->robot()->getBasicTimeStep()*1e6);
+    mControllerManager->update(mNode->get_clock()->now(), dt);
     mControllerManager->write();
   }
 

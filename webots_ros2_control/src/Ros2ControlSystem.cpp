@@ -72,14 +72,13 @@ namespace webots_ros2_control
     }
   }
 
-  hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info)
+  CallbackReturn Ros2ControlSystem::on_init(const hardware_interface::HardwareInfo &info)
   {
-    if (configure_default(info) != hardware_interface::return_type::OK)
+    if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS)
     {
-      return hardware_interface::return_type::ERROR;
+      return CallbackReturn::ERROR;
     }
-    status_ = hardware_interface::status::CONFIGURED;
-    return hardware_interface::return_type::OK;
+    return CallbackReturn::SUCCESS;
   }
 
   std::vector<hardware_interface::StateInterface> Ros2ControlSystem::export_state_interfaces()
@@ -108,16 +107,14 @@ namespace webots_ros2_control
     return interfaces;
   }
 
-  hardware_interface::return_type Ros2ControlSystem::start()
+  CallbackReturn Ros2ControlSystem::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
   {
-    status_ = hardware_interface::status::STARTED;
-    return hardware_interface::return_type::OK;
+    return CallbackReturn::SUCCESS;
   }
 
-  hardware_interface::return_type Ros2ControlSystem::stop()
+  CallbackReturn Ros2ControlSystem::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
   {
-    status_ = hardware_interface::status::STOPPED;
-    return hardware_interface::return_type::OK;
+    return CallbackReturn::SUCCESS;
   }
 
   hardware_interface::return_type Ros2ControlSystem::read()

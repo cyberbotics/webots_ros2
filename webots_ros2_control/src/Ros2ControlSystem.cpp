@@ -72,7 +72,7 @@ namespace webots_ros2_control
     }
   }
 
-  #if ROS_DISTRO == 'foxy' || (ROS_DISTRO == 'rolling' && ROS_REPO == 'main')
+  #if FOXY || (ROLLING && MAIN)
     hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info)
     {
       if (configure_default(info) != hardware_interface::return_type::OK)
@@ -119,7 +119,7 @@ namespace webots_ros2_control
     return interfaces;
   }
 
-  #if ROS_DISTRO == 'foxy' || (ROS_DISTRO == 'rolling' && ROS_REPO == 'main')
+  #if FOXY || (ROLLING && MAIN)
     hardware_interface::return_type Ros2ControlSystem::start()
     {
       status_ = hardware_interface::status::STARTED;

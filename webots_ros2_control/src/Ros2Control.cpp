@@ -33,7 +33,7 @@ namespace webots_ros2_control
   void Ros2Control::step()
   {
     mControllerManager->read();
-    #if ROS_DISTRO == 'foxy' || (ROS_DISTRO == 'rolling' && ROS_REPO == 'main')
+    #if FOXY || (ROLLING && MAIN)
       mControllerManager->update();
     #else
       auto dt = rclcpp::Duration::from_nanoseconds(mNode->robot()->getBasicTimeStep()*1e6);

@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#if ROS_DISTRO == 'foxy' || (ROS_DISTRO == 'rolling' && ROS_REPO == 'main')
+#if FOXY == 1 || (ROS_DISTRO == 1 && ROS_REPO == 1)
   #include "hardware_interface/base_interface.hpp"
   #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #endif
@@ -58,7 +58,7 @@ namespace webots_ros2_control
   public:
     void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) override;
 
-    #if ROS_DISTRO == 'foxy' || (ROS_DISTRO == 'rolling' && ROS_REPO == 'main')
+    #if FOXY || (ROLLING && MAIN)
       hardware_interface::return_type configure(const hardware_interface::HardwareInfo &info) override;
       hardware_interface::return_type start() override;
       hardware_interface::return_type stop() override;

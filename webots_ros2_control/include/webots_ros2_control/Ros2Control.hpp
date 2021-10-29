@@ -20,9 +20,9 @@
 #include <vector>
 #include <thread>
 
-#if ROS_DISTRO == 'foxy' || (ROS_DISTRO == 'rolling' && ROS_REPO == 'main')
-#include "hardware_interface/base_interface.hpp"
-#include "hardware_interface/types/hardware_interface_status_values.hpp"
+#if FOXY || (ROLLING && MAIN)
+  #include "hardware_interface/base_interface.hpp"
+  #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #endif
 
 #include "hardware_interface/system_interface.hpp"

@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#if ROS_DISTRO == 'foxy' || (ROS_DISTRO == 'rolling' && ROS_REPO == 'main')
+#if FOXY || (ROLLING && MAIN)
   #include "hardware_interface/base_interface.hpp"
   #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #endif
@@ -34,16 +34,20 @@
 
 namespace webots_ros2_control
 {
-  #if ROS_DISTRO == 'foxy' || (ROS_DISTRO == 'rolling' && ROS_REPO == 'main')
+  #if FOXY || (ROLLING && MAIN)
     class Ros2ControlSystemInterface : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
+    {
+    public:
+      virtual void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) = 0;
+    };
   #else
     class Ros2ControlSystemInterface : public hardware_interface::SystemInterface
+    {
+    public:
+      virtual void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) = 0;
+    };
   #endif
-  class Ros2ControlSystemInterface : public hardware_interface::SystemInterface
-  {
-  public:
-    virtual void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) = 0;
-  };
+  
 }
 
 #endif

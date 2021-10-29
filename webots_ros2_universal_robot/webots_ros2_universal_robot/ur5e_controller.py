@@ -72,7 +72,7 @@ def main(args=None):
 
     # Need to be sur that trajectory_controller is ready (only for slow machines).
     # https://github.com/ros2/rclpy/issues/842
-    time.sleep(5)
+    time.sleep(10)
 
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)

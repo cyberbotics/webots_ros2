@@ -36,7 +36,7 @@ namespace webots_ros2_control
     #if FOXY || (ROLLING && MAIN)
       mControllerManager->update();
     #else
-      auto dt = rclcpp::Duration::from_nanoseconds(mNode->robot()->getBasicTimeStep()*1e6);
+      auto dt = rclcpp::Duration::from_nanoseconds(mNode->robot()->getBasicTimeStep()*(int)1e6);
       mControllerManager->update(mNode->get_clock()->now(), dt);
     #endif
     mControllerManager->write();

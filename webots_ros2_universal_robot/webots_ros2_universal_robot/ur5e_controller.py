@@ -69,10 +69,10 @@ GOAL = {
 def main(args=None):
     rclpy.init(args=args)
     controller = FollowJointTrajectoryClient('ur5e_controller', '/ur5e/ur_joint_trajectory_controller/follow_joint_trajectory')
-    
+
     # Need to be sur that trajectory_controller is ready (only for slow machines).
-    # https://docs.ros2.org/crystal/api/rcl_action/action__client_8h.html#a5929e9b0b4b08e5c484fb94455e18d87
-    time.sleep(2)
+    # https://github.com/ros2/rclpy/issues/842
+    time.sleep(5)
 
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)

@@ -15,16 +15,29 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
+#include <webots/vehicle/Driver.hpp>
 
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  webots::Supervisor* robot = new webots::Supervisor();
-  auto node = std::make_shared<webots_ros2_driver::WebotsNode>(robot->getName(), robot);
+  webots::Supervisor* robot;
+
+  // Check if the robot can be a driver, if not create a simple Supervisor
+  if (webots::Driver::isInitialisationPossible())
+    robot = new webots::Driver();
+  else
+    robot = new webots::Supervisor();
+
+  std::string robotName = robot->getName();
+  for (char notAllowedChar : " -.)(")
+    std::replace(robotName.begin(), robotName.end(), notAllowedChar, '_');
+
+  std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
   node->init();
 
   rclcpp::spin(node);
+  delete robot;
   rclcpp::shutdown();
   return 0;
 }

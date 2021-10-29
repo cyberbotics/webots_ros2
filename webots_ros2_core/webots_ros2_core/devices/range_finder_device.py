@@ -31,6 +31,7 @@ class RangeFinderDevice(SensorDevice):
     - Publishes raw depth image of type `sensor_msgs/Image`
 
     Args:
+    ----
         node (WebotsNode): The ROS2 node.
         device_key (str): Unique identifier of the device used for configuration.
         wb_device (RangeFinder): Webots node of type RangeFinder.

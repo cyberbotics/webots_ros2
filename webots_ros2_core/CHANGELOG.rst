@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.0.4 (2021-xx-xx)
+1.0.4 (2021-01-08)
 ------------------
 * Improved performance of camera.
 * Replaced `tkinter` by a simple command line tools.

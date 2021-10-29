@@ -2,6 +2,13 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.2 (2021-09-13)
+------------------
+* Utilize webots_ros2_driver and ros2_control instead of webots_ros2_core
+* Add MoveIt2 example
+* Upgrade the multi-robot example
+* Remove non-useful simulations
+
 1.0.0 (2020-09-01)
 ------------------
 * Use the webots_ros2_core::webots_robotic_arm_node node

@@ -43,7 +43,7 @@ namespace webots_ros2_driver
     cameraInfoQos.transient_local();
     cameraInfoQos.keep_last(1);
     mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", cameraInfoQos);
-    mCameraInfoMessage.header.stamp = rclcpp::Clock().now();
+    mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = mRangeFinder->getHeight();
     mCameraInfoMessage.width = mRangeFinder->getWidth();
@@ -60,6 +60,11 @@ namespace webots_ros2_driver
         0.0, focalLength, (double)mRangeFinder->getHeight() / 2, 0.0,
         0.0, 0.0, 1.0, 0.0};
     mCameraInfoPublisher->publish(mCameraInfoMessage);
+
+    if (mAlwaysOn) {
+      mRangeFinder->enable(mPublishTimestepSyncedMs);
+      mIsEnabled = true;
+    }
   }
 
   void Ros2RangeFinder::step()
@@ -67,10 +72,14 @@ namespace webots_ros2_driver
     if (!preStep())
       return;
 
-    // Enable/Disable sensor
-    const bool imageSubscriptionsExist = mImagePublisher->get_subscription_count() > 0;
-    const bool shouldBeEnabled = mAlwaysOn || imageSubscriptionsExist;
+    if (mIsEnabled)
+      publishImage();
 
+    if (mAlwaysOn)
+      return;
+
+    // Enable/Disable sensor
+    const bool shouldBeEnabled = mImagePublisher->get_subscription_count() > 0;
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
@@ -79,10 +88,6 @@ namespace webots_ros2_driver
         mRangeFinder->disable();
       mIsEnabled = shouldBeEnabled;
     }
-
-    // Publish data
-    if (mAlwaysOn || imageSubscriptionsExist)
-      publishImage();
   }
 
   void Ros2RangeFinder::publishImage()
@@ -90,7 +95,7 @@ namespace webots_ros2_driver
     auto image = mRangeFinder->getRangeImage();
     if (image)
     {
-      mImageMessage.header.stamp = rclcpp::Clock().now();
+      mImageMessage.header.stamp = mNode->get_clock()->now();
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
       mImagePublisher->publish(mImageMessage);
     }

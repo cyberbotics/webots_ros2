@@ -46,6 +46,9 @@ namespace webots_ros2_control
       joint.controlPosition = false;
       joint.controlVelocity = false;
       joint.controlEffort = false;
+      joint.positionCommand = NAN;
+      joint.velocityCommand = NAN;
+      joint.effortCommand = NAN;
       for (hardware_interface::InterfaceInfo commandInterface : component.command_interfaces)
       {
         if (commandInterface.name == "position")
@@ -54,7 +57,10 @@ namespace webots_ros2_control
         {
           joint.controlVelocity = true;
           if (joint.motor)
+          {
             joint.motor->setPosition(INFINITY);
+            joint.motor->setVelocity(0.0);
+          }
         }
         else if (commandInterface.name == "effort")
           joint.controlEffort = true;
@@ -131,11 +137,11 @@ namespace webots_ros2_control
     {
       if (joint.motor)
       {
-        if (joint.controlPosition)
+        if (joint.controlPosition && !std::isnan(joint.positionCommand))
           joint.motor->setPosition(joint.positionCommand);
-        if (joint.controlVelocity)
+        if (joint.controlVelocity && !std::isnan(joint.velocityCommand))
           joint.motor->setVelocity(joint.velocityCommand);
-        if (joint.controlEffort)
+        if (joint.controlEffort && !std::isnan(joint.effortCommand))
           joint.motor->setTorque(joint.effortCommand);
       }
     }

@@ -40,7 +40,7 @@ namespace webots_ros2_driver
     cameraInfoQos.transient_local();
     cameraInfoQos.keep_last(1);
     mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", cameraInfoQos);
-    mCameraInfoMessage.header.stamp = rclcpp::Clock().now();
+    mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = mCamera->getHeight();
     mCameraInfoMessage.width = mCamera->getWidth();
@@ -61,14 +61,14 @@ namespace webots_ros2_driver
     // Recognition publisher
     if (mCamera->hasRecognition())
     {
-      mRecogntionPublisher = mNode->create_publisher<vision_msgs::msg::Detection2DArray>(
+      mRecognitionPublisher = mNode->create_publisher<vision_msgs::msg::Detection2DArray>(
           mTopicName + "/recognitions",
           rclcpp::SensorDataQoS().reliable());
       mWebotsRecognitionPublisher = mNode->create_publisher<
           webots_ros2_msgs::msg::WbCameraRecognitionObjects>(
           mTopicName + "/recognitions/webots",
           rclcpp::SensorDataQoS().reliable());
-      mRecogntionMessage.header.frame_id = mFrameName;
+      mRecognitionMessage.header.frame_id = mFrameName;
       mWebotsRecognitionMessage.header.frame_id = mFrameName;
     }
   }
@@ -81,7 +81,7 @@ namespace webots_ros2_driver
     // Enable/Disable sensor
     const bool imageSubscriptionsExist = mImagePublisher->get_subscription_count() > 0;
     const bool recognitionSubscriptionsExist =
-        (mRecogntionPublisher != nullptr && mRecogntionPublisher->get_subscription_count() > 0) ||
+        (mRecognitionPublisher != nullptr && mRecognitionPublisher->get_subscription_count() > 0) ||
         (mWebotsRecognitionPublisher != nullptr && mWebotsRecognitionPublisher->get_subscription_count() > 0);
     const bool shouldBeEnabled = mAlwaysOn || imageSubscriptionsExist || recognitionSubscriptionsExist;
 
@@ -106,7 +106,7 @@ namespace webots_ros2_driver
     auto image = mCamera->getImage();
     if (image)
     {
-      mImageMessage.header.stamp = rclcpp::Clock().now();
+      mImageMessage.header.stamp = mNode->get_clock()->now();
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
       mImagePublisher->publish(mImageMessage);
     }
@@ -118,8 +118,8 @@ namespace webots_ros2_driver
       return;
 
     auto objects = mCamera->getRecognitionObjects();
-    mRecogntionMessage.header.stamp = rclcpp::Clock().now();
-    mWebotsRecognitionMessage.header.stamp = rclcpp::Clock().now();
+    mRecognitionMessage.header.stamp = mNode->get_clock()->now();
+    mWebotsRecognitionMessage.header.stamp = mNode->get_clock()->now();
 
     for (size_t i = 0; i < mCamera->getRecognitionNumberOfObjects(); i++)
     {
@@ -134,7 +134,6 @@ namespace webots_ros2_driver
       // Object Info -> Detection2D
       vision_msgs::msg::Detection2D detection;
       vision_msgs::msg::ObjectHypothesisWithPose hypothesis;
-      hypothesis.id = std::string(objects[i].model);
       hypothesis.pose.pose.position = position;
       hypothesis.pose.pose.orientation = orientation;
       detection.results.push_back(hypothesis);
@@ -142,7 +141,7 @@ namespace webots_ros2_driver
       detection.bbox.center.y = objects[i].position_on_image[1];
       detection.bbox.size_x = objects[i].size_on_image[0];
       detection.bbox.size_y = objects[i].size_on_image[1];
-      mRecogntionMessage.detections.push_back(detection);
+      mRecognitionMessage.detections.push_back(detection);
 
       // Object Info -> WbCameraRecognitionObject
       webots_ros2_msgs::msg::WbCameraRecognitionObject recognitionWebotsObject;
@@ -165,6 +164,6 @@ namespace webots_ros2_driver
       mWebotsRecognitionMessage.objects.push_back(recognitionWebotsObject);
     }
     mWebotsRecognitionPublisher->publish(mWebotsRecognitionMessage);
-    mRecogntionPublisher->publish(mRecogntionMessage);
+    mRecognitionPublisher->publish(mRecognitionMessage);
   }
 }

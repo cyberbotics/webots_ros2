@@ -22,7 +22,8 @@ namespace webots_ros2_driver
   void Ros2Lidar::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
   {
     Ros2SensorPlugin::init(node, parameters);
-    mIsEnabled = false;
+    mIsSensorEnabled = false;
+    mIsPointCloudEnabled = false;
     mLidar = mNode->robot()->getLidar(parameters["name"]);
 
     assert(mLidar != NULL);
@@ -33,9 +34,9 @@ namespace webots_ros2_driver
       mLaserPublisher = mNode->create_publisher<sensor_msgs::msg::LaserScan>(mTopicName, rclcpp::SensorDataQoS().reliable());
       const int resolution = mLidar->getHorizontalResolution();
       mLaserMessage.header.frame_id = mFrameName + "_rotated";
-      mLaserMessage.angle_min = -mLidar->getFov() / 2.0;
-      mLaserMessage.angle_max = mLidar->getFov() / 2.0;
       mLaserMessage.angle_increment = mLidar->getFov() / resolution;
+      mLaserMessage.angle_min = -mLidar->getFov() / 2.0;
+      mLaserMessage.angle_max = mLidar->getFov() / 2.0 - mLaserMessage.angle_increment;
       mLaserMessage.time_increment = (double)mLidar->getSamplingPeriod() / (1000.0 * resolution);
       mLaserMessage.scan_time = (double)mLidar->getSamplingPeriod() / 1000.0;
       mLaserMessage.range_min = mLidar->getMinRange();
@@ -73,6 +74,13 @@ namespace webots_ros2_driver
     mPointCloudMessage.fields[2].count = 1;
     mPointCloudMessage.fields[2].offset = 8;
     mPointCloudMessage.is_bigendian = false;
+
+    if (mAlwaysOn) {
+      mLidar->enable(mPublishTimestepSyncedMs);
+      mLidar->enablePointCloud();
+      mIsSensorEnabled = true;
+      mIsPointCloudEnabled = true;
+    }
   }
 
   void Ros2Lidar::step()
@@ -80,30 +88,38 @@ namespace webots_ros2_driver
     if (!preStep())
       return;
 
-    // Enable/Disable sensor
-    const bool shouldBeEnabled = mAlwaysOn ||
-                                 mPointCloudPublisher->get_subscription_count() > 0 ||
+    if (mIsSensorEnabled && mLaserPublisher != nullptr)
+      publishLaserScan();
+
+    if (mIsPointCloudEnabled)
+      publishPointCloud();
+
+    if (mAlwaysOn)
+      return;
+    
+    const bool shouldPointCloudBeEnabled = mPointCloudPublisher->get_subscription_count() > 0;
+    const bool shouldSensorBeEnabled = shouldPointCloudBeEnabled ||
                                  (mLaserPublisher != nullptr && mLaserPublisher->get_subscription_count() > 0);
 
-    if (shouldBeEnabled != mIsEnabled)
+    // Enable/Disable sensor
+    if (shouldSensorBeEnabled != mIsSensorEnabled)
     {
-      if (shouldBeEnabled)
+      if (shouldSensorBeEnabled)
         mLidar->enable(mPublishTimestepSyncedMs);
       else
         mLidar->disable();
-      mIsEnabled = shouldBeEnabled;
+      mIsSensorEnabled = shouldSensorBeEnabled;
     }
 
-    // Publish data
-    if (mLaserPublisher != nullptr && (mLaserPublisher->get_subscription_count() > 0 || mAlwaysOn))
-      publishLaserScan();
-    if (mPointCloudPublisher->get_subscription_count() > 0 || mAlwaysOn)
+    // Enable/Disable point cloud
+    if (shouldPointCloudBeEnabled != mIsPointCloudEnabled)
     {
-      mLidar->enablePointCloud();
-      publishPointCloud();
+      if (shouldPointCloudBeEnabled)
+        mLidar->enablePointCloud();
+      else
+        mLidar->disablePointCloud();
+      mIsPointCloudEnabled = shouldPointCloudBeEnabled;
     }
-    else
-      mLidar->disablePointCloud();
   }
 
   void Ros2Lidar::publishPointCloud()
@@ -111,7 +127,7 @@ namespace webots_ros2_driver
     auto data = mLidar->getPointCloud();
     if (data)
     {
-      mPointCloudMessage.header.stamp = rclcpp::Clock().now();
+      mPointCloudMessage.header.stamp = mNode->get_clock()->now();
 
       mPointCloudMessage.width = mLidar->getNumberOfPoints();
       mPointCloudMessage.row_step = 20 * mLidar->getNumberOfPoints();
@@ -129,7 +145,7 @@ namespace webots_ros2_driver
     if (rangeImage)
     {
       memcpy(mLaserMessage.ranges.data(), rangeImage, mLaserMessage.ranges.size() * sizeof(float));
-      mLaserMessage.header.stamp = rclcpp::Clock().now();
+      mLaserMessage.header.stamp = mNode->get_clock()->now();
       mLaserPublisher->publish(mLaserMessage);
     }
   }

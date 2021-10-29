@@ -2,6 +2,6 @@
 Changelog for package webots_ros2_mavic
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.1.0 (2021-xx-xx)
+1.1.0 (2021-07-19)
 ------------------
 * Initial version

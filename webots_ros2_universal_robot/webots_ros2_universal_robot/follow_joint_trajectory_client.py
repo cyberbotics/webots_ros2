@@ -57,7 +57,8 @@ class FollowJointTrajectoryClient(Node):
 
     def send_goal(self, trajectory, iteration=1):
         self.get_logger().info('Waiting for action server...')
-        self.__client.wait_for_server()
+        if not self.__client.wait_for_server():
+            self.get_logger().info('Waiting for action server failed !!!')
 
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1

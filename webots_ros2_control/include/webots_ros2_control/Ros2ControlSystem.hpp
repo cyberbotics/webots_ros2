@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#if FOXY == 1 || (ROS_DISTRO == 1 && ROS_REPO == 1)
+#if FOXY || (ROLLING && MAIN)
   #include "hardware_interface/base_interface.hpp"
   #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #endif

@@ -23,6 +23,11 @@
         </plugin>
 
         <plugin type="webots_ros2_control::Ros2Control" />
+
+        <!-- type="package_name.file_name.class_name" -->
+        <plugin type="webots_ros2_turtlebot.plugin_example.PluginExample">
+            <parameterExample>someValue</parameterExample>
+        </plugin>
     </webots>
 
     <ros2_control name="WebotsControl" type="system">

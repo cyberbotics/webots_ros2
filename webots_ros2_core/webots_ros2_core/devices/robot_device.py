@@ -34,6 +34,7 @@ class RobotDevice(Device):
     - Updates `robot_description` parameter of `robot_state_publisher` node based on obtained URDF.
 
     Args:
+    ----
         node (WebotsNode): The ROS2 node.
         device_key (str): Unique identifier of the device used for configuration.
         wb_device (Robot): Webots node of type Robot.

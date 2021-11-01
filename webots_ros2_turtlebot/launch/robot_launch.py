@@ -25,7 +25,7 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_core.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher
 
 
 def generate_launch_description():
@@ -33,25 +33,31 @@ def generate_launch_description():
     world = LaunchConfiguration('world')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
+    # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
+    sleep_time = 60 if 'CI' in os.environ else 10
+    controller_manager_timeout = ['--controller-manager-timeout', '50'] if os.name == 'nt' else []
+    controller_manager_prefix = 'python.exe' if os.name == 'nt' else f"bash -c 'sleep {sleep_time}; $0 $@' "
+
     diffdrive_controller_spawner = Node(
         package='controller_manager',
         executable='spawner.py',
         output='screen',
-        prefix="bash -c 'sleep 10; $0 $@' ",
-        arguments=['diffdrive_controller'],
+        prefix=controller_manager_prefix,
+        arguments=['diffdrive_controller'] + controller_manager_timeout,
     )
 
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner.py',
         output='screen',
-        prefix="bash -c 'sleep 10; $0 $@' ",
-        arguments=['joint_state_broadcaster'],
+        prefix=controller_manager_prefix,
+        arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
 
     turtlebot_driver = Node(
@@ -59,7 +65,8 @@ def generate_launch_description():
         executable='driver',
         output='screen',
         parameters=[
-            {'robot_description': robot_description},
+            {'robot_description': robot_description,
+             'use_sim_time': use_sim_time},
             ros2_control_params
         ],
         remappings=[

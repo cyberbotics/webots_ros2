@@ -156,10 +156,13 @@ namespace webots_ros2_control
 
   hardware_interface::return_type Ros2ControlSystem::write()
   {
+    std::cout << " write \n";
     for (Joint &joint : mJoints)
     {
+      std::cout << " for joint \n";
       if (joint.motor)
       {
+        std::cout << " joint.motor \n";
         if (joint.controlPosition && !std::isnan(joint.positionCommand))
           joint.motor->setPosition(joint.positionCommand);
         if (joint.controlVelocity && !std::isnan(joint.velocityCommand))

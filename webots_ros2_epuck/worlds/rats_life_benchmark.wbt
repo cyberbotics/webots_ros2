@@ -1,4 +1,4 @@
-#VRML_SIM R2021c utf8
+#VRML_SIM R2022a utf8
 WorldInfo {
   info [
     "Rat's life pattern"
@@ -7,8 +7,8 @@ WorldInfo {
 }
 DEF VIEWPOINT Viewpoint {
   fieldOfView 0.755398
-  orientation 0 1 0 0
-  position 0.04888615968422466 -0.06513819475041821 2.315488551212319
+  orientation -0.5151418009877768 0.5155521856288982 0.6847151734614443 1.9400623840497306
+  position 0.04961631272573755 -0.5354218311467018 1.7212144058911614
   near 0.01
 }
 TexturedBackground {
@@ -341,22 +341,21 @@ DEF I000 LegoTallInterval {
   textureUrl []
 }
 Floor {
-  rotation 1 0 0 1.571
   size 0.8 0.8
   appearance Parquetry {
     type "light strip"
   }
 }
-E-puck_enu {
+E-puck {
   translation 0 -0.05 0.0066
   rotation 0 0 1 3.14159
   controller "<extern>"
   version "2"
   camera_width 640
   camera_height 480
+  distance_sensor_numberOfRays 7
   turretSlot [
     Pi-puck {
     }
   ]
-  distance_sensor_numberOfRays 7
 }

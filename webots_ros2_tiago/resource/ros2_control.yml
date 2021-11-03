@@ -1,0 +1,35 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50.0
+
+    diffdrive_controller:
+      type: diff_drive_controller/DiffDriveController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+diffdrive_controller:
+  ros__parameters:
+    left_wheel_names: ["wheel_left_joint"]
+    right_wheel_names: ["wheel_right_joint"]
+
+    wheel_separation: 0.5
+    wheel_radius: 0.12
+
+    publish_rate: 50.0
+    use_stamped_vel: false
+
+joint_state_broadcaster:
+  ros__parameters:
+    extra_joints:
+      - CASTER_WHEEL_FRONT_LEFT_JOINT
+      - CASTER_WHEEL_FRONT_RIGHT_JOINT
+      - CASTER_WHEEL_BACK_LEFT_JOINT
+      - CASTER_WHEEL_BACK_RIGHT_JOINT
+      - SMALL_WHEEL_JOINT
+      - SMALL_WHEEL_JOINT_0
+      - SMALL_WHEEL_JOINT_1
+      - SMALL_WHEEL_JOINT_2
+      - head_1_joint
+      - head_2_joint
+      - torso_lift_joint

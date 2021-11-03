@@ -10,11 +10,12 @@ jobs:
       fail-fast: false
       matrix:
         ROS_REPO: [main, testing]
-        ROS_DISTRO: [foxy, rolling]
+        ROS_DISTRO: [foxy, galactic, rolling]
     runs-on: ubuntu-latest
     env:
-      AFTER_INIT: ./scripts/ci_before_init.bash
-      BEFORE_INIT_EMBED: source scripts/ci_environment.bash
+      AFTER_INIT: ./scripts/ci_after_init.bash ${ROS_DISTRO} ${ROS_REPO}
+      BEFORE_INIT_EMBED: source scripts/ci_before_init_embed.bash
+      DOCKER_RUN_OPTS: -v /artifacts:/tmp/artifacts
     steps:
       - uses: actions/checkout@v1
         with:
@@ -23,3 +24,10 @@ jobs:
         env: 
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}
+      - name: Upload Artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: generic_artifacts_${{matrix.ROS_REPO}}_${{matrix.ROS_DISTRO}}
+          path: /artifacts
+          retention-days: 5

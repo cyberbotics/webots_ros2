@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<robot name="Tesla Webots">
+    <webots>
+        <plugin type="webots_ros2_tesla.tesla_driver.TeslaDriver" />
+    </webots>
+</robot>

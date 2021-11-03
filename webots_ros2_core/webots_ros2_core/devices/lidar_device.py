@@ -32,6 +32,7 @@ class LidarDevice(SensorDevice):
     - Publishes range measurements of type `sensor_msgs/PointCloud2` if 3D Lidar is present
 
     Args:
+    ----
         node (WebotsNode): The ROS2 node.
         device_key (str): Unique identifier of the device used for configuration.
         wb_device (Lidar): Webots node of type Lidar.

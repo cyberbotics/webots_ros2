@@ -1,0 +1,200 @@
+<?xml version="1.0" ?>
+<robot name="Epuck Webots">
+    <webots>
+        <device reference="ps0" type="DistanceSensor">
+            <ros>
+                <topicName>/ps0</topicName>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps1" type="DistanceSensor">
+            <ros>
+                <topicName>/ps1</topicName>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps2" type="DistanceSensor">
+            <ros>
+                <topicName>/ps2</topicName>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps3" type="DistanceSensor">
+            <ros>
+                <topicName>/ps3</topicName>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps4" type="DistanceSensor">
+            <ros>
+                <topicName>/ps4</topicName>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps5" type="DistanceSensor">
+            <ros>
+                <topicName>/ps5</topicName>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps6" type="DistanceSensor">
+            <ros>
+                <topicName>/ps6</topicName>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+        <device reference="ps7" type="DistanceSensor">
+            <ros>
+                <topicName>/ps7</topicName>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+
+        <device reference="tof" type="DistanceSensor">
+            <ros>
+                <topicName>/tof</topicName>
+                <enabled>true</enabled>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+
+        <device reference="camera" type="Camera">
+            <ros>
+                <topicName>/camera</topicName>
+            </ros>
+        </device>
+
+        <device reference="pi-puck led 0" type="LED">
+            <ros>
+                <topicName>/pi_puck_led_0</topicName>
+            </ros>
+        </device>
+        <device reference="pi-puck led 1" type="Display">
+            <ros>
+                <topicName>/pi_puck_led_1</topicName>
+            </ros>
+        </device>
+        <device reference="pi-puck led 2" type="LightSensor">
+            <ros>
+                <topicName>/pi_puck_led_2</topicName>
+            </ros>
+        </device>
+
+        <device reference="led0" type="LED">
+            <ros>
+                <topicName>/led0</topicName>
+            </ros>
+        </device>
+        <device reference="led1" type="LED">
+            <ros>
+                <topicName>/led1</topicName>
+            </ros>
+        </device>
+        <device reference="led2" type="LED">
+            <ros>
+                <topicName>/led2</topicName>
+            </ros>
+        </device>
+        <device reference="led3" type="LED">
+            <ros>
+                <topicName>/led3</topicName>
+            </ros>
+        </device>
+        <device reference="led4" type="LED">
+            <ros>
+                <topicName>/led4</topicName>
+            </ros>
+        </device>
+        <device reference="led5" type="LED">
+            <ros>
+                <topicName>/led5</topicName>
+            </ros>
+        </device>
+        <device reference="led6" type="LED">
+            <ros>
+                <topicName>/led6</topicName>
+            </ros>
+        </device>
+        <device reference="led7" type="LED">
+            <ros>
+                <topicName>/led7</topicName>
+            </ros>
+        </device>
+        <device reference="led8" type="LED">
+            <ros>
+                <topicName>/led8</topicName>
+            </ros>
+        </device>
+        <device reference="led9" type="LED">
+            <ros>
+                <topicName>/led9</topicName>
+            </ros>
+        </device>
+
+        <device reference="ls0" type="LightSensor">
+            <ros>
+                <topicName>/ls0</topicName>
+            </ros>
+        </device>
+        <device reference="ls1" type="LightSensor">
+            <ros>
+                <topicName>/ls1</topicName>
+            </ros>
+        </device>
+        <device reference="ls2" type="LightSensor">
+            <ros>
+                <topicName>/ls2</topicName>
+            </ros>
+        </device>
+        <device reference="ls3" type="LightSensor">
+            <ros>
+                <topicName>/ls3</topicName>
+            </ros>
+        </device>
+        <device reference="ls4" type="LightSensor">
+            <ros>
+                <topicName>/ls4</topicName>
+            </ros>
+        </device>
+        <device reference="ls5" type="LightSensor">
+            <ros>
+                <topicName>/ls5</topicName>
+            </ros>
+        </device>
+        <device reference="ls6" type="LightSensor">
+            <ros>
+                <topicName>/ls6</topicName>
+            </ros>
+        </device>
+        <device reference="ls7" type="LightSensor">
+            <ros>
+                <topicName>/ls7</topicName>
+            </ros>
+        </device>
+
+
+        <plugin type="webots_ros2_control::Ros2Control" />
+    </webots>
+
+    <ros2_control name="WebotsControl" type="system">
+        <hardware>
+            <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
+        </hardware>
+        <joint name="right wheel motor">
+            <state_interface name="position"/>
+            <command_interface name="velocity"/>
+        </joint>
+        <joint name="left wheel motor">
+            <state_interface name="position"/>
+            <command_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+</robot>

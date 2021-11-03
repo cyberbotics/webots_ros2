@@ -17,27 +17,31 @@
 """Launch Webots Mavic 2 Pro driver."""
 
 import os
+import pathlib
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
+from webots_ros2_driver.webots_launcher import WebotsLauncher
 
 
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_mavic')
     world = LaunchConfiguration('world')
+    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'mavic_webots.urdf')).read_text()
 
-    webots = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
-        ),
-        launch_arguments=[
-            ('package', 'webots_ros2_mavic'),
-            ('executable', 'mavic_driver'),
-            ('world', PathJoinSubstitution([package_dir, 'worlds', world])),
+    webots = WebotsLauncher(
+        world=PathJoinSubstitution([package_dir, 'worlds', world])
+    )
+
+    mavic_driver = Node(
+        package='webots_ros2_driver',
+        executable='driver',
+        output='screen',
+        parameters=[
+            {'robot_description': robot_description},
         ]
     )
 
@@ -47,5 +51,6 @@ def generate_launch_description():
             default_value='mavic_world.wbt',
             description='Choose one of the world files from `/webots_ros2_mavic/worlds` directory'
         ),
-        webots
+        webots,
+        mavic_driver
     ])

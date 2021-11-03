@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#if FOXY || (ROLLING && MAIN)
+#if FOXY
   #include "hardware_interface/base_interface.hpp"
   #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #endif
@@ -34,7 +34,7 @@
 
 namespace webots_ros2_control
 {
-  #if FOXY || (ROLLING && MAIN)
+  #if FOXY
     class Ros2ControlSystemInterface : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
     {
     public:

@@ -20,7 +20,7 @@
 #include <vector>
 #include <thread>
 
-#if FOXY || (ROLLING && MAIN)
+#if FOXY
   #include "hardware_interface/base_interface.hpp"
   #include "hardware_interface/types/hardware_interface_status_values.hpp"
 #endif

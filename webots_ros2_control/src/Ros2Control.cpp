@@ -33,7 +33,7 @@ namespace webots_ros2_control
   void Ros2Control::step()
   {
     mControllerManager->read();
-    #if FOXY || (ROLLING && MAIN)
+    #if FOXY
       mControllerManager->update();
     #else
       rclcpp::Duration dt = rclcpp::Duration::from_nanoseconds(RCL_MS_TO_NS(mNode->robot()->getBasicTimeStep()));
@@ -77,7 +77,7 @@ namespace webots_ros2_control
       auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
           mHardwareLoader->createUnmanagedInstance(hardwareType));
       webotsSystem->init(mNode, controlHardware[i]);
-      #if FOXY || (ROLLING && MAIN)
+      #if FOXY
         resourceManager->import_component(std::move(webotsSystem));
       #else
         resourceManager->import_component(std::move(webotsSystem), controlHardware[i]);

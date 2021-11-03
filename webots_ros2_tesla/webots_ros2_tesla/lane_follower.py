@@ -14,12 +14,13 @@
 
 """ROS2 Tesla driver."""
 
+import os
 import cv2
 import numpy as np
 import rclpy
 from sensor_msgs.msg import Image
 from ackermann_msgs.msg import AckermannDrive
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import qos_profile_sensor_data, QoSReliabilityPolicy
 from rclpy.node import Node
 
 
@@ -32,7 +33,12 @@ class LaneFollower(Node):
 
         # ROS interface
         self.__ackermann_publisher = self.create_publisher(AckermannDrive, 'cmd_ackermann', 1)
-        self.create_subscription(Image, 'camera/image_raw', self.__on_camera_image, qos_profile_sensor_data)
+
+        qos_camera_data = qos_profile_sensor_data
+        # In case ROS_DISTRO is Rolling the QoSReliabilityPolicy is strict.
+        if ('ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] == 'rolling' or os.environ['ROS_DISTRO'] == 'galactic')):
+            qos_camera_data.reliability = QoSReliabilityPolicy.RELIABLE
+        self.create_subscription(Image, 'vehicle/camera', self.__on_camera_image, qos_camera_data)
 
     def __on_camera_image(self, message):
         img = message.data
@@ -40,6 +46,7 @@ class LaneFollower(Node):
         img = img[380:420, :]
 
         # Segment the image by color in HSV color space
+        img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
         mask = cv2.inRange(img, np.array([50, 110, 150]), np.array([120, 255, 255]))
 

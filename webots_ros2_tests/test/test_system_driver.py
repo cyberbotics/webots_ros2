@@ -25,7 +25,7 @@ import pytest
 import rclpy
 from std_srvs.srv import Trigger
 from sensor_msgs.msg import Range, Image, Imu, Illuminance
-from std_msgs.msg import ColorRGBA, Float32
+from std_msgs.msg import Int32, Float32
 from geometry_msgs.msg import PointStamped
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -33,11 +33,13 @@ import launch
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
-from webots_ros2_tests.utils import TestWebots
+from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 
 @pytest.mark.rostest
 def generate_test_description():
+    initialize_webots_test()
+
     package_dir = get_package_share_directory('webots_ros2_tests')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'driver_test.urdf')).read_text()
 
@@ -102,7 +104,7 @@ class TestDriver(TestWebots):
 
     def testPythonPluginService(self):
         client = self.__node.create_client(Trigger, 'move_forward')
-        if not client.wait_for_service(timeout_sec=1.0):
+        if not client.wait_for_service(timeout_sec=10.0):
             self.assertTrue(False, 'The plugin service is not found')
         request = Trigger.Request()
         response_future = client.call_async(request)
@@ -117,7 +119,7 @@ class TestDriver(TestWebots):
         self.assertEqual(response.success, True)
 
     def testLED(self):
-        publisher = self.__node.create_publisher(ColorRGBA, '/Pioneer_3_AT/led', 1)
+        publisher = self.__node.create_publisher(Int32, '/Pioneer_3_AT/led', 1)
         check_start_time = time.time()
         while publisher.get_subscription_count() == 0:
             rclpy.spin_once(self.__node, timeout_sec=0.1)

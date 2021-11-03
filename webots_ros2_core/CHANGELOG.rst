@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.2 (2021-11-03)
+------------------
+* This package is now deprecated.
+
 1.0.4 (2021-01-08)
 ------------------
 * Improved performance of camera.

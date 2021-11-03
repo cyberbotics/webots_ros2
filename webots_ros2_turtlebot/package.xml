@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2_turtlebot</name>
-  <version>1.1.1</version>
+  <version>1.1.2</version>
   <description>TurtleBot3 Burger robot ROS2 interface for Webots.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -17,6 +17,9 @@
   <exec_depend>webots_ros2_control</exec_depend>
   <exec_depend>diff_drive_controller</exec_depend>
   <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

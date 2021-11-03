@@ -16,29 +16,20 @@
 
 import rclpy
 from ackermann_msgs.msg import AckermannDrive
-from webots_ros2_core.webots_node import WebotsNode
-from webots_ros2_core.webots.vehicle import Driver
 
 
-class TeslaDriver(WebotsNode):
-    def __init__(self, args):
-        super().__init__('tesla_driver', args, controller_class=Driver)
-        self.start_device_manager()
+class TeslaDriver:
+    def init(self, webots_node, properties):
+        self.__robot = webots_node.robot
 
         # ROS interface
-        self.create_subscription(AckermannDrive, 'cmd_ackermann', self.__cmd_ackermann_callback, 1)
+        rclpy.init(args=None)
+        self.__node = rclpy.create_node('tesla_node')
+        self.__node.create_subscription(AckermannDrive, 'cmd_ackermann', self.__cmd_ackermann_callback, 1)
 
     def __cmd_ackermann_callback(self, message):
-        self.robot.setCruisingSpeed(message.speed)
-        self.robot.setSteeringAngle(message.steering_angle)
+        self.__robot.setCruisingSpeed(message.speed)
+        self.__robot.setSteeringAngle(message.steering_angle)
 
-
-def main(args=None):
-    rclpy.init(args=args)
-    driver = TeslaDriver(args=args)
-    rclpy.spin(driver)
-    rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()
+    def step(self):
+        rclpy.spin_once(self.__node, timeout_sec=0)

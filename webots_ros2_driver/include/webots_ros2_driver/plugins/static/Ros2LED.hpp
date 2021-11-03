@@ -16,7 +16,7 @@
 #define ROS2_LED_HPP
 
 #include <unordered_map>
-#include <std_msgs/msg/u_int32.hpp>
+#include <std_msgs/msg/int32.hpp>
 #include <webots/LED.hpp>
 #include <webots_ros2_driver/utils/Utils.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
@@ -32,11 +32,11 @@ namespace webots_ros2_driver
     void step() override;
 
   private:
-    void onMessageReceived(const std_msgs::msg::UInt32::SharedPtr message);
+    void onMessageReceived(const std_msgs::msg::Int32::SharedPtr message);
 
     webots::LED *mLED;
     webots_ros2_driver::WebotsNode *mNode;
-    rclcpp::Subscription<std_msgs::msg::UInt32>::SharedPtr mSubscriber;
+    rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr mSubscriber;
   };
 
 }

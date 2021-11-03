@@ -119,7 +119,7 @@ class TestDriver(TestWebots):
         self.assertEqual(response.success, True)
 
     def testLED(self):
-        publisher = self.__node.create_publisher(ColorRGBA, '/Pioneer_3_AT/led', 1)
+        publisher = self.__node.create_publisher(Uint32, '/Pioneer_3_AT/led', 1)
         check_start_time = time.time()
         while publisher.get_subscription_count() == 0:
             rclpy.spin_once(self.__node, timeout_sec=0.1)

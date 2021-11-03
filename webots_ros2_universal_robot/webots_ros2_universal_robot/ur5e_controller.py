@@ -31,11 +31,7 @@ GOAL = {
     ],
     'points': [
         {
-<<<<<<< HEAD
-            'positions': [0.0, 0.0, 0.0, 0., 0.0495, 0.0495, 0.0495],
-=======
             'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
->>>>>>> origin/master
             'time_from_start': {'sec': 0, 'nanosec': 0}
         },
         {
@@ -73,14 +69,11 @@ GOAL = {
 def main(args=None):
     rclpy.init(args=args)
     controller = FollowJointTrajectoryClient('ur5e_controller', '/ur5e/ur_joint_trajectory_controller/follow_joint_trajectory')
-<<<<<<< HEAD
-=======
 
     # Need to be sur that trajectory_controller is ready (only for slow machines).
     # https://github.com/ros2/rclpy/issues/842
     time.sleep(5)
 
->>>>>>> origin/master
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)
 

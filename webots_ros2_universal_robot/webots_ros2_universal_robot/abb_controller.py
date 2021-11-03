@@ -31,11 +31,7 @@ GOAL = {
     ],
     'points': [
         {
-<<<<<<< HEAD
-            'positions': [0.0, 0.0, 0.0, 0., 0.0495, 0.0495, 0.0495],
-=======
             'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
->>>>>>> origin/master
             'time_from_start': {'sec': 0, 'nanosec': 0}
         },
         {
@@ -55,19 +51,11 @@ GOAL = {
             'time_from_start': {'sec': 4, 'nanosec': 0}
         },
         {
-<<<<<<< HEAD
-            'positions': [1.57, -0.1, 0.95, -0.71, 0.85, 0.85, 0.6],
-            'time_from_start': {'sec': 5, 'nanosec': 0}
-        },
-        {
-            'positions': [1.57, -0.1, 0.8, -0.81, 0.0495, 0.0495, 0.0495],
-=======
             'positions': [1.57, -0.05, 0.90, -0.71, 0.85, 0.85, 0.6],
             'time_from_start': {'sec': 5, 'nanosec': 0}
         },
         {
             'positions': [1.57, -0.05, 0.75, -0.81, 0.0495, 0.0495, 0.0495],
->>>>>>> origin/master
             'time_from_start': {'sec': 6, 'nanosec': 0}
         },
         {
@@ -85,14 +73,11 @@ GOAL = {
 def main(args=None):
     rclpy.init(args=args)
     controller = FollowJointTrajectoryClient('abb_controller', '/abb/abb_joint_trajectory_controller/follow_joint_trajectory')
-<<<<<<< HEAD
-=======
 
     # Need to be sur that trajectory_controller is ready (only for slow machines).
     # https://github.com/ros2/rclpy/issues/842
     time.sleep(5)
 
->>>>>>> origin/master
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)
 

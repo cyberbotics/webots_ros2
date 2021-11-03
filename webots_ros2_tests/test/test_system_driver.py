@@ -25,7 +25,7 @@ import pytest
 import rclpy
 from std_srvs.srv import Trigger
 from sensor_msgs.msg import Range, Image, Imu, Illuminance
-from std_msgs.msg import ColorRGBA, Float32
+from std_msgs.msg import Int32, Float32
 from geometry_msgs.msg import PointStamped
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -119,7 +119,7 @@ class TestDriver(TestWebots):
         self.assertEqual(response.success, True)
 
     def testLED(self):
-        publisher = self.__node.create_publisher(ColorRGBA, '/Pioneer_3_AT/led', 1)
+        publisher = self.__node.create_publisher(Int32, '/Pioneer_3_AT/led', 1)
         check_start_time = time.time()
         while publisher.get_subscription_count() == 0:
             rclpy.spin_once(self.__node, timeout_sec=0.1)

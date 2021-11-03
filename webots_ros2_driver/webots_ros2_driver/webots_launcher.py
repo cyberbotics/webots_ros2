@@ -31,13 +31,13 @@ class _ConditionalSubstitution(Substitution):
         self.__true_value = true_value if isinstance(true_value, Substitution) else TextSubstitution(text=true_value)
 
     def perform(self, context):
-        if context.perform_substitution(self.__condition).lower() in ['false', '0']:
+        if context.perform_substitution(self.__condition).lower() in ['false', '0', '']:
             return context.perform_substitution(self.__false_value)
         return context.perform_substitution(self.__true_value)
 
 
 class WebotsLauncher(ExecuteProcess):
-    def __init__(self, output='screen', world=None, gui=True, mode='realtime', **kwargs):
+    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
         # Find Webots executable
         webots_path = get_webots_home(show_warning=True)
         if webots_path is None:
@@ -58,6 +58,7 @@ class WebotsLauncher(ExecuteProcess):
             # Windows doesn't have the sandbox argument
             no_sandbox = ''
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
+        stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
 
         xvfb_run_prefix = []
         if 'WEBOTS_OFFSCREEN' in os.environ:
@@ -69,6 +70,7 @@ class WebotsLauncher(ExecuteProcess):
             output=output,
             cmd=xvfb_run_prefix + [
                 webots_path,
+                stream_argument,
                 no_rendering,
                 stdout,
                 stderr,
@@ -76,7 +78,7 @@ class WebotsLauncher(ExecuteProcess):
                 minimize,
                 world,
                 '--batch',
-                ['--mode=', mode]
+                ['--mode=', mode],
             ],
             **kwargs
         )

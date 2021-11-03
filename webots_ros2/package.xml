@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>webots_ros2</name>
-  <version>1.1.1</version>
+  <version>1.1.2</version>
   <description>Interface between Webots and ROS2</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -14,26 +14,23 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
-  <exec_depend>webots_ros2_abb</exec_depend>
+  <exec_depend>webots_ros2_control</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>
-  <exec_depend>webots_ros2_demos</exec_depend>
+  <exec_depend>webots_ros2_driver</exec_depend>
   <exec_depend>webots_ros2_epuck</exec_depend>
-  <exec_depend>webots_ros2_examples</exec_depend>
   <exec_depend>webots_ros2_importer</exec_depend>
   <exec_depend>webots_ros2_mavic</exec_depend>
   <exec_depend>webots_ros2_msgs</exec_depend>
   <exec_depend>webots_ros2_tesla</exec_depend>
   <exec_depend>webots_ros2_tiago</exec_depend>
   <exec_depend>webots_ros2_turtlebot</exec_depend>
-  <exec_depend>webots_ros2_tutorials</exec_depend>
   <exec_depend>webots_ros2_universal_robot</exec_depend>
 
-  <!-- These test dependencies are optional
-  Their purpose is to make sure that the code passes the linters -->
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
+  <test_depend>webots_ros2_tests</test_depend>
 
   <export>
     <build_type>ament_python</build_type>

@@ -33,11 +33,20 @@ import launch
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
+<<<<<<< HEAD
 from webots_ros2_tests.utils import TestWebots
+=======
+from webots_ros2_tests.utils import TestWebots, initialize_webots_test
+>>>>>>> origin/master
 
 
 @pytest.mark.rostest
 def generate_test_description():
+<<<<<<< HEAD
+=======
+    initialize_webots_test()
+
+>>>>>>> origin/master
     package_dir = get_package_share_directory('webots_ros2_tests')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'driver_test.urdf')).read_text()
 
@@ -102,7 +111,11 @@ class TestDriver(TestWebots):
 
     def testPythonPluginService(self):
         client = self.__node.create_client(Trigger, 'move_forward')
+<<<<<<< HEAD
         if not client.wait_for_service(timeout_sec=1.0):
+=======
+        if not client.wait_for_service(timeout_sec=10.0):
+>>>>>>> origin/master
             self.assertTrue(False, 'The plugin service is not found')
         request = Trigger.Request()
         response_future = client.call_async(request)

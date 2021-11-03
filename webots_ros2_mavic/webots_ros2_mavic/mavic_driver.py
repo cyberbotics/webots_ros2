@@ -17,7 +17,6 @@
 import math
 import rclpy
 from geometry_msgs.msg import Twist
-from webots_ros2_core.webots_node import WebotsNode
 
 
 K_VERTICAL_THRUST = 68.5    # with this thrust, the drone lifts.
@@ -36,27 +35,22 @@ def clamp(value, value_min, value_max):
     return min(max(value, value_min), value_max)
 
 
-class MavicDriver(WebotsNode):
-    def __init__(self, args):
-        super().__init__('mavic_driver', args)
-        self.start_device_manager({
-            'gyro': {'always_publish': True},
-            'inertial unit': {'always_publish': True},
-            'gps': {'always_publish': True}
-        })
+class MavicDriver:
+    def init(self, webots_node, properties):
+        self.__robot = webots_node.robot
+        self.__timestep = int(self.__robot.getBasicTimeStep())
 
         # Sensors
-        self.__gps = self.robot.getDevice('gps')
-        self.__gps.enable(self.timestep)
-        self.__gyro = self.robot.getDevice('gyro')
-        self.__imu = self.robot.getDevice('inertial unit')
+        self.__gps = self.__robot.getDevice('gps')
+        self.__gyro = self.__robot.getDevice('gyro')
+        self.__imu = self.__robot.getDevice('inertial unit')
 
         # Propellers
         self.__propellers = [
-            self.robot.getDevice('front right propeller'),
-            self.robot.getDevice('front left propeller'),
-            self.robot.getDevice('rear right propeller'),
-            self.robot.getDevice('rear left propeller')
+            self.__robot.getDevice('front right propeller'),
+            self.__robot.getDevice('front left propeller'),
+            self.__robot.getDevice('rear right propeller'),
+            self.__robot.getDevice('rear left propeller')
         ]
         for propeller in self.__propellers:
             propeller.setPosition(float('inf'))
@@ -69,16 +63,15 @@ class MavicDriver(WebotsNode):
         self.__linear_y_integral = 0
 
         # ROS interface
-        self.create_subscription(Twist, 'cmd_vel', self.__cmd_vel_callback, 1)
+        rclpy.init(args=None)
+        self.__node = rclpy.create_node('mavic_driver')
+        self.__node.create_subscription(Twist, 'cmd_vel', self.__cmd_vel_callback, 1)
 
     def __cmd_vel_callback(self, twist):
         self.__target_twist = twist
 
-    def log(self, *args):
-        self.get_logger().warn(' '.join([str(arg) for arg in args]))
-
-    def step(self, ms):
-        super().step(ms)
+    def step(self):
+        rclpy.spin_once(self.__node, timeout_sec=0)
 
         roll_ref = 0
         pitch_ref = 0
@@ -86,7 +79,7 @@ class MavicDriver(WebotsNode):
         # Read sensors
         roll, pitch, _ = self.__imu.getRollPitchYaw()
         _, _, vertical = self.__gps.getValues()
-        roll_acceleration, pitch_acceleraiton, twist_yaw = self.__gyro.getValues()
+        roll_acceleration, pitch_acceleration, twist_yaw = self.__gyro.getValues()
         velocity = self.__gps.getSpeed()
         if math.isnan(velocity):
             return
@@ -105,7 +98,7 @@ class MavicDriver(WebotsNode):
             roll_ref = K_Y_VELOCITY_P * linear_y_error + K_Y_VELOCITY_I * self.__linear_y_integral
             pitch_ref = - K_X_VELOCITY_P * linear_x_error - K_X_VELOCITY_I * self.__linear_x_integral
             self.__vertical_ref = clamp(
-                self.__vertical_ref + self.__target_twist.linear.z * (ms / 1000),
+                self.__vertical_ref + self.__target_twist.linear.z * (self.__timestep / 1000),
                 max(vertical - 0.5, LIFT_HEIGHT),
                 vertical + 0.5
             )
@@ -115,7 +108,7 @@ class MavicDriver(WebotsNode):
         yaw_ref = self.__target_twist.angular.z
 
         roll_input = K_ROLL_P * clamp(roll, -1, 1) + roll_acceleration + roll_ref
-        pitch_input = K_PITCH_P * clamp(pitch, -1, 1) + pitch_acceleraiton + pitch_ref
+        pitch_input = K_PITCH_P * clamp(pitch, -1, 1) + pitch_acceleration + pitch_ref
         yaw_input = K_YAW_P * (yaw_ref - twist_yaw)
 
         m1 = K_VERTICAL_THRUST + vertical_input + yaw_input + pitch_input + roll_input
@@ -128,14 +121,3 @@ class MavicDriver(WebotsNode):
         self.__propellers[1].setVelocity(m2)
         self.__propellers[2].setVelocity(m3)
         self.__propellers[3].setVelocity(-m4)
-
-
-def main(args=None):
-    rclpy.init(args=args)
-    driver = MavicDriver(args=args)
-    rclpy.spin(driver)
-    rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()

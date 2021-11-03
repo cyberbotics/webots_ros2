@@ -46,6 +46,9 @@ namespace webots_ros2_control
       joint.controlPosition = false;
       joint.controlVelocity = false;
       joint.controlEffort = false;
+      joint.positionCommand = NAN;
+      joint.velocityCommand = NAN;
+      joint.effortCommand = NAN;
       for (hardware_interface::InterfaceInfo commandInterface : component.command_interfaces)
       {
         if (commandInterface.name == "position")
@@ -54,7 +57,10 @@ namespace webots_ros2_control
         {
           joint.controlVelocity = true;
           if (joint.motor)
+          {
             joint.motor->setPosition(INFINITY);
+            joint.motor->setVelocity(0.0);
+          }
         }
         else if (commandInterface.name == "effort")
           joint.controlEffort = true;
@@ -66,15 +72,26 @@ namespace webots_ros2_control
     }
   }
 
-  hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info)
-  {
-    if (configure_default(info) != hardware_interface::return_type::OK)
+  #if FOXY
+    hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info)
     {
-      return hardware_interface::return_type::ERROR;
+      if (configure_default(info) != hardware_interface::return_type::OK)
+      {
+        return hardware_interface::return_type::ERROR;
+      }
+      status_ = hardware_interface::status::CONFIGURED;
+      return hardware_interface::return_type::OK;
     }
-    status_ = hardware_interface::status::CONFIGURED;
-    return hardware_interface::return_type::OK;
-  }
+  #else
+    CallbackReturn Ros2ControlSystem::on_init(const hardware_interface::HardwareInfo &info)
+    {
+      if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS)
+      {
+        return CallbackReturn::ERROR;
+      }
+      return CallbackReturn::SUCCESS;
+    }
+  #endif
 
   std::vector<hardware_interface::StateInterface> Ros2ControlSystem::export_state_interfaces()
   {
@@ -102,17 +119,29 @@ namespace webots_ros2_control
     return interfaces;
   }
 
-  hardware_interface::return_type Ros2ControlSystem::start()
-  {
-    status_ = hardware_interface::status::STARTED;
-    return hardware_interface::return_type::OK;
-  }
+  #if FOXY
+    hardware_interface::return_type Ros2ControlSystem::start()
+    {
+      status_ = hardware_interface::status::STARTED;
+      return hardware_interface::return_type::OK;
+    }
 
-  hardware_interface::return_type Ros2ControlSystem::stop()
-  {
-    status_ = hardware_interface::status::STOPPED;
-    return hardware_interface::return_type::OK;
-  }
+    hardware_interface::return_type Ros2ControlSystem::stop()
+    {
+      status_ = hardware_interface::status::STOPPED;
+      return hardware_interface::return_type::OK;
+    }
+  #else
+    CallbackReturn Ros2ControlSystem::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+    {
+      return CallbackReturn::SUCCESS;
+    }
+
+    CallbackReturn Ros2ControlSystem::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+    {
+      return CallbackReturn::SUCCESS;
+    }
+  #endif
 
   hardware_interface::return_type Ros2ControlSystem::read()
   {
@@ -131,11 +160,11 @@ namespace webots_ros2_control
     {
       if (joint.motor)
       {
-        if (joint.controlPosition)
+        if (joint.controlPosition && !std::isnan(joint.positionCommand))
           joint.motor->setPosition(joint.positionCommand);
-        if (joint.controlVelocity)
+        if (joint.controlVelocity && !std::isnan(joint.velocityCommand))
           joint.motor->setVelocity(joint.velocityCommand);
-        if (joint.controlEffort)
+        if (joint.controlEffort && !std::isnan(joint.effortCommand))
           joint.motor->setTorque(joint.effortCommand);
       }
     }

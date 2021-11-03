@@ -21,7 +21,6 @@
 
 #include <tinyxml2.h>
 
-#include <webots/Robot.hpp>
 #include <webots/Node.hpp>
 #include <webots/Supervisor.hpp>
 

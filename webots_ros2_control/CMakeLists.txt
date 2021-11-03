@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 project(webots_ros2_control)
 
+# Check which ROS distribution is used, ros2control depends of that
+if($ENV{ROS_DISTRO} MATCHES "foxy")
+  add_compile_definitions(FOXY)
+endif()
+
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -27,6 +32,10 @@ list(GET webots_ros2_driver_INCLUDE_DIRS 0 webots_ros2_driver_INCLUDE)
 include_directories(
   ${webots_ros2_driver_INCLUDE}/webots/cpp
 )
+
+if (MSVC OR MSYS OR MINGW OR WIN32)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
 
 # webots_ros2 Plugin
 add_library(

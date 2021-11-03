@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2_tesla</name>
-  <version>1.1.1</version>
+  <version>1.1.2</version>
   <description>Tesla ROS2 interface for Webots.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -12,6 +12,8 @@
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
   <exec_depend>rclpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>ackermann_msgs</exec_depend>
   <exec_depend>webots_ros2_core</exec_depend>

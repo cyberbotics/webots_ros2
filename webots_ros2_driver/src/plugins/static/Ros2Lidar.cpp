@@ -34,9 +34,9 @@ namespace webots_ros2_driver
       mLaserPublisher = mNode->create_publisher<sensor_msgs::msg::LaserScan>(mTopicName, rclcpp::SensorDataQoS().reliable());
       const int resolution = mLidar->getHorizontalResolution();
       mLaserMessage.header.frame_id = mFrameName + "_rotated";
-      mLaserMessage.angle_min = -mLidar->getFov() / 2.0;
-      mLaserMessage.angle_max = mLidar->getFov() / 2.0;
       mLaserMessage.angle_increment = mLidar->getFov() / resolution;
+      mLaserMessage.angle_min = -mLidar->getFov() / 2.0;
+      mLaserMessage.angle_max = mLidar->getFov() / 2.0 - mLaserMessage.angle_increment;
       mLaserMessage.time_increment = (double)mLidar->getSamplingPeriod() / (1000.0 * resolution);
       mLaserMessage.scan_time = (double)mLidar->getSamplingPeriod() / 1000.0;
       mLaserMessage.range_min = mLidar->getMinRange();

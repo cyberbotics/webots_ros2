@@ -19,7 +19,6 @@
 import os
 import json
 from math import pi, sin, cos
-import launch
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
@@ -100,20 +99,21 @@ def get_waypoints():
 
 
 def generate_launch_description():
-    use_sim_time = LaunchConfiguration('use_sim_time')
-
     package_dir = get_package_share_directory('webots_ros2_epuck')
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+    synchronization = LaunchConfiguration('synchronization', default=True)
+    world = LaunchConfiguration('world', default='rats_life_benchmark.wbt')
 
-    webots = IncludeLaunchDescription(
+    # Webots
+    webots_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('webots_ros2_core'), 'launch', 'robot_launch.py')
+            os.path.join(package_dir, 'launch', 'robot_launch.py')
         ),
-        launch_arguments=[
-            ('package', 'webots_ros2_epuck'),
-            ('executable', 'driver'),
-            ('world', os.path.join(package_dir, 'worlds', 'rats_life_benchmark.wbt')),
-        ],
-        condition=launch.conditions.IfCondition(use_sim_time)
+        launch_arguments={
+            'synchronization': synchronization,
+            'use_sim_time': 'true',
+            'world': world
+        }.items()
     )
 
     # Launch Navigation2 without localization and without costmaps.
@@ -162,7 +162,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        webots,
+        webots_launch,
         nav2,
         rviz,
         mapper,

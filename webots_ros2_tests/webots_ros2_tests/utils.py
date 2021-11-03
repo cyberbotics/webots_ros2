@@ -15,23 +15,17 @@
 # limitations under the License.
 
 import time
-<<<<<<< HEAD
-=======
 import os
 import tempfile
 import random
 import string
->>>>>>> origin/master
 import unittest
 import rclpy
 from rosgraph_msgs.msg import Clock
 
 
 DEFAULT_TIMEOUT = 90.0
-<<<<<<< HEAD
-=======
 DEFAULT_CLOCK_TIMEOUT = 5 * DEFAULT_TIMEOUT
->>>>>>> origin/master
 
 
 class TestWebots(unittest.TestCase):
@@ -66,10 +60,6 @@ class TestWebots(unittest.TestCase):
         finally:
             node.destroy_subscription(subscription)
 
-<<<<<<< HEAD
-    def wait_for_clock(self, node, timeout=DEFAULT_TIMEOUT, messages_to_receive=5):
-        self.wait_for_messages(node, Clock, 'clock', timeout=timeout, messages_to_receive=messages_to_receive)
-=======
     def wait_for_clock(self, node, timeout=DEFAULT_CLOCK_TIMEOUT, messages_to_receive=5):
         self.wait_for_messages(node, Clock, 'clock', timeout=timeout, messages_to_receive=messages_to_receive)
 
@@ -83,4 +73,3 @@ def initialize_webots_test():
     directory = os.path.join(tempfile.gettempdir(), f'webots_{random_string}')
     os.mkdir(directory)
     os.environ['WEBOTS_TMPDIR'] = directory
->>>>>>> origin/master

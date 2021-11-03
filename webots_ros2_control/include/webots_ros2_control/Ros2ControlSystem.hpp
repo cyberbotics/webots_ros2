@@ -19,12 +19,15 @@
 #include <string>
 #include <vector>
 
-#include "hardware_interface/base_interface.hpp"
+#if FOXY
+  #include "hardware_interface/base_interface.hpp"
+  #include "hardware_interface/types/hardware_interface_status_values.hpp"
+#endif
+
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
-#include "hardware_interface/types/hardware_interface_status_values.hpp"
 #include "rclcpp/macros.hpp"
 #include "webots_ros2_driver/PluginInterface.hpp"
 #include "webots_ros2_driver/WebotsNode.hpp"
@@ -55,11 +58,18 @@ namespace webots_ros2_control
   public:
     void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) override;
 
-    hardware_interface::return_type configure(const hardware_interface::HardwareInfo &info) override;
+    #if FOXY
+      hardware_interface::return_type configure(const hardware_interface::HardwareInfo &info) override;
+      hardware_interface::return_type start() override;
+      hardware_interface::return_type stop() override;
+    #else
+      CallbackReturn on_init(const hardware_interface::HardwareInfo &info) override;
+      CallbackReturn on_activate(const rclcpp_lifecycle::State & /*previous_state*/) override;
+      CallbackReturn on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) override;
+    #endif
+
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
-    hardware_interface::return_type start() override;
-    hardware_interface::return_type stop() override;
     hardware_interface::return_type read() override;
     hardware_interface::return_type write() override;
 

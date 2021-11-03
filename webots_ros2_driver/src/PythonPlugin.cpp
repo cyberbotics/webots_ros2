@@ -51,6 +51,7 @@ class WebotsNode:
             throw std::runtime_error("Error: The Python module with the WebotsNode class cannot be compiled.");
 
         PyObject *pyWebotsExtraModule = PyImport_ExecCodeModule("webots_extra", pyWebotsExtraModuleSource);
+
         if (!pyWebotsExtraModule)
             throw std::runtime_error("Error: The Python module with the WebotsNode class cannot be executed.");
 

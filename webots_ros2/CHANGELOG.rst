@@ -2,6 +2,13 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.2 (2021-11-03)
+------------------
+* Adapted the 'webots_ros2_driver' package to be also a python alternative to the 'webots_ros2_core' package.
+* Replaced the use of the deprecated 'webots_ros2_core' package by the 'webots_ros2_driver' package.
+* Removed the 'webots_ros2_example', 'webots_ros2_tutorials' and 'webots_ros2_abb' packages.
+* Replaced the 'webots_ros2_tiago' package.
+
 1.1.0 (2021-07-19)
 ------------------
 * Included the 'webots_ros2_driver' package as a C++ alternative to the 'webots_ros2_core' package.

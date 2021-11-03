@@ -26,18 +26,15 @@ namespace webots_ros2_driver
     assert(mLED != NULL);
 
     const std::string topicName = parameters.count("topicName") ? parameters["topicName"] : "~/" + getFixedNameString(parameters["name"]);
-    mSubscriber = mNode->create_subscription<std_msgs::msg::ColorRGBA>(topicName, rclcpp::SensorDataQoS().reliable(), std::bind(&Ros2LED::onMessageReceived, this, std::placeholders::_1));
+    mSubscriber = mNode->create_subscription<std_msgs::msg::Int32>(topicName, rclcpp::SensorDataQoS().reliable(), std::bind(&Ros2LED::onMessageReceived, this, std::placeholders::_1));
   }
 
   void Ros2LED::step()
   {
   }
 
-  void Ros2LED::onMessageReceived(const std_msgs::msg::ColorRGBA::SharedPtr message)
+  void Ros2LED::onMessageReceived(const std_msgs::msg::Int32::SharedPtr message)
   {
-    const int red = message->r * 255;
-    const int green = message->g * 255;
-    const int blue = message->b * 255;
-    mLED->set((red << 16) | (green << 8) | blue);
+    mLED->set(message->data);
   }
 }

@@ -55,6 +55,7 @@ namespace webots_ros2_driver
     }
     else
     {
+      mWebotsXMLElement = NULL;
       RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
     }
 
@@ -215,6 +216,7 @@ namespace webots_ros2_driver
   {
     if (mRobot->step(mStep) == -1) {
       mTimer->cancel();
+      exit(0);
       return;
     }
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)

@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2_universal_robot</name>
-  <version>1.1.1</version>
+  <version>1.1.2</version>
   <description>Universal Robot ROS2 interface for Webots.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -12,15 +12,17 @@
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
   <exec_depend>rclpy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>control_msgs</exec_depend>
-  <exec_depend>rosgraph_msgs</exec_depend>
-  <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
   <exec_depend>rviz2</exec_depend>
-  <exec_depend>webots_ros2_core</exec_depend>
-  <exec_depend>webots_ros2_ur_e_description</exec_depend> <!-- TODO: replace by universal_robot once available for ROS2 -->
+  <exec_depend>webots_ros2_driver</exec_depend>
+  <exec_depend>webots_ros2_control</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>moveit</exec_depend>
 
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->

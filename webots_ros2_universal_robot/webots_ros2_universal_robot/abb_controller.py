@@ -74,10 +74,6 @@ def main(args=None):
     rclpy.init(args=args)
     controller = FollowJointTrajectoryClient('abb_controller', '/abb/abb_joint_trajectory_controller/follow_joint_trajectory')
 
-    # Need to be sur that trajectory_controller is ready (only for slow machines).
-    # https://github.com/ros2/rclpy/issues/842
-    time.sleep(5)
-
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)
 

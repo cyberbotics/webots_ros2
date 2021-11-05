@@ -15,7 +15,6 @@
 """Trajectory follower client for the ABB irb4600 robot used for multi-robot demonstration."""
 
 import rclpy
-import time
 from webots_ros2_universal_robot.follow_joint_trajectory_client import FollowJointTrajectoryClient
 
 
@@ -73,7 +72,6 @@ GOAL = {
 def main(args=None):
     rclpy.init(args=args)
     controller = FollowJointTrajectoryClient('abb_controller', '/abb/abb_joint_trajectory_controller/follow_joint_trajectory')
-
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)
 

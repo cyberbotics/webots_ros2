@@ -14,8 +14,9 @@ TexturedBackground {
   texture "empty_office"
   skybox FALSE
 }
-TurtleBot3Burger {
+TurtleBot3Burger_enu {
   translation 6.36 0 0
+  rotation 1 0 0 0.000796322
   controller "<extern>"
   controllerArgs [
     ""
@@ -27,6 +28,7 @@ TurtleBot3Burger {
     }
     RobotisLds01 {
       translation 0 0.02 0
+      rotation -0.5773509358554485 0.5773509358554485 0.5773489358556708 2.0944
     }
     GPS {
     }

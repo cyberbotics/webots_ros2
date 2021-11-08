@@ -4,7 +4,7 @@ Changelog for package webots_ros2_control
 
 1.1.3 (2021-11-05)
 ------------------
-* Add build dependency for 'ros_environment'.
+* Added build dependency for 'ros_environment'.
 
 1.1.2 (2021-11-03)
 ------------------

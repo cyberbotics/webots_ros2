@@ -13,9 +13,6 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/turtlebot_webots.urdf',
     'resource/ros2control.yml'
 ]))
-data_files.append(('share/' + package_name + '/protos', [
-    'protos/TurtleBot3Burger_enu.proto'
-]))
 
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/turtlebot3_burger_example.wbt', 'worlds/.turtlebot3_burger_example.wbproj',

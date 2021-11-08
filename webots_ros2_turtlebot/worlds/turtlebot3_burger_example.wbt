@@ -14,23 +14,22 @@ TexturedBackground {
   texture "empty_office"
   skybox FALSE
 }
-TurtleBot3Burger_enu {
+TurtleBot3Burger {
   translation 6.36 0 0
-  rotation 1 0 0 0.000796322
   controller "<extern>"
   controllerArgs [
     ""
   ]
   extensionSlot [
+    Solid {
+      name "imu_link"
+    }
+    GPS {
+    }
     InertialUnit {
-      rotation 0 1 0 3.14
       name "inertial_unit"
     }
     RobotisLds01 {
-      translation 0 0.02 0
-      rotation -0.5773509358554485 0.5773509358554485 0.5773489358556708 2.0944
-    }
-    GPS {
     }
   ]
 }

@@ -21,7 +21,6 @@
 import os
 import pytest
 import rclpy
-from cartographer_ros_msgs.msg import SubmapList
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Quaternion

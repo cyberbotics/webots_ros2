@@ -27,7 +27,7 @@ from geometry_msgs.msg import Quaternion
 from nav_msgs.msg import OccupancyGrid
 from launch import LaunchDescription
 import launch_testing.actions
-from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
+from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
@@ -58,8 +58,7 @@ def generate_test_description():
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')
         ),
-        launch_arguments={'use_sim_time': 'true',
-                            'map': map_path}.items(),
+        launch_arguments={'use_sim_time': 'true', 'map': map_path}.items(),
     )
 
     return LaunchDescription([

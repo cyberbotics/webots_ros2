@@ -33,6 +33,10 @@ class FollowJointTrajectoryClient(Node):
         self.__get_result_future = None
         self.__send_goal_future = None
 
+        self.get_logger().info('Waiting for action server to be initialized...')
+        self.__client.wait_for_server()
+        self.get_logger().info('Action server ready!')
+
     def __on_goal_response_callback(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
@@ -56,9 +60,8 @@ class FollowJointTrajectoryClient(Node):
             rclpy.shutdown()
 
     def send_goal(self, trajectory, iteration=1):
-        self.get_logger().info('Waiting for action server...')
-        while not self.__client.wait_for_server():
-            self.get_logger().info('Action server not ready now...')
+        self.get_logger().info('Waiting for action server to be ready...')
+        self.__client.wait_for_server()
 
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1

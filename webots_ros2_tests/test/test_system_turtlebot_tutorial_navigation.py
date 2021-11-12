@@ -38,8 +38,9 @@ turtlebot3_map = 'turtlebot3_burger_example_map.yaml'
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()
-    # ROS_DISTRO is rolling, skip test so CI succeed
-    if ('ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'):
+    # ROS_DISTRO is Rolling or Galactic, skip test so CI succeed
+    if 'ROS_DISTRO' in os.environ and \
+            (os.environ['ROS_DISTRO'] == 'rolling' or os.environ['ROS_DISTRO'] == 'galactic'):
         pytest.skip('ROS_DISTRO is rolling, skip this test')
 
     # Webots

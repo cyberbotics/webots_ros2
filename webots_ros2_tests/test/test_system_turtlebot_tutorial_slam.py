@@ -32,7 +32,7 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()
-    # ROS_DISTRO is Rolling or Galactic, skip test so CI succeed
+    # ROS_DISTRO is Rolling or Galactic, skip test as some required package are missing (cf. ci_after_init.bash)
     if 'ROS_DISTRO' in os.environ and \
             (os.environ['ROS_DISTRO'] == 'rolling' or os.environ['ROS_DISTRO'] == 'galactic'):
         pytest.skip('ROS_DISTRO is rolling, skip this test')

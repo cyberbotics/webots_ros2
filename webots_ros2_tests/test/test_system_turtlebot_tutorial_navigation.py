@@ -38,10 +38,9 @@ turtlebot3_map = 'turtlebot3_burger_example_map.yaml'
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()
-    # If ROS_REPO is testing or ROS_DISTRO is rolling, skip test so CI succeed
-    if ('ROS_REPO' in os.environ and os.environ['ROS_REPO'] == 'testing') or \
-            ('ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'):
-        pytest.skip('ROS_REPO testing or ROS_DISTRO rolling exit')
+    # ROS_DISTRO is rolling, skip test so CI succeed
+    if ('ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'):
+        pytest.skip('ROS_DISTRO is rolling, skip this test')
 
     # Webots
     turtlebot_webots = IncludeLaunchDescription(
@@ -51,7 +50,7 @@ def generate_test_description():
     )
 
     # Rviz Navigation
-    os.environ["TURTLEBOT3_MODEL"] = "burger"
+    os.environ['TURTLEBOT3_MODEL'] = 'burger'
     map_path = os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', turtlebot3_map)
 
     turtlebot_navigation = IncludeLaunchDescription(
@@ -106,9 +105,9 @@ class TestTurtlebotTutorials(TestWebots):
 
         # Check if the cost map is updated -> local map for navigation is working
         def on_cost_map_message_received(message):
-            # There should be a value in the range (0, 100)
+            # There should be a value in the range ]0, 100]
             for value in message.data:
-                if value > -1:
+                if value > 0 and value <= 100:
                     return True
             return False
 

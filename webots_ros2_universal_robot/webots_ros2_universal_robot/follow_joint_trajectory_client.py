@@ -64,8 +64,6 @@ class FollowJointTrajectoryClient(Node):
         sleep_time = 0.25
         time.sleep(sleep_time)
 
-        self.__client._is_feedback_ready
-
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1
 

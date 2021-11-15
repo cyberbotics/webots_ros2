@@ -61,9 +61,6 @@ class FollowJointTrajectoryClient(Node):
         self.get_logger().info('Waiting for action server to be ready...')
         self.__client.wait_for_server()
 
-        sleep_time = 0.25
-        time.sleep(sleep_time)
-
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1
 

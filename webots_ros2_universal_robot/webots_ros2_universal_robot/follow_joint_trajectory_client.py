@@ -35,10 +35,6 @@ class FollowJointTrajectoryClient(Node):
         self.__get_result_future = None
         self.__send_goal_future = None
 
-        self.get_logger().info('Waiting for action server to be initialized...')
-        self.__client.wait_for_server()
-        self.get_logger().info('Action server ready!')
-
     def __on_goal_response_callback(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
@@ -65,9 +61,10 @@ class FollowJointTrajectoryClient(Node):
         self.get_logger().info('Waiting for action server to be ready...')
         self.__client.wait_for_server()
 
-        sleep_time = 0.25
+        sleep_time = 0.1
         self.get_logger().info('Waiting for action server to be listening...')
         while self.count_subscribers(self.__action_name) < 1:
+            self.get_logger().info('Waiting for action server to be listening one more time...')
             time.sleep(sleep_time)
 
         self.__current_trajectory = trajectory

@@ -71,7 +71,7 @@ def main(args=None):
 
     # Sleep as temporary solution to https://github.com/cyberbotics/webots_ros2/pull/333
     controller.create_rate(2).sleep()
-    
+
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)
 

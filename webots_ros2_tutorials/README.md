@@ -46,7 +46,7 @@ On third terminal:
 ```
 rviz2
 ``` 
-If you want the same configuration as in the video you can load it from rviz folder.
+If you want the same configuration as in the video you can load it from the `rviz` folder.
 
 ### Save the map
 In order to save the map, close the terminal with the slam_toolbox_launch and then run the following:

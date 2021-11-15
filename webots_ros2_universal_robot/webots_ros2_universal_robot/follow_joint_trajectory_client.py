@@ -14,6 +14,7 @@
 
 """Generic client for the FollowJointTrajectory action used for multi-robot demonstration."""
 
+import time
 from action_msgs.msg import GoalStatus
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -28,6 +29,7 @@ class FollowJointTrajectoryClient(Node):
     def __init__(self, name, action_name):
         super().__init__(name)
         self.__client = ActionClient(self, FollowJointTrajectory, action_name)
+        self.__action_name = action_name
         self.__remaining_iteration = 0
         self.__current_trajectory = None
         self.__get_result_future = None
@@ -62,6 +64,11 @@ class FollowJointTrajectoryClient(Node):
     def send_goal(self, trajectory, iteration=1):
         self.get_logger().info('Waiting for action server to be ready...')
         self.__client.wait_for_server()
+
+        sleep_time = 0.25
+        self.get_logger().info('Waiting for action server to be listening...')
+        while self.count_subscribers(self.__action_name) < 1:
+            time.sleep(sleep_time)
 
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1

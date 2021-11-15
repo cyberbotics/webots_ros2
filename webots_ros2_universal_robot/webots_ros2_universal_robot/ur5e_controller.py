@@ -68,6 +68,10 @@ GOAL = {
 def main(args=None):
     rclpy.init(args=args)
     controller = FollowJointTrajectoryClient('ur5e_controller', '/ur5e/ur_joint_trajectory_controller/follow_joint_trajectory')
+
+    # Sleep as temporary solution to https://github.com/cyberbotics/webots_ros2/pull/333
+    controller.create_rate(2).sleep()
+    
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)
 

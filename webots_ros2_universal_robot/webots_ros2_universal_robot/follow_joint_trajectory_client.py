@@ -14,7 +14,6 @@
 
 """Generic client for the FollowJointTrajectory action used for multi-robot demonstration."""
 
-import time
 from action_msgs.msg import GoalStatus
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint

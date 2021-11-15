@@ -74,7 +74,6 @@ def generate_launch_description():
         executable='spawner.py',
         output='screen',
         prefix=controller_manager_prefix,
-        namespace='ur5e',
         arguments=['ur_joint_trajectory_controller', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
     )
     ur5e_joint_state_broadcaster_spawner = Node(
@@ -82,7 +81,6 @@ def generate_launch_description():
         executable='spawner.py',
         output='screen',
         prefix=controller_manager_prefix,
-        namespace='ur5e',
         arguments=['ur_joint_state_broadcaster', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
     )
     abb_trajectory_controller_spawner = Node(
@@ -90,7 +88,6 @@ def generate_launch_description():
         executable='spawner.py',
         output='screen',
         prefix=controller_manager_prefix,
-        namespace='abb',
         arguments=['abb_joint_trajectory_controller', '-c', 'abb/controller_manager'] + controller_manager_timeout,
     )
     abb_joint_state_broadcaster_spawner = Node(
@@ -98,7 +95,6 @@ def generate_launch_description():
         executable='spawner.py',
         output='screen',
         prefix=controller_manager_prefix,
-        namespace='abb',
         arguments=['abb_joint_state_broadcaster', '-c', 'abb/controller_manager'] + controller_manager_timeout,
     )
 

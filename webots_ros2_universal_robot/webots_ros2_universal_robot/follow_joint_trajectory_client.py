@@ -29,7 +29,6 @@ class FollowJointTrajectoryClient(Node):
     def __init__(self, name, action_name):
         super().__init__(name)
         self.__client = ActionClient(self, FollowJointTrajectory, action_name)
-        self.__action_name = action_name
         self.__remaining_iteration = 0
         self.__current_trajectory = None
         self.__get_result_future = None

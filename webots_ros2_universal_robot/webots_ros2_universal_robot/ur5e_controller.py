@@ -15,7 +15,6 @@
 """Trajectory follower client for the UR5 robot used for multi-robot demonstration."""
 
 import rclpy
-import time
 from webots_ros2_universal_robot.follow_joint_trajectory_client import FollowJointTrajectoryClient
 
 
@@ -68,11 +67,7 @@ GOAL = {
 
 def main(args=None):
     rclpy.init(args=args)
-    controller = FollowJointTrajectoryClient('ur5e_controller', '/ur5e/ur_joint_trajectory_controller/follow_joint_trajectory')
-
-    # Need to be sur that trajectory_controller is ready (only for slow machines).
-    # https://github.com/ros2/rclpy/issues/842
-    time.sleep(5)
+    controller = FollowJointTrajectoryClient('ur5e_controller', '/ur5e/ur_joint_trajectory_controller')
 
     controller.send_goal(GOAL, 10)
     rclpy.spin(controller)

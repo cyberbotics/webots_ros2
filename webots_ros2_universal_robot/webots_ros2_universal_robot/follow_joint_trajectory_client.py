@@ -68,7 +68,7 @@ class FollowJointTrajectoryClient(Node):
 
         self.__client.wait_for_server()
 
-        # WORKAROUND: The `wait_for_server()` method reports the `joint_trajectory_controller` node is ready even thogh it
+        # WORKAROUND: The `wait_for_server()` method reports the `joint_trajectory_controller` node is ready even though it
         # needs a bit more time to get ready to receive commands.
         while self.__received_states_counter < 1:
             rclpy.spin_once(self)

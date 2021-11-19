@@ -48,8 +48,7 @@ UR5e {
 }
 SolidBox {
   translation 0 0 0.3
-  rotation 1 0 0 1.5707963267948966
-  size 0.3 0.6 0.3
+  size 0.3 0.3 0.6
   appearance GalvanizedMetal {
     textureTransform TextureTransform {
       scale 2 2

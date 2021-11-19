@@ -35,7 +35,7 @@ Pioneer3at {
     LED {
     }
     Solid {
-      translation 0.11 -1.46928e-07 0.37
+      translation 0.11 0 0.37
       children [
         DEF ROD_SHAPE Shape {
           appearance Plaster {
@@ -52,7 +52,7 @@ Pioneer3at {
       }
     }
     VelodyneVLP-16 {
-      translation 0.2 1.46928e-07 0.31
+      translation 0.2 0 0.31
       rotation 0 0 1 1.5708
     }
   ]

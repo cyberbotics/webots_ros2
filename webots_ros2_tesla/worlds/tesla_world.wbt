@@ -92,7 +92,7 @@ CurvedRoadSegment {
   curvatureRadius 40.5
 }
 StraightRoadSegment {
-  translation -4.5 -105 0.02
+  translation -4.5 -105.0 0.02
   name "road(1)"
   id "1"
   startJunction "25"
@@ -139,7 +139,7 @@ CurvedRoadSegment {
   curvatureRadius 40.5
 }
 StraightRoadSegment {
-  translation 105 -64.5 0.02
+  translation 105.0 -64.5 0.02
   rotation 0 0 1 1.5708
   name "road(3)"
   id "3"
@@ -186,7 +186,7 @@ CurvedRoadSegment {
   curvatureRadius 40.5
 }
 RoadIntersection {
-  translation 45 45 0.02
+  translation 45.0 45.0 0.02
   rotation 0 0 1 0.7853996938995746
   id "16"
   connectedRoadIDs [
@@ -217,7 +217,7 @@ RoadIntersection {
   startRoadBorder FALSE
 }
 StraightRoadSegment {
-  translation -4.5 45 0.02
+  translation -4.5 45.0 0.02
   name "road(5)"
   id "5"
   startJunction "28"
@@ -264,7 +264,7 @@ CurvedRoadSegment {
   curvatureRadius 40.5
 }
 StraightRoadSegment {
-  translation -45 -25.5 0.02
+  translation -45.0 -25.5 0.02
   rotation 0 0 1 1.5708
   name "road(7)"
   id "7"
@@ -288,7 +288,7 @@ StraightRoadSegment {
   length 30
 }
 RoadIntersection {
-  translation -45 -45 0.02
+  translation -45.0 -45.0 0.02
   rotation 0 0 1 0.7853996938995746
   name "road intersection(1)"
   id "17"
@@ -320,7 +320,7 @@ RoadIntersection {
   startRoadBorder FALSE
 }
 StraightRoadSegment {
-  translation -25.5 -45 0.02
+  translation -25.5 -45.0 0.02
   name "road(8)"
   id "8"
   startJunction "17"
@@ -367,7 +367,7 @@ CurvedRoadSegment {
   curvatureRadius 40.5
 }
 StraightRoadSegment {
-  translation 45 -4.5 0.02
+  translation 45.0 -4.5 0.02
   rotation 0 0 1 1.5708
   name "road(10)"
   id "10"
@@ -414,7 +414,7 @@ CurvedRoadSegment {
   curvatureRadius 40.5
 }
 StraightRoadSegment {
-  translation 4.5 105 0.02
+  translation 4.5 105.0 0.02
   rotation 0 0 1 3.1415
   name "road(12)"
   id "12"
@@ -462,7 +462,7 @@ CurvedRoadSegment {
   curvatureRadius 40.5
 }
 StraightRoadSegment {
-  translation -105 64.5 0.02
+  translation -105.0 64.5 0.02
   rotation 0 0 1 -1.5708
   name "road(14)"
   id "14"
@@ -518,7 +518,7 @@ GenericTrafficLight {
   state "red"
 }
 CrossRoadsTrafficLight {
-  translation 45 45 0
+  translation 45.0 45.0 0
 }
 DEF STONES Solid {
   translation 136.158 5.03891 -4.23581
@@ -527,7 +527,7 @@ DEF STONES Solid {
     DEF STONES_GROUP Group {
       children [
         Transform {
-          translation -2 -0.6 0
+          translation -2.0 -0.6 0
           children [
             Shape {
               appearance DEF OBJECTS_APPEARANCE PBRAppearance {
@@ -555,7 +555,7 @@ DEF STONES Solid {
           ]
         }
         Transform {
-          translation -2 -0.15 -4
+          translation -2.0 -0.15 -4.0
           children [
             Shape {
               appearance USE OBJECTS_APPEARANCE
@@ -567,7 +567,7 @@ DEF STONES Solid {
           ]
         }
         Transform {
-          translation 1 0 -6
+          translation 1 0 -6.0
           children [
             Shape {
               appearance USE OBJECTS_APPEARANCE
@@ -579,7 +579,7 @@ DEF STONES Solid {
           ]
         }
         Transform {
-          translation 0 0.15 -9
+          translation 0 0.15 -9.0
           children [
             Shape {
               appearance USE OBJECTS_APPEARANCE
@@ -591,7 +591,7 @@ DEF STONES Solid {
           ]
         }
         Transform {
-          translation 5 0.2 -5.5
+          translation 5.0 0.2 -5.5
           children [
             Shape {
               appearance USE OBJECTS_APPEARANCE
@@ -615,7 +615,7 @@ DEF STONES Solid {
           ]
         }
         Transform {
-          translation -5 0 -10
+          translation -5.0 0 -10.0
           children [
             Shape {
               appearance USE OBJECTS_APPEARANCE
@@ -627,7 +627,7 @@ DEF STONES Solid {
           ]
         }
         Transform {
-          translation -6 0.3 -1
+          translation -6.0 0.3 -1
           children [
             Shape {
               appearance USE OBJECTS_APPEARANCE
@@ -639,7 +639,7 @@ DEF STONES Solid {
           ]
         }
         Transform {
-          translation 4 0 -13
+          translation 4.0 0 -13.0
           children [
             Shape {
               appearance USE OBJECTS_APPEARANCE
@@ -669,51 +669,51 @@ DEF STONES Solid {
   boundingObject USE STONES_GROUP
 }
 BuildingUnderConstruction {
-  translation -110.896 112.102 2.13163e-14
-  rotation 2.3464099999870814e-06 -2.3464099999870814e-06 0.9999999999944944 1.5708
+  translation -110.896 112.102 0
+  rotation 0 0 1 1.5708
 }
 CommercialBuilding {
   translation -31.6315 70.9574 0
-  rotation 2.3464099999870814e-06 -2.3464099999870814e-06 0.9999999999944944 1.5708
+  rotation 0 0 1 1.5708
 }
 UBuilding {
-  translation -81.9927 -87.1466 1.42109e-13
-  rotation 2.3464099999870814e-06 -2.3464099999870814e-06 0.9999999999944944 1.5708
+  translation -81.9927 -87.1466 0
+  rotation 0 0 1 1.5708
 }
 HollowBuilding {
-  rotation 2.3464099999870814e-06 -2.3464099999870814e-06 0.9999999999944944 1.5708
+  rotation 0 0 1 1.5708
 }
 Hotel {
-  translation -71.6228 -9.97953 -5.11591e-13
-  rotation 2.3464099999870814e-06 -2.3464099999870814e-06 0.9999999999944944 1.5708
+  translation -71.6228 -9.97953 0
+  rotation 0 0 1 1.5708
 }
 TheThreeTowers {
-  translation 90.636 68.118 -2.84217e-14
-  rotation -2.653589999981315e-06 2.653589999981315e-06 0.9999999999929585 1.5708
+  translation 90.636 68.118 0
+  rotation 0 0 1 1.5708
 }
 CyberboticsTower {
   translation -68.7504 27.5187 0
-  rotation 2.3464099999870814e-06 -2.3464099999870814e-06 0.9999999999944944 1.5708
+  rotation 0 0 1 1.5708
 }
 BigGlassTower {
-  translation 9.29537 68.6779 -2.84217e-14
-  rotation -7.19233e-09 -1.50172e-14 1 3.14159
+  translation 9.29537 68.6779 0
+  rotation 0 0 1 3.14159
 }
 Auditorium {
-  translation 61.9719 -63.9296 -2.13163e-13
-  rotation 3.54686e-09 7.19231e-09 1 2.2253
+  translation 61.9719 -63.9296 0
+  rotation 0 0 1 2.2253
 }
 Museum {
-  translation 68.6571 -0.191182 2.13163e-14
-  rotation 1.125079999996903e-14 -2.346409999993541e-06 0.9999999999972473 3.14159
+  translation 68.6571 -0.191182 0
+  rotation 0 0 1 3.14159
 }
 ResidentialBuilding {
-  translation 1.81329 -69.274 -2.84217e-14
-  rotation 2.3464099999870814e-06 -2.3464099999870814e-06 0.9999999999944944 1.5708
+  translation 1.81329 -69.274 0
+  rotation 0 0 1 1.5708
 }
 FastFoodRestaurant {
   translation -50.065561 51.749488 0.004
-  rotation -5.5189e-09 7.192350000000001e-09 -1 1.8325953071795864
+  rotation 0 0 1 -1.8325953071795864
   height 4.3
   length 11
   width 11
@@ -722,105 +722,85 @@ FastFoodRestaurant {
 }
 Oak {
   translation 19.8126 81.7751 0
-  rotation 1 0 0 4.692820414042842e-06
 }
 Pine {
   translation 99.1307 50.4097 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(1)"
 }
 Cypress {
   translation 81.7163 56.567 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(2)"
 }
 Sassafras {
   translation 75.9885 -36.8744 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(3)"
 }
 BigSassafras {
   translation 54.5924 -35.4355 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(4)"
 }
 Oak {
   translation -5.24018 61.566 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(5)"
 }
 Pine {
   translation 68.7408 -26.6541 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(6)"
 }
 Cypress {
   translation 62.6042 26.6454 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(7)"
 }
 Sassafras {
   translation -79.3778 68.1255 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(8)"
 }
 BigSassafras {
   translation -79.9763 121.7561 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(9)"
 }
 Oak {
   translation -87.5263 45.3761 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(10)"
 }
 Pine {
   translation -63.11 4.80322 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(11)"
 }
 Cypress {
   translation -4.92425 -85.4708 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(12)"
 }
 Sassafras {
   translation 9.61883 -85.8355 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(13)"
 }
 BigSassafras {
   translation 24.9703 -84.6727 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(14)"
 }
 Oak {
   translation -81.8021 -76.3128 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(15)"
 }
 Pine {
   translation -120.797 81.4509 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(16)"
 }
 Cypress {
   translation -42.6205 -106.804 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(17)"
 }
 Sassafras {
   translation -115.416 -32.2671 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(18)"
 }
 BigSassafras {
   translation -33.1395 121.921 0
-  rotation 1 0 0 4.692820414042842e-06
   name "tree(19)"
 }
 PedestrianCrossing {
-  translation 26 45 -0.06
+  translation 26.0 45.0 -0.06
   rotation 0 0 1 -1.5707953071795862
 }
 PedestrianCrossing {
@@ -829,7 +809,7 @@ PedestrianCrossing {
 }
 CautionSign {
   translation -48.9391 -91.9275 0
-  rotation 2.3464099999870814e-06 -2.3464099999870814e-06 0.9999999999944944 1.5708
+  rotation 0 0 1 1.5708
   signBoards [
     CautionPanel {
       translation 0 -0.17 0
@@ -840,7 +820,7 @@ CautionSign {
   ]
 }
 CautionSign {
-  translation -55.4925 8.87679 -3.55271e-15
+  translation -55.4925 8.87679 0
   rotation 1 0 0 1.5707963267948966
   name "caution sign(1)"
 }
@@ -858,8 +838,8 @@ CautionSign {
   ]
 }
 CautionSign {
-  translation 26.81263 84.01191 -3.55271e-15
-  rotation -7.1923e-09 3.54684e-09 1 2.22529
+  translation 26.81263 84.01191 0
+  rotation 0 0 1 2.22529
   name "caution sign(3)"
   signBoards [
     CautionPanel {
@@ -884,17 +864,17 @@ CautionSign {
   ]
 }
 OrderSign {
-  translation -34.6769 -45.1363 7.10543e-15
-  rotation -7.19233e-09 -1.50172e-14 1 3.14159
+  translation -34.6769 -45.1363 0
+  rotation 0 0 1 3.14159
 }
 OrderSign {
   translation -34.1742 -55.4085 0
-  rotation -7.19233e-09 -1.50172e-14 1 3.14159
+  rotation 0 0 1 3.14159
   name "order sign(1)"
 }
 OrderSign {
-  translation -34.4983 -67.6589 1.81188e-13
-  rotation 9.38185669e-07 0.707106781186236 0.707106781186236 3.141590777218456
+  translation -34.4983 -67.6589 0
+  rotation 0 0.707106781186236 0.707106781186236 3.141590777218456
   name "order sign(2)"
   signBoards [
     OrderPanel {
@@ -906,8 +886,8 @@ OrderSign {
   ]
 }
 OrderSign {
-  translation -94.5041 5.21302 -1.59872e-14
-  rotation 9.38185669e-07 0.707106781186236 0.707106781186236 3.141590777218456
+  translation -94.5041 5.21302 0
+  rotation 0 0.707106781186236 0.707106781186236 3.141590777218456
   name "order sign(3)"
   signBoards [
     OrderPanel {
@@ -919,14 +899,13 @@ OrderSign {
   ]
 }
 StopSign {
-  translation -34.2884 -34.6012 1.77636e-15
-  rotation 2.9524886867359215e-08 0.014173193695777315 0.9998995552456563 1.01503e-06
+  translation -34.2884 -34.6012 0
   signBoards [
     StopPanel {
       translation 0 -0.097 0
     }
     OrderPanel {
-      translation 4.5753428e-24 -0.11 0.03
+      translation 0 -0.11 0.03
       rotation 0 1 0 3.1415926
     }
   ]
@@ -937,7 +916,7 @@ YieldSign {
 }
 SpeedLimitSign {
   translation -20.4404 -113.192 0
-  rotation -7.19232e-09 2.44145e-09 1 2.48709
+  rotation 0 0 1 2.48709
   signBoards [
     SpeedLimitPanel {
       translation 0 0 -0.023
@@ -948,7 +927,7 @@ SpeedLimitSign {
   ]
 }
 SpeedLimitSign {
-  translation 84.257796 26.49986 1.77636e-14
+  translation 84.257796 26.49986 0
   rotation 0.901501243173409 0.306019205734541 0.306019205734541 1.674304855512828
   name "speed limit(1)"
   signBoards [
@@ -975,7 +954,7 @@ SpeedLimitSign {
 }
 SpeedLimitSign {
   translation 50.335 87.1538 0
-  rotation 7.19237e-09 7.19239e-09 -1 1.57079
+  rotation 0 0 1 -1.57079
   name "speed limit(3)"
   signBoards [
     SpeedLimitPanel {
@@ -987,8 +966,8 @@ SpeedLimitSign {
   ]
 }
 SpeedLimitSign {
-  translation 34.4459 31.0289 8.88178e-15
-  rotation 2.3464099999870814e-06 -2.3464099999870814e-06 0.9999999999944944 1.5708
+  translation 34.4459 31.0289 0
+  rotation 0 0 1 1.5708
   name "speed limit(4)"
   signBoards [
     SpeedLimitPanel {
@@ -1007,7 +986,7 @@ TrafficCone {
   }
 }
 TrafficCone {
-  translation -33.9068 -53.3447 -1.74083e-13
+  translation -33.9068 -53.3447 0
   name "traffic cone(1)"
   physics Physics {
     density -1
@@ -1015,7 +994,7 @@ TrafficCone {
   }
 }
 TrafficCone {
-  translation -34.0095 -48.1681 -1.77636e-15
+  translation -34.0095 -48.1681 0
   name "traffic cone(2)"
   physics Physics {
     density -1
@@ -1087,7 +1066,7 @@ TrafficCone {
   }
 }
 TrafficCone {
-  translation 45.7234 33.7172 -7.10543e-15
+  translation 45.7234 33.7172 0
   name "traffic cone(11)"
   physics Physics {
     density -1
@@ -1135,7 +1114,7 @@ TrafficCone {
   }
 }
 TrafficCone {
-  translation 44.8955 11.2175 -3.55271e-14
+  translation 44.8955 11.2175 0
   name "traffic cone(17)"
   physics Physics {
     density -1
@@ -1143,7 +1122,7 @@ TrafficCone {
   }
 }
 TrafficCone {
-  translation 44.8152 22.1531 -2.84217e-14
+  translation 44.8152 22.1531 0
   name "traffic cone(18)"
   physics Physics {
     density -1
@@ -1152,7 +1131,7 @@ TrafficCone {
 }
 AdvertisingBoard {
   translation 116.28367 48.100535 0
-  rotation 7.19231e-09 4.15248e-09 1 -2.094395307179586
+  rotation 0 0 1 -2.094395307179586
   backTexture []
   displayBackLight TRUE
   displayWidth 8
@@ -1165,7 +1144,7 @@ AdvertisingBoard {
 }
 HighwayPole {
   translation 117.85 -17.67 0
-  rotation -7.19235e-09 7.19235e-09 -1 1.5708
+  rotation 0 0 1 -1.5708
   height 9
   length 12
   rightHorizontalSigns [
@@ -1192,7 +1171,7 @@ HighwayPole {
 }
 OilBarrel {
   translation 66.875162 -110.31684 0.6
-  rotation 7.19232e-09 -7.19235e-09 1 -1.5707953071795862
+  rotation 0 0 1 -1.5707953071795862
   height 1.2
   radius 0.4
   physics Physics {
@@ -1204,7 +1183,7 @@ OilBarrel {
 }
 OilBarrel {
   translation 33.037806 -107.04991 0.6
-  rotation 7.19232e-09 -7.19235e-09 1 -1.5707953071795862
+  rotation 0 0 1 -1.5707953071795862
   name "oil barrel(1)"
   height 1.2
   radius 0.4
@@ -1217,7 +1196,7 @@ OilBarrel {
 }
 OilBarrel {
   translation 54.770003 -103.169 0.6
-  rotation 7.19232e-09 -7.19235e-09 1 -1.5707953071795862
+  rotation 0 0 1 -1.5707953071795862
   name "oil barrel(2)"
   height 1.2
   radius 0.4
@@ -1229,8 +1208,7 @@ OilBarrel {
   }
 }
 OilBarrel {
-  translation 105.104 -45 0.6
-  rotation 1 0 0 4.692820414042842e-06
+  translation 105.104 -45.0 0.6
   name "oil barrel(3)"
   height 1.2
   radius 0.4
@@ -1243,7 +1221,7 @@ OilBarrel {
 }
 OilBarrel {
   translation 45.2699 -21.3988 0.6
-  rotation 1.07641e-08 -7.19235e-09 1 -1.1780953071795865
+  rotation 0 0 1 -1.1780953071795865
   name "oil barrel(4)"
   height 1.2
   radius 0.4
@@ -1256,7 +1234,7 @@ OilBarrel {
 }
 OilBarrel {
   translation 45.3401 -22.9161 0.6
-  rotation -4.80577e-09 -7.19235e-09 1 1.9635
+  rotation 0 0 1 1.9635
   name "oil barrel(5)"
   height 1.2
   radius 0.4
@@ -1269,7 +1247,6 @@ OilBarrel {
 }
 OilBarrel {
   translation 45.7229 -22.1326 0.6
-  rotation 1 0 0 4.692820414042842e-06
   name "oil barrel(6)"
   height 1.2
   radius 0.4
@@ -1282,7 +1259,7 @@ OilBarrel {
 }
 OilBarrel {
   translation -20.1904 -48.6853 0.6
-  rotation 6.30749e-09 -7.19235e-09 1 -1.7016953071795866
+  rotation 0 0 1 -1.7016953071795866
   name "oil barrel(7)"
   height 1.2
   radius 0.4
@@ -1294,7 +1271,7 @@ OilBarrel {
   }
 }
 Crossroad {
-  translation -105 -4.5001488 0
+  translation -105.0 -4.5001488 0
   id "18"
   shape []
   connectedRoadIDs [
@@ -1303,7 +1280,7 @@ Crossroad {
   ]
 }
 Crossroad {
-  translation -105 64.499851 0
+  translation -105.0 64.499851 0
   name "crossroad(1)"
   id "19"
   shape []
@@ -1323,7 +1300,7 @@ Crossroad {
   ]
 }
 Crossroad {
-  translation 4.4999256 105 0
+  translation 4.4999256 105.0 0
   name "crossroad(3)"
   id "21"
   shape []
@@ -1343,7 +1320,7 @@ Crossroad {
   ]
 }
 Crossroad {
-  translation 105 -64.5 0
+  translation 105.0 -64.5 0
   name "crossroad(5)"
   id "23"
   shape []
@@ -1363,7 +1340,7 @@ Crossroad {
   ]
 }
 Crossroad {
-  translation -4.4999794 -105 0
+  translation -4.4999794 -105.0 0
   name "crossroad(7)"
   id "25"
   shape []
@@ -1383,7 +1360,7 @@ Crossroad {
   ]
 }
 Crossroad {
-  translation 45 -4.5 0
+  translation 45.0 -4.5 0
   name "crossroad(9)"
   id "27"
   shape []
@@ -1393,7 +1370,7 @@ Crossroad {
   ]
 }
 Crossroad {
-  translation -4.5000744 45 0
+  translation -4.5000744 45.0 0
   name "crossroad(10)"
   id "28"
   shape []

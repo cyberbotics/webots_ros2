@@ -33,7 +33,7 @@ Floor {
 }
 UR5e {
   translation 0 0 0.6
-  rotation 0 0 -1 1.570796267678159
+  rotation 0 0 1 -1.570796267678159
   controller "<extern>"
   supervisor TRUE
   selfCollision FALSE

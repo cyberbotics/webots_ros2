@@ -24,6 +24,9 @@ from launch.substitutions import TextSubstitution
 from webots_ros2_driver.utils import get_webots_home, handle_webots_installation
 
 
+import shutil
+
+
 class _ConditionalSubstitution(Substitution):
     def __init__(self, *, condition, false_value='', true_value=''):
         self.__condition = condition if isinstance(condition, Substitution) else TextSubstitution(text=str(condition))
@@ -59,6 +62,17 @@ class WebotsLauncher(ExecuteProcess):
             no_sandbox = ''
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
         stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
+
+        file_input = "/home/benjamin/urdf2webots/tests/sources/kuka_lbr_iiwa_support/urdf/model.urdf"
+        file_output = "/home/benjamin/temp/temp_proto"
+
+        # checking whether file exists or not
+        if os.path.exists(file_input):
+            os.system("python -m urdf2webots.importer --input="+file_input+" --output="+file_output)
+            #shutil.rmtree(file_output)
+        else:
+            # file not found message
+            print("File not found in the directory")
 
         xvfb_run_prefix = []
         if 'WEBOTS_OFFSCREEN' in os.environ:

@@ -25,7 +25,43 @@ from webots_ros2_driver.utils import get_webots_home, handle_webots_installation
 
 
 import shutil
+import pathlib
 
+from typing import List
+from typing import Optional
+from typing import Iterable
+
+from launch import LaunchDescription
+from launch.launch_context import LaunchContext
+from launch.launch_description_entity import LaunchDescriptionEntity
+from launch_ros.actions import Node
+
+
+
+from urdf2webots.importer import convert2urdf
+
+'''
+def webotsCustomLaunchDescription(initial_entities: List[LaunchDescriptionEntity]):
+    launch_description = LaunchDescription(initial_entities)
+
+    # find WebotsLauncher
+    for entity in initial_entities:
+        if type(entity) == WebotsLauncher:
+            for robot in WebotsLauncher(entity).__robots:
+                robot_driver = Node(
+                    package='webots_ros2_driver',
+                    executable='driver',
+                    output='screen',
+                    additional_env={'WEBOTS_ROBOT_NAME': robot.get('name')},
+                    parameters=[
+                        {'robot_description': pathlib.Path(robot.get('urdf_location')).read_text()},
+                    ]
+                )
+
+                launch_description.add_entity(robot_driver)
+
+    return launch_description
+'''
 
 class _ConditionalSubstitution(Substitution):
     def __init__(self, *, condition, false_value='', true_value=''):
@@ -40,7 +76,7 @@ class _ConditionalSubstitution(Substitution):
 
 
 class WebotsLauncher(ExecuteProcess):
-    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
+    def __init__(self, output='screen', world=None, robots=[], gui=True, mode='realtime', stream=False, **kwargs):
         # Find Webots executable
         webots_path = get_webots_home(show_warning=True)
         if webots_path is None:
@@ -53,6 +89,9 @@ class WebotsLauncher(ExecuteProcess):
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
         world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
 
+        self.__world = world
+        self.__robots = robots
+
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
         stderr = _ConditionalSubstitution(condition=gui, false_value='--stderr')
@@ -62,17 +101,6 @@ class WebotsLauncher(ExecuteProcess):
             no_sandbox = ''
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
         stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
-
-        file_input = "/home/benjamin/urdf2webots/tests/sources/kuka_lbr_iiwa_support/urdf/model.urdf"
-        file_output = "/home/benjamin/temp/temp_proto"
-
-        # checking whether file exists or not
-        if os.path.exists(file_input):
-            os.system("python -m urdf2webots.importer --input="+file_input+" --output="+file_output)
-            #shutil.rmtree(file_output)
-        else:
-            # file not found message
-            print("File not found in the directory")
 
         xvfb_run_prefix = []
         if 'WEBOTS_OFFSCREEN' in os.environ:
@@ -96,3 +124,57 @@ class WebotsLauncher(ExecuteProcess):
             ],
             **kwargs
         )
+
+    def execute(self, context: LaunchContext):
+        # Check if the user wants to convert URDF files into robots
+        if self.__robots:
+            worldPath = self.__world.perform(context)
+            if not worldPath:
+                sys.exit('World file not specified (has to be specified with world=path/to/my/world.wbt')
+
+            worldCopy = worldPath[:-4] + '_with_URDF_robot.wbt'
+            shutil.copyfile(worldPath, worldCopy)
+            worldName=context.launch_configurations['world']
+            context.launch_configurations['world']=worldName[:-4] + '_with_URDF_robot.wbt'
+
+            for robot in self.__robots:
+                file_input = robot.get('urdf_location')
+                robot_name = robot.get('name')
+                robot_translation = robot.get('translation')
+                robot_rotation = robot.get('rotation')
+
+                if not file_input:
+                    sys.exit('URDF file not specified (has to be specified with \'urdf_location\': \'path/to/my/robotUrdf.urdf\'')
+                if not robot_name:
+                    sys.stderr.write('Robot name not specified (should be specified if more than one robot is present with \'name\': \'robotName\'\n')
+
+                convert2urdf(inFile=file_input, worldFile=worldCopy, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
+
+        return super().execute(context)
+
+    def getDriversList(self):
+        nodesList = []
+
+        for robot in self.__robots:
+
+            parameters=[
+                {'robot_description': pathlib.Path(robot.get('urdf_location')).read_text()},
+                {'use_sim_time': robot.get('use_sim_time')},
+                
+            ]
+
+            if robot.get('control_params'):
+                parameters.append(robot.get('control_params'))
+            
+            robot_driver = Node(
+                package='webots_ros2_driver',
+                executable='driver',
+                output='screen',
+                additional_env={'WEBOTS_ROBOT_NAME': robot.get('name')},
+                parameters=parameters,
+                remappings=robot.get('remappings')
+            )
+
+            nodesList.append(robot_driver)
+
+        return nodesList

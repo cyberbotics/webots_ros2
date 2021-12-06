@@ -128,14 +128,14 @@ class WebotsLauncher(ExecuteProcess):
     def execute(self, context: LaunchContext):
         # Check if the user wants to convert URDF files into robots
         if self.__robots:
-            worldPath = self.__world.perform(context)
-            if not worldPath:
+            world_path = self.__world.perform(context)
+            if not world_path:
                 sys.exit('World file not specified (has to be specified with world=path/to/my/world.wbt')
 
-            worldCopy = worldPath[:-4] + '_with_URDF_robot.wbt'
-            shutil.copyfile(worldPath, worldCopy)
-            worldName=context.launch_configurations['world']
-            context.launch_configurations['world']=worldName[:-4] + '_with_URDF_robot.wbt'
+            world_copy = world_path[:-4] + '_with_URDF_robot.wbt'
+            shutil.copyfile(world_path, world_copy)
+            world_name=context.launch_configurations['world']
+            context.launch_configurations['world']=world_name[:-4] + '_with_URDF_robot.wbt'
 
             for robot in self.__robots:
                 file_input = robot.get('urdf_location')
@@ -148,12 +148,12 @@ class WebotsLauncher(ExecuteProcess):
                 if not robot_name:
                     sys.stderr.write('Robot name not specified (should be specified if more than one robot is present with \'name\': \'robotName\'\n')
 
-                convert2urdf(inFile=file_input, worldFile=worldCopy, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
+                convert2urdf(inFile=file_input, worldFile=world_copy, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
 
         return super().execute(context)
 
     def getDriversList(self):
-        nodesList = []
+        nodes_list = []
 
         for robot in self.__robots:
 
@@ -175,6 +175,6 @@ class WebotsLauncher(ExecuteProcess):
                 remappings=robot.get('remappings')
             )
 
-            nodesList.append(robot_driver)
+            nodes_list.append(robot_driver)
 
-        return nodesList
+        return nodes_list

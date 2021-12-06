@@ -38,8 +38,18 @@ def generate_launch_description():
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_ur5e_description.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
 
+    # Define your URDF robots here
+    # Names of the robots have to match the environment variable convention
     webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world])
+        world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        robots=[
+            {'name': 'UR5e',
+             'urdf_location': os.path.join(package_dir, 'resource', 'webots_ur5e_description.urdf'),
+             'translation': '0 0 0.6',
+             'rotation': '0 0 1 -1.570796267678159',
+             'use_sim_time': True,
+            },
+        ]
     )
 
     controller_manager_timeout = ['--controller-manager-timeout', '100']
@@ -81,7 +91,10 @@ def generate_launch_description():
         }],
     )
 
-    return LaunchDescription([
+    # Use webots.getDriversList() to get all the drivers node, the basis of the
+    # webots_ros2 interface.
+    return LaunchDescription(
+        webots.getDriversList() + [
         DeclareLaunchArgument(
             'world',
             default_value='universal_robot.wbt',

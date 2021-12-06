@@ -37,6 +37,20 @@ def generate_launch_description():
     # Webots
     webots = WebotsLauncher(world=os.path.join(package_dir, 'worlds', 'armed_robots.wbt'))
 
+    # Define your URDF robots here
+    # Names of the robots have to match the environment variable convention
+    webots = WebotsLauncher(
+        world=os.path.join(package_dir, 'worlds', 'armed_robots.wbt'),
+        robots=[
+            {'name': 'UR5e',
+             'urdf_location': os.path.join(package_dir, 'resource', 'webots_ur5e_description.urdf'),
+             'translation': '0 0 0.6',
+             'rotation': '0 0 1 -1.5708',
+             'use_sim_time': True,
+            },
+        ]
+    )
+
     # Driver nodes
     # When having multiple robot it is enough to specify the `additional_env` argument.
     # The `WEBOTS_ROBOT_NAME` has to match the robot name in the world file.
@@ -112,7 +126,10 @@ def generate_launch_description():
         output='screen'
     )
 
-    return launch.LaunchDescription([
+    # Use webots.getDriversList() to get all the drivers node, the basis of the
+    # webots_ros2 interface.
+    return launch.LaunchDescription(
+        webots.getDriversList() + [
         webots,
         abb_controller,
         ur5e_controller,

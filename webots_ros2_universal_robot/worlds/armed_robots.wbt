@@ -144,25 +144,6 @@ Radiator {
   name "radiator(1)"
   numberOfFins 19
 }
-UR5e {
-  translation 0 0 0.6
-  rotation -2.39745e-09 5.67193e-08 -1 1.5708
-  controller "<extern>"
-  selfCollision FALSE
-  toolSlot [
-    DistanceSensor {
-      translation 3.67321e-08 0.09 -0.02
-      rotation 0 0 1 1.5708
-      name "object_present_sensor"
-      lookupTable [
-        0 0 0
-        0.2 0.2 0
-      ]
-    }
-    Robotiq3fGripper {
-    }
-  ]
-}
 Irb4600-40 {
   translation 1.48 0.58 -0.02
   rotation 0 0 1 3.14159

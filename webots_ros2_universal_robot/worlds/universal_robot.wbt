@@ -32,21 +32,6 @@ Floor {
   appearance ThreadMetalPlate {
   }
 }
-UR5e {
-  translation 0 0 0.6
-  rotation 0 0 -1 1.570796267678159
-  controller "<extern>"
-  supervisor TRUE
-  selfCollision FALSE
-  toolSlot [
-    Robotiq3fGripper {
-    }
-    DistanceSensor {
-      translation 0 0.1 0
-      rotation 0 0 1 1.570796
-    }
-  ]
-}
 SolidBox {
   translation 0 0 0.3
   rotation 1 0 0 1.5707963267948966

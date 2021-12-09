@@ -133,7 +133,9 @@ class WebotsLauncher(ExecuteProcess):
 
     def execute(self, context: LaunchContext):
         # Check if the user wants to convert URDF files into robots
-        if self.__robots:
+        if self.__robots or True:
+            print("Adding supervisor in world !!!")
+
             world_path = self.__world.perform(context)
             if not world_path:
                 sys.exit('World file not specified (has to be specified with world=path/to/my/world.wbt')
@@ -146,6 +148,16 @@ class WebotsLauncher(ExecuteProcess):
 
             shutil.copyfile(world_path, world_copy)
             context.launch_configurations['world']=os.path.split(world_copy)[1]
+
+            # add supervisor
+            indent = '  '
+            worldFile = open(world_copy, 'a')
+            worldFile.write('Robot {\n')
+            worldFile.write(indent + 'name "supervisor"\n')
+            worldFile.write(indent + 'controller "<extern>"\n')
+            worldFile.write('}\n')
+            worldFile.close()
+
             for robot in self.__robots:
                 file_input = robot.get('urdf_location')
                 robot_name = robot.get('name')

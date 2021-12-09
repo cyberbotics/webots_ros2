@@ -57,7 +57,8 @@ setup(
         'launch.frontend.launch_extension': ['launch_ros = launch_ros'],
         'console_scripts': [
             'ur5e_controller = webots_ros2_universal_robot.ur5e_controller:main',
-            'abb_controller = webots_ros2_universal_robot.abb_controller:main'
+            'abb_controller = webots_ros2_universal_robot.abb_controller:main',
+            'supervisor_driver = webots_ros2_universal_robot.supervisor_driver:main'
         ]
     }
 )

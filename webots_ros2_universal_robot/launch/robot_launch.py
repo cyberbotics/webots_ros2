@@ -56,6 +56,16 @@ def generate_launch_description():
         ]
     )
 
+    supervisor_driver = Node(
+        package='webots_ros2_driver',
+        executable='driver',
+        output='screen',
+        additional_env={'WEBOTS_ROBOT_NAME': 'supervisor'},
+        parameters=[
+            {'robot_description': pathlib.Path(os.path.join(package_dir, 'resource', 'supervisor_webots.urdf')).read_text()},
+        ]
+    )
+
     controller_manager_timeout = ['--controller-manager-timeout', '100']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
 
@@ -107,6 +117,7 @@ def generate_launch_description():
         webots,
         robot_state_publisher,
         universal_robot_driver,
+        supervisor_driver,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,

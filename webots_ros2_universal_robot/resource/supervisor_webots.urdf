@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<robot name="Supervisor Webots">
+    <webots>
+        <plugin type="webots_ros2_universal_robot.supervisor_driver.SupervisorDriver" />
+    </webots>
+</robot>

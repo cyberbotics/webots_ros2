@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+
+<robot name="robotiq-3f-gripper_articulated" xmlns:xacro="http://ros.org/wiki/xacro">
+
+        <xacro:include filename="$(find webots_ros2_universal_robot)/resource/ur_description/urdf/robotiq-3f-gripper_articulated_macro.xacro" />
+        <xacro:robotiq-3f-gripper_articulated prefix=""/>
+
+</robot>

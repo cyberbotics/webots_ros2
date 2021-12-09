@@ -40,6 +40,9 @@ from launch_ros.actions import Node
 
 from urdf2webots.importer import convert2urdf
 
+
+URDF_world_suffix = '_with_URDF_robot.wbt'
+
 '''
 def webotsCustomLaunchDescription(initial_entities: List[LaunchDescriptionEntity]):
     launch_description = LaunchDescription(initial_entities)
@@ -87,8 +90,11 @@ class WebotsLauncher(ExecuteProcess):
         webots_path = os.path.join(webots_path, 'webots')
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
-        world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
-
+        if not isinstance(world, Substitution):
+            if robots:
+                world = world[:-4] + URDF_world_suffix
+            world = TextSubstitution(text=world)
+        
         self.__world = world
         self.__robots = robots
 
@@ -131,12 +137,15 @@ class WebotsLauncher(ExecuteProcess):
             world_path = self.__world.perform(context)
             if not world_path:
                 sys.exit('World file not specified (has to be specified with world=path/to/my/world.wbt')
+            
+            if world_path[-len(URDF_world_suffix):] == URDF_world_suffix:
+                world_copy = world_path
+                world_path = world_path[:-len(URDF_world_suffix)] + '.wbt'
+            else:
+                world_copy = world_path[:-4] + URDF_world_suffix
 
-            world_copy = world_path[:-4] + '_with_URDF_robot.wbt'
             shutil.copyfile(world_path, world_copy)
-            world_name=context.launch_configurations['world']
-            context.launch_configurations['world']=world_name[:-4] + '_with_URDF_robot.wbt'
-
+            context.launch_configurations['world']=os.path.split(world_copy)[1]
             for robot in self.__robots:
                 file_input = robot.get('urdf_location')
                 robot_name = robot.get('name')
@@ -151,30 +160,3 @@ class WebotsLauncher(ExecuteProcess):
                 convert2urdf(inFile=file_input, worldFile=world_copy, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
 
         return super().execute(context)
-
-    def getDriversList(self):
-        nodes_list = []
-
-        for robot in self.__robots:
-
-            parameters=[
-                {'robot_description': pathlib.Path(robot.get('urdf_location')).read_text()},
-                {'use_sim_time': robot.get('use_sim_time')},
-                
-            ]
-
-            if robot.get('control_params'):
-                parameters.append(robot.get('control_params'))
-            
-            robot_driver = Node(
-                package='webots_ros2_driver',
-                executable='driver',
-                output='screen',
-                additional_env={'WEBOTS_ROBOT_NAME': robot.get('name')},
-                parameters=parameters,
-                remappings=robot.get('remappings')
-            )
-
-            nodes_list.append(robot_driver)
-
-        return nodes_list

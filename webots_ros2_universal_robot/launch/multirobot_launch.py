@@ -29,13 +29,11 @@ PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
-    ur5e_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_ur5e_description.urdf')).read_text()
+    ur5e_urdf_path = os.path.join(package_dir, 'resource', 'ur_description', 'urdf', 'ur5e.urdf')
+    ur5e_description = pathlib.Path(ur5e_urdf_path).read_text()
     abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
     ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
     abb_control_params = os.path.join(package_dir, 'resource', 'ros2_control_abb_config.yaml')
-
-    # Webots
-    webots = WebotsLauncher(world=os.path.join(package_dir, 'worlds', 'armed_robots.wbt'))
 
     # Define your URDF robots here
     # Names of the robots have to match the environment variable convention
@@ -43,10 +41,9 @@ def generate_launch_description():
         world=os.path.join(package_dir, 'worlds', 'armed_robots.wbt'),
         robots=[
             {'name': 'UR5e',
-             'urdf_location': os.path.join(package_dir, 'resource', 'webots_ur5e_description.urdf'),
+             'urdf_location': ur5e_urdf_path,
              'translation': '0 0 0.6',
              'rotation': '0 0 1 -1.5708',
-             'use_sim_time': True,
             },
         ]
     )
@@ -128,8 +125,7 @@ def generate_launch_description():
 
     # Use webots.getDriversList() to get all the drivers node, the basis of the
     # webots_ros2 interface.
-    return launch.LaunchDescription(
-        webots.getDriversList() + [
+    return launch.LaunchDescription([
         webots,
         abb_controller,
         ur5e_controller,

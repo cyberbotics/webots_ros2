@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+   <param name="robot_description" command="$(find xacro)/xacro.py '$(find robotiq_3f_gripper_visualization)/cfg/robotiq-3f-gripper_articulated.xacro'" />
+ </launch>

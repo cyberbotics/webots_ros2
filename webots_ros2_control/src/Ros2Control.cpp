@@ -109,9 +109,7 @@ namespace webots_ros2_control
     auto spin = [this]()
     {
       while (rclcpp::ok())
-      {
         mExecutor->spin_once();
-      }
     };
     mThreadExecutor = std::thread(spin);
   }

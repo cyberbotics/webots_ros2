@@ -3,7 +3,7 @@ WorldInfo {
   info [
     "An office break room, surrounded by office desks."
   ]
-  basicTimeStep 16
+  basicTimeStep 20
 }
 Viewpoint {
   fieldOfView 0.5

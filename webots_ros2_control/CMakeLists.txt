@@ -72,6 +72,22 @@ target_include_directories(
   PRIVATE
   include
 )
+
+if (APPLE)
+  set(WEBOTS_LIB_BASE webots/lib/darwin19)
+  set(WEBOTS_DRIVER_DARWIN ${CMAKE_SOURCE_DIR}/../webots_ros2_driver/${WEBOTS_LIB_BASE})
+  target_link_libraries(
+    ${PROJECT_NAME}_system
+    ${WEBOTS_DRIVER_DARWIN}/libController.dylib
+    ${WEBOTS_DRIVER_DARWIN}/libCppCar.dylib
+    ${WEBOTS_DRIVER_DARWIN}/libCppController.dylib
+    ${WEBOTS_DRIVER_DARWIN}/libCppDriver.dylib
+    ${WEBOTS_DRIVER_DARWIN}/libcar.dylib
+    ${WEBOTS_DRIVER_DARWIN}/libdriver.dylib
+)
+endif ()
+
+
 ament_target_dependencies(
   ${PROJECT_NAME}_system
   hardware_interface

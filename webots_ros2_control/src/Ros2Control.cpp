@@ -36,7 +36,6 @@ namespace webots_ros2_control
   void Ros2Control::step()
   {
     const double nowMs = mNode->get_clock()->now().seconds() * 1000.0;
-    RCLCPP_WARN_STREAM(mNode->get_logger(), " " << nowMs << " " << mLastControlUpdateMs << " " << mControlPeriodMs << "\n");
     if (nowMs >= mLastControlUpdateMs + mControlPeriodMs)
     {
       mControllerManager->read();

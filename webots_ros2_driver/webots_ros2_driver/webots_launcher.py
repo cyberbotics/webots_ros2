@@ -43,28 +43,6 @@ from urdf2webots.importer import convert2urdf
 
 URDF_world_suffix = '_with_URDF_robot.wbt'
 
-'''
-def webotsCustomLaunchDescription(initial_entities: List[LaunchDescriptionEntity]):
-    launch_description = LaunchDescription(initial_entities)
-
-    # find WebotsLauncher
-    for entity in initial_entities:
-        if type(entity) == WebotsLauncher:
-            for robot in WebotsLauncher(entity).__robots:
-                robot_driver = Node(
-                    package='webots_ros2_driver',
-                    executable='driver',
-                    output='screen',
-                    additional_env={'WEBOTS_ROBOT_NAME': robot.get('name')},
-                    parameters=[
-                        {'robot_description': pathlib.Path(robot.get('urdf_location')).read_text()},
-                    ]
-                )
-
-                launch_description.add_entity(robot_driver)
-
-    return launch_description
-'''
 
 class _ConditionalSubstitution(Substitution):
     def __init__(self, *, condition, false_value='', true_value=''):
@@ -94,7 +72,7 @@ class WebotsLauncher(ExecuteProcess):
             if robots:
                 world = world[:-4] + URDF_world_suffix
             world = TextSubstitution(text=world)
-        
+
         self.__world = world
         self.__robots = robots
 
@@ -139,7 +117,7 @@ class WebotsLauncher(ExecuteProcess):
             world_path = self.__world.perform(context)
             if not world_path:
                 sys.exit('World file not specified (has to be specified with world=path/to/my/world.wbt')
-            
+
             if world_path[-len(URDF_world_suffix):] == URDF_world_suffix:
                 world_copy = world_path
                 world_path = world_path[:-len(URDF_world_suffix)] + '.wbt'
@@ -157,6 +135,7 @@ class WebotsLauncher(ExecuteProcess):
             worldFile.write(indent + 'controller "<extern>"\n')
             worldFile.write('}\n')
             worldFile.close()
+
 
             for robot in self.__robots:
                 file_input = robot.get('urdf_location')

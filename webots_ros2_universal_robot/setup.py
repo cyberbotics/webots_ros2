@@ -13,6 +13,7 @@ data_files.append(('share/' + package_name + '/launch', [
     'launch/robot_launch.py',
     'launch/multirobot_launch.py',
     'launch/moveit_demo_launch.py',
+    'launch/test_launch.py',
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/universal_robot.wbt',
@@ -58,7 +59,8 @@ setup(
         'console_scripts': [
             'ur5e_controller = webots_ros2_universal_robot.ur5e_controller:main',
             'abb_controller = webots_ros2_universal_robot.abb_controller:main',
-            'supervisor_driver = webots_ros2_universal_robot.supervisor_driver:main'
+            'supervisor_driver = webots_ros2_universal_robot.supervisor_driver:main',
+            'supervisor_node = webots_ros2_universal_robot.supervisor_node:main'
         ]
     }
 )

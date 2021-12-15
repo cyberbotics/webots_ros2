@@ -66,7 +66,13 @@ class SupervisorSpawner(Node):
         robot_translation = robot.translation if robot.translation else '0 0 0'
         robot_rotation = robot.rotation if robot.rotation else '0 1 0 0'
 
-        robot_string = convert2urdf(inFile=file_input, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
+        self.get_logger().info('supervisor import urdf robot '+str(robot))
+
+        (robot_string, root_name) = convert2urdf(inFile=file_input, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
+
+        test = "USE base_0" in robot_string
+        self.get_logger().info('supervisor import urdf USE base_0 exist? '+str(test))
+        self.get_logger().info('supervisor import urdf rootname '+str(root_name))
 
         self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
 
@@ -74,13 +80,16 @@ class SupervisorSpawner(Node):
         return response
 
     def __clean_urdf_robot_callback(self, message):
+        self.get_logger().info('supervisor clean urdf ')
         if message.data:
             self.__insertion_robot_place.removeMF(-1)
 
 
     def __supervisor_step_callback(self):
+        #self.get_logger().info('supervisor robot step ')
         if self.__robot.step(self.__timestep) < 0:
-            self.get_logger().info('supervisor robot step will end')
+            self.get_logger().info('supervisor robot step return -1 !!!')
+        #self.get_logger().info('supervisor robot step end')
 
 
 def main(args=None):

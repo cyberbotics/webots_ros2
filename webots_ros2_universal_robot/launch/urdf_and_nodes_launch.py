@@ -73,6 +73,20 @@ def get_ros2_control_spawners(event):
         }],
     )
 
+    publish_clean_urdf_robot = ExecuteProcess(
+        cmd=[
+            'ros2',
+            'topic',
+            'pub',
+            '--once',
+            '/clean_urdf_robot',
+            'std_msgs/msg/Bool',
+            '{\
+            "data": "True"\
+            }'
+        ]
+    )
+
     if "success=True" in event.text.decode().strip():
         return [
             joint_state_broadcaster_spawner,
@@ -85,6 +99,7 @@ def get_ros2_control_spawners(event):
                     on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
                 )
             ),
+
         ]
     return
 
@@ -109,19 +124,7 @@ def generate_launch_description():
         ]
     )
 
-    publish_clean_urdf_robot = ExecuteProcess(
-        cmd=[
-            'ros2',
-            'topic',
-            'pub',
-            '--once',
-            '/clean_urdf_robot',
-            'std_msgs/msg/Bool',
-            '{\
-            "data": "True"\
-            }'
-        ]
-    )
+
 
     return LaunchDescription([
         service_send_urdf_robot,
@@ -131,12 +134,7 @@ def generate_launch_description():
                 on_stdout=lambda event: get_ros2_control_spawners(event),
             )
         ),
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=service_send_urdf_robot,
-                on_exit=publish_clean_urdf_robot,
-            )
-        ),
+
     ])
 
 

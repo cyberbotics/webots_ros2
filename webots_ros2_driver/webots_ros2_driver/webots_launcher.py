@@ -65,7 +65,6 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('xvfb-run')
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
-            os.environ['WEBOTS_SAFE_MODE'] = 'true'
 
         # no_rendering, stdout, stderr, no_sandbox, minimize
         super().__init__(

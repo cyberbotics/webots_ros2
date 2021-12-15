@@ -133,10 +133,11 @@ class WebotsLauncher(ExecuteProcess):
             worldFile.write('Robot {\n')
             worldFile.write(indent + 'name "supervisor"\n')
             worldFile.write(indent + 'controller "<extern>"\n')
+            worldFile.write(indent + 'supervisor TRUE\n')
             worldFile.write('}\n')
             worldFile.close()
 
-
+            '''
             for robot in self.__robots:
                 file_input = robot.get('urdf_location')
                 robot_name = robot.get('name')
@@ -149,5 +150,5 @@ class WebotsLauncher(ExecuteProcess):
                     sys.stderr.write('Robot name not specified (should be specified if more than one robot is present with \'name\': \'robotName\'\n')
 
                 convert2urdf(inFile=file_input, worldFile=world_copy, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
-
+            '''
         return super().execute(context)

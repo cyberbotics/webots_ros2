@@ -23,6 +23,8 @@ int main(int argc, char **argv)
 
   webots::Supervisor* robot;
 
+  //throw std::runtime_error(" just create robot !!!");
+
   // Check if the robot can be a driver, if not create a simple Supervisor
   if (webots::Driver::isInitialisationPossible())
     robot = new webots::Driver();

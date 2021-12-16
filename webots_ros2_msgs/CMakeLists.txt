@@ -28,6 +28,7 @@ set(msg_files
   "msg/WbURDFRobot.msg"
 )
 set(srv_files
+  "srv/ClearRobot.srv"
   "srv/SetInt.srv"
   "srv/SetWbURDFRobot.srv"
 )

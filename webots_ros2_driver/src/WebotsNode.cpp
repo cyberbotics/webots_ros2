@@ -60,7 +60,6 @@ namespace webots_ros2_driver
     }
 
     mClockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
-    mRemoveRobotPublisher = create_publisher<std_msgs::msg::Bool>("/clean_urdf_robot", 10);
   }
 
   std::unordered_map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement) const

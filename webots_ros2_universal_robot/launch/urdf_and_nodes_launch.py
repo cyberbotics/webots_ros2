@@ -20,12 +20,87 @@ import os
 import pathlib
 import launch
 from launch import LaunchDescription
-from launch_ros.actions import Node
+
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import ExecuteProcess
 
 
+import signal
+import sys
+
+
+import rclpy
+from rclpy.node import Node as rclpyNode
+
+from webots_ros2_msgs.srv import ClearRobot
+
+from rclpy.time import Duration
+
+import threading
+
+from launch_ros.actions import Node
+
+
+
 PACKAGE_NAME = 'webots_ros2_universal_robot'
+
+
+class MinimalClientAsync(rclpyNode):
+
+    def __init__(self):
+        super().__init__('minimal_client_async')
+        self.cli = self.create_client(ClearRobot, 'clean_urdf_robot')
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('service not available, waiting again...')
+        self.req = ClearRobot.Request()
+
+    def send_request(self):
+        self.req.name = 'hello'
+        self.future = self.cli.call_async(self.req)
+
+
+def signal_handler(sig, frame):
+    print('You pressed Ctrl+C!')
+    #print('sig is '+str(sig))
+    #print('frame is '+str(frame))
+
+    '''
+    rclpy.init()
+
+    minimal_client = MinimalClientAsync()
+    minimal_client.send_request()
+
+    time_start = minimal_client.get_clock().now()
+
+    timeout = Duration(seconds=5.0)
+
+    time_end = time_start + timeout
+
+    while rclpy.ok() and minimal_client.get_clock().now() < time_end:
+        minimal_client.get_logger().info('minimal_client before spine once...')
+        rclpy.spin_once(minimal_client)
+        minimal_client.get_logger().info('minimal_client after spine once..')
+        if minimal_client.future.done():
+            try:
+                response = minimal_client.future.result()
+            except Exception as e:
+                minimal_client.get_logger().info(
+                    'Service call failed %r' % (e,))
+            else:
+                minimal_client.get_logger().info(
+                    'Result of remove robot: for %s: %s' %
+                    (minimal_client.req.name, str(response.success)))
+            break
+        minimal_client.get_logger().info('minimal_client after minimal_client.future.done()...')
+
+    minimal_client.destroy_node()
+    rclpy.shutdown()
+    '''
+    print('Clean urdf done!')
+
+    #sys.exit(0)
+
+
 
 def get_ros2_control_spawners(event):
     package_dir = get_package_share_directory(PACKAGE_NAME)
@@ -73,19 +148,7 @@ def get_ros2_control_spawners(event):
         }],
     )
 
-    publish_clean_urdf_robot = ExecuteProcess(
-        cmd=[
-            'ros2',
-            'topic',
-            'pub',
-            '--once',
-            '/clean_urdf_robot',
-            'std_msgs/msg/Bool',
-            '{\
-            "data": "True"\
-            }'
-        ]
-    )
+    signal.signal(signal.SIGINT, signal_handler)
 
     if "success=True" in event.text.decode().strip():
         return [
@@ -99,7 +162,6 @@ def get_ros2_control_spawners(event):
                     on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
                 )
             ),
-
         ]
     return
 
@@ -123,7 +185,6 @@ def generate_launch_description():
             }'
         ]
     )
-
 
 
     return LaunchDescription([

@@ -36,13 +36,16 @@ from std_msgs.msg import Bool
 
 import webots_ros2_driver_webots
 
-from webots_ros2_msgs.msg import WbURDFRobot
 from webots_ros2_msgs.srv import SetWbURDFRobot
+from webots_ros2_msgs.srv import ClearRobot
 
 # As Driver need the controller library, we extend the path here
 # to avoid to load another library named "controller" when loading vehicle library
 sys.path.insert(1, os.path.dirname(webots_ros2_driver_webots.__file__))
 from controller import Supervisor
+
+
+
 
 
 class SupervisorSpawner(Node):
@@ -55,8 +58,8 @@ class SupervisorSpawner(Node):
         self.__insertion_robot_place = root_node.getField('children')
 
         self.create_timer(self.__timestep / 1000 , self.__supervisor_step_callback)
-        self.create_subscription(Bool, 'clean_urdf_robot', self.__clean_urdf_robot_callback, 1)
         self.create_service(SetWbURDFRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
+        self.create_service(ClearRobot, 'clean_urdf_robot', self.__clean_urdf_robot_callback)
 
     def __spawn_urdf_robot_callback(self, request, response):
         robot = request.robot
@@ -68,21 +71,19 @@ class SupervisorSpawner(Node):
 
         self.get_logger().info('supervisor import urdf robot '+str(robot))
 
-        (robot_string, root_name) = convert2urdf(inFile=file_input, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
-
-        test = "USE base_0" in robot_string
-        self.get_logger().info('supervisor import urdf USE base_0 exist? '+str(test))
-        self.get_logger().info('supervisor import urdf rootname '+str(root_name))
-
+        robot_string = convert2urdf(inFile=file_input, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
         self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
 
         response.success = True
         return response
 
-    def __clean_urdf_robot_callback(self, message):
-        self.get_logger().info('supervisor clean urdf ')
-        if message.data:
-            self.__insertion_robot_place.removeMF(-1)
+    def __clean_urdf_robot_callback(self, request, response):
+        self.get_logger().info('supervisor clean urdf of robot: '+str(request.name))
+
+        self.__insertion_robot_place.removeMF(-1)
+
+        response.success = True
+        return response
 
 
     def __supervisor_step_callback(self):
@@ -103,97 +104,39 @@ if __name__ == '__main__':
     main()
 
 
-
-
-
 '''
-class SupervisorDriver:
-    def init(self, webots_node, properties):
-        self.__robot = webots_node.robot
+"""my_controller controller."""
 
-        # ROS interface
-        rclpy.init(args=None)
-        self.__node = rclpy.create_node('supervisor_urdf_driver')
-        ''''''
-        # temp file
-        tmp_launch_file = tempfile.NamedTemporaryFile(mode="w", prefix='launch', suffix='.py', delete=False)
+# You may need to import some classes of the controller module. Ex:
+#  from controller import Robot, Motor, DistanceSensor
+from controller import Robot
 
-        self.__node.get_logger().info("tmp_launch_file file is "+tmp_launch_file.name)
+# create the Robot instance.
+robot = Robot()
 
-        tmp_launch_file.write()
+# get the time step of the current world.
+timestep = int(robot.getBasicTimeStep())
 
-        tmp_launch_file.close()
-        #os.unlink(tmp_launch_file.name)
+# You should insert a getDevice-like function in order to get the
+# instance of a device of the robot. Something like:
+#  motor = robot.getDevice('motorname')
+#  ds = robot.getDevice('dsname')
+#  ds.enable(timestep)
 
-        self.__node.create_subscription(String, 'robots_list', self.__get_urdf_robot_callback, 1)
+# Main loop:
+# - perform simulation steps until Webots is stopping the controller
+while robot.step(timestep) != -1:
+    # Read the sensors:
+    # Enter here functions to read sensor data, like:
+    #  val = ds.getValue()
 
-        # Refresh urdf
-        self.__node.create_subscription(Bool, 'refresh_urdf', self.__refresh_urdf_callback, 1)
+    # Process sensor data here.
 
-        #self.__refresh_urdf_robots_in_webots()
+    # Enter here functions to send actuator commands, like:
+    #  motor.setPosition(10.0)
+    pass
 
-        self.__relative_path_to_launch_file=tmp_launch_file.name
-        self.__launch_process = subprocess.Popen(["ros2", "launch", self.__relative_path_to_launch_file], text=True)
-
-        ''''''
-
-        # Add robot to simulation
-        self.__node.get_logger().info('supervisor_urdf_driver init will add robot')
-
-        package_dir = get_package_share_directory(PACKAGE_NAME)
-        urdf_path = os.path.join(package_dir, 'resource', 'ur_description', 'urdf', 'ur5e.urdf')
-
-        robots=[
-                {'name': 'UR5e',
-                'urdf_location': urdf_path,
-                'translation': '0 0 0.6',
-                'rotation': '0 0 1 -1.5708',
-                },
-            ]
-
-        test = self.__robot.getName()
-
-        test2 = self.__robot.getSupervisor()
-
-        self.__node.get_logger().info('supervisor_urdf_driver supervisor is '+ str(test2))
-
-        root_node = self.__robot.getRoot()
-        children_field = root_node.getField('children')
-
-        for robot in robots:
-            file_input = robot.get('urdf_location')
-            robot_name = robot.get('name')
-            robot_translation = robot.get('translation')
-            robot_rotation = robot.get('rotation')
-
-            if not file_input:
-                sys.exit('URDF file not specified (has to be specified with \'urdf_location\': \'path/to/my/robotUrdf.urdf\'')
-            if not robot_name:
-                sys.stderr.write('Robot name not specified (should be specified if more than one robot is present with \'name\': \'robotName\'\n')
-
-            robot_string = convert2urdf(inFile=file_input, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
-
-        children_field.importMFNodeFromString(-1, robot_string)
-
-        self.__pub = self.__node.create_publisher(String, 'test', 1)
-        self.__test = 0
-
-    def __get_urdf_robot_callback(self, string):
-        self.__node.get_logger().info('URDF robot recieved')
-
-    def __refresh_urdf_callback(self, bool):
-        self.__node.get_logger().info('URDF refresh asked')
-
-        if bool.data:
-            self.__launch_process.send_signal(signal.SIGINT)
-            self.__launch_process.wait(timeout=5)
-            self.__launch_process = subprocess.Popen(["ros2", "launch", self.__relative_path_to_launch_file], text=True)
-
-    def step(self):
-        rclpy.spin_once(self.__node, timeout_sec=0)
+# Enter here exit cleanup code.
 
 
-
-
-        #self.__node.get_logger().info('supervisor_urdf_driver spin !!!')
 '''

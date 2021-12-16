@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 project(webots_ros2_control)
 
+# Check which ROS distribution is used, ros2control depends of that
+if($ENV{ROS_DISTRO} MATCHES "foxy")
+  add_compile_definitions(FOXY)
+endif()
+
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)

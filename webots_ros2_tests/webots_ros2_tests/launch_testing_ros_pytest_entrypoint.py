@@ -12,12 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ament_copyright.main import main
-import pytest
+
+def pytest_launch_collect_makemodule(path, parent, entrypoint):
+    marks = getattr(entrypoint, 'pytestmark', [])
+    if marks and any(m.name == 'rostest' for m in marks):
+        from launch_testing_ros.pytest.hooks import LaunchROSTestModule
+        return LaunchROSTestModule.from_parent(parent=parent, fspath=path)
 
 
-@pytest.mark.copyright
-@pytest.mark.linter
-def test_copyright():
-    rc = main(argv=['.', 'test'])
-    assert rc == 0, 'Found errors'
+def pytest_configure(config):
+    config.addinivalue_line(
+        'markers',
+        'rostest: mark a generate_test_description function as a ROS launch test entrypoint'
+    )

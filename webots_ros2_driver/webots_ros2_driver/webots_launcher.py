@@ -59,7 +59,6 @@ class WebotsLauncher(ExecuteProcess):
             no_sandbox = ''
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
         stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
-
         xvfb_run_prefix = []
         if 'WEBOTS_OFFSCREEN' in os.environ:
             xvfb_run_prefix.append('xvfb-run')

@@ -1,4 +1,4 @@
-# Copyright 2015 Open Source Robotics Foundation, Inc.
+# Copyright 1996-2021 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,5 +21,5 @@ import pytest
 @pytest.mark.copyright
 @pytest.mark.linter
 def test_copyright():
-    rc = main(argv=['.', '--verbose', '--exclude', 'quaternions.py'])
+    rc = main(argv=['.', '--verbose', '--exclude', 'webots_ros2_core/math/quaternions.py'])
     assert rc == 0, 'Found errors'

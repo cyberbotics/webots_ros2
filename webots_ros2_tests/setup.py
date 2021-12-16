@@ -10,10 +10,6 @@ data_files = [
     ('share/' + package_name + '/resource', ['resource/driver_test.urdf'])
 ]
 
-entry_point_launch_ros = 'launch_testing_ros.pytest.hooks'
-if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling':
-    entry_point_launch_ros = f'{package_name}.launch_testing_ros_pytest_entrypoint'
-
 setup(
     name=package_name,
     version='1.1.3',
@@ -34,8 +30,5 @@ setup(
     ],
     description='System tests for `webots_ros2` packages',
     license='Apache License, Version 2.0',
-    tests_require=['pytest'],
-    entry_points={
-        'pytest11': [f'launch_ros = {entry_point_launch_ros}'],
-    }
+    tests_require=['pytest']
 )

@@ -1,5 +1,4 @@
 from setuptools import setup
-import os
 
 package_name = 'webots_ros2_tests'
 

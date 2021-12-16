@@ -14,6 +14,8 @@
   <depend>controller_manager</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+
   <depend>webots_ros2_driver</depend>
 
   <build_depend>ros_environment</build_depend>

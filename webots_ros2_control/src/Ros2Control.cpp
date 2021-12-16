@@ -27,24 +27,33 @@
 #include "pluginlib/class_list_macros.hpp"
 
 #include <iostream>
+
+const double CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS = 1.0;
+
 namespace webots_ros2_control
 {
 
   void Ros2Control::step()
   {
-    mControllerManager->read();
-    #if FOXY
+    const double nowMs = mNode->get_clock()->now().seconds() * 1000.0;
+    if (nowMs >= mLastControlUpdateMs + mControlPeriodMs)
+    {
+      mControllerManager->read();
+#if FOXY
       mControllerManager->update();
-    #else
+#else
       rclcpp::Duration dt = rclcpp::Duration::from_nanoseconds(RCL_MS_TO_NS(mNode->robot()->getBasicTimeStep()));
       mControllerManager->update(mNode->get_clock()->now(), dt);
-    #endif
+#endif
+      mLastControlUpdateMs = nowMs;
+    }
     mControllerManager->write();
   }
 
   void Ros2Control::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &)
   {
     mNode = node;
+    mLastControlUpdateMs = 0;
 
     // Load hardware
     try
@@ -77,22 +86,29 @@ namespace webots_ros2_control
       auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
           mHardwareLoader->createUnmanagedInstance(hardwareType));
       webotsSystem->init(mNode, controlHardware[i]);
-      #if FOXY
-        resourceManager->import_component(std::move(webotsSystem));
-      #else
-        resourceManager->import_component(std::move(webotsSystem), controlHardware[i]);
-      #endif
+#if FOXY
+      resourceManager->import_component(std::move(webotsSystem));
+#else
+      resourceManager->import_component(std::move(webotsSystem), controlHardware[i]);
+#endif
     }
 
     // Controller Manager
     mExecutor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
     mControllerManager.reset(new controller_manager::ControllerManager(std::move(resourceManager), mExecutor));
+
+    // Update rate
+    const int updateRate = mControllerManager->get_parameter("update_rate").as_int();
+    mControlPeriodMs = (1.0 / updateRate) * 1000.0;
+    if (abs(mControlPeriodMs - mNode->robot()->getBasicTimeStep()) > CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS)
+      RCLCPP_WARN_STREAM(node->get_logger(), "Desired controller update period (" << mControlPeriodMs << "ms / " << updateRate << "Hz) is different from the Webots timestep (" << mNode->robot()->getBasicTimeStep() << "ms). Please adjust the `update_rate` parameter in the `controller_manager` or the `basicTimeStep` parameter in the Webots `WorldInfo` node.");
+
+    // Spin
     mExecutor->add_node(mControllerManager);
     auto spin = [this]()
     {
-      while (rclcpp::ok()) {
+      while (rclcpp::ok())
         mExecutor->spin_once();
-      }
     };
     mThreadExecutor = std::thread(spin);
   }

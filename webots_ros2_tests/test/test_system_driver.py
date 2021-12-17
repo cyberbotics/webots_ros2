@@ -167,7 +167,8 @@ class TestDriver(TestWebots):
             self.assertAlmostEqual(message.z, 0.0, delta=0.2)
             return True
 
-        self.wait_for_messages(self.__node, Vector3, '/Pioneer_3_AT/gps/speed_vector', condition=on_speed_vector_message_received)
+        self.wait_for_messages(self.__node, Vector3, '/Pioneer_3_AT/gps/speed_vector',
+                               condition=on_speed_vector_message_received)
 
     def testLightSensor(self):
         self.wait_for_messages(self.__node, Illuminance, '/Pioneer_3_AT/light_sensor',

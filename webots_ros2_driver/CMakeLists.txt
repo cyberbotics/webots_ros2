@@ -146,10 +146,6 @@ target_link_libraries(${PROJECT_NAME}_imu
 )
 
 install(
- DIRECTORY include/${PROJECT_NAME}
- DESTINATION include/${PROJECT_NAME}
-)
-install(
   DIRECTORY webots/include/c
   DESTINATION include/webots
 )

@@ -16,6 +16,8 @@
   <depend>rclcpp</depend>
   <depend>webots_ros2_driver</depend>
 
+  <build_depend>ros_environment</build_depend>
+
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <test_depend>ament_lint_auto</test_depend>

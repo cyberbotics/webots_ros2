@@ -20,12 +20,15 @@
 #include <vector>
 #include <thread>
 
-#include "hardware_interface/base_interface.hpp"
+#if FOXY
+  #include "hardware_interface/base_interface.hpp"
+  #include "hardware_interface/types/hardware_interface_status_values.hpp"
+#endif
+
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
-#include "hardware_interface/types/hardware_interface_status_values.hpp"
 #include "controller_manager/controller_manager.hpp"
 #include "rclcpp/macros.hpp"
 #include "webots_ros2_driver/PluginInterface.hpp"
@@ -44,6 +47,8 @@ namespace webots_ros2_control
       webots_ros2_driver::WebotsNode *mNode;
       std::shared_ptr<pluginlib::ClassLoader<Ros2ControlSystemInterface>> mHardwareLoader;
       std::shared_ptr<controller_manager::ControllerManager> mControllerManager;
+      double mControlPeriodMs;
+      double mLastControlUpdateMs;
 
       std::thread mThreadExecutor;
       rclcpp::executors::MultiThreadedExecutor::SharedPtr mExecutor;

@@ -115,9 +115,7 @@ def generate_launch_description():
                 ('map', nav2_map),
                 ('use_sim_time', use_sim_time),
             ],
-            condition=launch.conditions.IfCondition(use_nav)
-        )
-        )
+            condition=launch.conditions.IfCondition(use_nav)))
 
     slam_toolbox = Node(
         parameters=[{'use_sim_time': use_sim_time}],

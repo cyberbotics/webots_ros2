@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 50.0
+    update_rate: 50
 
     diffdrive_controller:
       type: diff_drive_controller/DiffDriveController
@@ -16,5 +16,4 @@ diffdrive_controller:
     wheel_separation: 0.05685
     wheel_radius: 0.02
 
-    publish_rate: 50.0
     use_stamped_vel: false

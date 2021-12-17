@@ -16,6 +16,7 @@
 
 from action_msgs.msg import GoalStatus
 from control_msgs.action import FollowJointTrajectory
+from control_msgs.msg import JointTrajectoryControllerState
 from trajectory_msgs.msg import JointTrajectoryPoint
 from builtin_interfaces.msg import Duration
 
@@ -25,9 +26,13 @@ from rclpy.node import Node
 
 
 class FollowJointTrajectoryClient(Node):
-    def __init__(self, name, action_name):
+    def __init__(self, name, prefix):
         super().__init__(name)
-        self.__client = ActionClient(self, FollowJointTrajectory, action_name)
+        self.__client = ActionClient(self, FollowJointTrajectory, prefix + '/follow_joint_trajectory')
+        self.__state_subscriber = self.create_subscription(
+            JointTrajectoryControllerState, prefix + '/state', self.__on_state_received, 1
+        )
+        self.__received_states_counter = 0
         self.__remaining_iteration = 0
         self.__current_trajectory = None
         self.__get_result_future = None
@@ -55,9 +60,18 @@ class FollowJointTrajectoryClient(Node):
         else:
             rclpy.shutdown()
 
+    def __on_state_received(self, _):
+        self.__received_states_counter += 1
+
     def send_goal(self, trajectory, iteration=1):
-        self.get_logger().info('Waiting for action server...')
+        self.get_logger().info('Waiting for action server to be ready...')
+
         self.__client.wait_for_server()
+
+        # WORKAROUND: The `wait_for_server()` method reports the `joint_trajectory_controller` node is ready even though it
+        # needs a bit more time to get ready to receive commands.
+        while self.__received_states_counter < 1:
+            rclpy.spin_once(self)
 
         self.__current_trajectory = trajectory
         self.__remaining_iteration = iteration - 1

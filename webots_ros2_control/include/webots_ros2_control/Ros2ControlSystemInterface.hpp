@@ -19,23 +19,35 @@
 #include <string>
 #include <vector>
 
-#include "hardware_interface/base_interface.hpp"
+#if FOXY
+  #include "hardware_interface/base_interface.hpp"
+  #include "hardware_interface/types/hardware_interface_status_values.hpp"
+#endif
+
 #include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
-#include "hardware_interface/types/hardware_interface_status_values.hpp"
 #include "webots_ros2_driver/PluginInterface.hpp"
 #include <webots/Supervisor.hpp>
 #include "webots_ros2_driver/WebotsNode.hpp"
 
 namespace webots_ros2_control
 {
-  class Ros2ControlSystemInterface : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
-  {
-  public:
-    virtual void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) = 0;
-  };
+  #if FOXY
+    class Ros2ControlSystemInterface : public hardware_interface::BaseInterface<hardware_interface::SystemInterface>
+    {
+    public:
+      virtual void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) = 0;
+    };
+  #else
+    class Ros2ControlSystemInterface : public hardware_interface::SystemInterface
+    {
+    public:
+      virtual void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) = 0;
+    };
+  #endif
+  
 }
 
 #endif

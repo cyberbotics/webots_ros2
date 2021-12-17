@@ -4,6 +4,7 @@ WorldInfo {
     "Simple TurtleBot3 Burger simulation that can be controlled by a ROS."
   ]
   title "ROS2 simulation of the TurtleBot3 Burger robot"
+  basicTimeStep 20
 }
 Viewpoint {
   orientation -0.1500994671353544 -0.4810853207937876 -0.8637285824160397 3.5119475446104667

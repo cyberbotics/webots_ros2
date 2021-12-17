@@ -16,17 +16,23 @@
 
 """Test the `webots_ros2_turtlebot` package on the SLAM and Navigation tutorials."""
 
-# Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_turtlebot_tutorials.py
+# Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_turtlebot_tutorial_navigation.py
 
 import os
 import pytest
 import rclpy
+from geometry_msgs.msg import PoseWithCovarianceStamped
+from geometry_msgs.msg import Point
+from geometry_msgs.msg import Quaternion
+from nav_msgs.msg import OccupancyGrid
 from launch import LaunchDescription
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
+
+turtlebot3_map = 'turtlebot3_burger_example_map.yaml'
 
 
 @pytest.mark.rostest
@@ -44,17 +50,20 @@ def generate_test_description():
         )
     )
 
-    # Rviz SLAM
-    turtlebot_slam = IncludeLaunchDescription(
+    # Rviz Navigation
+    os.environ['TURTLEBOT3_MODEL'] = 'burger'
+    map_path = os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'resource', turtlebot3_map)
+
+    turtlebot_navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('turtlebot3_cartographer'), 'launch', 'cartographer.launch.py')
+            os.path.join(get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')
         ),
-        launch_arguments={'use_sim_time': 'true'}.items(),
+        launch_arguments={'use_sim_time': 'true', 'map': map_path}.items(),
     )
 
     return LaunchDescription([
         turtlebot_webots,
-        turtlebot_slam,
+        turtlebot_navigation,
         launch_testing.actions.ReadyToTest(),
     ])
 
@@ -72,17 +81,38 @@ class TestTurtlebotTutorials(TestWebots):
         self.__node = rclpy.create_node('driver_tester')
         self.wait_for_clock(self.__node, messages_to_receive=20)
 
-    def testSLAM(self):
-        from nav_msgs.msg import OccupancyGrid
+    def testNavigation(self):
+        # Set the initial pose
+        publisher = self.__node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
+        pose_message = PoseWithCovarianceStamped()
+        pose_message.header.frame_id = "map"
 
-        def on_map_message_received(message):
-            # There should be an update the map
+        initial_point = Point()
+        initial_point.x = 0.0
+        initial_point.y = 0.0
+        initial_point.z = 0.0
+        pose_message.pose.pose.position = initial_point
+
+        initial_orientation = Quaternion()
+        initial_orientation.x = 0.0
+        initial_orientation.y = 0.0
+        initial_orientation.z = 0.0
+        initial_orientation.w = 1.0
+        pose_message.pose.pose.orientation = initial_orientation
+
+        # Wait for Webots before sending the message
+        self.wait_for_clock(self.__node)
+        publisher.publish(pose_message)
+
+        # Check if the cost map is updated -> local map for navigation is working
+        def on_cost_map_message_received(message):
+            # There should be a value in the range ]0, 100]
             for value in message.data:
-                if value > -1:
+                if value > 0 and value <= 100:
                     return True
             return False
 
-        self.wait_for_messages(self.__node, OccupancyGrid, '/map', condition=on_map_message_received)
+        self.wait_for_messages(self.__node, OccupancyGrid, '/global_costmap/costmap', condition=on_cost_map_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

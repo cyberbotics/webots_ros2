@@ -40,9 +40,8 @@ def generate_launch_description():
     )
 
     # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
-    sleep_time = 60 if 'CI' in os.environ else 10
-    controller_manager_timeout = ['--controller-manager-timeout', '50'] if os.name == 'nt' else []
-    controller_manager_prefix = 'python.exe' if os.name == 'nt' else f"bash -c 'sleep {sleep_time}; $0 $@' "
+    controller_manager_timeout = ['--controller-manager-timeout', '50']
+    controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
 
     diffdrive_controller_spawner = Node(
         package='controller_manager',

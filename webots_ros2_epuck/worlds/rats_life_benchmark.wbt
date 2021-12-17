@@ -3,7 +3,7 @@ WorldInfo {
   info [
     "Rat's life pattern"
   ]
-  basicTimeStep 16
+  basicTimeStep 20
 }
 DEF VIEWPOINT Viewpoint {
   fieldOfView 0.755398

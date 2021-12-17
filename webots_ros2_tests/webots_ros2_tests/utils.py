@@ -24,7 +24,7 @@ import rclpy
 from rosgraph_msgs.msg import Clock
 
 
-DEFAULT_TIMEOUT = 90.0
+DEFAULT_TIMEOUT = 120.0
 DEFAULT_CLOCK_TIMEOUT = 5 * DEFAULT_TIMEOUT
 
 

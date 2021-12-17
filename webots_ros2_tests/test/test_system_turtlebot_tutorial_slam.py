@@ -16,7 +16,7 @@
 
 """Test the `webots_ros2_turtlebot` package on the SLAM and Navigation tutorials."""
 
-# Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_turtlebot_tutorials_slam.py
+# Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_turtlebot_tutorial_slam.py
 
 import os
 import pytest

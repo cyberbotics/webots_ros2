@@ -10,7 +10,6 @@ find_package(ament_cmake_python REQUIRED)
 find_package(rosgraph_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
-find_package(rclcpp_lifecycle REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -105,7 +104,6 @@ ament_target_dependencies(driver
   rosgraph_msgs
   rclcpp
   pluginlib
-  rclcpp_lifecycle
   sensor_msgs
   std_msgs
   tf2_ros
@@ -209,7 +207,6 @@ pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
 ament_export_include_directories(include)
 ament_export_dependencies(
   rclcpp
-  rclcpp_lifecycle
   rclpy
   sensor_msgs
   std_msgs

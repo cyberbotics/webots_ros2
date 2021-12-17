@@ -38,7 +38,7 @@ namespace webots_ros2_driver
       mPointMessage.header.frame_id = mFrameName;
     }
     mSpeedPublisher = mNode->create_publisher<std_msgs::msg::Float32>(mTopicName + "/speed", rclcpp::SensorDataQoS().reliable());
-    mVelocityPublisher = mNode->create_publisher<geometry_msgs::msg::Vector3>(mTopicName + "/velocity", rclcpp::SensorDataQoS().reliable());
+    mSpeedVectorPublisher = mNode->create_publisher<geometry_msgs::msg::Vector3>(mTopicName + "/speed_vector", rclcpp::SensorDataQoS().reliable());
 
     if (mAlwaysOn) {
       mGPS->enable(mPublishTimestepSyncedMs);
@@ -60,7 +60,7 @@ namespace webots_ros2_driver
         assert(false);
 
       publishSpeed();
-      publishVelocity();
+      publishSpeedVector();
     }
 
     if (mAlwaysOn)
@@ -70,9 +70,9 @@ namespace webots_ros2_driver
     const bool pointSubscriptionsExist = mPointPublisher != nullptr && mPointPublisher->get_subscription_count() > 0;
     const bool gpsSubscriptionsExist = mGPSPublisher != nullptr && mGPSPublisher->get_subscription_count() > 0;
     const bool speedSubscriptionsExist = mSpeedPublisher->get_subscription_count() > 0;
-    const bool velocitySubscriptionsExist = mVelocityPublisher->get_subscription_count() > 0;
+    const bool speedVectorSubscriptionsExist = mSpeedVectorPublisher->get_subscription_count() > 0;
     const bool shouldBeEnabled = pointSubscriptionsExist || gpsSubscriptionsExist || speedSubscriptionsExist
-                              || velocitySubscriptionsExist;
+                              || speedVectorSubscriptionsExist;
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
@@ -109,12 +109,12 @@ namespace webots_ros2_driver
     mSpeedPublisher->publish(mSpeedMessage);
   }
 
-  void Ros2GPS::publishVelocity()
+  void Ros2GPS::publishSpeedVector()
   {
     const double *values = mGPS->getSpeedVector();
-    mVelocityMessage.x = values[0];
-    mVelocityMessage.y = values[1];
-    mVelocityMessage.z = values[2];
-    mVelocityPublisher->publish(mVelocityMessage);
+    mSpeedVectorMessage.x = values[0];
+    mSpeedVectorMessage.y = values[1];
+    mSpeedVectorMessage.z = values[2];
+    mSpeedVectorPublisher->publish(mSpeedVectorMessage);
   }
 }

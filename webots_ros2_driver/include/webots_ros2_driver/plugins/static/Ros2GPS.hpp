@@ -36,7 +36,7 @@ namespace webots_ros2_driver
     void publishPoint();
     void publishGPS();
     void publishSpeed();
-    void publishVelocity();
+    void publishSpeedVector();
 
     webots::GPS *mGPS;
 
@@ -49,8 +49,8 @@ namespace webots_ros2_driver
     rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr mSpeedPublisher;
     std_msgs::msg::Float32 mSpeedMessage;
 
-    rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr mVelocityPublisher;
-    geometry_msgs::msg::Vector3 mVelocityMessage;
+    rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr mSpeedVectorPublisher;
+    geometry_msgs::msg::Vector3 mSpeedVectorMessage;
 
     bool mIsEnabled;
   };

@@ -69,8 +69,10 @@ namespace webots_ros2_driver
     // Enable/Disable sensor
     const bool pointSubscriptionsExist = mPointPublisher != nullptr && mPointPublisher->get_subscription_count() > 0;
     const bool gpsSubscriptionsExist = mGPSPublisher != nullptr && mGPSPublisher->get_subscription_count() > 0;
+    const bool speedSubscriptionsExist = mSpeedPublisher->get_subscription_count() > 0;
     const bool velocitySubscriptionsExist = mVelocityPublisher->get_subscription_count() > 0;
-    const bool shouldBeEnabled = pointSubscriptionsExist || gpsSubscriptionsExist || velocitySubscriptionsExist;
+    const bool shouldBeEnabled = pointSubscriptionsExist || gpsSubscriptionsExist || speedSubscriptionsExist
+                              || velocitySubscriptionsExist;
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)

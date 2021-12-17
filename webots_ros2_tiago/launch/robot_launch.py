@@ -24,13 +24,14 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 
 
 def generate_launch_description():
+    optional_nodes = []
     package_dir = get_package_share_directory('webots_ros2_tiago')
     world = LaunchConfiguration('world')
     mode = LaunchConfiguration('mode')
@@ -106,14 +107,15 @@ def generate_launch_description():
         condition=launch.conditions.IfCondition(use_rviz)
     )
 
-    nav2 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
-        launch_arguments=[
-            ('map', nav2_map),
-            ('use_sim_time', use_sim_time),
-        ],
-        condition=launch.conditions.IfCondition(use_nav)
-    )
+    if 'nav2_bringup' in get_packages_with_prefixes():
+        optional_nodes.append(IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(
+                get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
+            launch_arguments=[
+                ('map', nav2_map),
+                ('use_sim_time', use_sim_time),
+            ],
+            condition=launch.conditions.IfCondition(use_nav)))
 
     slam_toolbox = Node(
         parameters=[{'use_sim_time': use_sim_time}],
@@ -142,7 +144,6 @@ def generate_launch_description():
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,
-        nav2,
         slam_toolbox,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
@@ -150,4 +151,4 @@ def generate_launch_description():
                 on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
             )
         )
-    ])
+    ] + optional_nodes)

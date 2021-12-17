@@ -37,7 +37,8 @@ namespace webots_ros2_driver
       mPointPublisher = mNode->create_publisher<geometry_msgs::msg::PointStamped>(mTopicName, rclcpp::SensorDataQoS().reliable());
       mPointMessage.header.frame_id = mFrameName;
     }
-    mVelocityPublisher = mNode->create_publisher<std_msgs::msg::Float32>(mTopicName + "/velocity", rclcpp::SensorDataQoS().reliable());
+    mSpeedPublisher = mNode->create_publisher<std_msgs::msg::Float32>(mTopicName + "/speed", rclcpp::SensorDataQoS().reliable());
+    mSpeedVectorPublisher = mNode->create_publisher<geometry_msgs::msg::Vector3>(mTopicName + "/speed_vector", rclcpp::SensorDataQoS().reliable());
 
     if (mAlwaysOn) {
       mGPS->enable(mPublishTimestepSyncedMs);
@@ -52,15 +53,14 @@ namespace webots_ros2_driver
 
     if (mIsEnabled) {
       if (mPointPublisher != nullptr)
-        pubishPoint();
+        publishPoint();
       else if (mGPSPublisher != nullptr)
         publishGPS();
-      else 
+      else
         assert(false);
 
-      std_msgs::msg::Float32 mSpeedMessage;
-      mSpeedMessage.data = mGPS->getSpeed();
-      mVelocityPublisher->publish(mSpeedMessage);
+      publishSpeed();
+      publishSpeedVector();
     }
 
     if (mAlwaysOn)
@@ -69,8 +69,10 @@ namespace webots_ros2_driver
     // Enable/Disable sensor
     const bool pointSubscriptionsExist = mPointPublisher != nullptr && mPointPublisher->get_subscription_count() > 0;
     const bool gpsSubscriptionsExist = mGPSPublisher != nullptr && mGPSPublisher->get_subscription_count() > 0;
-    const bool velocitySubscriptionsExist = mVelocityPublisher->get_subscription_count() > 0;
-    const bool shouldBeEnabled = pointSubscriptionsExist || gpsSubscriptionsExist || velocitySubscriptionsExist;
+    const bool speedSubscriptionsExist = mSpeedPublisher->get_subscription_count() > 0;
+    const bool speedVectorSubscriptionsExist = mSpeedVectorPublisher->get_subscription_count() > 0;
+    const bool shouldBeEnabled = pointSubscriptionsExist || gpsSubscriptionsExist || speedSubscriptionsExist
+                              || speedVectorSubscriptionsExist;
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
@@ -81,7 +83,7 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2GPS::pubishPoint()
+  void Ros2GPS::publishPoint()
   {
     mPointMessage.header.stamp = mNode->get_clock()->now();
     const double *values = mGPS->getValues();
@@ -99,5 +101,20 @@ namespace webots_ros2_driver
     mGPSMessage.longitude = values[1];
     mGPSMessage.altitude = values[2];
     mGPSPublisher->publish(mGPSMessage);
+  }
+
+  void Ros2GPS::publishSpeed()
+  {
+    mSpeedMessage.data = mGPS->getSpeed();
+    mSpeedPublisher->publish(mSpeedMessage);
+  }
+
+  void Ros2GPS::publishSpeedVector()
+  {
+    const double *values = mGPS->getSpeedVector();
+    mSpeedVectorMessage.x = values[0];
+    mSpeedVectorMessage.y = values[1];
+    mSpeedVectorMessage.z = values[2];
+    mSpeedVectorPublisher->publish(mSpeedVectorMessage);
   }
 }

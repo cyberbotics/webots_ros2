@@ -2,6 +2,11 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.0 (2021-12-21)
+------------------
+* Adapt the worlds to the new R2022a FLU convention.
+* Fix synchornosiation issue when the trajectory controller was receiving goals but was not ready to execute them.
+
 1.1.2 (2021-11-03)
 ------------------
 * Utilize the 'webots_ros2_driver' and 'ros2_control' instead of 'webots_ros2_core'.

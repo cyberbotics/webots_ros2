@@ -56,7 +56,6 @@ ament_target_dependencies(
   rclcpp
   webots_ros2_driver
 )
-
 # Prevent pluginlib from using boost
 target_compile_definitions(${PROJECT_NAME} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 pluginlib_export_plugin_description_file(webots_ros2_driver webots_ros2_control.xml)

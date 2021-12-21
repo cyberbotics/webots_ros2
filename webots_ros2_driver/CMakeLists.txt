@@ -221,5 +221,6 @@ ament_export_dependencies(
 )
 ament_export_libraries(
   ${PROJECT_NAME}_imu
+  ${WEBOTS_LIB}
 )
 ament_package()

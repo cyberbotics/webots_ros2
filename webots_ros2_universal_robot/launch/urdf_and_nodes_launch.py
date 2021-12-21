@@ -28,6 +28,8 @@ from launch.actions import ExecuteProcess
 import signal
 import sys
 
+import time
+
 
 import rclpy
 from rclpy.node import Node as rclpyNode
@@ -64,6 +66,14 @@ def signal_handler(sig, frame):
     #print('sig is '+str(sig))
     #print('frame is '+str(frame))
 
+    '''
+    i = 0
+
+    while (i < 99):
+        i+=1
+        print('while loop iter '+str(i))
+        time.sleep(0.1)
+    '''
     '''
     rclpy.init()
 

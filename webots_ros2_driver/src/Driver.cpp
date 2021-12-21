@@ -17,13 +17,23 @@
 #include <webots_ros2_driver/WebotsNode.hpp>
 #include <webots/vehicle/Driver.hpp>
 
+#include <signal.h>
+
+// Replacement SIGINT handler
+void mySigIntHandler(int sig)
+{
+  std::cout << "mySigIntHandler" << std::endl;
+}
+
+
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  webots::Supervisor* robot;
+  signal(SIGINT, mySigIntHandler);
+  signal(SIGKILL, mySigIntHandler);
 
-  //throw std::runtime_error(" just create robot !!!");
+  webots::Supervisor* robot;
 
   // Check if the robot can be a driver, if not create a simple Supervisor
   if (webots::Driver::isInitialisationPossible())
@@ -38,8 +48,13 @@ int main(int argc, char **argv)
   std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
   node->init();
 
+  std::cout << "spin" << std::endl;
+
   rclcpp::spin(node);
+  std::cout << "will del robot" << std::endl;
   delete robot;
+  std::cout << "has del robot" << std::endl;
   rclcpp::shutdown();
+  std::cout << "has shutdown" << std::endl;
   return 0;
 }

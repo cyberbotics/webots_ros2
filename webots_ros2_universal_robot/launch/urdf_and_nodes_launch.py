@@ -162,9 +162,6 @@ def get_ros2_control_spawners(event):
 
     if "success=True" in event.text.decode().strip():
         return [
-            joint_state_broadcaster_spawner,
-            trajectory_controller_spawner,
-            robot_state_publisher,
             universal_robot_driver,
             launch.actions.RegisterEventHandler(
                 event_handler=launch.event_handlers.OnProcessExit(

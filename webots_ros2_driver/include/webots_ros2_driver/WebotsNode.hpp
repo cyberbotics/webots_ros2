@@ -44,6 +44,9 @@ namespace webots_ros2_driver
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
 
+    bool test = false;
+    bool inStep = true;
+
   private:
     void timerCallback();
     std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
@@ -53,6 +56,8 @@ namespace webots_ros2_driver
 
     std::string mRobotName;
     std::string mRobotDescription;
+
+
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;

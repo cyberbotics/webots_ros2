@@ -214,16 +214,27 @@ namespace webots_ros2_driver
 
   void WebotsNode::timerCallback()
   {
+    if (test){
+      std::cout << "test is true" << std::endl;
+      inStep = false;
+      return;
+    }
+
+    //std::cout << "timerCallback begin" << std::endl;
     if (mRobot->step(mStep) == -1) {
+      std::cout << "robot step -1" << std::endl;
       mTimer->cancel();
       exit(0);
       return;
     }
+    //std::cout << "timerCallback mid" << std::endl;
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
 
     mClockMessage.clock = rclcpp::Time(mRobot->getTime() * 1e9);
     mClockPublisher->publish(mClockMessage);
+
+    //std::cout << "timerCallback end" << std::endl;
   }
 
   void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue)

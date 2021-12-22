@@ -57,7 +57,7 @@ namespace webots_ros2_driver
     std::string mRobotName;
     std::string mRobotDescription;
 
-
+    void wait_for_clean_urdf();
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;

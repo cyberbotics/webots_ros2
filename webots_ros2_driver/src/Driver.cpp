@@ -48,12 +48,14 @@ void mySigIntHandler2()
 
 int main(int argc, char **argv)
 {
+  signal(SIGINT, mySigIntHandler);
+  signal(SIGTERM, mySigIntHandler);
+
   rclcpp::InitOptions options{};
   options.shutdown_on_sigint = false;
   rclcpp::init(argc, argv, options);
 
-  signal(SIGINT, mySigIntHandler);
-  signal(SIGTERM, mySigIntHandler);
+
 
   if(rclcpp::uninstall_signal_handlers())
     std::cout << "uninstall_signal_handlers" << std::endl;

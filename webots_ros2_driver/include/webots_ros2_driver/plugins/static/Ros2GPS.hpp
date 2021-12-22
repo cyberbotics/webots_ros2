@@ -17,6 +17,7 @@
 
 #include <webots/GPS.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
+#include <geometry_msgs/msg/vector3.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include <sensor_msgs/msg/nav_sat_status.hpp>
 #include <std_msgs/msg/float32.hpp>
@@ -32,8 +33,10 @@ namespace webots_ros2_driver
     void step() override;
 
   private:
-    void pubishPoint();
+    void publishPoint();
     void publishGPS();
+    void publishSpeed();
+    void publishSpeedVector();
 
     webots::GPS *mGPS;
 
@@ -43,7 +46,11 @@ namespace webots_ros2_driver
     rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr mPointPublisher;
     geometry_msgs::msg::PointStamped mPointMessage;
 
-    rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr mVelocityPublisher;
+    rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr mSpeedPublisher;
+    std_msgs::msg::Float32 mSpeedMessage;
+
+    rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr mSpeedVectorPublisher;
+    geometry_msgs::msg::Vector3 mSpeedVectorMessage;
 
     bool mIsEnabled;
   };

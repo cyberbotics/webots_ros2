@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_mavic
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.0 (2021-12-21)
+------------------
+* Adapt the worlds to the new R2022a FLU convention.
+
 1.1.2 (2021-11-03)
 ------------------
 * Utilize the 'webots_ros2_driver' instead of 'webots_ros2_core'.

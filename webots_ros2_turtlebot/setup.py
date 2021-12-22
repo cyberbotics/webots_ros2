@@ -13,9 +13,6 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/turtlebot_webots.urdf',
     'resource/ros2control.yml'
 ]))
-data_files.append(('share/' + package_name + '/protos', [
-    'protos/TurtleBot3Burger_enu.proto'
-]))
 
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/turtlebot3_burger_example.wbt', 'worlds/.turtlebot3_burger_example.wbproj',
@@ -25,7 +22,7 @@ data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
     name=package_name,
-    version='1.1.3',
+    version='1.2.0',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

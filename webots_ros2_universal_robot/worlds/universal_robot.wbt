@@ -1,4 +1,4 @@
-#VRML_SIM R2021b utf8
+#VRML_SIM R2022a utf8
 WorldInfo {
   info [
     "Unviversal Robot UR3e, UR5e and UR10e grasping cans using Robotiq 3F grippers."
@@ -19,22 +19,21 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.2828515894124307 0.48526242696388916 0.8273544315128661 2.1461257860334544
-  position 3.1290668777803785 1.3328618265205465 2.5870478364077405
+  orientation 0.3118460054718159 0.06120895855528569 -0.9481590226664772 2.710827783218323
+  position 2.9308358456729615 1.1235070287382412 2.814381048353761
   exposure 1.7
 }
 TexturedBackground {
   texture "factory"
 }
 Floor {
-  rotation 1 0 0 1.5707963267948966
   size 20 20
   appearance ThreadMetalPlate {
   }
 }
 UR5e {
   translation 0 0 0.6
-  rotation 0 0 -1 1.570796267678159
+  rotation 0 0 1 -1.570796267678159
   controller "<extern>"
   supervisor TRUE
   selfCollision FALSE
@@ -49,8 +48,7 @@ UR5e {
 }
 SolidBox {
   translation 0 0 0.3
-  rotation 1 0 0 1.5707963267948966
-  size 0.3 0.6 0.3
+  size 0.3 0.3 0.6
   appearance GalvanizedMetal {
     textureTransform TextureTransform {
       scale 2 2

@@ -204,7 +204,11 @@ target_compile_definitions(${PROJECT_NAME}_imu PUBLIC "PLUGINLIB__DISABLE_BOOST_
 pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
 
 # Ament export
-ament_export_include_directories(include)
+ament_export_include_directories(
+  include
+  include/webots/c
+  include/webots/cpp
+)
 ament_export_dependencies(
   rclcpp
   rclpy

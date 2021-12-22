@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         ROS_REPO: [main, testing]
-        ROS_DISTRO: [foxy, rolling]
+        ROS_DISTRO: [foxy, galactic, rolling]
     runs-on: ubuntu-latest
     env:
       AFTER_INIT: ./scripts/ci_after_init.bash ${ROS_DISTRO} ${ROS_REPO}
@@ -21,7 +21,7 @@ jobs:
         with:
          submodules: recursive
       - uses: 'ros-industrial/industrial_ci@master'
-        env: 
+        env:
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}
       - name: Upload Artifact

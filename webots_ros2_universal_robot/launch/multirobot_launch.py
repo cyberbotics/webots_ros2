@@ -78,7 +78,7 @@ def generate_launch_description():
         ]
     )
 
-    controller_manager_timeout = ['--controller-manager-timeout', '50']
+    controller_manager_timeout = ['--controller-manager-timeout', '75']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
     ur5e_trajectory_controller_spawner = Node(
         package='controller_manager',

@@ -16,7 +16,7 @@
 
 """Test the `webots_ros2_turtlebot` package on the SLAM and Navigation tutorials."""
 
-# Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_turtlebot_tutorials.py
+# Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_turtlebot_tutorial_slam.py
 
 import os
 import pytest
@@ -32,10 +32,10 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()
-    # If ROS_REPO is testing or ROS_DISTRO is rolling, skip test so CI succeed
-    if ('ROS_REPO' in os.environ and os.environ['ROS_REPO'] == 'testing') or \
-            ('ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'):
-        pytest.skip('ROS_REPO testing or ROS_DISTRO rolling exit')
+    # If ROS_DISTRO is rolling or galactic, skip the test as some required packages are missing (cf. ci_after_init.bash)
+    if 'ROS_DISTRO' in os.environ and \
+            (os.environ['ROS_DISTRO'] == 'rolling' or os.environ['ROS_DISTRO'] == 'galactic'):
+        pytest.skip('ROS_DISTRO is rolling or galactic, skipping this test')
 
     # Webots
     turtlebot_webots = IncludeLaunchDescription(

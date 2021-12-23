@@ -138,6 +138,7 @@ add_library(
 ament_target_dependencies(${PROJECT_NAME}_imu
   rclcpp
   sensor_msgs
+  webots_ros2_msgs
   pluginlib
   tf2_ros
 )

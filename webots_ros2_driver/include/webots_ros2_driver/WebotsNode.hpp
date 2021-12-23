@@ -28,9 +28,12 @@
 #include <rclcpp/clock.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <webots_ros2_msgs/srv/clear_robot.hpp>
 #include <pluginlib/class_loader.hpp>
 
 #include "webots_ros2_driver/PluginInterface.hpp"
+
+extern bool SIGINTReceived;
 
 namespace webots_ros2_driver
 {
@@ -44,8 +47,7 @@ namespace webots_ros2_driver
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
 
-    bool test = false;
-    bool inStep = true;
+
 
   private:
     void timerCallback();
@@ -58,6 +60,14 @@ namespace webots_ros2_driver
     std::string mRobotDescription;
 
     void wait_for_clean_urdf();
+
+    bool waitCleanRobot = false;
+    bool robotHasBeenCleaned = false;
+
+    rclcpp::Client<webots_ros2_msgs::srv::ClearRobot>::SharedPtr mURDFDClient;
+    std::shared_ptr<webots_ros2_msgs::srv::ClearRobot::Request> request;
+    rclcpp::Client<webots_ros2_msgs::srv::ClearRobot>::SharedFuture result;
+    // std::shared_future<ServiceT::Response::SharedPtr>
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;

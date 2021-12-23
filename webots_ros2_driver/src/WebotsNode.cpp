@@ -117,6 +117,17 @@ namespace webots_ros2_driver
     mStep = mRobot->getBasicTimeStep();
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 
+    mURDFDClient = this->create_client<webots_ros2_msgs::srv::ClearRobot>("clean_urdf_robot");
+
+    using namespace std::chrono_literals;
+    while (!mURDFDClient->wait_for_service(1s)) {
+      if (!rclcpp::ok()) {
+        RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service. Exiting.");
+        break;
+      }
+      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "service not available, waiting again...");
+    }
+
     // Load static plugins
     // Static plugins are automatically configured based on the robot model.
     // The static plugins will try to guess parameter based on the robot model,
@@ -214,20 +225,45 @@ namespace webots_ros2_driver
 
   void WebotsNode::timerCallback()
   {
-    if (test){
-      std::cout << "test is true" << std::endl;
-      inStep = false;
-      return;
+    if (SIGINTReceived){
+      if (!waitCleanRobot){
+        std::cout << "SIGINTReceived is true" << std::endl;
+
+        request = std::make_shared<webots_ros2_msgs::srv::ClearRobot::Request>();
+        request->name = mRobotName;
+
+        //result = mURDFDClient->async_send_request(request);
+
+        using ServiceResponseFuture = rclcpp::Client<webots_ros2_msgs::srv::ClearRobot>::SharedFuture;
+        auto response_received_callback = [this](ServiceResponseFuture future) {
+          auto result = future.get();
+          RCLCPP_INFO(this->get_logger(), "Result of clean_urdf_robot: %" PRIi8, result->success);
+
+          robotHasBeenCleaned = true;
+        };
+        auto future_result = mURDFDClient->async_send_request(request, response_received_callback);
+
+        waitCleanRobot = true;
+      }
+      else if (robotHasBeenCleaned){
+        mTimer->cancel();
+        exit(0);
+        return;
+      }
     }
 
-    //std::cout << "timerCallback begin" << std::endl;
+    std::cout << "timerCallback begin" << std::endl;
+    if (!mRobot){
+      std::cout << "mRobot killed" << std::endl;
+    }
+
     if (mRobot->step(mStep) == -1) {
       std::cout << "robot step -1" << std::endl;
       mTimer->cancel();
       exit(0);
       return;
     }
-    //std::cout << "timerCallback mid" << std::endl;
+    std::cout << "timerCallback mid" << std::endl;
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
 

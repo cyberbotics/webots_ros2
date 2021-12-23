@@ -17,22 +17,31 @@
 #include <webots_ros2_driver/WebotsNode.hpp>
 #include <webots/vehicle/Driver.hpp>
 
+#include <chrono>
+#include <thread>
 
-std::shared_ptr<webots_ros2_driver::WebotsNode> node;
+bool SIGINTReceived = false;
 
 // Replacement SIGINT handler
 void mySigIntHandler(int sig)
 {
   std::cout << "mySigIntHandler begin" << std::endl;
 
-  node->test = true;
-  while (node->inStep)
-    std::cout << "wait for inStep" << std::endl;
+  SIGINTReceived = true;
+
+  //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+
+
+  //node->test = true;
+  //while (node->inStep)
+  //  std::cout << "wait for inStep" << std::endl;
 
   std::cout << "mySigIntHandler end" << std::endl;
-  rclcpp::shutdown();
+  //rclcpp::shutdown();
 }
 
+/*
 void mySigIntHandler2()
 {
   std::cout << "mySigIntHandler begin" << std::endl;
@@ -43,45 +52,54 @@ void mySigIntHandler2()
 
   std::cout << "mySigIntHandler end" << std::endl;
   rclcpp::shutdown();
-}
+}*/
+
 
 
 int main(int argc, char **argv)
 {
+
+  webots::Supervisor* robot;
+
+  // Check if the robot can be a driver, if not create a simple Supervisor
+  if (webots::Driver::isInitialisationPossible())
+    robot = new webots::Driver();
+  else
+    robot = new webots::Supervisor();
+
+
   signal(SIGINT, mySigIntHandler);
-  signal(SIGTERM, mySigIntHandler);
+  //signal(SIGTERM, mySigIntHandler);
 
   rclcpp::InitOptions options{};
   options.shutdown_on_sigint = false;
   rclcpp::init(argc, argv, options);
 
-
-
-  if(rclcpp::uninstall_signal_handlers())
-    std::cout << "uninstall_signal_handlers" << std::endl;
+  //if(rclcpp::uninstall_signal_handlers())
+  //  std::cout << "uninstall_signal_handlers" << std::endl;
 
   //rclcpp::on_shutdown(mySigIntHandler2);
 
-  //webots::Supervisor* robot;
 
-  // Check if the robot can be a driver, if not create a simple Supervisor
-  //if (webots::Driver::isInitialisationPossible())
-  //  robot = new webots::Driver();
-  //else
-  //  robot = new webots::Supervisor();
 
-  //std::string robotName = robot->getName();
-  //for (char notAllowedChar : " -.)(")
-  //  std::replace(robotName.begin(), robotName.end(), notAllowedChar, '_');
 
-  //node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
-  //node->init();
 
-  auto node2 = rclcpp::Node::make_shared("test_prog");
+
+  std::string robotName = robot->getName();
+  for (char notAllowedChar : " -.)(")
+    std::replace(robotName.begin(), robotName.end(), notAllowedChar, '_');
+
+  std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
+  node->init();
+
+
+
+
+  //auto node = rclcpp::Node::make_shared("test_prog");
 
   std::cout << "spin" << std::endl;
 
-  rclcpp::spin(node2);
+  rclcpp::spin(node);
   std::cout << "will del robot" << std::endl;
   //delete robot;
   std::cout << "has del robot" << std::endl;

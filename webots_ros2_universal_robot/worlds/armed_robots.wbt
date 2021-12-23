@@ -1,7 +1,7 @@
 #VRML_SIM R2022a utf8
 WorldInfo {
   title "ROS2-Webots Armed Robots Demo"
-  basicTimeStep 16
+  basicTimeStep 50
   contactProperties [
     ContactProperties {
       bounce 0.3

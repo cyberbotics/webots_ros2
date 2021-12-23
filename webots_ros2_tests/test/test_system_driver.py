@@ -26,7 +26,7 @@ import rclpy
 from std_srvs.srv import Trigger
 from sensor_msgs.msg import Range, Image, Imu, Illuminance
 from std_msgs.msg import Int32, Float32
-from geometry_msgs.msg import PointStamped
+from geometry_msgs.msg import PointStamped, Vector3
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
@@ -155,11 +155,20 @@ class TestDriver(TestWebots):
 
         self.wait_for_messages(self.__node, PointStamped, '/Pioneer_3_AT/gps', condition=on_position_message_received)
 
-        def on_velocity_message_received(message):
+        def on_speed_message_received(message):
             self.assertAlmostEqual(message.data, 0.0, delta=0.2)
             return True
 
-        self.wait_for_messages(self.__node, Float32, '/Pioneer_3_AT/gps/velocity', condition=on_velocity_message_received)
+        self.wait_for_messages(self.__node, Float32, '/Pioneer_3_AT/gps/speed', condition=on_speed_message_received)
+
+        def on_speed_vector_message_received(message):
+            self.assertAlmostEqual(message.x, 0.0, delta=0.2)
+            self.assertAlmostEqual(message.y, 0.0, delta=0.2)
+            self.assertAlmostEqual(message.z, 0.0, delta=0.2)
+            return True
+
+        self.wait_for_messages(self.__node, Vector3, '/Pioneer_3_AT/gps/speed_vector',
+                               condition=on_speed_vector_message_received)
 
     def testLightSensor(self):
         self.wait_for_messages(self.__node, Illuminance, '/Pioneer_3_AT/light_sensor',

@@ -22,8 +22,6 @@ data_files.append(('share/' + package_name + '/worlds', [
     'worlds/.rats_life_benchmark.wbproj'
 ]))
 data_files.append(('share/' + package_name + '/protos', [
-    'protos/E-puck_enu.proto',
-    'protos/E-puckDistanceSensor_enu.proto',
     'protos/LegoTallInterval.proto',
     'protos/LegoTallWall.proto'
 ]))
@@ -45,7 +43,7 @@ data_files.append(('share/' + package_name, [
 
 setup(
     name=package_name,
-    version='1.1.3',
+    version='1.2.0',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

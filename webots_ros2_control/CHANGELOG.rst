@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.0 (2021-12-21)
+------------------
+* Fix the controller_manager update rate.
+
 1.1.3 (2021-11-05)
 ------------------
 * Added build dependency on 'ros_environment'.

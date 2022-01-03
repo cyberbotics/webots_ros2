@@ -1,20 +1,19 @@
-#VRML_SIM R2021b utf8
+#VRML_SIM R2022a utf8
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.15884326710103885 -0.5935655099023555 -0.7889542457906066 2.72544233076922
-  position -0.8954397740487239 1.2372617694112547 0.8102365388788932
+  orientation 0.1333498669640634 0.23178687609389498 -0.9635832382577542 1.1477928696817155
+  position -0.6180770946281612 1.1964377717818577 0.7652427724115963
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 Floor {
-  rotation 1 0 0 1.5708003061004252
 }
 CardboardBox {
   translation 1.21847 0.00917563 0.3
-  rotation 0 0 1 1.309
+  rotation 0.7040631892342535 -0.09269012491274485 -0.7040621892339847 -2.9567353071795863
 }
 Pioneer3at {
   controller "<extern>"
@@ -24,7 +23,6 @@ Pioneer3at {
     }
     Kinect {
       translation 0.109998 0 0.47
-      rotation -0.5773519358547601 0.5773499358549823 0.5773489358550934 -2.094395307179586
     }
     Gyro {
     }
@@ -37,8 +35,7 @@ Pioneer3at {
     LED {
     }
     Solid {
-      translation 0.11 -1.46928e-07 0.37
-      rotation 1 0 0 1.5708
+      translation 0.11 0 0.37
       children [
         DEF ROD_SHAPE Shape {
           appearance Plaster {
@@ -55,8 +52,8 @@ Pioneer3at {
       }
     }
     VelodyneVLP-16 {
-      translation 0.2 1.46928e-07 0.31
-      rotation 1 0 0 1.5708
+      translation 0.2 0 0.31
+      rotation 0 0 1 1.5708
     }
   ]
 }

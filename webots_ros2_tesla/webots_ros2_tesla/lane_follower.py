@@ -35,7 +35,7 @@ class LaneFollower(Node):
         self.__ackermann_publisher = self.create_publisher(AckermannDrive, 'cmd_ackermann', 1)
 
         qos_camera_data = qos_profile_sensor_data
-        # In case ROS_DISTRO is Rolling the QoSReliabilityPolicy is strict.
+        # In case ROS_DISTRO is Rolling or Galactic the QoSReliabilityPolicy is strict.
         if ('ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] == 'rolling' or os.environ['ROS_DISTRO'] == 'galactic')):
             qos_camera_data.reliability = QoSReliabilityPolicy.RELIABLE
         self.create_subscription(Image, 'vehicle/camera', self.__on_camera_image, qos_camera_data)

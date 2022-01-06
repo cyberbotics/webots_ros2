@@ -17,3 +17,9 @@ diffdrive_controller:
     wheel_radius: 0.033
 
     use_stamped_vel: false
+
+joint_state_broadcaster:
+  ros__parameters:
+    extra_joints:
+      - LDS-01_secondary_motor
+      - LDS-01_main_motor

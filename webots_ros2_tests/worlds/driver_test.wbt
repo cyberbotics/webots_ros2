@@ -18,6 +18,9 @@ CardboardBox {
 Pioneer3at {
   controller "<extern>"
   extensionSlot [
+    RobotisLds01 {
+      translation 0.18 0 0.3
+    }
     LightSensor {
       translation 0 0 0.29
     }
@@ -50,10 +53,6 @@ Pioneer3at {
       boundingObject USE ROD_SHAPE
       physics Physics {
       }
-    }
-    VelodyneVLP-16 {
-      translation 0.2 0 0.31
-      rotation 0 0 1 1.5708
     }
   ]
 }

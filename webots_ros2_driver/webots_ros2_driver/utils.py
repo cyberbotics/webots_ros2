@@ -27,8 +27,8 @@ import urllib.request
 from pathlib import Path
 
 
-MINIMUM_VERSION_STR = 'R2021b'
-TARGET_VERSION_STR = 'R2021b'
+MINIMUM_VERSION_STR = 'R2022a'
+TARGET_VERSION_STR = 'R2022a'
 
 
 @functools.total_ordering

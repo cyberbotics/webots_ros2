@@ -43,7 +43,7 @@ class _ConditionalSubstitution(Substitution):
 
 
 class WebotsLauncher(ExecuteProcess):
-    def __init__(self, output='screen', world=None, use_URDF_robot_spawner=False, gui=True, mode='realtime', stream=False, **kwargs):
+    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
         # Find Webots executable
         webots_path = get_webots_home(show_warning=True)
         if webots_path is None:
@@ -55,12 +55,11 @@ class WebotsLauncher(ExecuteProcess):
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
         if not isinstance(world, Substitution):
-            #if use_URDF_robot_spawner:
+            #if use_URDF_robot_spawner or true:
             #    world = world[:-4] + URDF_world_suffix
             world = TextSubstitution(text=world)
 
         self.__world = world
-        self.__use_URDF_robot_spawner = use_URDF_robot_spawner
 
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
@@ -96,31 +95,29 @@ class WebotsLauncher(ExecuteProcess):
         )
 
     def execute(self, context: LaunchContext):
-        # Check if the user wants to convert URDF files into robots
-        if self.__use_URDF_robot_spawner:
-            world_path = self.__world.perform(context)
-            if not world_path:
-                sys.exit('World file not specified (has to be specified with world=path/to/my/world.wbt')
+        world_path = self.__world.perform(context)
+        if not world_path:
+            sys.exit('World file not specified (has to be specified with world=path/to/my/world.wbt')
 
-            '''
-            if world_path[-len(URDF_world_suffix):] == URDF_world_suffix:
-                world_copy = world_path
-                world_path = world_path[:-len(URDF_world_suffix)] + '.wbt'
-            else:
-            '''
+        '''
+        if world_path[-len(URDF_world_suffix):] == URDF_world_suffix:
+            world_copy = world_path
+            world_path = world_path[:-len(URDF_world_suffix)] + '.wbt'
+        else:
+        '''
 
-            world_copy = world_path[:-4] + URDF_world_suffix
-            shutil.copyfile(world_path, world_copy)
-            context.launch_configurations['world']=world_copy
+        world_copy = world_path[:-4] + URDF_world_suffix
+        shutil.copyfile(world_path, world_copy)
+        context.launch_configurations['world']=world_copy
 
-            # add supervisor
-            indent = '  '
-            worldFile = open(world_copy, 'a')
-            worldFile.write('Robot {\n')
-            worldFile.write(indent + 'name "Spawner"\n')
-            worldFile.write(indent + 'controller "<extern>"\n')
-            worldFile.write(indent + 'supervisor TRUE\n')
-            worldFile.write('}\n')
-            worldFile.close()
+        # add supervisor
+        indent = '  '
+        worldFile = open(world_copy, 'a')
+        worldFile.write('Robot {\n')
+        worldFile.write(indent + 'name "Spawner"\n')
+        worldFile.write(indent + 'controller "<extern>"\n')
+        worldFile.write(indent + 'supervisor TRUE\n')
+        worldFile.write('}\n')
+        worldFile.close()
 
         return super().execute(context)

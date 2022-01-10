@@ -65,21 +65,14 @@ def get_ros2_control_spawners(event):
         ],
     )
 
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        output='screen',
-        parameters=[{
-            'robot_description': '<robot name=""><link name=""/></robot>'
-        }],
-    )
+
 
     if "success=True" in event.text.decode().strip():
         return [
             trajectory_controller_spawner,
             joint_state_broadcaster_spawner,
             universal_robot_driver,
-            robot_state_publisher,
+
             launch.actions.RegisterEventHandler(
                 event_handler=launch.event_handlers.OnProcessExit(
                     target_action=universal_robot_driver,
@@ -93,6 +86,15 @@ def get_ros2_control_spawners(event):
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
     urdf_path = os.path.join(package_dir, 'resource', 'ur_description', 'urdf', 'ur5e.urdf')
+
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>'
+        }],
+    )
 
     service_send_urdf_robot = ExecuteProcess(
         cmd=[
@@ -113,6 +115,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         service_send_urdf_robot,
+        robot_state_publisher,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessIO(
                 target_action=service_send_urdf_robot,

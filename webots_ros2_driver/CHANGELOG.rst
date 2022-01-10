@@ -2,6 +2,11 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.1 (2022-01-10)
+------------------
+* Fix link error for 'webots_ros2_control' on macOS.
+* Fix lidar device according to FLU convention.
+
 1.2.0 (2021-12-21)
 ------------------
 * Adapt the worlds to the new R2022a FLU convention.

@@ -28,7 +28,6 @@ class PluginExample:
         print('  - basic timestep:', int(webots_node.robot.getBasicTimeStep()))
         print('  - robot name:', webots_node.robot.getName())
         print('  - is robot?', webots_node.robot.getType() == Node.ROBOT)
-        print('  - pose:', webots_node.robot.getSelf().getPose())
 
         self.__robot = webots_node.robot
 

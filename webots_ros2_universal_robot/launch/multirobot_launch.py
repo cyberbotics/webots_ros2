@@ -44,7 +44,7 @@ def generate_launch_description():
              'urdf_location': ur5e_urdf_path,
              'translation': '0 0 0.6',
              'rotation': '0 0 1 -1.5708',
-            },
+             },
         ]
     )
 

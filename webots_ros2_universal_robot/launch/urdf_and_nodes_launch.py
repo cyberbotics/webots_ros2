@@ -89,6 +89,7 @@ def get_ros2_control_spawners(event):
         ]
     return
 
+
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
     urdf_path = os.path.join(package_dir, 'resource', 'ur_description', 'urdf', 'ur5e.urdf')

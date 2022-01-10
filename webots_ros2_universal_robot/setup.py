@@ -13,7 +13,6 @@ data_files.append(('share/' + package_name + '/launch', [
     'launch/robot_launch.py',
     'launch/multirobot_launch.py',
     'launch/moveit_demo_launch.py',
-    'launch/test_launch.py',
     'launch/urdf_and_nodes_launch.py',
     'launch/webots_launch.py',
 ]))

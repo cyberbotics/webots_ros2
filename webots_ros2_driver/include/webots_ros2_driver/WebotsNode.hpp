@@ -26,9 +26,10 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/clock.hpp>
+#include <rclcpp/qos.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
 #include <std_msgs/msg/bool.hpp>
-#include <webots_ros2_msgs/srv/clear_robot.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <pluginlib/class_loader.hpp>
 
 #include "webots_ros2_driver/PluginInterface.hpp"
@@ -47,8 +48,6 @@ namespace webots_ros2_driver
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
 
-
-
   private:
     void timerCallback();
     std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
@@ -56,18 +55,11 @@ namespace webots_ros2_driver
     void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);
     rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
 
-    std::string mRobotName;
     std::string mRobotDescription;
 
-    void wait_for_clean_urdf();
-
     bool waitCleanRobot = false;
-    bool robotHasBeenCleaned = false;
-
-    rclcpp::Client<webots_ros2_msgs::srv::ClearRobot>::SharedPtr mURDFDClient;
-    std::shared_ptr<webots_ros2_msgs::srv::ClearRobot::Request> request;
-    rclcpp::Client<webots_ros2_msgs::srv::ClearRobot>::SharedFuture result;
-    // std::shared_future<ServiceT::Response::SharedPtr>
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mURDFCleanPublisher;
+    std_msgs::msg::String mURDFCleanMessage;
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;

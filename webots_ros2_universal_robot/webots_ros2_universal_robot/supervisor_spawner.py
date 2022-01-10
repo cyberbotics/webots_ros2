@@ -16,28 +16,16 @@
 
 
 import os
-from ament_index_python.packages import get_package_share_directory
-
+import sys
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import qos_profile_services_default
 
-import subprocess
-import signal
-
-import tempfile
-
-import sys
-
-
-from urdf2webots.importer import convert2urdf
-
-from rosgraph_msgs.msg import Clock
-from std_msgs.msg import Bool
+from std_msgs.msg import String
+from webots_ros2_msgs.srv import SetWbURDFRobot
 
 import webots_ros2_driver_webots
-
-from webots_ros2_msgs.srv import SetWbURDFRobot
-from webots_ros2_msgs.srv import ClearRobot
+from urdf2webots.importer import convert2urdf
 
 # As Driver need the controller library, we extend the path here
 # to avoid to load another library named "controller" when loading vehicle library
@@ -45,21 +33,18 @@ sys.path.insert(1, os.path.dirname(webots_ros2_driver_webots.__file__))
 from controller import Supervisor
 
 
-
-
-
 class SupervisorSpawner(Node):
     def __init__(self):
-        super().__init__('super_spawn')
+        super().__init__('Spawner')
 
         self.__robot = Supervisor()
         self.__timestep = int(self.__robot.getBasicTimeStep())
         root_node = self.__robot.getRoot()
         self.__insertion_robot_place = root_node.getField('children')
 
-        self.create_timer(self.__timestep / 1000 , self.__supervisor_step_callback)
+        self.create_timer(self.__timestep / 1000, self.__supervisor_step_callback)
         self.create_service(SetWbURDFRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
-        self.create_service(ClearRobot, 'clean_urdf_robot', self.__clean_urdf_robot_callback)
+        self.create_subscription(String, 'clean_urdf_robot', self.__clean_urdf_robot_callback, qos_profile_services_default)
 
     def __spawn_urdf_robot_callback(self, request, response):
         robot = request.robot
@@ -69,28 +54,36 @@ class SupervisorSpawner(Node):
         robot_translation = robot.translation if robot.translation else '0 0 0'
         robot_rotation = robot.rotation if robot.rotation else '0 1 0 0'
 
-        self.get_logger().info('supervisor import urdf robot '+str(robot))
-
-        robot_string = convert2urdf(inFile=file_input, robotName=robot_name, initTranslation=robot_translation, initRotation=robot_rotation)
+        robot_string = convert2urdf(inFile=file_input, robotName=robot_name, initTranslation=robot_translation,
+                                    initRotation=robot_rotation)
         self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
 
-        response.success = True
-        return response
-
-    def __clean_urdf_robot_callback(self, request, response):
-        self.get_logger().info('supervisor clean urdf of robot: '+str(request.name))
-
-        self.__insertion_robot_place.removeMF(-1)
+        self.get_logger().info('Spawner has imported the URDF robot "' + str(robot_name) + '"')
 
         response.success = True
         return response
 
+    def __clean_urdf_robot_callback(self, message):
+        robot_node = None
+        robotName = message.data
+
+        for ind_node in range(self.__insertion_robot_place.getCount()):
+            node = self.__insertion_robot_place.getMFNode(ind_node)
+            node_name_field = node.getField("name")
+            if node_name_field and node_name_field.getSFString() == robotName:
+                robot_node = node
+                break
+
+        if robot_node:
+            robot_node.remove()
+            self.get_logger().info('Spawner has removed the URDF robot "' + str(robotName) + '"')
+        else:
+            self.get_logger().info('Spawner wanted to remove the URDF robot "' + str(robotName) +
+                                   '" but it has not been found.')
 
     def __supervisor_step_callback(self):
-        #self.get_logger().info('supervisor robot step ')
         if self.__robot.step(self.__timestep) < 0:
-            self.get_logger().info('supervisor robot step return -1 !!!')
-        #self.get_logger().info('supervisor robot step end')
+            self.get_logger().info('Spawner will shut down...')
 
 
 def main(args=None):

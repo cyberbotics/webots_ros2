@@ -60,6 +60,8 @@ namespace webots_ros2_driver
     }
 
     mClockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
+    mURDFCleanPublisher = create_publisher<std_msgs::msg::String>("/clean_urdf_robot", rclcpp::ServicesQoS());
+    mURDFCleanMessage.data = name;
   }
 
   std::unordered_map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement) const
@@ -116,17 +118,6 @@ namespace webots_ros2_driver
 
     mStep = mRobot->getBasicTimeStep();
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
-
-    mURDFDClient = this->create_client<webots_ros2_msgs::srv::ClearRobot>("clean_urdf_robot");
-
-    using namespace std::chrono_literals;
-    while (!mURDFDClient->wait_for_service(1s)) {
-      if (!rclcpp::ok()) {
-        RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service. Exiting.");
-        break;
-      }
-      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "service not available, waiting again...");
-    }
 
     // Load static plugins
     // Static plugins are automatically configured based on the robot model.
@@ -225,52 +216,22 @@ namespace webots_ros2_driver
 
   void WebotsNode::timerCallback()
   {
-    if (SIGINTReceived){
+    if (SIGINTReceived && !waitCleanRobot){
       if (!waitCleanRobot){
-        std::cout << "SIGINTReceived is true" << std::endl;
-
-        request = std::make_shared<webots_ros2_msgs::srv::ClearRobot::Request>();
-        request->name = mRobotName;
-
-        //result = mURDFDClient->async_send_request(request);
-
-        using ServiceResponseFuture = rclcpp::Client<webots_ros2_msgs::srv::ClearRobot>::SharedFuture;
-        auto response_received_callback = [this](ServiceResponseFuture future) {
-          auto result = future.get();
-          RCLCPP_INFO(this->get_logger(), "Result of clean_urdf_robot: %" PRIi8, result->success);
-
-          robotHasBeenCleaned = true;
-        };
-        auto future_result = mURDFDClient->async_send_request(request, response_received_callback);
-
+        mURDFCleanPublisher->publish(mURDFCleanMessage);
         waitCleanRobot = true;
       }
-      else if (robotHasBeenCleaned){
-        mTimer->cancel();
-        exit(0);
-        return;
-      }
     }
-
-    std::cout << "timerCallback begin" << std::endl;
-    if (!mRobot){
-      std::cout << "mRobot killed" << std::endl;
-    }
-
     if (mRobot->step(mStep) == -1) {
-      std::cout << "robot step -1" << std::endl;
       mTimer->cancel();
       exit(0);
       return;
     }
-    std::cout << "timerCallback mid" << std::endl;
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
 
     mClockMessage.clock = rclcpp::Time(mRobot->getTime() * 1e9);
     mClockPublisher->publish(mClockMessage);
-
-    //std::cout << "timerCallback end" << std::endl;
   }
 
   void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue)

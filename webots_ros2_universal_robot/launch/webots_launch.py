@@ -16,52 +16,40 @@
 
 """Launch Webots Universal Robot simulation."""
 
-import os
-import pathlib
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
-from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 
 
-PACKAGE_NAME = 'webots_ros2_universal_robot'
+'''
 
+
+ros2 launch webots_ros2_universal_robot webots_launch.py world:=/home/benjamin/ros2_ws/src/webots_ros2/webots_ros2_universal_robot/worlds/universal_robot.wbt
+
+
+'''
 
 def generate_launch_description():
     world = LaunchConfiguration('world')
 
-    package_dir = get_package_share_directory(PACKAGE_NAME)
-    urdf_path = os.path.join(package_dir, 'resource', 'ur_description', 'urdf', 'ur5e.urdf')
-
-    # Define your URDF robots here
-    # Names of the robots have to match the environment variable convention and have to be unique
     webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world]),
-        robots=[
-            {'name': 'UR5e',
-             'urdf_location': urdf_path,
-             'translation': '0 0 0.6',
-             'rotation': '0 0 1 -1.5708',
-            },
-        ]
+        world=world,
+        use_URDF_robot_spawner=True,
     )
 
     supervisor_spawner = Node(
         package='webots_ros2_universal_robot',
         executable='supervisor_spawner',
         output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'supervisor'},
+        additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
         respawn=True,
     )
 
     return LaunchDescription([DeclareLaunchArgument(
-            'world',
-            default_value='universal_robot.wbt',
-            description=f'Choose one of the world files from `/{PACKAGE_NAME}/world` directory'
+            'world'
         ),
         webots,
         supervisor_spawner,

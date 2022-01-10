@@ -35,7 +35,7 @@ data_files = [
 
 setup(
     name=package_name,
-    version='1.2.0',
+    version='1.2.1',
     packages=['webots_ros2_universal_robot'],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

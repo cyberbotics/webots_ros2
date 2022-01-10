@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_turtlebot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.1 (2022-01-10)
+------------------
+* Add ros2control parameters for the lidar device.
+
 1.2.0 (2021-12-21)
 ------------------
 * Adapt the worlds to the new R2022a FLU convention.

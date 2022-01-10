@@ -21,7 +21,6 @@ TurtleBot3Burger {
   controllerArgs [
     ""
   ]
-  supervisor TRUE
   extensionSlot [
     Solid {
       name "imu_link"

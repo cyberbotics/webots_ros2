@@ -17,6 +17,7 @@ CardboardBox {
 }
 Pioneer3at {
   controller "<extern>"
+  supervisor TRUE
   extensionSlot [
     RobotisLds01 {
       translation 0.18 0 0.3

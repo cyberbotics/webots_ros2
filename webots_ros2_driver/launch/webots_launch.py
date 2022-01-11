@@ -28,10 +28,6 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher
 
 xacro ur.urdf.xacro > ur5e.urdf name:=ur5e joint_limit_params:=/home/benjamin/ros2_ws/src/webots_ros2/webots_ros2_universal_robot/resource/ur_description/config/ur5e/joint_limits.yaml kinematics_params:=/home/benjamin/ros2_ws/src/webots_ros2/webots_ros2_universal_robot/resource/ur_description/config/ur5e/default_kinematics.yaml physical_params:=/home/benjamin/ros2_ws/src/webots_ros2/webots_ros2_universal_robot/resource/ur_description/config/ur5e/physical_parameters.yaml visual_params:=/home/benjamin/ros2_ws/src/webots_ros2/webots_ros2_universal_robot/resource/ur_description/config/ur5e/visual_parameters.yaml
 
-
-ros2 launch webots_ros2_universal_robot webots_launch.py world:=/home/benjamin/ros2_ws/src/webots_ros2/webots_ros2_universal_robot/worlds/universal_robot.wbt
-
-
 '''
 
 def generate_launch_description():
@@ -42,8 +38,8 @@ def generate_launch_description():
     )
 
     supervisor_spawner = Node(
-        package='webots_ros2_universal_robot',
-        executable='supervisor_spawner',
+        package='webots_ros2_driver',
+        executable='supervisor_spawner.py',
         output='screen',
         additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
         respawn=True,

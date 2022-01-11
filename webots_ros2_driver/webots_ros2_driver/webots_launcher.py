@@ -19,6 +19,7 @@
 import os
 import sys
 import shutil
+import tempfile
 
 from launch.actions import ExecuteProcess
 from launch.substitution import Substitution
@@ -27,7 +28,7 @@ from launch.launch_context import LaunchContext
 from webots_ros2_driver.utils import get_webots_home, handle_webots_installation
 
 
-URDF_world_suffix = '_with_URDF_robot.wbt'
+URDF_world_suffix = '_world_with_URDF_robot.wbt'
 
 
 class _ConditionalSubstitution(Substitution):
@@ -60,6 +61,7 @@ class WebotsLauncher(ExecuteProcess):
             world = TextSubstitution(text=world)
 
         self.__world = world
+        self.__world_copy = None
 
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
@@ -97,7 +99,7 @@ class WebotsLauncher(ExecuteProcess):
     def execute(self, context: LaunchContext):
         world_path = self.__world.perform(context)
         if not world_path:
-            sys.exit('World file not specified (has to be specified with world=path/to/my/world.wbt')
+            sys.exit('World file not specified (has to be specified with world=absolute/path/to/my/world.wbt')
 
         '''
         if world_path[-len(URDF_world_suffix):] == URDF_world_suffix:
@@ -106,13 +108,13 @@ class WebotsLauncher(ExecuteProcess):
         else:
         '''
 
-        world_copy = world_path[:-4] + URDF_world_suffix
-        shutil.copyfile(world_path, world_copy)
-        context.launch_configurations['world']=world_copy
+        self.__world_copy = tempfile.NamedTemporaryFile(mode="w+", suffix=URDF_world_suffix)
+        shutil.copy2(world_path, self.__world_copy.name)
+        context.launch_configurations['world']=self.__world_copy.name
 
-        # add supervisor
+        # Add supervisor Spawner
         indent = '  '
-        worldFile = open(world_copy, 'a')
+        worldFile = open(self.__world_copy.name, 'a')
         worldFile.write('Robot {\n')
         worldFile.write(indent + 'name "Spawner"\n')
         worldFile.write(indent + 'controller "<extern>"\n')
@@ -121,3 +123,16 @@ class WebotsLauncher(ExecuteProcess):
         worldFile.close()
 
         return super().execute(context)
+
+    def _shutdown_process(self, context, *, send_sigint):
+        # Remove copy of the world and the corresponding ".wbproj" file
+        if self.__world_copy:
+            self.__world_copy.close()
+            if os.path.isfile(self.__world_copy.name):
+                os.unlink(self.__world_copy.name)
+
+            path, file = os.path.split(self.__world_copy.name)
+            world_copy_secondary_file = os.path.join(path, "." + file[:-1] + "proj")
+            if os.path.isfile(world_copy_secondary_file):
+                os.unlink(world_copy_secondary_file)
+        return super()._shutdown_process(context, send_sigint=send_sigint)

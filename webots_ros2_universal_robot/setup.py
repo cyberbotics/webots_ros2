@@ -10,11 +10,12 @@ data_files.append(('share/ament_index/resource_index/packages', [
     'resource/' + package_name
 ]))
 data_files.append(('share/' + package_name + '/launch', [
-    'launch/robot_launch.py',
-    'launch/multirobot_launch.py',
-    'launch/moveit_demo_launch.py',
-    'launch/urdf_and_nodes_launch.py',
-    'launch/webots_launch.py',
+    'launch/robot_launch/robot_launch.py',
+    'launch/robot_launch/world_robot_launch.py',
+    'launch/robot_launch/nodes_robot_launch.py',
+    'launch/moveit_demo_launch/moveit_demo_launch.py',
+    'launch/multirobot_launch/multirobot_launch.py',
+
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/universal_robot.wbt',
@@ -60,7 +61,6 @@ setup(
         'console_scripts': [
             'ur5e_controller = webots_ros2_universal_robot.ur5e_controller:main',
             'abb_controller = webots_ros2_universal_robot.abb_controller:main',
-            'supervisor_spawner = webots_ros2_universal_robot.supervisor_spawner:main',
         ]
     }
 )

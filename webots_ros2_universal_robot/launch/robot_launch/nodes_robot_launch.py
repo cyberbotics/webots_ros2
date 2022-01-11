@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch Webots Universal Robot simulation."""
+"""Launch Webots Universal Robot simulation nodes."""
 
 import os
 import pathlib
 import launch
+from launch_ros.actions import Node
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
-from launch_ros.actions import Node
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
 
 

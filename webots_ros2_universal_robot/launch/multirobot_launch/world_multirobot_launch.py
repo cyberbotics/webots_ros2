@@ -20,6 +20,7 @@ import os
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
 
 
@@ -28,20 +29,18 @@ PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
+    package_webots_ros2_driver_dir = get_package_share_directory('webots_ros2_driver')
 
-    world_launch = IncludeLaunchDescription(
+    # Webots
+    webots_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'launch', 'world_multirobot_launch.py')
-        )
-    )
-
-    nodes_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'launch', 'nodes_multirobot_launch.py')
-        )
+            os.path.join(package_webots_ros2_driver_dir, 'launch', 'webots_launch.py')
+        ),
+        launch_arguments={
+            'world': PathJoinSubstitution([package_dir, 'worlds', 'armed_robots.wbt'])
+        }.items()
     )
 
     return LaunchDescription([
-        world_launch,
-        nodes_launch,
+        webots_launch,
     ])

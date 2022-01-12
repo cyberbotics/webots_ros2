@@ -42,12 +42,16 @@ class SupervisorSpawner(Node):
 
         self.__robot = Supervisor()
         self.__timestep = int(self.__robot.getBasicTimeStep())
-        root_node = self.__robot.getRoot()
-        self.__insertion_robot_place = root_node.getField('children')
 
-        self.create_timer(self.__timestep / 1000, self.__supervisor_step_callback)
-        self.create_service(SetWbURDFRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
-        self.create_subscription(String, 'clean_urdf_robot', self.__clean_urdf_robot_callback, qos_profile_services_default)
+        #root_node = self.__robot.getRoot()
+        #self.__insertion_robot_place = root_node.getField('children')
+
+        self.create_timer(1.0 / 1000.0, self.__supervisor_step_callback)
+
+        self.get_logger().info('Spawner time step is: '+str(1.0 / 1000.0))
+        #self.create_service(SetWbURDFRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
+        #self.create_subscription(String, 'clean_urdf_robot', self.__clean_urdf_robot_callback, qos_profile_services_default)
+        self.get_logger().info('Spawner init !!!!!!!!!!!!!!')
 
     def __spawn_urdf_robot_callback(self, request, response):
         robot = request.robot

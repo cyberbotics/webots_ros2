@@ -141,28 +141,6 @@ Radiator {
   name "radiator(1)"
   numberOfFins 19
 }
-Irb4600-40 {
-  translation 1.48 0.58 -0.02
-  rotation 0 0 1 3.14159
-  name "abbirb4600"
-  controller "<extern>"
-  handSlot [
-    DistanceSensor {
-      translation 0 0 0.05
-      rotation 0 1 0 -1.5707953071795862
-      name "object_present_sensor"
-      lookupTable [
-        0 0 0
-        0.2 0.2 0
-      ]
-    }
-    Robotiq3fGripper {
-      translation 0 0 -0.0100001
-      rotation 0 0.70710528118436 0.707108281185553 3.14159
-    }
-  ]
-  staticBase TRUE
-}
 Solid {
   translation 1.48 0.58 0.005
   children [

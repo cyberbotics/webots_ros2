@@ -37,6 +37,7 @@ def generate_launch_description():
         world=world,
     )
 
+    '''
     supervisor_spawner = Node(
         package='webots_ros2_driver',
         executable='supervisor_spawner.py',
@@ -44,13 +45,13 @@ def generate_launch_description():
         additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
         respawn=True,
     )
+    '''
 
     return LaunchDescription([DeclareLaunchArgument(
             'world',
             description=f'Give a world file path as argument'
         ),
         webots,
-        supervisor_spawner,
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,

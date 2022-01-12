@@ -25,11 +25,23 @@ from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
 
 
+import os
+import pathlib
+from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions.path_join_substitution import PathJoinSubstitution
+from launch import LaunchDescription
+from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import Node
+from webots_ros2_driver.webots_launcher import WebotsLauncher
+
+
 PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
+    '''
     ur5e_urdf_path = os.path.join(package_dir, 'resource', 'ur_description', 'urdf', 'ur5e.urdf')
     ur5e_description = pathlib.Path(ur5e_urdf_path).read_text()
     abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
@@ -117,35 +129,29 @@ def generate_launch_description():
         namespace='abb',
         output='screen'
     )
+    '''
+
+
+    world = LaunchConfiguration('world')
+    webots = WebotsLauncher(
+        world=PathJoinSubstitution([package_dir, 'worlds', world])
+    )
 
     return LaunchDescription([
         # Request to spawn the URDF robot
-        spawn_URDF_ur5e,
 
         # Standard Webots robot
-        abb_driver,
 
         # Other ROS 2 nodes
-        abb_controller,
-        ur5e_controller,
-        ur5e_trajectory_controller_spawner,
-        ur5e_joint_state_broadcaster_spawner,
-        abb_trajectory_controller_spawner,
-        abb_joint_state_broadcaster_spawner,
+
+        DeclareLaunchArgument(
+            'world',
+            default_value='armed_robots.wbt',
+            description='Choose one of the world files from `/webots_ros2_tesla/worlds` directory'
+        ),
+        webots,
 
         # Launch the driver node once the URDF robot is spawned
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessIO(
-                target_action=spawn_URDF_ur5e,
-                on_stdout=lambda event: get_webots_driver_node(event, ur5e_driver),
-            )
-        ),
 
         # Kill all the nodes when the driver node is shut down
-        launch.actions.RegisterEventHandler(
-                event_handler=launch.event_handlers.OnProcessExit(
-                    target_action=ur5e_driver,
-                    on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
-                )
-            ),
     ])

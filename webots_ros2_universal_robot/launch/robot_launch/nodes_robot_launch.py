@@ -30,19 +30,24 @@ PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
-    urdf_path = os.path.join(package_dir, 'resource', 'ur_description', 'urdf', 'ur5e.urdf')
-    robot_description = pathlib.Path(urdf_path).read_text()
+    ur5e_urdf_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
+    robot_description = pathlib.Path(ur5e_urdf_path).read_text()
 
     # Define your URDF robots here
     # The name of an URDF robot has to match the WEBOTS_ROBOT_NAME of the driver node
     spawn_URDF_ur5e = URDFSpawner(
         name = "UR5e",
-        urdf_path = urdf_path,
+        urdf_path = ur5e_urdf_path,
         translation = "0 0 0.6",
         rotation = "0 0 1 -1.5708",
     )
 
+    # Driver nodes
+    # When having multiple robot it is enough to specify the `additional_env` argument.
+    # The `WEBOTS_ROBOT_NAME` has to match the robot name in the world file.
+    # You can check for more information at:
+    # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#single-simulation-and-multiple-extern-robot-controllers
     universal_robot_driver = Node(
         package='webots_ros2_driver',
         executable='driver',

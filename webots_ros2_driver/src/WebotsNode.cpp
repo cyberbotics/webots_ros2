@@ -60,8 +60,8 @@ namespace webots_ros2_driver
     }
 
     mClockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
-    //mURDFCleanPublisher = create_publisher<std_msgs::msg::String>("/clean_urdf_robot", rclcpp::ServicesQoS());
-    //mURDFCleanMessage.data = name;
+    mURDFCleanPublisher = create_publisher<std_msgs::msg::String>("/clean_urdf_robot", rclcpp::ServicesQoS());
+    mURDFCleanMessage.data = name;
   }
 
   std::unordered_map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement) const
@@ -216,13 +216,12 @@ namespace webots_ros2_driver
 
   void WebotsNode::timerCallback()
   {
-    /*
     if (SIGINTReceived && !waitCleanRobot){
       if (!waitCleanRobot){
         mURDFCleanPublisher->publish(mURDFCleanMessage);
         waitCleanRobot = true;
       }
-    }*/
+    }
     if (mRobot->step(mStep) == -1) {
       mTimer->cancel();
       exit(0);

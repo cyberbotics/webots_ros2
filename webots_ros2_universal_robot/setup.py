@@ -17,7 +17,6 @@ data_files.append(('share/' + package_name + '/launch', [
     'launch/multirobot_launch/multirobot_launch.py',
     'launch/multirobot_launch/world_multirobot_launch.py',
     'launch/multirobot_launch/nodes_multirobot_launch.py',
-
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/universal_robot.wbt',
@@ -29,13 +28,13 @@ data_files.append(('share/' + package_name, [
     'package.xml'
 ]))
 
-'''
+
 folder_to_include = 'resource'
 
 for (path, _, filenames) in os.walk(folder_to_include):
     for filename in filenames:
         data_files.append((os.path.join('share', package_name, path), [os.path.join(path, filename)]))
-'''
+
 
 setup(
     name=package_name,

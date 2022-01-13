@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.x.x (2022-xx-xx)
+------------------
+* Added an URDF importer feature to spawn robots from URDF files.
+
 1.2.0 (2021-12-21)
 ------------------
 * Adapt the worlds to the new R2022a FLU convention.

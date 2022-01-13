@@ -24,6 +24,8 @@
   <depend>vision_msgs</depend>
   <depend>tinyxml2_vendor</depend>
   <depend>webots_ros2_msgs</depend>
+  <depend>xacro</depend>
+  <depend>urdf2webots</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

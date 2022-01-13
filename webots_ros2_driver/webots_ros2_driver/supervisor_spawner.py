@@ -43,15 +43,12 @@ class SupervisorSpawner(Node):
         self.__robot = Supervisor()
         self.__timestep = int(self.__robot.getBasicTimeStep())
 
-        #root_node = self.__robot.getRoot()
-        #self.__insertion_robot_place = root_node.getField('children')
+        root_node = self.__robot.getRoot()
+        self.__insertion_robot_place = root_node.getField('children')
 
-        self.create_timer(1.0 / 1000.0, self.__supervisor_step_callback)
-
-        self.get_logger().info('Spawner time step is: '+str(1.0 / 1000.0))
-        #self.create_service(SetWbURDFRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
-        #self.create_subscription(String, 'clean_urdf_robot', self.__clean_urdf_robot_callback, qos_profile_services_default)
-        self.get_logger().info('Spawner init !!!!!!!!!!!!!!')
+        self.create_timer(1 / 1000, self.__supervisor_step_callback)
+        self.create_service(SetWbURDFRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
+        self.create_subscription(String, 'clean_urdf_robot', self.__clean_urdf_robot_callback, qos_profile_services_default)
 
     def __spawn_urdf_robot_callback(self, request, response):
         robot = request.robot
@@ -60,9 +57,10 @@ class SupervisorSpawner(Node):
         robot_name = robot.name if robot.name else ''
         robot_translation = robot.translation if robot.translation else '0 0 0'
         robot_rotation = robot.rotation if robot.rotation else '0 1 0 0'
+        package_dir = robot.package_dir if robot.package_dir else None
 
         robot_string = convert2urdf(inFile=file_input, robotName=robot_name, initTranslation=robot_translation,
-                                    initRotation=robot_rotation)
+                                    initRotation=robot_rotation, packagePathDefined=package_dir)
         self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
 
         self.get_logger().info('Spawner has imported the URDF robot "' + str(robot_name) + '"')

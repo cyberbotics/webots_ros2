@@ -17,19 +17,15 @@
 #include <webots_ros2_driver/WebotsNode.hpp>
 #include <webots/vehicle/Driver.hpp>
 
-/*
 bool SIGINTReceived = false;
 
 void customSigIntHandler(int sig)
 {
   SIGINTReceived = true;
 }
-*/
 
 int main(int argc, char **argv)
 {
-  rclcpp::init(argc, argv);//only test, to remove
-
   webots::Supervisor* robot;
 
   // Check if the robot can be a driver, if not create a simple Supervisor
@@ -39,10 +35,10 @@ int main(int argc, char **argv)
     robot = new webots::Supervisor();
 
   // Replace the signal handler for the WebotsNode and the robot by a custom one
-  //signal(SIGINT, customSigIntHandler);
-  //rclcpp::InitOptions options{};
-  //options.shutdown_on_sigint = false;
-  //rclcpp::init(argc, argv, options);
+  signal(SIGINT, customSigIntHandler);
+  rclcpp::InitOptions options{};
+  options.shutdown_on_sigint = false;
+  rclcpp::init(argc, argv, options);
 
   std::string robotName = robot->getName();
   for (char notAllowedChar : " -.)(")

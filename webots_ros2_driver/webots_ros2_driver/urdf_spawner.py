@@ -17,16 +17,32 @@
 """This process simply sends urdf information to the Spawner through a service."""
 
 from launch.actions import ExecuteProcess
-
+import os
+import tempfile
+import xacro
 
 def get_webots_driver_node(event, driver_node):
+    """Return the driver node in case the servic response is successful"""
     if "success=True" in event.text.decode().strip():
         return driver_node
     print("WARNING: the Spawner was not able to spawn an URDF robot.")
     return
 
+def convert_xacro(xacro_path, xacro_args):
+    """Convert a Xacro file into an URDF file and return the path to the URDF file"""
+    temp_urdf_path = tempfile.NamedTemporaryFile(mode='w' , suffix='.urdf', delete=False)
+    temp_urdf_file = open(temp_urdf_path.name, 'w')
+    temp_urdf_file.write(xacro.process(input_file_name=xacro_path, mappings=xacro_args))
+    temp_urdf_file.close()
+
+    return temp_urdf_path.name
+
+def remove_temp_urdf(temp_urdf_path):
+    if os.path.isfile(temp_urdf_path):
+        os.unlink(temp_urdf_path)
+
 class URDFSpawner(ExecuteProcess):
-    def __init__(self, output='screen', name=None, urdf_path=None, translation=None, rotation=None, **kwargs):
+    def __init__(self, output='screen', name=None, urdf_path=None, translation=None, rotation=None, package_dir=None, **kwargs):
         command = [
                 'ros2',
                 'service',
@@ -45,6 +61,8 @@ class URDFSpawner(ExecuteProcess):
             message += '"translation": "' + translation + '",'
         if rotation:
             message += '"rotation": "' + rotation + '",'
+        if package_dir:
+            message += '"package_dir": "' + package_dir + '",'
 
         message += '} }'
         command.append(message)

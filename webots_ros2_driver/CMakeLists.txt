@@ -19,6 +19,7 @@ find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
 find_package(PythonLibs 3.8 EXACT REQUIRED)
+find_package(xacro REQUIRED)
 
 if (UNIX AND NOT APPLE)
   set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
@@ -230,6 +231,7 @@ ament_export_dependencies(
   webots_ros2_msgs
   tinyxml2_vendor
   TinyXML2
+  xacro
 )
 ament_export_libraries(
   ${PROJECT_NAME}_imu

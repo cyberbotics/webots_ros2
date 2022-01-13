@@ -25,24 +25,12 @@ from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
 
 
-import os
-import pathlib
-from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions.path_join_substitution import PathJoinSubstitution
-from launch import LaunchDescription
-from ament_index_python.packages import get_package_share_directory
-from launch_ros.actions import Node
-from webots_ros2_driver.webots_launcher import WebotsLauncher
-
-
 PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
-    '''
-    ur5e_urdf_path = os.path.join(package_dir, 'resource', 'ur_description', 'urdf', 'ur5e.urdf')
+    ur5e_urdf_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf')
     ur5e_description = pathlib.Path(ur5e_urdf_path).read_text()
     abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
     ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
@@ -53,10 +41,15 @@ def generate_launch_description():
     spawn_URDF_ur5e = URDFSpawner(
         name = "UR5e",
         urdf_path = ur5e_urdf_path,
-        translation = "0 0 0.6",
+        translation = "0 0 0.62",
         rotation = "0 0 1 -1.5708",
     )
 
+    # Driver nodes
+    # When having multiple robot it is enough to specify the `additional_env` argument.
+    # The `WEBOTS_ROBOT_NAME` has to match the robot name in the world file.
+    # You can check for more information at:
+    # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#single-simulation-and-multiple-extern-robot-controllers
     ur5e_driver = Node(
         package='webots_ros2_driver',
         executable='driver',
@@ -70,7 +63,7 @@ def generate_launch_description():
         ]
     )
 
-    # Standard Webots robot
+    # Standard Webots robot using driver node
     abb_driver = Node(
         package='webots_ros2_driver',
         executable='driver',
@@ -129,29 +122,35 @@ def generate_launch_description():
         namespace='abb',
         output='screen'
     )
-    '''
-
-
-    world = LaunchConfiguration('world')
-    webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world])
-    )
 
     return LaunchDescription([
         # Request to spawn the URDF robot
+        spawn_URDF_ur5e,
 
         # Standard Webots robot
+        abb_driver,
 
         # Other ROS 2 nodes
-
-        DeclareLaunchArgument(
-            'world',
-            default_value='armed_robots.wbt',
-            description='Choose one of the world files from `/webots_ros2_tesla/worlds` directory'
-        ),
-        webots,
+        ur5e_controller,
+        ur5e_trajectory_controller_spawner,
+        ur5e_joint_state_broadcaster_spawner,
+        abb_controller,
+        abb_trajectory_controller_spawner,
+        abb_joint_state_broadcaster_spawner,
 
         # Launch the driver node once the URDF robot is spawned
+        launch.actions.RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessIO(
+                target_action=spawn_URDF_ur5e,
+                on_stdout=lambda event: get_webots_driver_node(event, ur5e_driver),
+            )
+        ),
 
         # Kill all the nodes when the driver node is shut down
+        launch.actions.RegisterEventHandler(
+                event_handler=launch.event_handlers.OnProcessExit(
+                    target_action=ur5e_driver,
+                    on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+                )
+            ),
     ])

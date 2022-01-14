@@ -39,10 +39,10 @@ def generate_launch_description():
     # Define your URDF robots here
     # The name of an URDF robot has to match the WEBOTS_ROBOT_NAME of the driver node
     spawn_URDF_ur5e = URDFSpawner(
-        name = "UR5e",
-        urdf_path = ur5e_urdf_path,
-        translation = "0 0 0.62",
-        rotation = "0 0 1 -1.5708",
+        name='UR5e',
+        urdf_path=ur5e_urdf_path,
+        translation='0 0 0.62',
+        rotation='0 0 1 -1.5708',
     )
 
     # Driver nodes

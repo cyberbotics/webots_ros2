@@ -42,7 +42,7 @@ def remove_temp_urdf(temp_urdf_path):
         os.unlink(temp_urdf_path)
 
 class URDFSpawner(ExecuteProcess):
-    def __init__(self, output='screen', name=None, urdf_path=None, translation=None, rotation=None, package_dir=None, **kwargs):
+    def __init__(self, output='screen', name=None, urdf_path=None, translation=None, rotation=None, **kwargs):
         command = [
                 'ros2',
                 'service',
@@ -61,8 +61,6 @@ class URDFSpawner(ExecuteProcess):
             message += '"translation": "' + translation + '",'
         if rotation:
             message += '"rotation": "' + rotation + '",'
-        if package_dir:
-            message += '"package_dir": "' + package_dir + '",'
 
         message += '} }'
         command.append(message)

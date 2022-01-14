@@ -57,10 +57,9 @@ class SupervisorSpawner(Node):
         robot_name = robot.name if robot.name else ''
         robot_translation = robot.translation if robot.translation else '0 0 0'
         robot_rotation = robot.rotation if robot.rotation else '0 1 0 0'
-        package_dir = robot.package_dir if robot.package_dir else None
 
         robot_string = convert2urdf(inFile=file_input, robotName=robot_name, initTranslation=robot_translation,
-                                    initRotation=robot_rotation, packagePathDefined=package_dir)
+                                    initRotation=robot_rotation)
         self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
 
         self.get_logger().info('Spawner has imported the URDF robot "' + str(robot_name) + '"')

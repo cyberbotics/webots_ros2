@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-
-
 ROS_DISTRO=$1
 ROS_REPO=$2
 

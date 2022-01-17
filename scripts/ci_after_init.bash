@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+
+
 ROS_DISTRO=$1
 ROS_REPO=$2
 
@@ -12,3 +14,5 @@ apt install -y /tmp/webots.deb xvfb
 if [ "${ROS_DISTRO}" = "foxy" ]; then
     apt install -y ros-foxy-turtlebot3-cartographer ros-foxy-turtlebot3-navigation2
 fi
+
+apt-cache search moveit

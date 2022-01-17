@@ -22,6 +22,7 @@ jobs:
          submodules: recursive
       - uses: 'ros-industrial/industrial_ci@master'
         env:
+          OS_CODE_NAME: focal
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}
       - name: Upload Artifact

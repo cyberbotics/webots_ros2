@@ -21,6 +21,7 @@ jobs:
         with:
          submodules: recursive
       - uses: 'ros-industrial/industrial_ci@master'
+        ROS_REPOSITORY_PATH: http://packages.ros.org/ros2/ubuntu
         env:
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}

@@ -95,6 +95,7 @@ def generate_launch_description():
             )
         )
     else:
-        launch_description_nodes.append(LogInfo(msg='"moveit" package is not installed, please install it in order to use this demo.'))
+        launch_description_nodes.append(LogInfo(msg='"moveit" package is not installed, \
+                                                please install it in order to use this demo.'))
 
     return LaunchDescription(launch_description_nodes)

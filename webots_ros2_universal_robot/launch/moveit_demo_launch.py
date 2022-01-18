@@ -39,7 +39,7 @@ def generate_launch_description():
     def load_yaml(filename):
         return yaml.safe_load(load_file(filename))
 
-    # Check if nav2_bringup is installed
+    # Check if moveit is installed
     if 'moveit' in get_packages_with_prefixes():
         # Configuration
         description = {'robot_description': load_file('moveit_ur5e_description.urdf')}
@@ -65,7 +65,7 @@ def generate_launch_description():
             )
         )
 
-        # Navigation
+        # MoveIt2 node
         movegroup = {'move_group': load_yaml('moveit_movegroup.yaml')}
         moveit_controllers = {
             'moveit_controller_manager': 'moveit_simple_controller_manager/MoveItSimpleControllerManager',
@@ -96,6 +96,6 @@ def generate_launch_description():
         )
     else:
         launch_description_nodes.append(LogInfo(msg='"moveit" package is not installed, \
-                                                please install it in order to use this demo.'))
+                                                please install it in order to run this demo.'))
 
     return LaunchDescription(launch_description_nodes)

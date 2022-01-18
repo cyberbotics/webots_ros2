@@ -87,14 +87,14 @@ def generate_launch_description():
                 ],
             )
         )
-    else:
-        launch_description_nodes.append(LogInfo(msg='"moveit" package is not installed, please install it in order to use this functionnality.'))
 
-    # Webots simulation with robot
-    launch_description_nodes.append(
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(package_dir, 'launch', 'robot_launch.py'))
+        # Webots simulation with robot
+        launch_description_nodes.append(
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(os.path.join(package_dir, 'launch', 'robot_launch.py'))
+            )
         )
-    )
+    else:
+        launch_description_nodes.append(LogInfo(msg='"moveit" package is not installed, please install it in order to use this demo.'))
 
     return LaunchDescription(launch_description_nodes)

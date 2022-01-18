@@ -53,3 +53,7 @@ SolidBox {
     metalness 0
   }
 }
+
+
+url [
+  "webots://projects/samples/demos/worlds/textures/soccer/yellow.png"]

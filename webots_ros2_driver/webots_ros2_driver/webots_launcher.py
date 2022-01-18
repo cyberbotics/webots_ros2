@@ -112,9 +112,17 @@ class WebotsLauncher(ExecuteProcess):
 
             print("hello")
 
-            for match in re.finditer('url [(.*)]', content):
+            '''
+            
+            url [
+  "webots://projects/samples/demos/worlds/textures/soccer/yellow.png"]
+            
+            '''
 
-                print("match is " + str(match))
+            for match in re.finditer('url \n \[(.*?)\[', content):
+
+                print("match is: " + str(match.group()))
+
 
                 sys.exit(1)
 

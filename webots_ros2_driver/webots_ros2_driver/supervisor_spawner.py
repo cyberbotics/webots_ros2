@@ -56,17 +56,24 @@ class SupervisorSpawner(Node):
         file_input = robot.urdf_location if robot.urdf_location else ''
         robot_name = robot.name if robot.name else ''
         robot_translation = robot.translation if robot.translation else '0 0 0'
-        robot_rotation = robot.rotation if robot.rotation else '0 1 0 0'
+        robot_rotation = robot.rotation if robot.rotation else '0 0 1 0'
+        normal = robot.normal if robot.normal else False
+        box_collision = robot.box_collision if robot.box_collision else False
+        init_pos = robot.init_pos if robot.init_pos else None
 
         if robot_name == '':
-            self.get_logger().info('Spawner cannot import un unnamed URDF robot. Please specifiy it.')
+            self.get_logger().info('Spawner cannot import an unnamed URDF robot. Please specifiy it.')
             response.success = False
             return response
 
-        robot_string = convert2urdf(inFile=file_input, isProto=False, robotName=robot_name, initTranslation=robot_translation,
-                                    initRotation=robot_rotation)
-        self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
+        robot_string = convert2urdf(inFile=file_input, isProto=False, robotName=robot_name, normal=normal,
+                                    boxCollision=box_collision, initTranslation=robot_translation, initRotation=robot_rotation,
+                                    initPos=init_pos)
 
+        import pyperclip
+        pyperclip.copy(robot_string)
+
+        self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
         self.get_logger().info('Spawner has imported the URDF robot "' + str(robot_name) + '"')
         response.success = True
         return response

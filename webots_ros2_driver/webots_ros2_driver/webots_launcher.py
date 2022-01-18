@@ -17,16 +17,18 @@
 """This launcher simply starts Webots."""
 
 import os
-import sys
+import re
 import shutil
+import sys
 import tempfile
 
 from launch.actions import ExecuteProcess
+from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
-from launch.launch_context import LaunchContext
-from webots_ros2_driver.utils import get_webots_home, handle_webots_installation
 
+from webots_ros2_driver.utils import (get_webots_home,
+                                      handle_webots_installation)
 
 URDF_world_suffix = '_world_with_URDF_robot.wbt'
 
@@ -55,10 +57,7 @@ class WebotsLauncher(ExecuteProcess):
         webots_path = os.path.join(webots_path, 'webots')
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
-        if not isinstance(world, Substitution):
-            #if use_URDF_robot_spawner or true:
-            #    world = world[:-4] + URDF_world_suffix
-            world = TextSubstitution(text=world)
+        mode = mode if isinstance(world, Substitution) else TextSubstitution(text=world)
 
         self.__world = world
         self.__world_copy = None
@@ -101,16 +100,64 @@ class WebotsLauncher(ExecuteProcess):
         if not world_path:
             sys.exit('World file not specified (has to be specified with world=absolute/path/to/my/world.wbt')
 
-        '''
-        if world_path[-len(URDF_world_suffix):] == URDF_world_suffix:
-            world_copy = world_path
-            world_path = world_path[:-len(URDF_world_suffix)] + '.wbt'
-        else:
-        '''
-
         self.__world_copy = tempfile.NamedTemporaryFile(mode="w+", suffix=URDF_world_suffix, delete=False)
         shutil.copy2(world_path, self.__world_copy.name)
         context.launch_configurations['world']=self.__world_copy.name
+
+        # Update relative paths
+
+        with open(self.__world_copy.name, 'r') as file:
+            inPath = os.path.dirname(os.path.abspath(self.__world_copy.name))
+            content = file.read()
+
+            print("hello")
+
+            for match in re.finditer('url [(.*)]', content):
+
+                print("match is " + str(match))
+
+                sys.exit(1)
+
+                '''
+
+                packageName = match.group(1).split('/')[0]
+                directory = inPath
+                while packageName != os.path.split(directory)[1] and os.path.split(directory)[1]:
+                    directory = os.path.dirname(directory)
+                if not os.path.split(directory)[1]:
+                    try:
+                        rospack = rospkg.RosPack()
+                        directory = rospack.get_path(packageName)
+                    except rospkg.common.ResourceNotFound:
+                        sys.stderr.write('Package "%s" not found.\n' % packageName)
+                    except NameError:
+                        sys.stderr.write('Impossible to find location of "%s" package, installing "rospkg" might help.\n'
+                                        % packageName)
+                if os.path.split(directory)[1]:
+                    packagePath = os.path.split(directory)[0]
+                    content = content.replace('url "'+packageName, packagePath+'/'+packageName)
+                else:
+                    sys.stderr.write('Can\'t determine package root path.\n')
+
+
+
+
+
+
+
+
+
+                baseColorMap ImageTexture {
+                url [
+                    "webots://projects/samples/demos/worlds/textures/soccer/yellow.png"
+                ]
+                }
+
+                '''
+
+            sys.exit(1)
+
+
 
         # Add supervisor Spawner
         indent = '  '

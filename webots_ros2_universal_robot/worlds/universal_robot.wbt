@@ -40,3 +40,16 @@ SolidBox {
     }
   }
 }
+SolidBox {
+  translation 0.5 0.5 0.3
+  size 0.3 0.3 0.6
+  appearance PBRAppearance {
+    baseColorMap ImageTexture {
+      url [
+        "webots://projects/samples/demos/worlds/textures/soccer/yellow.png"
+      ]
+    }
+    roughness 1
+    metalness 0
+  }
+}

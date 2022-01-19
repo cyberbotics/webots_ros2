@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.2 (2022-01-19)
+------------------
+* Fix the Supervisor API access from plugins.
+
 1.2.1 (2022-01-10)
 ------------------
 * Fix link error for 'webots_ros2_control' on macOS.

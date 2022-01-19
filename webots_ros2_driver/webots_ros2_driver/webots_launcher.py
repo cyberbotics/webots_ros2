@@ -112,17 +112,17 @@ class WebotsLauncher(ExecuteProcess):
 
             print("hello")
 
-            '''
-            
-            url [
-  "webots://projects/samples/demos/worlds/textures/soccer/yellow.png"]
-            
-            '''
-
-            for match in re.finditer('url \n \[(.*?)\[', content):
+            for match in re.finditer('url\s*\[\s*\"(.*?)\"', content):
 
                 print("match is: " + str(match.group()))
 
+                url_path = match.group(1)
+
+                print("url_path is: " + str(url_path))
+
+                
+                if os.path.isabs(url_path):
+                    print("url_path is absolute !")
 
                 sys.exit(1)
 

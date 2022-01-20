@@ -124,8 +124,6 @@ class WebotsLauncher(ExecuteProcess):
                 if os.path.isabs(url_path):
                     print("url_path is absolute !")
 
-                sys.exit(1)
-
                 '''
 
                 packageName = match.group(1).split('/')[0]

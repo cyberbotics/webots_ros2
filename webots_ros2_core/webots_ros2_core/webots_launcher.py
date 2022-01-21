@@ -26,9 +26,12 @@ from webots_ros2_core.utils import get_webots_home, handle_webots_installation
 
 class _WebotsCommandSubstitution(Substitution):
     def __init__(self, *, world, gui, mode):
-        self.__gui = gui if isinstance(gui, Substitution) else TextSubstitution(text=str(gui))
-        self.__mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
-        self.__world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
+        self.__gui = gui if isinstance(
+            gui, Substitution) else TextSubstitution(text=str(gui))
+        self.__mode = mode if isinstance(
+            mode, Substitution) else TextSubstitution(text=mode)
+        self.__world = world if isinstance(
+            world, Substitution) else TextSubstitution(text=world)
 
     def perform(self, context):
         webots_path = get_webots_home(show_warning=True)
@@ -53,7 +56,6 @@ class _WebotsCommandSubstitution(Substitution):
                 '--stdout',
                 '--stderr',
                 '--batch',
-                '--no-sandbox',
                 '--minimize',
                 '--no-rendering'
             ]

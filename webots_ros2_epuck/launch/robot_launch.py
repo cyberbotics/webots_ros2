@@ -70,7 +70,8 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'robot_description': robot_description,
-             'use_sim_time': use_sim_time},
+             'use_sim_time': use_sim_time,
+             'set_robot_state_publisher': True},
             ros2_control_params
         ],
         remappings=[

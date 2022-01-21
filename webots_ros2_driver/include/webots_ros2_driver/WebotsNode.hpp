@@ -52,6 +52,7 @@ namespace webots_ros2_driver
 
     std::string mRobotName;
     std::string mRobotDescription;
+    bool mSetRobotStatePublisher;
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;

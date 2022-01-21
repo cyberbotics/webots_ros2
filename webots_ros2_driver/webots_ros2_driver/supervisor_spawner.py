@@ -70,9 +70,6 @@ class SupervisorSpawner(Node):
                                     boxCollision=box_collision, initTranslation=robot_translation, initRotation=robot_rotation,
                                     initPos=init_pos)
 
-        import pyperclip
-        pyperclip.copy(robot_string)
-
         self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
         self.get_logger().info('Spawner has imported the URDF robot "' + str(robot_name) + '"')
         response.success = True

@@ -105,65 +105,22 @@ class WebotsLauncher(ExecuteProcess):
         context.launch_configurations['world']=self.__world_copy.name
 
         # Update relative paths
-
         with open(self.__world_copy.name, 'r') as file:
-            inPath = os.path.dirname(os.path.abspath(self.__world_copy.name))
             content = file.read()
 
-            print("hello")
+        for match in re.finditer('url\s*\[\s*\"(.*?)\"', content):
+            url_path = match.group(1)
 
-            for match in re.finditer('url\s*\[\s*\"(.*?)\"', content):
+            # Absolute path or Webots relative path or Web paths
+            if os.path.isabs(url_path) or "webots://" in url_path or "http://" in url_path or "https://" in url_path:
+                continue
 
-                print("match is: " + str(match.group()))
+            new_url_path = '"' + os.path.split(world_path)[0] + '/' + url_path + '"'
+            url_path = '"' + url_path + '"'
+            content = content.replace(url_path, new_url_path)
 
-                url_path = match.group(1)
-
-                print("url_path is: " + str(url_path))
-
-                
-                if os.path.isabs(url_path):
-                    print("url_path is absolute !")
-
-                '''
-
-                packageName = match.group(1).split('/')[0]
-                directory = inPath
-                while packageName != os.path.split(directory)[1] and os.path.split(directory)[1]:
-                    directory = os.path.dirname(directory)
-                if not os.path.split(directory)[1]:
-                    try:
-                        rospack = rospkg.RosPack()
-                        directory = rospack.get_path(packageName)
-                    except rospkg.common.ResourceNotFound:
-                        sys.stderr.write('Package "%s" not found.\n' % packageName)
-                    except NameError:
-                        sys.stderr.write('Impossible to find location of "%s" package, installing "rospkg" might help.\n'
-                                        % packageName)
-                if os.path.split(directory)[1]:
-                    packagePath = os.path.split(directory)[0]
-                    content = content.replace('url "'+packageName, packagePath+'/'+packageName)
-                else:
-                    sys.stderr.write('Can\'t determine package root path.\n')
-
-
-
-
-
-
-
-
-
-                baseColorMap ImageTexture {
-                url [
-                    "webots://projects/samples/demos/worlds/textures/soccer/yellow.png"
-                ]
-                }
-
-                '''
-
-            sys.exit(1)
-
-
+        with open(self.__world_copy.name, 'w') as file:
+            file.write(content)
 
         # Add supervisor Spawner
         indent = '  '

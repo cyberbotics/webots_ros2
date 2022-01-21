@@ -62,11 +62,11 @@ class SupervisorSpawner(Node):
         init_pos = robot.init_pos if robot.init_pos else None
 
         if robot_name == '':
-            self.get_logger().info('Spawner cannot import an unnamed URDF robot. Please specifiy it.')
+            self.get_logger().info('Spawner cannot import an unnamed URDF robot. Please specifiy it with name="" in the URDFSpawner object.')
             response.success = False
             return response
 
-        robot_string = convert2urdf(inFile=file_input, isProto=False, robotName=robot_name, normal=normal,
+        robot_string = convert2urdf(inFile=file_input, robotName=robot_name, normal=normal,
                                     boxCollision=box_collision, initTranslation=robot_translation, initRotation=robot_rotation,
                                     initPos=init_pos)
 

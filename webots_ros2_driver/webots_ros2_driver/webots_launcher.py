@@ -26,9 +26,12 @@ from webots_ros2_driver.utils import get_webots_home, handle_webots_installation
 
 class _ConditionalSubstitution(Substitution):
     def __init__(self, *, condition, false_value='', true_value=''):
-        self.__condition = condition if isinstance(condition, Substitution) else TextSubstitution(text=str(condition))
-        self.__false_value = false_value if isinstance(false_value, Substitution) else TextSubstitution(text=false_value)
-        self.__true_value = true_value if isinstance(true_value, Substitution) else TextSubstitution(text=true_value)
+        self.__condition = condition if isinstance(
+            condition, Substitution) else TextSubstitution(text=str(condition))
+        self.__false_value = false_value if isinstance(
+            false_value, Substitution) else TextSubstitution(text=false_value)
+        self.__true_value = true_value if isinstance(
+            true_value, Substitution) else TextSubstitution(text=true_value)
 
     def perform(self, context):
         if context.perform_substitution(self.__condition).lower() in ['false', '0', '']:
@@ -47,25 +50,28 @@ class WebotsLauncher(ExecuteProcess):
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')
         webots_path = os.path.join(webots_path, 'webots')
 
-        mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
-        world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
+        mode = mode if isinstance(
+            mode, Substitution) else TextSubstitution(text=mode)
+        world = world if isinstance(
+            world, Substitution) else TextSubstitution(text=world)
 
-        no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
-        stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
-        stderr = _ConditionalSubstitution(condition=gui, false_value='--stderr')
-        no_sandbox = _ConditionalSubstitution(condition=gui, false_value='--no-sandbox')
-        if sys.platform == 'win32':
-            # Windows doesn't have the sandbox argument
-            no_sandbox = ''
-        minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
-        stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
+        no_rendering = _ConditionalSubstitution(
+            condition=gui, false_value='--no-rendering')
+        stdout = _ConditionalSubstitution(
+            condition=gui, false_value='--stdout')
+        stderr = _ConditionalSubstitution(
+            condition=gui, false_value='--stderr')
+        minimize = _ConditionalSubstitution(
+            condition=gui, false_value='--minimize')
+        stream_argument = _ConditionalSubstitution(
+            condition=stream, true_value='--stream')
         xvfb_run_prefix = []
         if 'WEBOTS_OFFSCREEN' in os.environ:
             xvfb_run_prefix.append('xvfb-run')
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
-        # no_rendering, stdout, stderr, no_sandbox, minimize
+        # no_rendering, stdout, stderr, minimize
         super().__init__(
             output=output,
             cmd=xvfb_run_prefix + [
@@ -74,7 +80,6 @@ class WebotsLauncher(ExecuteProcess):
                 no_rendering,
                 stdout,
                 stderr,
-                no_sandbox,
                 minimize,
                 world,
                 '--batch',

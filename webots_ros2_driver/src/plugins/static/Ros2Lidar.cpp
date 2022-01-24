@@ -33,25 +33,15 @@ namespace webots_ros2_driver
     {
       mLaserPublisher = mNode->create_publisher<sensor_msgs::msg::LaserScan>(mTopicName, rclcpp::SensorDataQoS().reliable());
       const int resolution = mLidar->getHorizontalResolution();
-      mLaserMessage.header.frame_id = mFrameName + "_rotated";
-      mLaserMessage.angle_increment = mLidar->getFov() / resolution;
-      mLaserMessage.angle_min = -mLidar->getFov() / 2.0;
-      mLaserMessage.angle_max = mLidar->getFov() / 2.0 - mLaserMessage.angle_increment;
+      mLaserMessage.header.frame_id = mFrameName;
+      mLaserMessage.angle_increment = -mLidar->getFov() / resolution;
+      mLaserMessage.angle_min = mLidar->getFov() / 2.0 - mLaserMessage.angle_increment;
+      mLaserMessage.angle_max = -mLidar->getFov() / 2.0;
       mLaserMessage.time_increment = (double)mLidar->getSamplingPeriod() / (1000.0 * resolution);
       mLaserMessage.scan_time = (double)mLidar->getSamplingPeriod() / 1000.0;
       mLaserMessage.range_min = mLidar->getMinRange();
       mLaserMessage.range_max = mLidar->getMaxRange();
       mLaserMessage.ranges.resize(resolution);
-
-      mTfBroadcaster = std::make_unique<tf2_ros::StaticTransformBroadcaster>(mNode);
-      auto transformStamped = geometry_msgs::msg::TransformStamped();
-      transformStamped.header.frame_id = mFrameName;
-      transformStamped.child_frame_id = mFrameName + "_rotated";
-      transformStamped.transform.rotation.x = 0.5;
-      transformStamped.transform.rotation.y = 0.5;
-      transformStamped.transform.rotation.z = -0.5;
-      transformStamped.transform.rotation.w = 0.5;
-      mTfBroadcaster->sendTransform(transformStamped);
     }
 
     // Point cloud publisher

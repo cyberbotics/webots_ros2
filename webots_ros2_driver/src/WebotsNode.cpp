@@ -42,6 +42,7 @@ namespace webots_ros2_driver
   WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
+    mSetRobotStatePublisher = this->declare_parameter<bool>("set_robot_state_publisher", false);
     if (mRobotDescription != "")
     {
       mRobotDescriptionDocument = std::make_shared<tinyxml2::XMLDocument>();
@@ -114,7 +115,8 @@ namespace webots_ros2_driver
 
   void WebotsNode::init()
   {
-    setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
+    if (mSetRobotStatePublisher)
+      setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
 
     mStep = mRobot->getBasicTimeStep();
     mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));

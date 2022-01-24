@@ -56,6 +56,7 @@ namespace webots_ros2_driver
     rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
 
     std::string mRobotDescription;
+    bool mSetRobotStatePublisher;
 
     bool waitCleanRobot = false;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mURDFCleanPublisher;

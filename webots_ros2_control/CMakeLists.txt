@@ -26,12 +26,8 @@ find_package(hardware_interface REQUIRED)
 find_package(controller_manager REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 find_package(webots_ros2_driver REQUIRED)
-
-list(GET webots_ros2_driver_INCLUDE_DIRS 0 webots_ros2_driver_INCLUDE)
-include_directories(
-  ${webots_ros2_driver_INCLUDE}/webots/cpp
-)
 
 if (MSVC OR MSYS OR MINGW OR WIN32)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -77,6 +73,7 @@ ament_target_dependencies(
   hardware_interface
   pluginlib
   rclcpp
+  rclcpp_lifecycle
   webots_ros2_driver
 )
 
@@ -100,6 +97,7 @@ ament_export_dependencies(
   hardware_interface
   pluginlib
   rclcpp
+  rclcpp_lifecycle
 )
 ament_export_libraries(
   ${PROJECT_NAME}

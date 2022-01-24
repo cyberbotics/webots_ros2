@@ -6,6 +6,15 @@ Changelog for package webots_ros2_driver
 ------------------
 * Added an URDF importer feature to spawn robots from URDF files.
 
+1.2.2 (2022-01-19)
+------------------
+* Fix the Supervisor API access from plugins.
+
+1.2.1 (2022-01-10)
+------------------
+* Fix link error for 'webots_ros2_control' on macOS.
+* Fix lidar device according to FLU convention.
+
 1.2.0 (2021-12-21)
 ------------------
 * Adapt the worlds to the new R2022a FLU convention.

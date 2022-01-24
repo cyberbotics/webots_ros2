@@ -57,7 +57,7 @@ class WebotsLauncher(ExecuteProcess):
         webots_path = os.path.join(webots_path, 'webots')
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
-        mode = mode if isinstance(world, Substitution) else TextSubstitution(text=world)
+        world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
 
         self.__world = world
         self.__world_copy = None

@@ -39,6 +39,14 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
+    supervisor_spawner = Node(
+        package='webots_ros2_driver',
+        executable='supervisor_spawner.py',
+        output='screen',
+        additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
+        respawn=True,
+    )
+
     # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -99,6 +107,7 @@ def generate_launch_description():
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
         webots,
+        supervisor_spawner,
         robot_state_publisher,
         turtlebot_driver,
         footprint_publisher,

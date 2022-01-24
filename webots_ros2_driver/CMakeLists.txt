@@ -206,10 +206,10 @@ target_compile_definitions(${PROJECT_NAME}_imu PUBLIC "PLUGINLIB__DISABLE_BOOST_
 pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
 
 # Install launch files
-install(
-  DIRECTORY launch
-  DESTINATION share/${PROJECT_NAME}
-)
+#install(
+#  DIRECTORY launch
+#  DESTINATION share/${PROJECT_NAME}
+#)
 
 # Install ROS 2 nodes
 install(PROGRAMS ${PROJECT_NAME}/supervisor_spawner.py

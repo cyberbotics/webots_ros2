@@ -39,6 +39,14 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
+    supervisor_spawner = Node(
+        package='webots_ros2_driver',
+        executable='supervisor_spawner.py',
+        output='screen',
+        additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
+        respawn=True,
+    )
+
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
 
@@ -110,9 +118,10 @@ def generate_launch_description():
             default_value='epuck_world.wbt',
             description='Choose one of the world files from `/webots_ros2_epuck/world` directory'
         ),
+        webots,
+        supervisor_spawner,
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
-        webots,
         robot_state_publisher,
         epuck_driver,
         footprint_publisher,

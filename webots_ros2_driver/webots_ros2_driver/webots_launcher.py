@@ -25,7 +25,9 @@ import tempfile
 from launch.actions import ExecuteProcess
 from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
+from launch.substitutions import LaunchConfiguration
 from launch.substitutions import TextSubstitution
+from launch.substitutions.path_join_substitution import PathJoinSubstitution
 
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation)
@@ -57,10 +59,11 @@ class WebotsLauncher(ExecuteProcess):
         webots_path = os.path.join(webots_path, 'webots')
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
-        world = world if isinstance(world, Substitution) else TextSubstitution(text=world)
 
+        self.__world_copy = tempfile.NamedTemporaryFile(mode="w+", suffix=URDF_world_suffix, delete=False)
         self.__world = world
-        self.__world_copy = None
+        if not isinstance(world, Substitution):
+            world = TextSubstitution(text=self.__world_copy.name)
 
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
@@ -96,13 +99,15 @@ class WebotsLauncher(ExecuteProcess):
         )
 
     def execute(self, context: LaunchContext):
-        world_path = self.__world.perform(context)
-        if not world_path:
-            sys.exit('World file not specified (has to be specified with world=absolute/path/to/my/world.wbt')
+        # User can give a substitution world ...
+        if isinstance(self.__world, PathJoinSubstitution):
+            world_path = self.__world.perform(context)
+            context.launch_configurations['world'] = self.__world_copy.name
+        # or an absoulute path world
+        else:
+            world_path = self.__world
 
-        self.__world_copy = tempfile.NamedTemporaryFile(mode="w+", suffix=URDF_world_suffix, delete=False)
         shutil.copy2(world_path, self.__world_copy.name)
-        context.launch_configurations['world']=self.__world_copy.name
 
         # Update relative paths
         with open(self.__world_copy.name, 'r') as file:

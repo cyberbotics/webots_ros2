@@ -16,12 +16,13 @@
 
 """Launch Webots Universal Robot simulation world."""
 
-import os
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import Node
+from webots_ros2_driver.webots_launcher import WebotsLauncher
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -29,18 +30,26 @@ PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
-    package_webots_ros2_driver_dir = get_package_share_directory('webots_ros2_driver')
+    world = LaunchConfiguration('world')
 
-    # Webots
-    webots_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(package_webots_ros2_driver_dir, 'launch', 'webots_launch.py')
-        ),
-        launch_arguments={
-            'world': PathJoinSubstitution([package_dir, 'worlds', 'universal_robot.wbt'])
-        }.items()
+    webots = WebotsLauncher(
+        world=PathJoinSubstitution([package_dir, 'worlds', world])
+    )
+
+    supervisor_spawner = Node(
+        package='webots_ros2_driver',
+        executable='supervisor_spawner.py',
+        output='screen',
+        additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
+        respawn=True,
     )
 
     return LaunchDescription([
-        webots_launch,
+        DeclareLaunchArgument(
+            'world',
+            default_value='universal_robot.wbt',
+            description='Choose one of the world files from `/webots_ros2_universal_robot/worlds` directory'
+        ),
+        supervisor_spawner,
+        webots,
     ])

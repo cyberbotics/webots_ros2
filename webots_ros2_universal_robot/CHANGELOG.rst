@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.2 (2022-01-19)
+------------------
+* Remove the 'moveit' dependency.
+
 1.2.0 (2021-12-21)
 ------------------
 * Adapt the worlds to the new R2022a FLU convention.

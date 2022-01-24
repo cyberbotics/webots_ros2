@@ -36,11 +36,11 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    supervisor_spawner = Node(
+    ros2_supervisor = Node(
         package='webots_ros2_driver',
-        executable='supervisor_spawner.py',
+        executable='ros2_supervisor.py',
         output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
+        additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
         respawn=True,
     )
 
@@ -65,7 +65,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_tesla/worlds` directory'
         ),
         webots,
-        supervisor_spawner,
+        ros2_supervisor,
         lane_follower,
         tesla_driver,
     ])

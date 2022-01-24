@@ -39,11 +39,11 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    supervisor_spawner = Node(
+    ros2_supervisor = Node(
         package='webots_ros2_driver',
-        executable='supervisor_spawner.py',
+        executable='ros2_supervisor.py',
         output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
+        additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
         respawn=True,
     )
 
@@ -104,10 +104,10 @@ def generate_launch_description():
             default_value='turtlebot3_burger_example.wbt',
             description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
         ),
+        webots,
+        ros2_supervisor,
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
-        webots,
-        supervisor_spawner,
         robot_state_publisher,
         turtlebot_driver,
         footprint_publisher,

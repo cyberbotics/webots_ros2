@@ -25,14 +25,11 @@ import tempfile
 from launch.actions import ExecuteProcess
 from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
-from launch.substitutions import LaunchConfiguration
 from launch.substitutions import TextSubstitution
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation)
-
-URDF_world_suffix = '_world_with_URDF_robot.wbt'
 
 
 class _ConditionalSubstitution(Substitution):
@@ -60,7 +57,7 @@ class WebotsLauncher(ExecuteProcess):
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 
-        self.__world_copy = tempfile.NamedTemporaryFile(mode="w+", suffix=URDF_world_suffix, delete=False)
+        self.__world_copy = tempfile.NamedTemporaryFile(mode="w+", suffix='_world_with_URDF_robot.wbt', delete=False)
         self.__world = world
         if not isinstance(world, Substitution):
             world = TextSubstitution(text=self.__world_copy.name)
@@ -99,17 +96,17 @@ class WebotsLauncher(ExecuteProcess):
         )
 
     def execute(self, context: LaunchContext):
-        # User can give a substitution world ...
+        # User can give a PathJoinSubstitution world ...
         if isinstance(self.__world, PathJoinSubstitution):
             world_path = self.__world.perform(context)
             context.launch_configurations['world'] = self.__world_copy.name
-        # or an absoulute path world
+        # or an absolute path world
         else:
             world_path = self.__world
 
         shutil.copy2(world_path, self.__world_copy.name)
 
-        # Update relative paths
+        # Update relative paths in the world
         with open(self.__world_copy.name, 'r') as file:
             content = file.read()
 
@@ -127,11 +124,11 @@ class WebotsLauncher(ExecuteProcess):
         with open(self.__world_copy.name, 'w') as file:
             file.write(content)
 
-        # Add supervisor Spawner
+        # Add the Ros2Supervisor
         indent = '  '
         world_file = open(self.__world_copy.name, 'a')
         world_file.write('Robot {\n')
-        world_file.write(indent + 'name "Spawner"\n')
+        world_file.write(indent + 'name "Ros2Supervisor"\n')
         world_file.write(indent + 'controller "<extern>"\n')
         world_file.write(indent + 'supervisor TRUE\n')
         world_file.write('}\n')

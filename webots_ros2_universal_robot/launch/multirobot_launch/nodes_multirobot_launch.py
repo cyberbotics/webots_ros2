@@ -138,11 +138,11 @@ def generate_launch_description():
         abb_trajectory_controller_spawner,
         abb_joint_state_broadcaster_spawner,
 
-        # Launch the driver node once the URDF robot is spawned
+        # Launch the driver nodes once the URDF robots are spawned
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessIO(
                 target_action=spawn_URDF_ur5e,
-                on_stdout=lambda event: get_webots_driver_node(event, ur5e_driver),
+                on_stdout=lambda event: get_webots_driver_node(event, [ur5e_driver, abb_driver]),
             )
         ),
 

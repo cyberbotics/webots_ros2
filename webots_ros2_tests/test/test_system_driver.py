@@ -50,11 +50,11 @@ def generate_test_description():
         mode='fast'
     )
 
-    supervisor_spawner = Node(
+    ros2_supervisor = Node(
         package='webots_ros2_driver',
-        executable='supervisor_spawner.py',
+        executable='ros2_supervisor.py',
         output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
+        additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
         respawn=True,
     )
 
@@ -66,8 +66,8 @@ def generate_test_description():
     )
 
     return LaunchDescription([
-        supervisor_spawner,
         webots,
+        ros2_supervisor,
         webots_driver,
         launch_testing.actions.ReadyToTest(),
         launch.actions.RegisterEventHandler(

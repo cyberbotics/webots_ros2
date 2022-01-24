@@ -18,7 +18,6 @@ find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
 find_package(PythonLibs 3.8 EXACT REQUIRED)
-find_package(xacro REQUIRED)
 
 if (UNIX AND NOT APPLE)
   set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
@@ -212,7 +211,7 @@ pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
 #)
 
 # Install ROS 2 nodes
-install(PROGRAMS ${PROJECT_NAME}/supervisor_spawner.py
+install(PROGRAMS ${PROJECT_NAME}/ros2_supervisor.py
 DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -232,7 +231,6 @@ ament_export_dependencies(
   webots_ros2_msgs
   tinyxml2_vendor
   TinyXML2
-  xacro
 )
 ament_export_libraries(
   ${PROJECT_NAME}_imu

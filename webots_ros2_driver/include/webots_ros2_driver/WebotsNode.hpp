@@ -28,7 +28,6 @@
 #include <rclcpp/clock.hpp>
 #include <rclcpp/qos.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
-#include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <pluginlib/class_loader.hpp>
 
@@ -58,9 +57,9 @@ namespace webots_ros2_driver
     std::string mRobotDescription;
     bool mSetRobotStatePublisher;
 
-    bool waitCleanRobot = false;
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mURDFCleanPublisher;
-    std_msgs::msg::String mURDFCleanMessage;
+    bool waitForURDFRobotRemoved = false;
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mURDFRemovePublisher;
+    std_msgs::msg::String mURDFRemoveMessage;
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;

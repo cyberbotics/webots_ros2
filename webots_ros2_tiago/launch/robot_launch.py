@@ -48,11 +48,11 @@ def generate_launch_description():
         mode=mode
     )
 
-    supervisor_spawner = Node(
+    ros2_supervisor = Node(
         package='webots_ros2_driver',
-        executable='supervisor_spawner.py',
+        executable='ros2_supervisor.py',
         output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'Spawner'},
+        additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
         respawn=True,
     )
 
@@ -146,10 +146,10 @@ def generate_launch_description():
             default_value='realtime',
             description='Webots startup mode'
         ),
+        webots,
+        ros2_supervisor,
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
-        webots,
-        supervisor_spawner,
         rviz,
         robot_state_publisher,
         tiago_driver,

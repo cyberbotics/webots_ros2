@@ -7,11 +7,11 @@ Documentation is available [here](https://github.com/cyberbotics/webots_ros2/wik
 
 ## Creation of the UR5e URDF file
 
-The [URDF file](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_universal_robot/resource/ur5e_with_gripper.urdf) for the UR5e robot used in this package is a mix of the UR5e robot taken from [UniversalRobots](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver) and the 3-fingers-gripper taken from [robotiq](https://github.com/ros-industrial/robotiq). Some adaptations have been made in the files from these two repositories.
+The [URDF file](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ros2_universal_robot/resource/ur5e_with_gripper.urdf) for the UR5e robot used in this package is a mix of the UR5e robot taken from [UniversalRobots](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver) and the 3-fingers-gripper taken from [robotiq](https://github.com/ros-industrial/robotiq). Some adaptations have been made in the files in the two repositories.
 
-### In order to reproduce a Xacro file that can generate this URDF file do follow this steps:
+### In order to reproduce a Xacro file that can generate this URDF file follow these steps:
 - Clone the repositories of [UniversalRobots](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver) and [robotiq](https://github.com/ros-industrial/robotiq) in your package.
-- Create your own Xacro file to combine the robot and the gripper and add the `<webots>` required tag:
+- Create your own Xacro file to combine the robot and the gripper and add the `<webots>` plugin tag:
 ```
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://wiki.ros.org/xacro">

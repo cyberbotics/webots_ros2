@@ -18,13 +18,16 @@
 """ROS2 Webots URDF Robots spawner."""
 
 
+import imp
 import os
 import sys
 
 import rclpy
 import webots_ros2_driver_webots
+from builtin_interfaces.msg import Time
 from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
+from rosgraph_msgs.msg import Clock
 from std_msgs.msg import String
 from urdf2webots.importer import convert2urdf
 from webots_ros2_msgs.srv import SetWbURDFRobot
@@ -47,6 +50,7 @@ class Ros2Supervisor(Node):
         self.__urdf_robots_list=[]
 
         self.create_timer(1 / 1000, self.__supervisor_step_callback)
+        self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
         self.create_service(SetWbURDFRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
         self.create_subscription(String, 'remove_urdf_robot', self.__remove_urdf_robot_callback, qos_profile_services_default)
 
@@ -106,6 +110,10 @@ class Ros2Supervisor(Node):
         if self.__robot.step(self.__timestep) < 0:
             self.get_logger().info('Ros2Supervisor will shut down...')
             self.destroy_node()
+        else:
+            clock_message = Clock()
+            clock_message.clock = Time(nanosec=self.__robot.getTime())
+            self.__clock_publisher.publish(clock_message)
 
 
 def main(args=None):

@@ -60,7 +60,6 @@ namespace webots_ros2_driver
       RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
     }
 
-    mClockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
     mURDFRemovePublisher = create_publisher<std_msgs::msg::String>("/remove_urdf_robot", rclcpp::ServicesQoS());
     mURDFRemoveMessage.data = name;
   }
@@ -229,9 +228,6 @@ namespace webots_ros2_driver
     }
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
-
-    mClockMessage.clock = rclcpp::Time(mRobot->getTime() * 1e9);
-    mClockPublisher->publish(mClockMessage);
   }
 
   void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue)

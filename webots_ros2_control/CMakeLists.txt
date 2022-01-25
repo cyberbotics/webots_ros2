@@ -5,6 +5,9 @@ project(webots_ros2_control)
 if($ENV{ROS_DISTRO} MATCHES "foxy")
   add_compile_definitions(FOXY)
 endif()
+if($ENV{ROS_DISTRO} MATCHES "galactic")
+  add_compile_definitions(GALACTIC)
+endif()
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)

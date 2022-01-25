@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
 project(webots_ros2_driver)
 
+# Check which ROS distribution is used, ros2control depends of that
+if($ENV{ROS_DISTRO} MATCHES "foxy")
+  add_compile_definitions(FOXY)
+endif()
+if($ENV{ROS_DISTRO} MATCHES "galactic")
+  add_compile_definitions(GALACTIC)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

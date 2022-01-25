@@ -68,7 +68,7 @@ def generate_test_description():
     ])
 
 
-class TestTurtlebotTutorials(TestWebots):
+class TestTurtlebotNavigationTutorial(TestWebots):
     @classmethod
     def setUpClass(cls):
         rclpy.init()

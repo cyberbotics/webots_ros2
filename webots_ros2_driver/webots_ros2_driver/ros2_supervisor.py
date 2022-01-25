@@ -18,13 +18,12 @@
 """ROS2 Webots URDF Robots spawner."""
 
 
-import imp
 import os
 import sys
 
 import rclpy
 import webots_ros2_driver_webots
-from builtin_interfaces.msg import Time
+from rclpy.time import Time
 from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
 from rosgraph_msgs.msg import Clock
@@ -112,7 +111,7 @@ class Ros2Supervisor(Node):
             self.destroy_node()
         else:
             clock_message = Clock()
-            clock_message.clock = Time(nanosec=self.__robot.getTime())
+            clock_message.clock = Time(seconds=self.__robot.getTime()).to_msg()
             self.__clock_publisher.publish(clock_message)
 
 

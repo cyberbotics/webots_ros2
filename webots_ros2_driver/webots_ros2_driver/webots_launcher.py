@@ -23,6 +23,7 @@ import sys
 import tempfile
 
 from launch.actions import ExecuteProcess
+from launch_ros.actions import Node
 from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
@@ -148,3 +149,16 @@ class WebotsLauncher(ExecuteProcess):
             if os.path.isfile(world_copy_secondary_file):
                 os.unlink(world_copy_secondary_file)
         return super()._shutdown_process(context, send_sigint=send_sigint)
+
+
+class Ros2SupervisorLauncher(Node):
+    def __init__(self, output='screen', respawn=False, **kwargs):
+        # no_rendering, stdout, stderr, no_sandbox, minimize
+        super().__init__(
+            package='webots_ros2_driver',
+            executable='ros2_supervisor.py',
+            output=output,
+            additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
+            respawn=respawn,
+            **kwargs
+        )

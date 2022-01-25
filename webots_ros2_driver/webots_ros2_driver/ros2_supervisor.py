@@ -105,6 +105,7 @@ class Ros2Supervisor(Node):
     def __supervisor_step_callback(self):
         if self.__robot.step(self.__timestep) < 0:
             self.get_logger().info('Ros2Supervisor will shut down...')
+            self.destroy_node()
 
 
 def main(args=None):

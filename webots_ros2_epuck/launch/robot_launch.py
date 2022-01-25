@@ -25,7 +25,7 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 
 
 def generate_launch_description():
@@ -39,13 +39,7 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    ros2_supervisor = Node(
-        package='webots_ros2_driver',
-        executable='ros2_supervisor.py',
-        output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
-        respawn=True,
-    )
+    ros2_supervisor = Ros2SupervisorLauncher()
 
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''

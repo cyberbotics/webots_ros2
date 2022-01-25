@@ -27,7 +27,7 @@ from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
-from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 
 
 def generate_launch_description():
@@ -48,13 +48,7 @@ def generate_launch_description():
         mode=mode
     )
 
-    ros2_supervisor = Node(
-        package='webots_ros2_driver',
-        executable='ros2_supervisor.py',
-        output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
-        respawn=True,
-    )
+    ros2_supervisor = Ros2SupervisorLauncher()
 
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''

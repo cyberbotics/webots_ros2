@@ -16,13 +16,13 @@
 
 """Launch Webots Universal Robot simulation world."""
 
+import launch
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
-from launch_ros.actions import Node
-from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -36,13 +36,7 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    ros2_supervisor = Node(
-        package='webots_ros2_driver',
-        executable='ros2_supervisor.py',
-        output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
-        respawn=True,
-    )
+    ros2_supervisor = Ros2SupervisorLauncher()
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -52,4 +46,11 @@ def generate_launch_description():
         ),
         webots,
         ros2_supervisor,
+        # This action will kill all nodes once the Webots simulation has exited
+        launch.actions.RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=webots,
+                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+            )
+        )
     ])

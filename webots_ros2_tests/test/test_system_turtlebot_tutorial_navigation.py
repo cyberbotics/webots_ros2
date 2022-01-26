@@ -110,7 +110,7 @@ class TestTurtlebotTutorials(TestWebots):
             # There should be a value in the range ]0, 100]
             for value in message.data:
                 if value > 0 and value <= 100:
-                    return False
+                    return True
             return False
 
         self.wait_for_messages(self.__node, OccupancyGrid, '/global_costmap/costmap', condition=on_cost_map_message_received)

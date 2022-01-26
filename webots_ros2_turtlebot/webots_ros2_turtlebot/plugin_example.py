@@ -14,7 +14,6 @@
 
 """A simple dummy plugin that demonstrates the usage of Python plugins."""
 
-from webots_ros2_driver_webots.controller import Node
 from std_msgs.msg import Float32
 import rclpy
 import rclpy.node
@@ -22,22 +21,23 @@ import rclpy.node
 
 class PluginExample:
     def init(self, webots_node, properties):
-        print('PluginExample: The init() method is called')
-        print('  - properties:', properties)
-
-        print('  - basic timestep:', int(webots_node.robot.getBasicTimeStep()))
-        print('  - robot name:', webots_node.robot.getName())
-        print('  - is robot?', webots_node.robot.getType() == Node.ROBOT)
-
-        self.__robot = webots_node.robot
-
         # Unfortunately, we cannot get an instance of the parent ROS node.
         # However, we can create a new one.
         rclpy.init(args=None)
         self.__node = rclpy.node.Node('plugin_node_example')
-        print('PluginExample: Node created')
+        self.__node.get_logger().info('PluginExample: The init() method is called and new node created')
+
+        self.__node.get_logger().info('PluginExample: ')
+        self.__node.get_logger().info('  - properties: ' + str(properties))
+
+        self.__node.get_logger().info('  - basic timestep: ' + str(int(webots_node.robot.getBasicTimeStep())))
+        self.__node.get_logger().info('  - robot name: ' + str(webots_node.robot.getName()))
+        self.__node.get_logger().info('  - is robot? ' + str(not webots_node.robot.getSupervisor()))
+
+        self.__robot = webots_node.robot
+
         self.__publisher = self.__node.create_publisher(Float32, 'custom_time', 1)
-        print('PluginExample: Publisher created')
+        self.__node.get_logger().info('PluginExample: Publisher created')
 
     def step(self):
         self.__publisher.publish(Float32(data=self.__robot.getTime()))

@@ -38,10 +38,10 @@ The [URDF file](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ro
 
 #### The [ur.urdf.xacro](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/foxy/ur_description/urdf/ur.urdf.xacro) file:
 - Define the `joint_limit_params`, `kinematics_params`, `physical_params` and `visual_params` default arguments with the path to their corresponding `.yaml` [files](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/foxy/ur_description/config/ur5e).
-- Update accordingly to your package all the paths.
+- Update all the paths accordingly to your package.
 
 #### The [visual_parameters.yaml](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/foxy/ur_description/config/ur5e/visual_parameters.yaml) file:
-- Update accordingly to your package all the paths.
+- Update all the paths accordingly to your package.
 
 #### The [ur_macro.xacro](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/foxy/ur_description/urdf/ur_macro.xacro) file:
 - Remove the 4 lines below `<!-- Data files required by the UR driver -->`.
@@ -51,7 +51,7 @@ The [URDF file](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ro
     name="WebotsControl" prefix="${prefix}"
     initial_positions="${initial_positions}" />
 ```
-- Update accordingly to your package all the paths.
+- Update all the paths accordingly to your package.
 
 #### The [ur.ros2_control.xacro](https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/foxy/ur_description/urdf/ur.ros2_control.xacro) file:
 - Remove `script_filename output_recipe_filename input_recipe_filename tf_prefix hash_kinematics robot_ip` from the `<xacro:macro...>` tag.
@@ -124,7 +124,7 @@ The [URDF file](https://github.com/cyberbotics/webots_ros2/blob/master/webots_ro
     <origin xyz="0 0.045 0" rpy="1.5708 0 0"/>
 </joint>
 ```
-- Update accordingly to your package all the paths.
+- Update all the paths accordingly to your package.
 
 #### The [robotiq-3f-gripper_finger_articulated_macro.xacro](https://github.com/ros-industrial/robotiq/blob/kinetic-devel/robotiq_3f_gripper_visualization/cfg/robotiq-3f-gripper_finger_articulated_macro.xacro) file:
-- Update accordingly to your package all the paths.
+- Update all the paths accordingly to your package.

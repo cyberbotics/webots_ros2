@@ -33,7 +33,7 @@
 
 #include "webots_ros2_driver/PluginInterface.hpp"
 
-extern bool SIGINTReceived;
+extern bool shutdown_signal_received;
 
 namespace webots_ros2_driver
 {
@@ -57,9 +57,9 @@ namespace webots_ros2_driver
     std::string mRobotDescription;
     bool mSetRobotStatePublisher;
 
-    bool waitForURDFRobotRemoved = false;
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mURDFRemovePublisher;
-    std_msgs::msg::String mURDFRemoveMessage;
+    bool mWaitingForUrdfRobotToBeRemoved = false;
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mRemoveUrdfRobotPublisher;
+    std_msgs::msg::String mRemoveUrdfRobotMessage;
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;

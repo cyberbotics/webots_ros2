@@ -97,11 +97,10 @@ class WebotsLauncher(ExecuteProcess):
         )
 
     def execute(self, context: LaunchContext):
-        # User can give a PathJoinSubstitution world ...
+        # User can give a PathJoinSubstitution world or an absolute path world
         if isinstance(self.__world, PathJoinSubstitution):
             world_path = self.__world.perform(context)
             context.launch_configurations['world'] = self.__world_copy.name
-        # or an absolute path world
         else:
             world_path = self.__world
 

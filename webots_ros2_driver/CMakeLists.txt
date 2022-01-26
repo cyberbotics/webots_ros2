@@ -212,15 +212,9 @@ target_compile_definitions(driver PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 target_compile_definitions(${PROJECT_NAME}_imu PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
 
-# Install launch files
-#install(
-#  DIRECTORY launch
-#  DESTINATION share/${PROJECT_NAME}
-#)
-
 # Install ROS 2 nodes
 install(PROGRAMS ${PROJECT_NAME}/ros2_supervisor.py
-DESTINATION lib/${PROJECT_NAME}
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 # Ament export

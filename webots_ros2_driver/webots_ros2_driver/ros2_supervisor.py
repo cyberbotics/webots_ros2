@@ -60,7 +60,7 @@ class Ros2Supervisor(Node):
             response.success = False
             return response
         if robot_name in self.__urdf_robots_list:
-            self.get_logger().info('The URDF robot name "' + str(robot_name) + '" is already used ny another robot! Please specifiy another unique name.')
+            self.get_logger().info('The URDF robot name "' + str(robot_name) + '" is already used by another robot! Please specifiy a unique name.')
             response.success = False
             return response
 
@@ -100,11 +100,11 @@ class Ros2Supervisor(Node):
                 self.get_logger().info('Ros2Supervisor has removed the URDF robot named "' + str(robotName) + '".')
             else:
                 self.get_logger().info('Ros2Supervisor wanted to remove the URDF robot named "' + str(robotName) +
-                                    '" but this robot has not been found in the simulation.')
+                                    '" but this robot has not been found in the simulation world.')
 
     def __supervisor_step_callback(self):
         if self.__robot.step(self.__timestep) < 0:
-            self.get_logger().info('Ros2Supervisor will shut down...')
+            self.get_logger().info('Ros2Supervisor is shutting down...')
             self.destroy_node()
 
 

@@ -110,7 +110,7 @@ class WebotsLauncher(ExecuteProcess):
         with open(self.__world_copy.name, 'r') as file:
             content = file.read()
 
-        for match in re.finditer('url\s*\[\s*\"(.*?)\"', content):
+        for match in re.finditer('url\s*\[?\s*\"(.*?)\"', content):
             url_path = match.group(1)
 
             # Absolute path or Webots relative path or Web paths

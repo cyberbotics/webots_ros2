@@ -23,13 +23,13 @@ find_package(std_msgs REQUIRED)
 find_package(vision_msgs REQUIRED)
 
 set(msg_files
-  "msg/WbCameraRecognitionObject.msg"
-  "msg/WbCameraRecognitionObjects.msg"
-  "msg/WbURDFRobot.msg"
+  "msg/CameraRecognitionObject.msg"
+  "msg/CameraRecognitionObjects.msg"
+  "msg/UrdfRobot.msg"
 )
 set(srv_files
   "srv/SetInt.srv"
-  "srv/SetWbURDFRobot.srv"
+  "srv/SpawnUrdfRobot.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}

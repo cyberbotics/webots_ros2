@@ -27,7 +27,7 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
 from std_msgs.msg import String
 from urdf2webots.importer import convert2urdf
-from webots_ros2_msgs.srv import SetWbURDFRobot
+from webots_ros2_msgs.srv import SpawnUrdfRobot
 
 # As Ros2Supervisor need the controller library, we extend the path here
 # to avoid to load another library named "controller".
@@ -47,7 +47,7 @@ class Ros2Supervisor(Node):
         self.__urdf_robots_list=[]
 
         self.create_timer(1 / 1000, self.__supervisor_step_callback)
-        self.create_service(SetWbURDFRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
+        self.create_service(SpawnUrdfRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
         self.create_subscription(String, 'remove_urdf_robot', self.__remove_urdf_robot_callback, qos_profile_services_default)
 
     def __spawn_urdf_robot_callback(self, request, response):

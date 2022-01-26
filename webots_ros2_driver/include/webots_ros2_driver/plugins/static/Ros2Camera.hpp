@@ -58,9 +58,9 @@ namespace webots_ros2_driver
     sensor_msgs::msg::CameraInfo mCameraInfoMessage;
 
     rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr mRecognitionPublisher;
-    rclcpp::Publisher<webots_ros2_msgs::msg::WbCameraRecognitionObjects>::SharedPtr mWebotsRecognitionPublisher;
+    rclcpp::Publisher<webots_ros2_msgs::msg::CameraRecognitionObjects>::SharedPtr mWebotsRecognitionPublisher;
     vision_msgs::msg::Detection2DArray mRecognitionMessage;
-    webots_ros2_msgs::msg::WbCameraRecognitionObjects mWebotsRecognitionMessage;
+    webots_ros2_msgs::msg::CameraRecognitionObjects mWebotsRecognitionMessage;
 
     bool mIsEnabled;
   };

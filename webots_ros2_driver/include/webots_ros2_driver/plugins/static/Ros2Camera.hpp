@@ -29,8 +29,8 @@
 #include <vision_msgs/msg/detection2_d_array.hpp>
 #include <vision_msgs/msg/object_hypothesis_with_pose.hpp>
 
-#include <webots_ros2_msgs/msg/wb_camera_recognition_object.hpp>
-#include <webots_ros2_msgs/msg/wb_camera_recognition_objects.hpp>
+#include <webots_ros2_msgs/msg/camera_recognition_object.hpp>
+#include <webots_ros2_msgs/msg/camera_recognition_objects.hpp>
 #include <webots_ros2_driver/utils/Math.hpp>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>

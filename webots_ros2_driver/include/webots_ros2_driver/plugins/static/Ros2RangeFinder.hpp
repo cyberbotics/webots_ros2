@@ -18,6 +18,7 @@
 #include <unordered_map>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
 #include <webots/RangeFinder.hpp>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
@@ -34,6 +35,7 @@ namespace webots_ros2_driver
 
   private:
     void publishImage();
+    void publishPointCloud();
 
     webots::RangeFinder* mRangeFinder;
 
@@ -41,6 +43,8 @@ namespace webots_ros2_driver
     sensor_msgs::msg::Image mImageMessage;
     rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr mCameraInfoPublisher;
     sensor_msgs::msg::CameraInfo mCameraInfoMessage;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr mPointCloudPublisher;
+    sensor_msgs::msg::PointCloud2 mPointCloudMessage;
 
     bool mIsEnabled;
   };

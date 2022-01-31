@@ -25,4 +25,4 @@ fi
 
 ldd /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so
 
-export LD_LIBRARY_PATH:/usr/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH

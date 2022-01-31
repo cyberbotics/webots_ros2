@@ -31,3 +31,5 @@ fi
 
 echo PRINTENV turtle
 printenv
+
+exit 1;

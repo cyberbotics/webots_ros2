@@ -33,7 +33,7 @@ class URDFSpawner(ExecuteProcess):
                 'service',
                 'call',
                 '/spawn_urdf_robot',
-                'webots_ros2_msgs/srv/SetWbURDFRobot',
+                'webots_ros2_msgs/srv/SpawnUrdfRobot',
             ]
 
         message = '{ "robot": {'

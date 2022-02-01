@@ -22,7 +22,6 @@ from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
-from launch_ros.actions import Node
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 
 
@@ -42,7 +41,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
-            default_value='armed_robots.wbt',
+            default_value='robotic_arms.wbt',
             description='Choose one of the world files from `/webots_ros2_universal_robot/worlds` directory'
         ),
         webots,

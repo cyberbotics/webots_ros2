@@ -47,7 +47,7 @@ def generate_test_description():
     # Therefore, make sure to store all bag files under the `/tmp/artifacts`.
     rosbag = ExecuteProcess(
         cmd=[
-            'ros2', 'bag', 'record', '-a',
+            'ros2', 'bag', 'record', '-a', '--include-hidden-topicsm',
             '-o', os.path.join(
                 tempfile.gettempdir(),
                 'artifacts',

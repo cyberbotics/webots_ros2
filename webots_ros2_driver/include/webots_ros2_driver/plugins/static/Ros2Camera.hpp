@@ -29,8 +29,8 @@
 #include <vision_msgs/msg/detection2_d_array.hpp>
 #include <vision_msgs/msg/object_hypothesis_with_pose.hpp>
 
-#include <webots_ros2_msgs/msg/wb_camera_recognition_object.hpp>
-#include <webots_ros2_msgs/msg/wb_camera_recognition_objects.hpp>
+#include <webots_ros2_msgs/msg/camera_recognition_object.hpp>
+#include <webots_ros2_msgs/msg/camera_recognition_objects.hpp>
 #include <webots_ros2_driver/utils/Math.hpp>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
@@ -58,9 +58,9 @@ namespace webots_ros2_driver
     sensor_msgs::msg::CameraInfo mCameraInfoMessage;
 
     rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr mRecognitionPublisher;
-    rclcpp::Publisher<webots_ros2_msgs::msg::WbCameraRecognitionObjects>::SharedPtr mWebotsRecognitionPublisher;
+    rclcpp::Publisher<webots_ros2_msgs::msg::CameraRecognitionObjects>::SharedPtr mWebotsRecognitionPublisher;
     vision_msgs::msg::Detection2DArray mRecognitionMessage;
-    webots_ros2_msgs::msg::WbCameraRecognitionObjects mWebotsRecognitionMessage;
+    webots_ros2_msgs::msg::CameraRecognitionObjects mWebotsRecognitionMessage;
 
     bool mIsEnabled;
   };

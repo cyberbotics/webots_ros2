@@ -29,7 +29,7 @@ from rclpy.qos import qos_profile_services_default
 from rosgraph_msgs.msg import Clock
 from std_msgs.msg import String
 from urdf2webots.importer import convert2urdf
-from webots_ros2_msgs.srv import SetWbURDFRobot
+from webots_ros2_msgs.srv import SpawnUrdfRobot
 
 # As Ros2Supervisor need the controller library, we extend the path here
 # to avoid to load another library named "controller".
@@ -50,7 +50,7 @@ class Ros2Supervisor(Node):
 
         self.create_timer(1 / 1000, self.__supervisor_step_callback)
         self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
-        self.create_service(SetWbURDFRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
+        self.create_service(SpawnUrdfRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
         self.create_subscription(String, 'remove_urdf_robot', self.__remove_urdf_robot_callback, qos_profile_services_default)
 
     def __spawn_urdf_robot_callback(self, request, response):
@@ -63,7 +63,7 @@ class Ros2Supervisor(Node):
             response.success = False
             return response
         if robot_name in self.__urdf_robots_list:
-            self.get_logger().info('The URDF robot name "' + str(robot_name) + '" is already used ny another robot! Please specifiy another unique name.')
+            self.get_logger().info('The URDF robot name "' + str(robot_name) + '" is already used by another robot! Please specifiy a unique name.')
             response.success = False
             return response
 
@@ -103,11 +103,11 @@ class Ros2Supervisor(Node):
                 self.get_logger().info('Ros2Supervisor has removed the URDF robot named "' + str(robotName) + '".')
             else:
                 self.get_logger().info('Ros2Supervisor wanted to remove the URDF robot named "' + str(robotName) +
-                                    '" but this robot has not been found in the simulation.')
+                                    '" but this robot has not been found in the simulation world.')
 
     def __supervisor_step_callback(self):
         if self.__robot.step(self.__timestep) < 0:
-            self.get_logger().info('Ros2Supervisor will shut down...')
+            self.get_logger().info('Ros2Supervisor is shutting down...')
             self.destroy_node()
         else:
             clock_message = Clock()

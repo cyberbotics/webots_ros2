@@ -17,11 +17,11 @@
 #include <webots_ros2_driver/WebotsNode.hpp>
 #include <webots/vehicle/Driver.hpp>
 
-bool SIGINTReceived = false;
+bool shutdown_signal_received = false;
 
-void customSigIntHandler(int sig)
+static void customSignalHandler(int sig)
 {
-  SIGINTReceived = true;
+  shutdown_signal_received = true;
 }
 
 int main(int argc, char **argv)
@@ -35,9 +35,13 @@ int main(int argc, char **argv)
     robot = new webots::Supervisor();
 
   // Replace the signal handler for the WebotsNode and the robot by a custom one
-  signal(SIGINT, customSigIntHandler);
+  signal(SIGINT, customSignalHandler);
   rclcpp::InitOptions options{};
-  options.shutdown_on_sigint = false;
+  #if FOXY || GALACTIC
+    options.shutdown_on_sigint = false;
+  #else
+    options.shutdown_on_signal = false;
+  #endif
   rclcpp::init(argc, argv, options);
 
   std::string robotName = robot->getName();

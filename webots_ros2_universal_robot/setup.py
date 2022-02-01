@@ -19,8 +19,8 @@ data_files.append(('share/' + package_name + '/launch', [
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/universal_robot.wbt',
     'worlds/.universal_robot.wbproj',
-    'worlds/armed_robots.wbt',
-    'worlds/.armed_robots.wbproj'
+    'worlds/robotic_arms.wbt',
+    'worlds/.robotic_arms.wbproj'
 ]))
 data_files.append(('share/' + package_name, [
     'package.xml'

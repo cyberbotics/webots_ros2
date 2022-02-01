@@ -53,10 +53,6 @@ class WebotsLauncher(ExecuteProcess):
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
         stderr = _ConditionalSubstitution(condition=gui, false_value='--stderr')
-        no_sandbox = _ConditionalSubstitution(condition=gui, false_value='--no-sandbox')
-        if sys.platform == 'win32':
-            # Windows doesn't have the sandbox argument
-            no_sandbox = ''
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
         stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
         xvfb_run_prefix = []
@@ -65,7 +61,7 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
-        # no_rendering, stdout, stderr, no_sandbox, minimize
+        # no_rendering, stdout, stderr, minimize
         super().__init__(
             output=output,
             cmd=xvfb_run_prefix + [
@@ -74,7 +70,6 @@ class WebotsLauncher(ExecuteProcess):
                 no_rendering,
                 stdout,
                 stderr,
-                no_sandbox,
                 minimize,
                 world,
                 '--batch',

@@ -23,6 +23,7 @@ import time
 import pathlib
 import pytest
 import rclpy
+from sensor_msgs.msg import LaserScan
 from std_srvs.srv import Trigger
 from sensor_msgs.msg import Range, Image, Imu, Illuminance
 from std_msgs.msg import Int32, Float32
@@ -81,6 +82,16 @@ class TestDriver(TestWebots):
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
         self.wait_for_clock(self.__node, messages_to_receive=20)
+
+    def testLidar(self):
+        def on_message_received(message):
+            # There should be some scans hitting the box
+            for value in message.ranges:
+                if abs(value - 0.6749) < 0.01:
+                    return True
+            return False
+
+        self.wait_for_messages(self.__node, LaserScan, '/scan', condition=on_message_received)
 
     def testRangeFinder(self):
         def on_image_received(message):

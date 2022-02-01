@@ -30,9 +30,9 @@ class PluginTest:
         self.__service = self.__node.create_service(Trigger, 'move_forward', self.on_service_call)
 
     def on_service_call(self, _, response):
-        for motor_name in ['back left wheel', 'back right wheel', 'front left wheel', 'front right wheel']:
-            motor = self.__robot.getDevice(motor_name)
-            motor.setPosition(1)
+        robot_node = self.__robot.getSelf()
+        translation_field = robot_node.getField('translation')
+        translation_field.setSFVec3f([0.3, 0.0, 0.0])
 
         response.success = True
         response.message = 'Some success message'

@@ -43,7 +43,7 @@ class WebotsNode:
         if Driver.isInitialisationPossible():
             self.robot = Driver.getDriverInstance()
         else:
-            self.robot = Driver.internalGetInstance()
+            self.robot = Driver.getSupervisorInstance()
 )EOT",
             "webots_extra", Py_file_input);
 

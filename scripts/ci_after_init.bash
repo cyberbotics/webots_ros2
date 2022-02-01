@@ -4,8 +4,8 @@ ROS_DISTRO=$1
 ROS_REPO=$2
 
 # Take the latest nightly build
-YESTERDAY_WEEK_DAY_NUMBER=`date --date="2 day ago" +"%u"`
-LAST_NIGHTLY_DAY_OLD=1
+YESTERDAY_WEEK_DAY_NUMBER=`date --date="1 day ago" +"%u"`
+LAST_NIGHTLY_DAY_OLD=5
 # There is no nightly build the weekend
 if [ ${YESTERDAY_WEEK_DAY_NUMBER} -gt 5 ]; then
     LAST_NIGHTLY_DAY_OLD="$((${YESTERDAY_WEEK_DAY_NUMBER}-4))"

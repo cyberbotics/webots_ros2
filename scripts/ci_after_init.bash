@@ -23,6 +23,7 @@ if [ "${ROS_DISTRO}" = "foxy" ]; then
     apt install -y ros-foxy-turtlebot3-cartographer ros-foxy-turtlebot3-navigation2
 
     # Setup Qt plugins for Rviz
+    apt-get install qt5-default
     export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
     ldd /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so
 fi

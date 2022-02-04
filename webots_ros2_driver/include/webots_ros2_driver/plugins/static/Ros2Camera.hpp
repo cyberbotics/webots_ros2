@@ -63,6 +63,7 @@ namespace webots_ros2_driver
     webots_ros2_msgs::msg::CameraRecognitionObjects mWebotsRecognitionMessage;
 
     bool mIsEnabled;
+    bool mRecognitionIsEnabled;
   };
 
 }

@@ -20,6 +20,7 @@ namespace webots_ros2_driver
   {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
+    mRecognitionIsEnabled = false;
     mCamera = mNode->robot()->getCamera(parameters["name"]);
 
     assert(mCamera != NULL);
@@ -94,6 +95,15 @@ namespace webots_ros2_driver
       mIsEnabled = shouldBeEnabled;
     }
 
+    if (recognitionSubscriptionsExist != mRecognitionIsEnabled)
+    {
+      if (recognitionSubscriptionsExist)
+        mCamera->recognitionEnable(mPublishTimestepSyncedMs);
+      else
+        mCamera->recognitionDisable();
+      mRecognitionIsEnabled = recognitionSubscriptionsExist;
+    }
+
     // Publish data
     if (mAlwaysOn || imageSubscriptionsExist)
       publishImage();
@@ -120,6 +130,8 @@ namespace webots_ros2_driver
     auto objects = mCamera->getRecognitionObjects();
     mRecognitionMessage.header.stamp = mNode->get_clock()->now();
     mWebotsRecognitionMessage.header.stamp = mNode->get_clock()->now();
+    mRecognitionMessage.detections.clear();
+    mWebotsRecognitionMessage.objects.clear();
 
     for (size_t i = 0; i < mCamera->getRecognitionNumberOfObjects(); i++)
     {

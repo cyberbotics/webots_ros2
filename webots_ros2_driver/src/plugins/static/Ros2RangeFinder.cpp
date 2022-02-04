@@ -84,9 +84,9 @@ namespace webots_ros2_driver
     mPointCloudMessage.is_bigendian = false;
     mPointCloudMessage.width = width;
     mPointCloudMessage.height = height;
-    mPointCloudMessage.point_step = 4;
-    mPointCloudMessage.row_step = width * 4;
-    mPointCloudMessage.data.resize(width * 4 * height);
+    mPointCloudMessage.point_step = 12;
+    mPointCloudMessage.row_step = width * 12;
+    mPointCloudMessage.data.resize(width * 12 * height);
 
     if (mAlwaysOn) {
       mRangeFinder->enable(mPublishTimestepSyncedMs);

@@ -20,7 +20,7 @@ apt install -y /tmp/webots.deb xvfb
 
 # The following packages are only available in the ROS 2 Foxy distribution. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
 if [ "${ROS_DISTRO}" = "foxy" ]; then
-    apt install -y ros-foxy-turtlebot3-cartographer ros-foxy-turtlebot3-navigation2
+    apt install -y ros-foxy-turtlebot3-cartographer ros-foxy-turtlebot3-navigation2 rviz
 fi
 
 # Setup Qt plugins for Rviz

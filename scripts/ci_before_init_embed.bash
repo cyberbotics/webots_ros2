@@ -7,3 +7,4 @@ export DEBIAN_FRONTEND=noninteractive
 export QTWEBENGINE_DISABLE_SANDBOX=1
 export QT_DEBUG_PLUGINS=1
 export LIBGL_ALWAYS_INDIRECT=0 # required for OpenGL apps like rviz
+export DISPLAY=:0

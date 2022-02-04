@@ -125,11 +125,8 @@ namespace webots_ros2_driver
 
   void Ros2Camera::publishRecognition()
   {
-    RCLCPP_INFO(mNode->get_logger(), "publishRecognition ????");
     if (mCamera->getRecognitionNumberOfObjects() == 0)
       return;
-
-    RCLCPP_INFO(mNode->get_logger(), "publishRecognition yes !");
 
     auto objects = mCamera->getRecognitionObjects();
     mRecognitionMessage.header.stamp = mNode->get_clock()->now();
@@ -139,7 +136,6 @@ namespace webots_ros2_driver
 
     for (size_t i = 0; i < mCamera->getRecognitionNumberOfObjects(); i++)
     {
-      RCLCPP_INFO(mNode->get_logger(), "publishRecognition new obj !");
       // Getting Object Info
       geometry_msgs::msg::Point position;
       geometry_msgs::msg::Quaternion orientation;

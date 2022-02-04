@@ -23,5 +23,5 @@ if [ "${ROS_DISTRO}" = "foxy" ]; then
     apt install -y ros-foxy-turtlebot3-cartographer ros-foxy-turtlebot3-navigation2 rviz
 fi
 
-# Setup Qt plugins for Rviz
-export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
+# Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).
+#export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins

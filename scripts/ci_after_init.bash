@@ -24,4 +24,4 @@ if [ "${ROS_DISTRO}" = "foxy" ]; then
 fi
 
 # Setup Qt plugins for Rviz
-export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
+# export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins

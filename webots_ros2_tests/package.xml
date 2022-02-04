@@ -35,6 +35,7 @@
   <test_depend>launch_testing</test_depend>
   <test_depend>launch_testing_ament_cmake</test_depend>
   <test_depend>launch_testing_ros</test_depend>
+  <test_depend>rviz2</test_depend>
 
   <export>
     <build_type>ament_python</build_type>

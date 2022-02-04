@@ -51,8 +51,8 @@ namespace webots_ros2_driver
     mCameraInfoMessage.height = height;
     mCameraInfoMessage.width = width;
     mCameraInfoMessage.distortion_model = "plumb_bob";
-    const double focalLengthx = 0.5 * width * (1 / tan(0.5 * mRangeFinder->getFov()));
-    const double focalLengthy = 0.5 * height * (1 / tan(0.5 * mRangeFinder->getFov()));
+    const double focalLengthX = 0.5 * width * (1 / tan(0.5 * mRangeFinder->getFov()));
+    const double focalLengthY = 0.5 * height * (1 / tan(0.5 * mRangeFinder->getFov()));
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     mCameraInfoMessage.k = {

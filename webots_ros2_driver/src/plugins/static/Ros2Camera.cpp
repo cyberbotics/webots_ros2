@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <webots_ros2_driver/plugins/static/Ros2Camera.hpp>
-#include <rclcpp/rclcpp.hpp>
 
 namespace webots_ros2_driver
 {

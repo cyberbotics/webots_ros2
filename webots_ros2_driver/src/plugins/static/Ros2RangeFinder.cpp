@@ -56,12 +56,12 @@ namespace webots_ros2_driver
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     mCameraInfoMessage.k = {
-        focalLengthx, 0.0, (double)width / 2,
-        0.0, focalLengthy, (double)height / 2,
+        focalLengthX, 0.0, (double)width / 2,
+        0.0, focalLengthY, (double)height / 2,
         0.0, 0.0, 1.0};
     mCameraInfoMessage.p = {
-        focalLengthx, 0.0, (double)width / 2, 0.0,
-        0.0, focalLengthy, (double)height / 2, 0.0,
+        focalLengthX, 0.0, (double)width / 2, 0.0,
+        0.0, focalLengthY, (double)height / 2, 0.0,
         0.0, 0.0, 1.0, 0.0};
     mCameraInfoPublisher->publish(mCameraInfoMessage);
 

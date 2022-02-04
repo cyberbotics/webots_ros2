@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <webots_ros2_driver/plugins/static/Ros2Camera.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 namespace webots_ros2_driver
 {
@@ -20,6 +21,7 @@ namespace webots_ros2_driver
   {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
+    mRecognitionIsEnabled = false;
     mCamera = mNode->robot()->getCamera(parameters["name"]);
 
     assert(mCamera != NULL);
@@ -94,6 +96,15 @@ namespace webots_ros2_driver
       mIsEnabled = shouldBeEnabled;
     }
 
+    if (recognitionSubscriptionsExist != mRecognitionIsEnabled)
+    {
+      if (recognitionSubscriptionsExist)
+        mCamera->recognitionEnable(mPublishTimestepSyncedMs);
+      else
+        mCamera->recognitionDisable();
+      mRecognitionIsEnabled = recognitionSubscriptionsExist;
+    }
+
     // Publish data
     if (mAlwaysOn || imageSubscriptionsExist)
       publishImage();
@@ -114,15 +125,21 @@ namespace webots_ros2_driver
 
   void Ros2Camera::publishRecognition()
   {
+    RCLCPP_INFO(mNode->get_logger(), "publishRecognition ????");
     if (mCamera->getRecognitionNumberOfObjects() == 0)
       return;
+
+    RCLCPP_INFO(mNode->get_logger(), "publishRecognition yes !");
 
     auto objects = mCamera->getRecognitionObjects();
     mRecognitionMessage.header.stamp = mNode->get_clock()->now();
     mWebotsRecognitionMessage.header.stamp = mNode->get_clock()->now();
+    mRecognitionMessage.detections.clear();
+    mWebotsRecognitionMessage.objects.clear();
 
     for (size_t i = 0; i < mCamera->getRecognitionNumberOfObjects(); i++)
     {
+      RCLCPP_INFO(mNode->get_logger(), "publishRecognition new obj !");
       // Getting Object Info
       geometry_msgs::msg::Point position;
       geometry_msgs::msg::Quaternion orientation;

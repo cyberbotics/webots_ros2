@@ -25,3 +25,17 @@ fi
 
 # Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).
 #export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
+
+if [[ -n ${XDISPLAY-} ]]; then
+  if [[ "$OSTYPE" != "darwin"* ]]; then
+    # 'coproc' so that SIGINT will still work (https://unix.stackexchange.com/a/478697/11592)
+    coproc Xvfb ${XDISPLAY} -screen 0 1024x768x16
+    VIRT_FB_PID=$!
+    sleep 4 # time to (probabilistically) ensure that Xvfb has started
+  fi
+fi
+
+if [[ "$OSTYPE" != "darwin"* ]]; then
+  echo "reading single argument (should be either empty or ':1' to choose display)"
+  export DISPLAY="${1:-"$DISPLAY"}"
+fi

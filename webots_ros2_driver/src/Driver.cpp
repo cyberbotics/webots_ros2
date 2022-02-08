@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     robot = new webots::Supervisor();
 
   // Let WebotsNode handle the system signals
-  signal(SIGINT, webots_ros2_driver::WebotsNode::handleSigint);
+  webots_ros2_driver::WebotsNode::handleSignals();
 
   rclcpp::InitOptions options{};
 #if FOXY || GALACTIC

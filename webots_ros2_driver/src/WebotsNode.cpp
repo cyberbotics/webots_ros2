@@ -41,6 +41,11 @@ namespace webots_ros2_driver
 
   bool gShutdownSignalReceived = false;
 
+  void handleSigint(int sig)
+  {
+    gShutdownSignalReceived = true;
+  }
+
   WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
@@ -221,6 +226,7 @@ namespace webots_ros2_driver
   {
     if (gShutdownSignalReceived && !mWaitingForUrdfRobotToBeRemoved)
     {
+      RCLCPP_INFO(get_logger(), "test");
       mRemoveUrdfRobotPublisher->publish(mRemoveUrdfRobotMessage);
       mWaitingForUrdfRobotToBeRemoved = true;
     }
@@ -247,8 +253,8 @@ namespace webots_ros2_driver
     mClient->async_send_request(request);
   }
 
-  void WebotsNode::handleSigint(int sig)
+  void WebotsNode::handleSignals()
   {
-    gShutdownSignalReceived = true;
+    signal(SIGINT, handleSigint);
   }
 } // end namespace webots_ros2_driver

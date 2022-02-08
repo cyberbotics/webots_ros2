@@ -42,7 +42,7 @@ namespace webots_ros2_driver
     void init();
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
-    static void handleSignals();
+    static void handleSigint(int sig);
 
   private:
     void timerCallback();

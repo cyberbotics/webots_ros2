@@ -41,11 +41,6 @@ namespace webots_ros2_driver
 
   bool gShutdownSignalReceived = false;
 
-  void handleSigint(int sig)
-  {
-    bool gShutdownSignalReceived = true;
-  }
-
   WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
@@ -252,8 +247,8 @@ namespace webots_ros2_driver
     mClient->async_send_request(request);
   }
 
-  void WebotsNode::handleSignals()
+  void WebotsNode::handleSigint(int sig)
   {
-    signal(SIGINT, handleSigint);
+    gShutdownSignalReceived = true;
   }
 } // end namespace webots_ros2_driver

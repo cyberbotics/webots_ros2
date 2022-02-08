@@ -31,8 +31,6 @@
 
 #include "webots_ros2_driver/PluginInterface.hpp"
 
-extern bool shutdown_signal_received;
-
 namespace webots_ros2_driver
 {
   class PluginInterface;
@@ -44,6 +42,8 @@ namespace webots_ros2_driver
     void init();
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
+    static void customSignalHandler(int sig);
+    static bool mShutdownSignalReceived;
 
   private:
     void timerCallback();
@@ -68,6 +68,7 @@ namespace webots_ros2_driver
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;
     std::shared_ptr<PluginInterface> loadPlugin(const std::string &type);
   };
+
 
 } // end namespace webots_ros2_driver
 

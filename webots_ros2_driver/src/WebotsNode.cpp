@@ -39,6 +39,8 @@ namespace webots_ros2_driver
   const char *gPluginInterface = "webots_ros2_driver::PluginInterface";
   const char *gPluginInterfaceName = "webots_ros2_driver";
 
+  bool WebotsNode::mShutdownSignalReceived = false;
+
   WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
@@ -217,7 +219,7 @@ namespace webots_ros2_driver
 
   void WebotsNode::timerCallback()
   {
-    if (shutdown_signal_received && !mWaitingForUrdfRobotToBeRemoved){
+    if (mShutdownSignalReceived && !mWaitingForUrdfRobotToBeRemoved){
       mRemoveUrdfRobotPublisher->publish(mRemoveUrdfRobotMessage);
       mWaitingForUrdfRobotToBeRemoved = true;
     }
@@ -241,5 +243,10 @@ namespace webots_ros2_driver
     parameter.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
     request->parameters.push_back(parameter);
     mClient->async_send_request(request);
+  }
+
+  void WebotsNode::customSignalHandler(int sig)
+  {
+    mShutdownSignalReceived = true;
   }
 } // end namespace webots_ros2_driver

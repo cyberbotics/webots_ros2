@@ -17,13 +17,6 @@
 #include <webots_ros2_driver/WebotsNode.hpp>
 #include <webots/vehicle/Driver.hpp>
 
-bool shutdown_signal_received = false;
-
-static void customSignalHandler(int sig)
-{
-  shutdown_signal_received = true;
-}
-
 int main(int argc, char **argv)
 {
   webots::Supervisor* robot;
@@ -35,7 +28,8 @@ int main(int argc, char **argv)
     robot = new webots::Supervisor();
 
   // Replace the signal handler for the WebotsNode and the robot by a custom one
-  signal(SIGINT, customSignalHandler);
+  //signal(SIGINT, webots_ros2_driver::WebotsNode::customSignalHandler);
+  signal(SIGINT, webots_ros2_driver::WebotsNode::customSignalHandler);
   rclcpp::InitOptions options{};
   #if FOXY || GALACTIC
     options.shutdown_on_sigint = false;

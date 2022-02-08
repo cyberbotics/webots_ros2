@@ -19,7 +19,7 @@
 
 int main(int argc, char **argv)
 {
-  webots::Supervisor* robot;
+  webots::Supervisor *robot;
 
   // Check if the robot can be a driver, if not create a simple Supervisor
   if (webots::Driver::isInitialisationPossible())
@@ -27,15 +27,15 @@ int main(int argc, char **argv)
   else
     robot = new webots::Supervisor();
 
-  // Replace the signal handler for the WebotsNode and the robot by a custom one
-  //signal(SIGINT, webots_ros2_driver::WebotsNode::customSignalHandler);
-  signal(SIGINT, webots_ros2_driver::WebotsNode::customSignalHandler);
+  // Let WebotsNode handle the system signals
+  webots_ros2_driver::WebotsNode::handleSignals();
+
   rclcpp::InitOptions options{};
-  #if FOXY || GALACTIC
-    options.shutdown_on_sigint = false;
-  #else
-    options.shutdown_on_signal = false;
-  #endif
+#if FOXY || GALACTIC
+  options.shutdown_on_sigint = false;
+#else
+  options.shutdown_on_signal = false;
+#endif
   rclcpp::init(argc, argv, options);
 
   std::string robotName = robot->getName();

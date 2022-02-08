@@ -42,8 +42,7 @@ namespace webots_ros2_driver
     void init();
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
-    static void customSignalHandler(int sig);
-    static bool mShutdownSignalReceived;
+    static void handleSignals();
 
   private:
     void timerCallback();
@@ -68,7 +67,6 @@ namespace webots_ros2_driver
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;
     std::shared_ptr<PluginInterface> loadPlugin(const std::string &type);
   };
-
 
 } // end namespace webots_ros2_driver
 

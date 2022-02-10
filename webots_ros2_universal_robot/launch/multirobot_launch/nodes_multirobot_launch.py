@@ -40,7 +40,7 @@ def generate_launch_description():
     # The name of an URDF robot has to match the WEBOTS_ROBOT_NAME of the driver node
     spawn_URDF_ur5e = URDFSpawner(
         name='UR5e',
-        urdf_path=ur5e_urdf_path,
+        robot_description=ur5e_description,
         translation='0 0 0.62',
         rotation='0 0 1 -1.5708',
     )
@@ -131,18 +131,17 @@ def generate_launch_description():
         abb_driver,
 
         # Other ROS 2 nodes
-        ur5e_controller,
         ur5e_trajectory_controller_spawner,
         ur5e_joint_state_broadcaster_spawner,
-        abb_controller,
         abb_trajectory_controller_spawner,
         abb_joint_state_broadcaster_spawner,
 
-        # Launch the driver node once the URDF robot is spawned
+        # Launch the driver node once the URDF robot is spawned.
+        # You might include other nodes to start them with the driver node.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessIO(
                 target_action=spawn_URDF_ur5e,
-                on_stdout=lambda event: get_webots_driver_node(event, ur5e_driver),
+                on_stdout=lambda event: get_webots_driver_node(event, [ur5e_driver, ur5e_controller, abb_controller]),
             )
         ),
 

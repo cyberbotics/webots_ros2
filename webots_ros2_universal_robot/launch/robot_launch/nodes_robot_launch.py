@@ -31,14 +31,14 @@ PACKAGE_NAME = 'webots_ros2_universal_robot'
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
     ur5e_urdf_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf')
-    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
     robot_description = pathlib.Path(ur5e_urdf_path).read_text()
+    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
 
     # Define your URDF robots here
     # The name of an URDF robot has to match the WEBOTS_ROBOT_NAME of the driver node
     spawn_URDF_ur5e = URDFSpawner(
         name='UR5e',
-        urdf_path=ur5e_urdf_path,
+        robot_description=robot_description,
         translation='0 0 0.6',
         rotation='0 0 1 -1.5708',
     )

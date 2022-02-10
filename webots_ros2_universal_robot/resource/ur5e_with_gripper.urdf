@@ -138,7 +138,7 @@
     <visual>
       <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/base.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/base.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -147,7 +147,7 @@
     <collision>
       <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/base.stl"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/base.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -160,7 +160,7 @@
     <visual>
       <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/shoulder.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/shoulder.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -169,7 +169,7 @@
     <collision>
       <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/shoulder.stl"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/shoulder.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -182,7 +182,7 @@
     <visual>
       <origin rpy="1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0.138"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/upperarm.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/upperarm.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -191,7 +191,7 @@
     <collision>
       <origin rpy="1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0.138"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/upperarm.stl"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/upperarm.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -204,7 +204,7 @@
     <visual>
       <origin rpy="1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0.007"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/forearm.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/forearm.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -213,7 +213,7 @@
     <collision>
       <origin rpy="1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0.007"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/forearm.stl"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/forearm.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -226,7 +226,7 @@
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 -0.127"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/wrist1.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/wrist1.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -235,7 +235,7 @@
     <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 -0.127"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/wrist1.stl"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/wrist1.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -248,7 +248,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 -0.0997"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/wrist2.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/wrist2.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -257,7 +257,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 -0.0997"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/wrist2.stl"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/wrist2.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -270,7 +270,7 @@
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 -0.0989"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/wrist3.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/visual/wrist3.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
@@ -279,7 +279,7 @@
     <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 -0.0989"/>
       <geometry>
-        <mesh filename="package://resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/wrist3.stl"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/Universal_Robots_ROS2_Driver/ur_description/meshes/ur5e/collision/wrist3.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -379,7 +379,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.020 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_0.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_0.dae"/>
       </geometry>
       <material name="gray">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -388,7 +388,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.020 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_0.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_0.STL"/>
       </geometry>
       <material name="yellow">
         <color rgba="0 1 1 1"/>
@@ -404,14 +404,14 @@
     <visual>
       <origin rpy="0 0 -0.52" xyz="0.050 -.028 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_1.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_1.dae"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 -0.52" xyz="0.050 -.028 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_1.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_1.STL"/>
       </geometry>
       <material name="yellow"/>
     </collision>
@@ -430,14 +430,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.039 0 0.0075"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_2.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_2.dae"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.039 0 0.0075"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_2.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_2.STL"/>
       </geometry>
       <material name="yellow"/>
     </collision>
@@ -451,14 +451,14 @@
     <visual>
       <origin rpy="0 0 0.52" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_3.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_3.dae"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 0.52" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_3.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_3.STL"/>
       </geometry>
       <material name="yellow"/>
     </collision>
@@ -497,7 +497,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.020 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_0.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_0.dae"/>
       </geometry>
       <material name="gray">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -506,7 +506,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.020 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_0.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_0.STL"/>
       </geometry>
       <material name="yellow">
         <color rgba="0 1 1 1"/>
@@ -522,14 +522,14 @@
     <visual>
       <origin rpy="0 0 -0.52" xyz="0.050 -.028 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_1.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_1.dae"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 -0.52" xyz="0.050 -.028 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_1.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_1.STL"/>
       </geometry>
       <material name="yellow"/>
     </collision>
@@ -548,14 +548,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.039 0 0.0075"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_2.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_2.dae"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.039 0 0.0075"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_2.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_2.STL"/>
       </geometry>
       <material name="yellow"/>
     </collision>
@@ -569,14 +569,14 @@
     <visual>
       <origin rpy="0 0 0.52" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_3.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_3.dae"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 0.52" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_3.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_3.STL"/>
       </geometry>
       <material name="yellow"/>
     </collision>
@@ -615,7 +615,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.020 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_0.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_0.dae"/>
       </geometry>
       <material name="gray">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -624,7 +624,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.020 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_0.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_0.STL"/>
       </geometry>
       <material name="yellow">
         <color rgba="0 1 1 1"/>
@@ -640,14 +640,14 @@
     <visual>
       <origin rpy="0 0 -0.52" xyz="0.050 -.028 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_1.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_1.dae"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 -0.52" xyz="0.050 -.028 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_1.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_1.STL"/>
       </geometry>
       <material name="yellow"/>
     </collision>
@@ -666,14 +666,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.039 0 0.0075"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_2.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_2.dae"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.039 0 0.0075"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_2.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_2.STL"/>
       </geometry>
       <material name="yellow"/>
     </collision>
@@ -687,14 +687,14 @@
     <visual>
       <origin rpy="0 0 0.52" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_3.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_3.dae"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 0.52" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_3.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_3.STL"/>
       </geometry>
       <material name="yellow"/>
     </collision>
@@ -732,7 +732,7 @@
   <link name="palm">
     <visual>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/palm.dae"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/palm.dae"/>
       </geometry>
       <material name="gray">
         <color rgba="0.2 0.2 0.2 1"/>
@@ -740,7 +740,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/palm.STL"/>
+        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/palm.STL"/>
       </geometry>
       <material name="yellow">
         <color rgba="0 1 1 1"/>

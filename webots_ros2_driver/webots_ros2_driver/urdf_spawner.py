@@ -27,7 +27,7 @@ def get_webots_driver_node(event, driver_node):
     return
 
 class URDFSpawner(ExecuteProcess):
-    def __init__(self, output='screen', name=None, urdf_path=None, translation='0 0 0', rotation='0 0 1 0', normal=False, box_collision=False, init_pos=None, **kwargs):
+    def __init__(self, output='log', name=None, robot_description=None, translation='0 0 0', rotation='0 0 1 0', normal=False, box_collision=False, init_pos=None, **kwargs):
         command = [
                 'ros2',
                 'service',
@@ -36,22 +36,25 @@ class URDFSpawner(ExecuteProcess):
                 'webots_ros2_msgs/srv/SpawnUrdfRobot',
             ]
 
-        message = '{ "robot": {'
+        message = '{robot: {'
 
         if name:
-            message += '"name": "' + name + '",'
-        if urdf_path:
-            message += '"urdf_location": "' + urdf_path + '",'
+            message += 'name: "' + name + '",'
+        if robot_description:
+            # Prepare the robot_description to be send via command.
+            robot_description = robot_description.replace("'", "\'")
+            robot_description = robot_description.replace('"', '\\"')
+            message += 'robot_description: "\\ ' + robot_description + '",'
         if translation:
-            message += '"translation": "' + translation + '",'
+            message += 'translation: "' + translation + '",'
         if rotation:
-            message += '"rotation": "' + rotation + '",'
+            message += 'rotation: "' + rotation + '",'
         if normal:
-            message += '"normal": "' + str(normal) + '",'
+            message += 'normal: "' + str(normal) + '",'
         if box_collision:
-            message += '"box_collision": "' + str(box_collision) + '",'
+            message += 'box_collision: "' + str(box_collision) + '",'
         if init_pos:
-            message += '"init_pos": "' + init_pos + '",'
+            message += 'init_pos: "' + init_pos + '",'
 
         message += '} }'
         command.append(message)

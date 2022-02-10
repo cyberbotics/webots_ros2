@@ -1,5 +1,5 @@
 string name
-string urdf_location
+string robot_description
 string translation
 string rotation
 bool normal

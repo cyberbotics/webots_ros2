@@ -31,7 +31,7 @@ from std_msgs.msg import String
 from urdf2webots.importer import convert2urdf
 from webots_ros2_msgs.srv import SpawnUrdfRobot
 
-# As Ros2Supervisor need the controller library, we extend the path here
+# As Ros2Supervisor needs the controller library, we extend the path here
 # to avoid to load another library named "controller".
 sys.path.insert(1, os.path.dirname(webots_ros2_driver_webots.__file__))
 from controller import Supervisor
@@ -67,14 +67,14 @@ class Ros2Supervisor(Node):
             response.success = False
             return response
 
-        file_input = robot.urdf_location if robot.urdf_location else ''
+        robot_description = robot.robot_description if robot.robot_description else ''
         robot_translation = robot.translation if robot.translation else '0 0 0'
         robot_rotation = robot.rotation if robot.rotation else '0 0 1 0'
         normal = robot.normal if robot.normal else False
         box_collision = robot.box_collision if robot.box_collision else False
         init_pos = robot.init_pos if robot.init_pos else None
 
-        robot_string = convert2urdf(inFile=file_input, robotName=robot_name, normal=normal,
+        robot_string = convert2urdf(input=robot_description, robotName=robot_name, normal=normal,
                                     boxCollision=box_collision, initTranslation=robot_translation, initRotation=robot_rotation,
                                     initPos=init_pos)
 

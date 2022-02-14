@@ -28,14 +28,6 @@ def get_webots_driver_node(event, driver_node):
 
 class URDFSpawner(ExecuteProcess):
     def __init__(self, output='log', name=None, robot_description=None, translation='0 0 0', rotation='0 0 1 0', normal=False, box_collision=False, init_pos=None, **kwargs):
-        command = [
-                'ros2',
-                'service',
-                'call',
-                '/spawn_urdf_robot',
-                'webots_ros2_msgs/srv/SpawnUrdfRobot',
-            ]
-
         message = '{robot: {'
 
         if name:
@@ -44,7 +36,7 @@ class URDFSpawner(ExecuteProcess):
             # Prepare the robot_description to be send via command.
             robot_description = robot_description.replace("'", "\'")
             robot_description = robot_description.replace('"', '\\"')
-            message += 'robot_description: "\\ ' + robot_description + '",'
+            message += 'robot_description: "\\\n' + robot_description + '",'
         if translation:
             message += 'translation: "' + translation + '",'
         if rotation:
@@ -57,7 +49,15 @@ class URDFSpawner(ExecuteProcess):
             message += 'init_pos: "' + init_pos + '",'
 
         message += '} }'
-        command.append(message)
+
+        command = [
+                'ros2',
+                'service',
+                'call',
+                '/spawn_urdf_robot',
+                'webots_ros2_msgs/srv/SpawnUrdfRobot',
+                message
+            ]
 
         super().__init__(
             output=output,

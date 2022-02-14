@@ -28,7 +28,7 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
 from rosgraph_msgs.msg import Clock
 from std_msgs.msg import String
-from urdf2webots.importer import convert2urdf
+from urdf2webots.importer import convertUrdfContent
 from webots_ros2_msgs.srv import SpawnUrdfRobot
 
 # As Ros2Supervisor needs the controller library, we extend the path here
@@ -74,7 +74,7 @@ class Ros2Supervisor(Node):
         box_collision = robot.box_collision if robot.box_collision else False
         init_pos = robot.init_pos if robot.init_pos else None
 
-        robot_string = convert2urdf(input=robot_description, robotName=robot_name, normal=normal,
+        robot_string = convertUrdfContent(input=robot_description, robotName=robot_name, normal=normal,
                                     boxCollision=box_collision, initTranslation=robot_translation, initRotation=robot_rotation,
                                     initPos=init_pos)
 

@@ -18,10 +18,8 @@
 """ROS2 Webots URDF Robots spawner."""
 
 
-from subprocess import Popen
 import os
 import sys
-from signal import SIGINT
 
 import rclpy
 import webots_ros2_driver_webots

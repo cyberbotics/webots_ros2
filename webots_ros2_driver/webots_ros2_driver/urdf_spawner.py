@@ -34,8 +34,7 @@ class URDFSpawner(ExecuteProcess):
             message += 'name: "' + name + '",'
         if robot_description:
             # Prepare the robot_description to be send via command.
-            robot_description = robot_description.replace("'", "\'")
-            robot_description = robot_description.replace('"', '\\"')
+            robot_description = robot_description.replace("'", "\'").replace('"', '\\"')
             message += 'robot_description: "\\\n' + robot_description + '",'
         if translation:
             message += 'translation: "' + translation + '",'

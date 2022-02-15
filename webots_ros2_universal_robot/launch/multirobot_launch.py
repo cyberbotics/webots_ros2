@@ -155,6 +155,7 @@ def get_ros2_nodes(*args):
         ),
     ]
 
+
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
     world = LaunchConfiguration('world')

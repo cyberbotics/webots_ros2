@@ -18,8 +18,10 @@
 """ROS2 Webots URDF Robots spawner."""
 
 
+from subprocess import Popen
 import os
 import sys
+from signal import SIGINT
 
 import rclpy
 import webots_ros2_driver_webots
@@ -28,7 +30,7 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
 from rosgraph_msgs.msg import Clock
 from std_msgs.msg import String
-from urdf2webots.importer import convertUrdfContent
+from urdf2webots.importer import convertUrdfFile, convertUrdfContent
 from webots_ros2_msgs.srv import SpawnUrdfRobot
 
 # As Ros2Supervisor needs the controller library, we extend the path here
@@ -44,12 +46,14 @@ class Ros2Supervisor(Node):
         self.__robot = Supervisor()
         self.__timestep = int(self.__robot.getBasicTimeStep())
 
+        # /clock topic
+        self.create_timer(1 / 1000, self.__supervisor_step_callback)
+        self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
+
+        # Spawn URDF robots
         root_node = self.__robot.getRoot()
         self.__insertion_robot_place = root_node.getField('children')
         self.__urdf_robots_list=[]
-
-        self.create_timer(1 / 1000, self.__supervisor_step_callback)
-        self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
         self.create_service(SpawnUrdfRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
         self.create_subscription(String, 'remove_urdf_robot', self.__remove_urdf_robot_callback, qos_profile_services_default)
 
@@ -67,16 +71,26 @@ class Ros2Supervisor(Node):
             response.success = False
             return response
 
-        robot_description = robot.robot_description if robot.robot_description else ''
         robot_translation = robot.translation if robot.translation else '0 0 0'
         robot_rotation = robot.rotation if robot.rotation else '0 0 1 0'
         normal = robot.normal if robot.normal else False
         box_collision = robot.box_collision if robot.box_collision else False
         init_pos = robot.init_pos if robot.init_pos else None
 
-        robot_string = convertUrdfContent(input=robot_description, robotName=robot_name, normal=normal,
+        # Choose the conversion according to the input
+        if robot.urdf_path:
+            robot_string = convertUrdfFile(input=robot.urdf_path, robotName=robot_name, normal=normal,
                                     boxCollision=box_collision, initTranslation=robot_translation, initRotation=robot_rotation,
                                     initPos=init_pos)
+        elif robot.robot_description:
+            relative_path_prefix = robot.relative_path_prefix if robot.relative_path_prefix else None
+            robot_string = convertUrdfContent(input=robot.robot_description, robotName=robot_name, normal=normal,
+                                        boxCollision=box_collision, initTranslation=robot_translation, initRotation=robot_rotation,
+                                        initPos=init_pos, relativePathPrefix=relative_path_prefix)
+        else:
+            self.get_logger().info('Ros2Supervisor can not import a URDF file without a specified "urdf_path" or "robot_description" in the URDFSpawner object.')
+            response.success = False
+            return response
 
         self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
         self.get_logger().info('Ros2Supervisor has imported the URDF robot named "' + str(robot_name) + '".')

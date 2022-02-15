@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch Webots Universal Robot and ABB Robot simulation world."""
+"""Launch Webots Universal Robot simulation world."""
 
 import launch
-from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 
 
@@ -32,16 +32,18 @@ def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
     world = LaunchConfiguration('world')
 
+    # Starts Webots
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
+    # Starts the Ros2Supervisor node, with by default respawn=True
     ros2_supervisor = Ros2SupervisorLauncher()
 
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
-            default_value='robotic_arms.wbt',
+            default_value='universal_robot.wbt',
             description='Choose one of the world files from `/webots_ros2_universal_robot/worlds` directory'
         ),
         webots,

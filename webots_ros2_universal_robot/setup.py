@@ -8,13 +8,10 @@ package_name = 'webots_ros2_universal_robot'
 data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name + '/launch', [
-    'launch/robot_launch/robot_launch.py',
-    'launch/robot_launch/world_robot_launch.py',
-    'launch/robot_launch/nodes_robot_launch.py',
-    'launch/moveit_demo_launch.py',
-    'launch/multirobot_launch/multirobot_launch.py',
-    'launch/multirobot_launch/world_multirobot_launch.py',
-    'launch/multirobot_launch/nodes_multirobot_launch.py'
+    'launch/robot_launch/robot_nodes_launch.py',
+    'launch/robot_launch/robot_world_launch.py',
+    'launch/robot_launch/robot_moveit_nodes_launch.py',
+    'launch/multirobot_launch.py',
 ]))
 data_files.append(('share/' + package_name + '/worlds', [
     'worlds/universal_robot.wbt',

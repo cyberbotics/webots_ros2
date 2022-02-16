@@ -104,7 +104,7 @@ class Ros2Supervisor(Node):
 
             for id_node in range(self.__insertion_robot_place.getCount()):
                 node = self.__insertion_robot_place.getMFNode(id_node)
-                node_name_field = node.getField("name")
+                node_name_field = node.getField('name')
                 if node_name_field and node_name_field.getSFString() == robotName:
                     robot_node = node
                     break

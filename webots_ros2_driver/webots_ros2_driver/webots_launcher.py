@@ -58,7 +58,7 @@ class WebotsLauncher(ExecuteProcess):
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 
-        self.__world_copy = tempfile.NamedTemporaryFile(mode="w+", suffix='_world_with_URDF_robot.wbt', delete=False)
+        self.__world_copy = tempfile.NamedTemporaryFile(mode='w+', suffix='_world_with_URDF_robot.wbt', delete=False)
         self.__world = world
         if not isinstance(world, Substitution):
             world = TextSubstitution(text=self.__world_copy.name)
@@ -110,7 +110,7 @@ class WebotsLauncher(ExecuteProcess):
             url_path = match.group(1)
 
             # Absolute path or Webots relative path or Web paths
-            if os.path.isabs(url_path) or "webots://" in url_path or "http://" in url_path or "https://" in url_path:
+            if os.path.isabs(url_path) or 'webots://' in url_path or 'http://' in url_path or 'https://' in url_path:
                 continue
 
             new_url_path = '"' + os.path.split(world_path)[0] + '/' + url_path + '"'
@@ -140,7 +140,7 @@ class WebotsLauncher(ExecuteProcess):
                 os.unlink(self.__world_copy.name)
 
             path, file = os.path.split(self.__world_copy.name)
-            world_copy_secondary_file = os.path.join(path, "." + file[:-1] + "proj")
+            world_copy_secondary_file = os.path.join(path, '.' + file[:-1] + 'proj')
             if os.path.isfile(world_copy_secondary_file):
                 os.unlink(world_copy_secondary_file)
         return super()._shutdown_process(context, send_sigint=send_sigint)

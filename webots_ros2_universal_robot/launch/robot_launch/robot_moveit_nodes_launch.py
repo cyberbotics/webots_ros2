@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch Webots Universal Robot simulation with MoveIt2."""
+"""Launch Webots Universal Robot simulation nodes with MoveIt2."""
 
 import os
 import pathlib
@@ -91,7 +91,7 @@ def generate_launch_description():
         # Webots simulation with robot
         launch_description_nodes.append(
             IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(os.path.join(package_dir, 'launch', 'robot_launch.py'))
+                PythonLaunchDescriptionSource(os.path.join(package_dir, 'launch', 'robot_nodes_launch.py'))
             )
         )
     else:

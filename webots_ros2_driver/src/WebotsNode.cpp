@@ -39,6 +39,13 @@ namespace webots_ros2_driver
   const char *gPluginInterface = "webots_ros2_driver::PluginInterface";
   const char *gPluginInterfaceName = "webots_ros2_driver";
 
+  bool gShutdownSignalReceived = false;
+
+  void handleSigint(int sig)
+  {
+    gShutdownSignalReceived = true;
+  }
+
   WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
@@ -60,7 +67,8 @@ namespace webots_ros2_driver
       RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
     }
 
-    mClockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
+    mRemoveUrdfRobotPublisher = create_publisher<std_msgs::msg::String>("/remove_urdf_robot", rclcpp::ServicesQoS());
+    mRemoveUrdfRobotMessage.data = name;
   }
 
   std::unordered_map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement) const
@@ -216,16 +224,20 @@ namespace webots_ros2_driver
 
   void WebotsNode::timerCallback()
   {
-    if (mRobot->step(mStep) == -1) {
+    if (gShutdownSignalReceived && !mWaitingForUrdfRobotToBeRemoved)
+    {
+      RCLCPP_INFO(get_logger(), "test");
+      mRemoveUrdfRobotPublisher->publish(mRemoveUrdfRobotMessage);
+      mWaitingForUrdfRobotToBeRemoved = true;
+    }
+    if (mRobot->step(mStep) == -1)
+    {
       mTimer->cancel();
       exit(0);
       return;
     }
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
-
-    mClockMessage.clock = rclcpp::Time(mRobot->getTime() * 1e9);
-    mClockPublisher->publish(mClockMessage);
   }
 
   void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue)
@@ -239,5 +251,10 @@ namespace webots_ros2_driver
     parameter.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
     request->parameters.push_back(parameter);
     mClient->async_send_request(request);
+  }
+
+  void WebotsNode::handleSignals()
+  {
+    signal(SIGINT, handleSigint);
   }
 } // end namespace webots_ros2_driver

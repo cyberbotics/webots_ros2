@@ -14,28 +14,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Launch Webots and the controllers."""
+"""Launch Webots Universal Robot and ABB Robot simulation."""
 
 import os
+import xacro
 import pathlib
 import launch
-from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_driver.webots_launcher import WebotsLauncher
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch.substitutions.path_join_substitution import PathJoinSubstitution
+from launch_ros.actions import Node
+from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
+from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 
-def generate_launch_description():
+# Define all the ROS 2 nodes that need to be restart on simulation reset here
+def get_ros2_nodes(*args):
     package_dir = get_package_share_directory(PACKAGE_NAME)
-    ur5e_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_ur5e_description.urdf')).read_text()
+    ur5e_xacro_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf.xacro')
+    ur5e_description = xacro.process_file(ur5e_xacro_path, mappings={'name': 'UR5eWithGripper'}).toxml()
     abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
     ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
     abb_control_params = os.path.join(package_dir, 'resource', 'ros2_control_abb_config.yaml')
 
-    # Webots
-    webots = WebotsLauncher(world=os.path.join(package_dir, 'worlds', 'armed_robots.wbt'))
+    # Define your URDF robots here
+    # The name of an URDF robot has to match the WEBOTS_ROBOT_NAME of the driver node
+    # You can specify the URDF content to use with robot_description
+    # In case you have relative paths in your URDF, specifiy the relative_path_prefix as the directory of your xacro file
+    spawn_URDF_ur5e = URDFSpawner(
+        name='UR5e',
+        robot_description=ur5e_description,
+        relative_path_prefix=os.path.join(package_dir, 'resource'),
+        translation='0 0 0.62',
+        rotation='0 0 1 -1.5708',
+    )
 
     # Driver nodes
     # When having multiple robot it is enough to specify the `additional_env` argument.
@@ -54,6 +71,8 @@ def generate_launch_description():
             ur5e_control_params
         ]
     )
+
+    # Standard Webots robot using driver node
     abb_driver = Node(
         package='webots_ros2_driver',
         executable='driver',
@@ -67,6 +86,7 @@ def generate_launch_description():
         ]
     )
 
+    # Other ROS 2 nodes
     controller_manager_timeout = ['--controller-manager-timeout', '75']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
     ur5e_trajectory_controller_spawner = Node(
@@ -112,20 +132,65 @@ def generate_launch_description():
         output='screen'
     )
 
-    return launch.LaunchDescription([
-        webots,
-        abb_controller,
-        ur5e_controller,
-        ur5e_driver,
+    return [
+        # Request to spawn the URDF robot
+        spawn_URDF_ur5e,
+
+        # Standard Webots robot
         abb_driver,
+
+        # Other ROS 2 nodes
         ur5e_trajectory_controller_spawner,
         ur5e_joint_state_broadcaster_spawner,
         abb_trajectory_controller_spawner,
         abb_joint_state_broadcaster_spawner,
+
+        # Launch the driver node once the URDF robot is spawned.
+        # You might include other nodes to start them with the driver node.
+        launch.actions.RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessIO(
+                target_action=spawn_URDF_ur5e,
+                on_stdout=lambda event: get_webots_driver_node(event, [ur5e_driver, ur5e_controller, abb_controller]),
+            )
+        ),
+    ]
+
+
+def generate_launch_description():
+    package_dir = get_package_share_directory(PACKAGE_NAME)
+    world = LaunchConfiguration('world')
+
+    # Starts Webots
+    webots = WebotsLauncher(
+        world=PathJoinSubstitution([package_dir, 'worlds', world])
+    )
+
+    # Starts the Ros2Supervisor node, with by default respawn=True
+    ros2_supervisor = Ros2SupervisorLauncher()
+
+    return LaunchDescription([
+        DeclareLaunchArgument(
+            'world',
+            default_value='robotic_arms.wbt',
+            description='Choose one of the world files from `/webots_ros2_universal_robot/worlds` directory'
+        ),
+        webots,
+        ros2_supervisor,
+
+        # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
                 on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
             )
+        ),
+
+        # The following line is important!
+        # This event respawns the ROS 2 nodes on simulation reset.
+        launch.actions.RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=ros2_supervisor,
+                on_exit=get_ros2_nodes,
+            )
         )
-    ])
+    ] + get_ros2_nodes())

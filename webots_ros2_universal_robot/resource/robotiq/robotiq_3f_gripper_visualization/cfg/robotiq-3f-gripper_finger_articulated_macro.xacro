@@ -1,0 +1,131 @@
+<!--
+robotiq-3f-gripper_finder_articulated_macro(prefix)
+
+Creates an articulated robotiq-3f-gripper finder with the passed in prefix.  The
+prefix typcially includes the hand prefix and an identifier for the
+finger(i.e. finger_1, etc...).
+
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+        <xacro:macro name="robotiq-3f-gripper_finger_articulated" params="prefix">
+		<!-- link list -->
+		<link name="${prefix}link_0">
+			<visual>
+				<origin xyz="0.020 0 0" rpy="0 0 0"/>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_0.dae" />
+				</geometry>
+				<material name="gray">
+					<color rgba="0.2 0.2 0.2 1"/>
+				</material>
+			</visual>
+			<collision>
+				<origin xyz="0.020 0 0" rpy="0 0 0"/>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_0.STL" />
+				</geometry>
+				<material name="yellow">
+					<color rgba="0 1 1 1"/>
+				</material>
+			</collision>
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="0.05"/>
+                <inertia ixx="0.01" ixy="-0.00002" ixz="0.00001" iyy="0.0008" iyz="0" izz="0.001" />
+            </inertial>
+		</link>
+		<link name="${prefix}link_1">
+			<visual>
+				<origin xyz="0.050 -.028 0" rpy="0 0 -0.52"/>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_1.dae" />
+				</geometry>
+				<material name="gray"/>
+			</visual>
+			<collision>
+				<origin xyz="0.050 -.028 0" rpy="0 0 -0.52"/>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_1.STL" />
+				</geometry>
+				<material name="yellow"/>
+			</collision>
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="0.15"/>
+                <inertia ixx="0.001859" ixy="-0.000376" ixz="0.000028" iyy="0.012756" iyz="0" izz="0.0024" />
+            </inertial>
+		</link>
+		<link name="${prefix}link_2">
+			<!--
+			NOTE: This link has an offset in the z-direction based on the models that were
+			used to generate grap-it poses.  With the offset below the model appears visually
+			correct, but it is suspect.
+			-->
+			<visual>
+				<origin xyz="0.039 0 0.0075" rpy="0 0 0"/>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_2.dae" />
+				</geometry>
+				<material name="gray"/>
+			</visual>
+			<collision>
+				<origin xyz="0.039 0 0.0075" rpy="0 0 0"/>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_2.STL" />
+				</geometry>
+				<material name="yellow"/>
+			</collision>
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="0.15"/>
+                <inertia ixx="0.001859" ixy="-0.000376" ixz="0.000028" iyy="0.012756" iyz="0" izz="0.0024" />
+            </inertial>
+		</link>
+		<link name="${prefix}link_3">
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0.52"/>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/link_3.dae" />
+				</geometry>
+				<material name="gray"/>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0.52"/>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/link_3.STL" />
+				</geometry>
+				<material name="yellow"/>
+			</collision>
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="0.05"/>
+                <inertia ixx="0.001239" ixy="-0.000251" ixz="0.000019" iyy="0.00085" iyz="0" izz="0.001632" />
+            </inertial>
+		</link>
+
+		<!-- end of link list -->
+		<!-- joint list -->
+		<joint name="${prefix}joint_1" type="revolute">
+			<parent link="${prefix}link_0"/>
+			<child link="${prefix}link_1"/>
+			<axis xyz="0 0 1"/>
+			<origin xyz="0.020 0 0" rpy="0 0 0"/>
+			<limit lower="0.0495" upper="1.2218" effort="100" velocity="100"/>
+		</joint>
+		<joint name="${prefix}joint_2" type="revolute">
+			<parent link="${prefix}link_1"/>
+			<child link="${prefix}link_2"/>
+			<axis xyz="0 0 1"/>
+			<origin xyz="0.050 -.028 0" rpy="0 0 -0.52"/>
+			<limit lower="0.0" upper="1.5708" effort="100" velocity="100"/>
+		</joint>
+		<joint name="${prefix}joint_3" type="revolute">
+			<parent link="${prefix}link_2"/>
+			<child link="${prefix}link_3"/>
+			<axis xyz="0 0 1"/>
+			<origin xyz="0.039 0 0" rpy="0 0 0"/>
+			<limit lower="-1.2217" upper="-0.0523" effort="100" velocity="100"/>
+		</joint>
+		<!-- end of joint list -->
+	</xacro:macro>
+</robot>

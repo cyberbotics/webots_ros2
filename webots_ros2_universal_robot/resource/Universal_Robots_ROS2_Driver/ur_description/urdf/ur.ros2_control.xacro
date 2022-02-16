@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="ur_ros2_control" params="name prefix
+    use_fake_hardware:=false fake_sensor_commands:=false
+    headless_mode:=false
+    initial_positions:=${dict(shoulder_pan_joint=0.0,shoulder_lift_joint=-1.57,elbow_joint=0.0,wrist_1_joint=-1.57,wrist_2_joint=0.0,wrist_3_joint=0.0)}
+    use_tool_communication:=false">
+
+    <ros2_control name="${name}" type="system">
+      <hardware>
+    <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
+</hardware>
+      <joint name="${prefix}shoulder_pan_joint">
+        <command_interface name="position">
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+        <param name="initial_position">${initial_positions['shoulder_pan_joint']}</param>  <!-- initial position for the FakeSystem -->
+      </joint>
+      <joint name="${prefix}shoulder_lift_joint">
+        <command_interface name="position">
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+        <param name="initial_position">${initial_positions['shoulder_lift_joint']}</param>  <!-- initial position for the FakeSystem -->
+      </joint>
+      <joint name="${prefix}elbow_joint">
+        <command_interface name="position">
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+        <param name="initial_position">${initial_positions['elbow_joint']}</param>  <!-- initial position for the FakeSystem -->
+      </joint>
+      <joint name="${prefix}wrist_1_joint">
+        <command_interface name="position">
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+        <param name="initial_position">${initial_positions['wrist_1_joint']}</param>  <!-- initial position for the FakeSystem -->
+      </joint>
+      <joint name="${prefix}wrist_2_joint">
+        <command_interface name="position">
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+        <param name="initial_position">${initial_positions['wrist_2_joint']}</param>  <!-- initial position for the FakeSystem -->
+      </joint>
+      <joint name="${prefix}wrist_3_joint">
+        <command_interface name="position">
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+        <param name="initial_position">${initial_positions['wrist_3_joint']}</param>  <!-- initial position for the FakeSystem -->
+      </joint>
+      <sensor name="tcp_fts_sensor">
+        <state_interface name="force.x"/>
+        <state_interface name="force.y"/>
+        <state_interface name="force.z"/>
+        <state_interface name="torque.x"/>
+        <state_interface name="torque.y"/>
+        <state_interface name="torque.z"/>
+      </sensor>
+
+      <!-- ROBOTIQ 3F Gripper -->
+<joint name="palm_finger_1_joint">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="finger_1_joint_1">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="finger_1_joint_2">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="finger_1_joint_3">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="palm_finger_2_joint">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="finger_2_joint_1">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="finger_2_joint_2">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="finger_2_joint_3">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="finger_middle_joint_1">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="finger_middle_joint_2">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+<joint name="finger_middle_joint_3">
+    <state_interface name="position"/>
+    <command_interface name="position"/>
+</joint>
+
+    </ros2_control>
+  </xacro:macro>
+
+</robot>

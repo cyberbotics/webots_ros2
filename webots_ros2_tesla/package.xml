@@ -16,7 +16,7 @@
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>ackermann_msgs</exec_depend>
-  <exec_depend>webots_ros2_core</exec_depend>
+  <exec_depend>webots_ros2_driver</exec_depend>
 
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->

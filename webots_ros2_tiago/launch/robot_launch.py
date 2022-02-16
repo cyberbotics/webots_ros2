@@ -27,7 +27,7 @@ from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
-from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 
 
 def generate_launch_description():
@@ -47,6 +47,8 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world]),
         mode=mode
     )
+
+    ros2_supervisor = Ros2SupervisorLauncher()
 
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -138,9 +140,10 @@ def generate_launch_description():
             default_value='realtime',
             description='Webots startup mode'
         ),
+        webots,
+        ros2_supervisor,
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
-        webots,
         rviz,
         robot_state_publisher,
         tiago_driver,

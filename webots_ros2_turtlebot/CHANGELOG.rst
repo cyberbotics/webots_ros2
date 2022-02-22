@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_turtlebot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.3 (2022-02-22)
+------------------
+* Fix warnings with the example plugin.
+
 1.2.1 (2022-01-10)
 ------------------
 * Add ros2control parameters for the lidar device.

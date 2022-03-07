@@ -2,6 +2,11 @@
 Changelog for package webots_ros2_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.3 (2022-02-22)
+------------------
+* This package shows now deprecation warnings and will be removed with the release of Webots `R2023a`.
+* Users of `webots_ros2_core` should migrate to `webots_ros2_driver`.
+
 1.1.2 (2021-11-03)
 ------------------
 * This package is now deprecated.

@@ -1,6 +1,14 @@
 """webots_ros2 package setup file."""
 
 from setuptools import setup
+import logging
+
+logging.basicConfig()
+webots_ros2_core_logger = logging.getLogger('webots_ros2_core')
+webots_ros2_core_logger.warning(
+    ' This package will be removed with the release of Webots R2023a.'
+    ' Use "webots_ros2_driver" instead.'
+    .format_map(locals()))
 
 package_name = 'webots_ros2_core'
 data_files = []

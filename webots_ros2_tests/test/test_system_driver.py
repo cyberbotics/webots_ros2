@@ -87,7 +87,7 @@ class TestDriver(TestWebots):
         def on_message_received(message):
             # There should be some scans hitting the box
             for value in message.ranges:
-                if abs(value - 0.6749) < 0.01:
+                if abs(value - 0.76) < 0.01:
                     return True
             return False
 

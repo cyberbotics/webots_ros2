@@ -46,17 +46,21 @@ namespace webots_ros2_driver
     mCameraInfoMessage.height = mCamera->getHeight();
     mCameraInfoMessage.width = mCamera->getWidth();
     mCameraInfoMessage.distortion_model = "plumb_bob";
-    const double focalLengthX = 0.5 * mCamera->getWidth() * (1 / tan(0.5 * mCamera->getFov()));
-    const double focalLengthY = 0.5 * mCamera->getHeight() * (1 / tan(0.5 * mCamera->getFov()));
+
+    // Convert FoV to focal length.
+    // Reference: https://en.wikipedia.org/wiki/Focal_length#In_photography
+    const double diagonal = sqrt(pow(mCamera->getWidth(), 2) + pow(mCamera->getHeight(), 2));
+    const double focalLength =  0.5 * diagonal * (cos(0.5 * mCamera->getFov()) / sin(0.5 * mCamera->getFov()));
+
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     mCameraInfoMessage.k = {
-        focalLengthX, 0.0, (double)mCamera->getWidth() / 2,
-        0.0, focalLengthY, (double)mCamera->getHeight() / 2,
+        focalLength, 0.0, (double)mCamera->getWidth() / 2,
+        0.0, focalLength, (double)mCamera->getHeight() / 2,
         0.0, 0.0, 1.0};
     mCameraInfoMessage.p = {
-        focalLengthX, 0.0, (double)mCamera->getWidth() / 2, 0.0,
-        0.0, focalLengthY, (double)mCamera->getHeight() / 2, 0.0,
+        focalLength, 0.0, (double)mCamera->getWidth() / 2, 0.0,
+        0.0, focalLength, (double)mCamera->getHeight() / 2, 0.0,
         0.0, 0.0, 1.0, 0.0};
     mCameraInfoPublisher->publish(mCameraInfoMessage);
 

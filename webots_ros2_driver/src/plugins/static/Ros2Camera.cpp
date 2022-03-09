@@ -46,16 +46,17 @@ namespace webots_ros2_driver
     mCameraInfoMessage.height = mCamera->getHeight();
     mCameraInfoMessage.width = mCamera->getWidth();
     mCameraInfoMessage.distortion_model = "plumb_bob";
-    const double focalLength = (mCamera->getFocalLength() == 0) ? 570.34 : mCamera->getFocalLength();
+    const double focalLengthX = 0.5 * mCamera->getWidth() * (1 / tan(0.5 * mCamera->getFov()));
+    const double focalLengthY = 0.5 * mCamera->getHeight() * (1 / tan(0.5 * mCamera->getFov()));
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     mCameraInfoMessage.k = {
-        focalLength, 0.0, (double)mCamera->getWidth() / 2,
-        0.0, focalLength, (double)mCamera->getHeight() / 2,
+        focalLengthX, 0.0, (double)mCamera->getWidth() / 2,
+        0.0, focalLengthY, (double)mCamera->getHeight() / 2,
         0.0, 0.0, 1.0};
     mCameraInfoMessage.p = {
-        focalLength, 0.0, (double)mCamera->getWidth() / 2, 0.0,
-        0.0, focalLength, (double)mCamera->getHeight() / 2, 0.0,
+        focalLengthX, 0.0, (double)mCamera->getWidth() / 2, 0.0,
+        0.0, focalLengthY, (double)mCamera->getHeight() / 2, 0.0,
         0.0, 0.0, 1.0, 0.0};
     mCameraInfoPublisher->publish(mCameraInfoMessage);
 

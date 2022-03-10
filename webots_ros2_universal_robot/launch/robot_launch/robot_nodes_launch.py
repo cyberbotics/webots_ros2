@@ -57,7 +57,6 @@ def generate_launch_description():
         parameters=[
             {'robot_description': robot_description},
             {'use_sim_time': True},
-            {'set_robot_state_publisher': True},
             ros2_control_params
         ],
     )
@@ -87,7 +86,7 @@ def generate_launch_description():
         executable='robot_state_publisher',
         output='screen',
         parameters=[{
-            'robot_description': '<robot name=""><link name=""/></robot>'
+            'robot_description': robot_description
         }],
     )
 

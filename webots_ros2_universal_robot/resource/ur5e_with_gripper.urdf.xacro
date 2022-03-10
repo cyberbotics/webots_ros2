@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://wiki.ros.org/xacro">
+<robot name="UR5e" xmlns:xacro="http://wiki.ros.org/xacro">
     <!-- Custom mix of ur5e robot and robotiq 3f gripper for Webots.
       Based on https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver
       and https://github.com/ros-industrial/robotiq.

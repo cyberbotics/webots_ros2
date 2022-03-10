@@ -31,6 +31,7 @@
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="world_fixed" type="fixed" parent_frame="world" child_link="base_link"/>
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
+    <passive_joint name="palm_finger_middle_joint"/>
     <passive_joint name="finger_middle_joint_1"/>
     <passive_joint name="finger_middle_joint_2"/>
     <passive_joint name="finger_middle_joint_3"/>
@@ -43,16 +44,21 @@
     <passive_joint name="finger_2_joint_2"/>
     <passive_joint name="finger_2_joint_3"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="ROBOTIQ 3f Gripper" link2="finger_1_link_0" reason="Adjacent"/>
-    <disable_collisions link1="ROBOTIQ 3f Gripper" link2="finger_1_link_1" reason="Default"/>
-    <disable_collisions link1="ROBOTIQ 3f Gripper" link2="finger_2_link_0" reason="Adjacent"/>
-    <disable_collisions link1="ROBOTIQ 3f Gripper" link2="finger_2_link_1" reason="Default"/>
-    <disable_collisions link1="ROBOTIQ 3f Gripper" link2="finger_middle_link_1" reason="Adjacent"/>
-    <disable_collisions link1="ROBOTIQ 3f Gripper" link2="wrist_1_link" reason="Never"/>
-    <disable_collisions link1="ROBOTIQ 3f Gripper" link2="wrist_2_link" reason="Never"/>
-    <disable_collisions link1="ROBOTIQ 3f Gripper" link2="wrist_3_link" reason="Adjacent"/>
-    <disable_collisions link1="base_link" link2="shoulder_link" reason="Adjacent"/>
-    <disable_collisions link1="base_link" link2="upper_arm_link" reason="Never"/>
+    <disable_collisions link1="palm" link2="finger_1_link_0" reason="Adjacent"/>
+    <disable_collisions link1="palm" link2="finger_1_link_1" reason="Default"/>
+    <disable_collisions link1="palm" link2="finger_2_link_0" reason="Adjacent"/>
+    <disable_collisions link1="palm" link2="finger_2_link_1" reason="Default"/>
+    <disable_collisions link1="palm" link2="finger_middle_link_0" reason="Adjacent"/>
+    <disable_collisions link1="palm" link2="finger_middle_link_1" reason="Default"/>
+    <disable_collisions link1="palm" link2="wrist_1_link" reason="Never"/>
+    <disable_collisions link1="palm" link2="wrist_2_link" reason="Never"/>
+    <disable_collisions link1="palm" link2="wrist_3_link" reason="Never"/>-
+    <disable_collisions link1="palm" link2="tool0" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="base" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="base_link_inertia" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="shoulder_link" reason="Never"/>
+    <disable_collisions link1="base_link_inertia" link2="shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="base_link_inertia" link2="upper_arm_link" reason="Never"/>
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_1" reason="Adjacent"/>
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_2" reason="Never"/>
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_3" reason="Never"/>
@@ -60,6 +66,7 @@
     <disable_collisions link1="finger_1_link_0" link2="finger_2_link_1" reason="Never"/>
     <disable_collisions link1="finger_1_link_0" link2="finger_2_link_2" reason="Never"/>
     <disable_collisions link1="finger_1_link_0" link2="finger_2_link_3" reason="Never"/>
+    <disable_collisions link1="finger_1_link_0" link2="finger_middle_link_0" reason="Never"/>
     <disable_collisions link1="finger_1_link_0" link2="finger_middle_link_1" reason="Never"/>
     <disable_collisions link1="finger_1_link_0" link2="finger_middle_link_2" reason="Never"/>
     <disable_collisions link1="finger_1_link_0" link2="wrist_1_link" reason="Never"/>
@@ -88,6 +95,7 @@
     <disable_collisions link1="finger_2_link_0" link2="finger_2_link_1" reason="Adjacent"/>
     <disable_collisions link1="finger_2_link_0" link2="finger_2_link_2" reason="Never"/>
     <disable_collisions link1="finger_2_link_0" link2="finger_2_link_3" reason="Never"/>
+    <disable_collisions link1="finger_2_link_0" link2="finger_middle_link_0" reason="Never"/>
     <disable_collisions link1="finger_2_link_0" link2="finger_middle_link_1" reason="Never"/>
     <disable_collisions link1="finger_2_link_0" link2="finger_middle_link_2" reason="Never"/>
     <disable_collisions link1="finger_2_link_0" link2="wrist_1_link" reason="Never"/>
@@ -105,6 +113,12 @@
     <disable_collisions link1="finger_2_link_3" link2="wrist_1_link" reason="Never"/>
     <disable_collisions link1="finger_2_link_3" link2="wrist_2_link" reason="Never"/>
     <disable_collisions link1="finger_2_link_3" link2="wrist_3_link" reason="Never"/>
+    <disable_collisions link1="finger_middle_link_0" link2="finger_middle_link_1" reason="Adjacent"/>
+    <disable_collisions link1="finger_middle_link_0" link2="finger_middle_link_2" reason="Never"/>
+    <disable_collisions link1="finger_middle_link_0" link2="finger_middle_link_3" reason="Never"/>
+    <disable_collisions link1="finger_middle_link_0" link2="wrist_1_link" reason="Never"/>
+    <disable_collisions link1="finger_middle_link_0" link2="wrist_2_link" reason="Never"/>
+    <disable_collisions link1="finger_middle_link_0" link2="wrist_3_link" reason="Never"/>
     <disable_collisions link1="finger_middle_link_1" link2="finger_middle_link_2" reason="Adjacent"/>
     <disable_collisions link1="finger_middle_link_1" link2="finger_middle_link_3" reason="Never"/>
     <disable_collisions link1="finger_middle_link_1" link2="wrist_1_link" reason="Never"/>
@@ -124,4 +138,10 @@
     <disable_collisions link1="wrist_1_link" link2="wrist_2_link" reason="Adjacent"/>
     <disable_collisions link1="wrist_1_link" link2="wrist_3_link" reason="Never"/>
     <disable_collisions link1="wrist_2_link" link2="wrist_3_link" reason="Adjacent"/>
+    <disable_collisions link1="flange" link2="wrist_3_link" reason="Adjacent"/>
+    <disable_collisions link1="flange" link2="tool0" reason="Adjacent"/>
 </robot>
+
+
+
+

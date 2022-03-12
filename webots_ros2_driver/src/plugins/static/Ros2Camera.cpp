@@ -36,11 +36,7 @@ namespace webots_ros2_driver
     mImageMessage.encoding = sensor_msgs::image_encodings::BGRA8;
 
     // CameraInfo publisher
-    rclcpp::QoS cameraInfoQos(1);
-    cameraInfoQos.reliable();
-    cameraInfoQos.transient_local();
-    cameraInfoQos.keep_last(1);
-    mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", cameraInfoQos);
+    mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", rclcpp::SensorDataQoS().reliable());
     mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = mCamera->getHeight();
@@ -62,7 +58,6 @@ namespace webots_ros2_driver
         focalLength, 0.0, (double)mCamera->getWidth() / 2, 0.0,
         0.0, focalLength, (double)mCamera->getHeight() / 2, 0.0,
         0.0, 0.0, 1.0, 0.0};
-    mCameraInfoPublisher->publish(mCameraInfoMessage);
 
     // Recognition publisher
     if (mCamera->hasRecognition())
@@ -114,6 +109,8 @@ namespace webots_ros2_driver
       publishImage();
     if (recognitionSubscriptionsExist)
       publishRecognition();
+    if (mCameraInfoPublisher->get_subscription_count() > 0)
+      mCameraInfoPublisher->publish(mCameraInfoMessage);
   }
 
   void Ros2Camera::publishImage()

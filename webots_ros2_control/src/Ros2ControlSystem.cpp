@@ -43,12 +43,18 @@ namespace webots_ros2_control
       if (!joint.sensor && !joint.motor)
         throw std::runtime_error("Cannot find a Motor or PositionSensor with name " + joint.name);
 
+      // Initialize the state
       joint.controlPosition = false;
       joint.controlVelocity = false;
       joint.controlEffort = false;
       joint.positionCommand = NAN;
       joint.velocityCommand = NAN;
       joint.effortCommand = NAN;
+      joint.position = NAN;
+      joint.velocity = NAN;
+      joint.acceleration = NAN;
+
+      // Configure the command interface
       for (hardware_interface::InterfaceInfo commandInterface : component.command_interfaces)
       {
         if (commandInterface.name == "position")
@@ -60,7 +66,6 @@ namespace webots_ros2_control
         else
           throw std::runtime_error("Invalid hardware info name `" + commandInterface.name + "`");
       }
-
       if (joint.motor && joint.controlVelocity && !joint.controlPosition)
       {
         joint.motor->setPosition(INFINITY);
@@ -96,8 +101,11 @@ namespace webots_ros2_control
   {
     std::vector<hardware_interface::StateInterface> interfaces;
     for (Joint &joint : mJoints)
-      if (joint.sensor)
+      if (joint.sensor) {
         interfaces.emplace_back(hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_POSITION, &(joint.position)));
+        interfaces.emplace_back(hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_VELOCITY, &(joint.velocity)));
+        interfaces.emplace_back(hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_ACCELERATION, &(joint.acceleration)));
+      }
 
     return interfaces;
   }
@@ -144,10 +152,22 @@ namespace webots_ros2_control
 
   hardware_interface::return_type Ros2ControlSystem::read()
   {
+    static double lastReadTime = 0;
+
+    const double deltaTime = mNode->robot()->getTime() - lastReadTime;
+    lastReadTime = mNode->robot()->getTime();
+
     for (Joint &joint : mJoints)
     {
-      if (joint.sensor)
-        joint.position = joint.sensor->getValue();
+      const double position = joint.sensor->getValue();
+      const double velocity = std::isnan(joint.position) ? NAN : (position - joint.position) / deltaTime;
+
+      if (joint.sensor) {
+        if (!std::isnan(joint.velocity))
+          joint.acceleration = (joint.velocity - velocity) / deltaTime;
+        joint.velocity = velocity;
+        joint.position = position;
+      }
     }
 
     return hardware_interface::return_type::OK;

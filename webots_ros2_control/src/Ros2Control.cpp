@@ -35,9 +35,8 @@ namespace webots_ros2_control
 
   void Ros2Control::step()
   {
-    const double nowMs = mNode->robot()->getTime() * 1000.0;
-    const double periodMs = nowMs - mLastControlUpdateMs;
-    std::cout << periodMs << " " << mControlPeriodMs << "\n";
+    const int nowMs = mNode->robot()->getTime() * 1000.0;
+    const int periodMs = nowMs - mLastControlUpdateMs;
     if (periodMs >= mControlPeriodMs)
     {
       mControllerManager->read();

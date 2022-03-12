@@ -47,8 +47,8 @@ namespace webots_ros2_control
       webots_ros2_driver::WebotsNode *mNode;
       std::shared_ptr<pluginlib::ClassLoader<Ros2ControlSystemInterface>> mHardwareLoader;
       std::shared_ptr<controller_manager::ControllerManager> mControllerManager;
-      double mControlPeriodMs;
-      double mLastControlUpdateMs;
+      int mControlPeriodMs;
+      int mLastControlUpdateMs;
 
       std::thread mThreadExecutor;
       rclcpp::executors::MultiThreadedExecutor::SharedPtr mExecutor;

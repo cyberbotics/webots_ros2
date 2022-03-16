@@ -39,7 +39,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'tesla_driver = webots_ros2_tesla.tesla_driver:main',
             'lane_follower = webots_ros2_tesla.lane_follower:main'
         ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']

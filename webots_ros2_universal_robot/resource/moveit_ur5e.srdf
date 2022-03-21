@@ -141,7 +141,3 @@
     <disable_collisions link1="flange" link2="wrist_3_link" reason="Adjacent"/>
     <disable_collisions link1="flange" link2="tool0" reason="Adjacent"/>
 </robot>
-
-
-
-

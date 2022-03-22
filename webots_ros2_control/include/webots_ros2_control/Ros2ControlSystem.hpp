@@ -44,7 +44,7 @@ namespace webots_ros2_control
     double velocityCommand;
     double velocity;
     double effortCommand;
-    double effort;
+    double acceleration;
     bool controlPosition;
     bool controlVelocity;
     bool controlEffort;

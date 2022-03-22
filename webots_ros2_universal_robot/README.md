@@ -15,7 +15,7 @@ Some adaptations have been made in the files from the two repositories.
 - Create your own Xacro file to combine the robot and the gripper and add the `<webots>` plugin tag:
 ```
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://wiki.ros.org/xacro">
+<robot name="UR5e" xmlns:xacro="http://wiki.ros.org/xacro">
     <!--
         Custom mix of ur5e robot and robotiq 3f gripper for Webots.
         Based on https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver
@@ -122,7 +122,7 @@ Some adaptations have been made in the files from the two repositories.
 <joint name="${prefix}tool0_palm" type="fixed">
     <parent link="${prefix}tool0"/>
     <child link="${prefix}palm"/>
-    <origin xyz="0 0.045 0" rpy="1.5708 0 0"/>
+    <origin xyz="0 0 0.045" rpy="1.5708 0 0"/>
 </joint>
 ```
 - Update all the paths accordingly to your package.

@@ -42,7 +42,7 @@ def generate_launch_description():
     # Check if moveit is installed
     if 'moveit' in get_packages_with_prefixes():
         # Configuration
-        description = {'robot_description': load_file('moveit_ur5e_description.urdf')}
+        description = {'robot_description': load_file('ur5e_with_gripper.urdf')}
         description_semantic = {'robot_description_semantic': load_file('moveit_ur5e.srdf')}
         description_kinematics = {'robot_description_kinematics': load_yaml('moveit_kinematics.yaml')}
         sim_time = {'use_sim_time': True}

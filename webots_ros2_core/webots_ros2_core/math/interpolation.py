@@ -42,7 +42,7 @@ def interpolate_lookup_table(value, table):
             )
 
     # Extrapolate (we assume that the table is sorted, order is irrelevant)
-    ascending = (table[1] < table[len(table) - 1*3 + 1])
+    ascending = (table[1] < table[len(table) - 1 * 3 + 1])
     if (ascending and value >= table[1]) or (not ascending and value < table[1]):
         return interpolate_function(
             value,

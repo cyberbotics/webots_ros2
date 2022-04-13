@@ -14,10 +14,8 @@
 
 #include <webots_ros2_driver/plugins/static/Ros2Camera.hpp>
 
-namespace webots_ros2_driver
-{
-  void Ros2Camera::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {
+namespace webots_ros2_driver {
+  void Ros2Camera::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
     mRecognitionIsEnabled = false;
@@ -36,7 +34,8 @@ namespace webots_ros2_driver
     mImageMessage.encoding = sensor_msgs::image_encodings::BGRA8;
 
     // CameraInfo publisher
-    mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", rclcpp::SensorDataQoS().reliable());
+    mCameraInfoPublisher =
+      mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", rclcpp::SensorDataQoS().reliable());
     mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = mCamera->getHeight();
@@ -46,48 +45,39 @@ namespace webots_ros2_driver
     // Convert FoV to focal length.
     // Reference: https://en.wikipedia.org/wiki/Focal_length#In_photography
     const double diagonal = sqrt(pow(mCamera->getWidth(), 2) + pow(mCamera->getHeight(), 2));
-    const double focalLength =  0.5 * diagonal * (cos(0.5 * mCamera->getFov()) / sin(0.5 * mCamera->getFov()));
+    const double focalLength = 0.5 * diagonal * (cos(0.5 * mCamera->getFov()) / sin(0.5 * mCamera->getFov()));
 
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     mCameraInfoMessage.k = {
-        focalLength, 0.0, (double)mCamera->getWidth() / 2,
-        0.0, focalLength, (double)mCamera->getHeight() / 2,
-        0.0, 0.0, 1.0};
+      focalLength, 0.0, (double)mCamera->getWidth() / 2, 0.0, focalLength, (double)mCamera->getHeight() / 2, 0.0, 0.0, 1.0};
     mCameraInfoMessage.p = {
-        focalLength, 0.0, (double)mCamera->getWidth() / 2, 0.0,
-        0.0, focalLength, (double)mCamera->getHeight() / 2, 0.0,
-        0.0, 0.0, 1.0, 0.0};
+      focalLength, 0.0, (double)mCamera->getWidth() / 2, 0.0, 0.0, focalLength, (double)mCamera->getHeight() / 2, 0.0, 0.0, 0.0,
+      1.0,         0.0};
 
     // Recognition publisher
-    if (mCamera->hasRecognition())
-    {
-      mRecognitionPublisher = mNode->create_publisher<vision_msgs::msg::Detection2DArray>(
-          mTopicName + "/recognitions",
-          rclcpp::SensorDataQoS().reliable());
-      mWebotsRecognitionPublisher = mNode->create_publisher<
-          webots_ros2_msgs::msg::WbCameraRecognitionObjects>(
-          mTopicName + "/recognitions/webots",
-          rclcpp::SensorDataQoS().reliable());
+    if (mCamera->hasRecognition()) {
+      mRecognitionPublisher = mNode->create_publisher<vision_msgs::msg::Detection2DArray>(mTopicName + "/recognitions",
+                                                                                          rclcpp::SensorDataQoS().reliable());
+      mWebotsRecognitionPublisher = mNode->create_publisher<webots_ros2_msgs::msg::WbCameraRecognitionObjects>(
+        mTopicName + "/recognitions/webots", rclcpp::SensorDataQoS().reliable());
       mRecognitionMessage.header.frame_id = mFrameName;
       mWebotsRecognitionMessage.header.frame_id = mFrameName;
     }
   }
 
-  void Ros2Camera::step()
-  {
+  void Ros2Camera::step() {
     if (!preStep())
       return;
 
     // Enable/Disable sensor
     const bool imageSubscriptionsExist = mImagePublisher->get_subscription_count() > 0;
     const bool recognitionSubscriptionsExist =
-        (mRecognitionPublisher != nullptr && mRecognitionPublisher->get_subscription_count() > 0) ||
-        (mWebotsRecognitionPublisher != nullptr && mWebotsRecognitionPublisher->get_subscription_count() > 0);
+      (mRecognitionPublisher != nullptr && mRecognitionPublisher->get_subscription_count() > 0) ||
+      (mWebotsRecognitionPublisher != nullptr && mWebotsRecognitionPublisher->get_subscription_count() > 0);
     const bool shouldBeEnabled = mAlwaysOn || imageSubscriptionsExist || recognitionSubscriptionsExist;
 
-    if (shouldBeEnabled != mIsEnabled)
-    {
+    if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         mCamera->enable(mPublishTimestepSyncedMs);
       else
@@ -95,8 +85,7 @@ namespace webots_ros2_driver
       mIsEnabled = shouldBeEnabled;
     }
 
-    if (recognitionSubscriptionsExist != mRecognitionIsEnabled)
-    {
+    if (recognitionSubscriptionsExist != mRecognitionIsEnabled) {
       if (recognitionSubscriptionsExist)
         mCamera->recognitionEnable(mPublishTimestepSyncedMs);
       else
@@ -113,19 +102,16 @@ namespace webots_ros2_driver
       mCameraInfoPublisher->publish(mCameraInfoMessage);
   }
 
-  void Ros2Camera::publishImage()
-  {
+  void Ros2Camera::publishImage() {
     auto image = mCamera->getImage();
-    if (image)
-    {
+    if (image) {
       mImageMessage.header.stamp = mNode->get_clock()->now();
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
       mImagePublisher->publish(mImageMessage);
     }
   }
 
-  void Ros2Camera::publishRecognition()
-  {
+  void Ros2Camera::publishRecognition() {
     if (mCamera->getRecognitionNumberOfObjects() == 0)
       return;
 
@@ -135,8 +121,7 @@ namespace webots_ros2_driver
     mRecognitionMessage.detections.clear();
     mWebotsRecognitionMessage.objects.clear();
 
-    for (size_t i = 0; i < mCamera->getRecognitionNumberOfObjects(); i++)
-    {
+    for (size_t i = 0; i < mCamera->getRecognitionNumberOfObjects(); i++) {
       // Getting Object Info
       geometry_msgs::msg::Point position;
       geometry_msgs::msg::Quaternion orientation;
@@ -167,8 +152,7 @@ namespace webots_ros2_driver
       recognitionWebotsObject.bbox.center.y = objects[i].position_on_image[1];
       recognitionWebotsObject.bbox.size_x = objects[i].size_on_image[0];
       recognitionWebotsObject.bbox.size_y = objects[i].size_on_image[1];
-      for (size_t j = 0; j < objects[i].number_of_colors; j++)
-      {
+      for (size_t j = 0; j < objects[i].number_of_colors; j++) {
         std_msgs::msg::ColorRGBA color;
         color.r = objects[i].colors[3 * j];
         color.g = objects[i].colors[3 * j + 1];
@@ -180,4 +164,4 @@ namespace webots_ros2_driver
     mWebotsRecognitionPublisher->publish(mWebotsRecognitionMessage);
     mRecognitionPublisher->publish(mRecognitionMessage);
   }
-}
+}  // namespace webots_ros2_driver

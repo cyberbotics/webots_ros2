@@ -65,7 +65,7 @@ class LaneFollower(Node):
                 center_x = int(largest_contour_center['m10'] / largest_contour_center['m00'])
                 # Find error (the lane distance from the target distance)
                 error = center_x - 190
-                command_message.steering_angle = error*CONTROL_COEFFICIENT
+                command_message.steering_angle = error * CONTROL_COEFFICIENT
 
         self.__ackermann_publisher.publish(command_message)
 

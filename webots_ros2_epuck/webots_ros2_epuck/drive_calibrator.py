@@ -82,9 +82,9 @@ class EPuckDriveCalibrator(Node):
 
         # Resolve singularities (first for positive angle and then for negative angle)
         if yaw - self.odom_angular_last > pi:
-            self.odom_angular_last_abs += 2*pi - (yaw - self.odom_angular_last)
+            self.odom_angular_last_abs += 2 * pi - (yaw - self.odom_angular_last)
         elif self.odom_angular_last - yaw > pi:
-            self.odom_angular_last_abs += 2*pi - (self.odom_angular_last - yaw)
+            self.odom_angular_last_abs += 2 * pi - (self.odom_angular_last - yaw)
         else:
             self.odom_angular_last_abs += yaw - self.odom_angular_last
 
@@ -92,7 +92,7 @@ class EPuckDriveCalibrator(Node):
         if self.type.value == 'angular':
             self.get_logger().info('Angular calibration in progress...')
             self.set_velocity(0, ANGULAR_VELOCITY)
-            n_rotations = (self.odom_angular_last_abs - self.odom_angular_start)/(2*pi)
+            n_rotations = (self.odom_angular_last_abs - self.odom_angular_start) / (2 * pi)
             if n_rotations > NUMBER_OF_ROTATIONS:
                 self.finish_calibration()
             self.get_logger().info(f'Number of rotations: {n_rotations:.4f}')

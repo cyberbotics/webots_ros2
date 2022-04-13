@@ -19,8 +19,8 @@
 
 #include <webots/Camera.hpp>
 
-#include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/quaternion.hpp>
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -29,18 +29,15 @@
 #include <vision_msgs/msg/detection2_d_array.hpp>
 #include <vision_msgs/msg/object_hypothesis_with_pose.hpp>
 
+#include <webots_ros2_driver/WebotsNode.hpp>
+#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
+#include <webots_ros2_driver/utils/Math.hpp>
 #include <webots_ros2_msgs/msg/wb_camera_recognition_object.hpp>
 #include <webots_ros2_msgs/msg/wb_camera_recognition_objects.hpp>
-#include <webots_ros2_driver/utils/Math.hpp>
-#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
-#include <webots_ros2_driver/WebotsNode.hpp>
 
+namespace webots_ros2_driver {
 
-namespace webots_ros2_driver
-{
-
-  class Ros2Camera : public Ros2SensorPlugin
-  {
+  class Ros2Camera : public Ros2SensorPlugin {
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
@@ -49,7 +46,7 @@ namespace webots_ros2_driver
     void publishImage();
     void publishRecognition();
 
-    webots::Camera* mCamera;
+    webots::Camera *mCamera;
 
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
     sensor_msgs::msg::Image mImageMessage;
@@ -66,6 +63,6 @@ namespace webots_ros2_driver
     bool mRecognitionIsEnabled;
   };
 
-}
+}  // namespace webots_ros2_driver
 
 #endif

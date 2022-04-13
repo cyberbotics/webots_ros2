@@ -81,7 +81,7 @@ def fillpositive(xyz, w2_thresh=None):
         raise ValueError('xyz should have length 3')
     # If necessary, guess precision of input
     if w2_thresh is None:
-        try: # trap errors for non-array, integer array
+        try:  # trap errors for non-array, integer array
             w2_thresh = -np.finfo(xyz.dtype).eps * 3
         except (AttributeError, ValueError):
             w2_thresh = -_FLOAT_EPS * 3
@@ -131,20 +131,25 @@ def quat2mat(q):
     True
     '''
     w, x, y, z = q
-    Nq = w*w + x*x + y*y + z*z
+    Nq = w * w + x * x + y * y + z * z
     if Nq < _FLOAT_EPS:
         return np.eye(3)
-    s = 2.0/Nq
-    X = x*s
-    Y = y*s
-    Z = z*s
-    wX = w*X; wY = w*Y; wZ = w*Z
-    xX = x*X; xY = x*Y; xZ = x*Z
-    yY = y*Y; yZ = y*Z; zZ = z*Z
-    return np.array(
-           [[ 1.0-(yY+zZ), xY-wZ, xZ+wY ],
-            [ xY+wZ, 1.0-(xX+zZ), yZ-wX ],
-            [ xZ-wY, yZ+wX, 1.0-(xX+yY) ]])
+    s = 2.0 / Nq
+    X = x * s
+    Y = y * s
+    Z = z * s
+    wX = w * X
+    wY = w * Y
+    wZ = w * Z
+    xX = x * X
+    xY = x * Y
+    xZ = x * Z
+    yY = y * Y
+    yZ = y * Z
+    zZ = z * Z
+    return np.array([[1.0 - (yY + zZ), xY - wZ, xZ + wY],
+                     [xY + wZ, 1.0 - (xX + zZ), yZ - wX],
+                     [xZ - wY, yZ + wX, 1.0 - (xX + yY)]])
 
 
 def mat2quat(M):
@@ -205,12 +210,10 @@ def mat2quat(M):
     # M[0,1].  The notation is from the Wikipedia article.
     Qxx, Qyx, Qzx, Qxy, Qyy, Qzy, Qxz, Qyz, Qzz = M.flat
     # Fill only lower half of symmetric matrix
-    K = np.array([
-        [Qxx - Qyy - Qzz, 0,               0,               0              ],
-        [Qyx + Qxy,       Qyy - Qxx - Qzz, 0,               0              ],
-        [Qzx + Qxz,       Qzy + Qyz,       Qzz - Qxx - Qyy, 0              ],
-        [Qyz - Qzy,       Qzx - Qxz,       Qxy - Qyx,       Qxx + Qyy + Qzz]]
-        ) / 3.0
+    K = np.array([[Qxx - Qyy - Qzz, 0, 0, 0],
+                  [Qyx + Qxy, Qyy - Qxx - Qzz, 0, 0],
+                  [Qzx + Qxz, Qzy + Qyz, Qzz - Qxx - Qyy, 0],
+                  [Qyz - Qzy, Qzx - Qxz, Qxy - Qyx, Qxx + Qyy + Qzz]]) / 3.0
     # Use Hermitian eigenvectors, values for speed
     vals, vecs = np.linalg.eigh(K)
     # Select largest eigenvector, reorder to w,x,y,z quaternion
@@ -240,10 +243,10 @@ def qmult(q1, q2):
     '''
     w1, x1, y1, z1 = q1
     w2, x2, y2, z2 = q2
-    w = w1*w2 - x1*x2 - y1*y2 - z1*z2
-    x = w1*x2 + x1*w2 + y1*z2 - z1*y2
-    y = w1*y2 + y1*w2 + z1*x2 - x1*z2
-    z = w1*z2 + z1*w2 + x1*y2 - y1*x2
+    w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+    x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
+    y = w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2
+    z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
     return np.array([w, x, y, z])
 
 
@@ -304,9 +307,9 @@ def qinverse(q):
     return qconjugate(q) / qnorm(q)
 
 
-def qeye(dtype = np.float):
+def qeye(dtype=np.float):
     ''' Return identity quaternion '''
-    return np.array([1.0,0,0,0], dtype = dtype)
+    return np.array([1.0, 0, 0, 0], dtype=dtype)
 
 
 def qexp(q):
@@ -337,7 +340,7 @@ def qexp(q):
     if norm == 0.:
         return qeye(q.dtype)
 
-    result[0] =  np.cos(norm)
+    result[0] = np.cos(norm)
     result[1:] = np.sin(norm)/norm * v
     return result * np.exp(w)
 
@@ -371,8 +374,8 @@ def qlog(q):
     if vnorm == 0.:
         return qeye(q.dtype)
 
-    result[0] =  np.log(qnorm_)
-    result[1:] = v/vnorm * np.arccos(w/qnorm_)
+    result[0] = np.log(qnorm_)
+    result[1:] = v / vnorm * np.arccos(w / qnorm_)
     return result
 
 
@@ -408,12 +411,12 @@ def qpow(q, n):
     if nnorm == 0.:
         return qeye(q.dtype)
 
-    theta = np.arccos(w/qnorm_)
-    n_hat = v/nnorm
+    theta = np.arccos(w / qnorm_)
+    n_hat = v / nnorm
 
-    result[0] = np.cos(n*theta)
-    result[1:] = n_hat * np.sin(n*theta)
-    return result *  np.power(qnorm_, n)
+    result[0] = np.cos(n * theta)
+    result[1:] = n_hat * np.sin(n * theta)
+    return result * np.power(qnorm_, n)
 
 
 def rotate_vector(v, q):
@@ -511,8 +514,7 @@ def axangle2quat(vector, theta, is_normalized=False):
         vector = vector / math.sqrt(np.dot(vector, vector))
     t2 = theta / 2.0
     st2 = math.sin(t2)
-    return np.concatenate(([math.cos(t2)],
-                           vector * st2))
+    return np.concatenate(([math.cos(t2)], vector * st2))
 
 
 def quat2axangle(quat, identity_thresh=None):
@@ -569,7 +571,7 @@ def quat2axangle(quat, identity_thresh=None):
     if identity_thresh is None:
         try:
             identity_thresh = np.finfo(Nq.type).eps * 3
-        except (AttributeError, ValueError): # Not a numpy type or not float
+        except (AttributeError, ValueError):  # Not a numpy type or not float
             identity_thresh = _FLOAT_EPS * 3
     if Nq < _FLOAT_EPS ** 2:  # Results unreliable after normalization
         return np.array([1.0, 0, 0]), 0.0
@@ -582,4 +584,4 @@ def quat2axangle(quat, identity_thresh=None):
         return np.array([1.0, 0, 0]), 0.0
     # Make sure w is not slightly above 1 or below -1
     theta = 2 * math.acos(max(min(w, 1), -1))
-    return  np.array([x, y, z]) / math.sqrt(len2), theta
+    return np.array([x, y, z]) / math.sqrt(len2), theta

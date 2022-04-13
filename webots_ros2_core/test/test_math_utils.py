@@ -16,21 +16,19 @@ import unittest
 from webots_ros2_core.math.interpolation import interpolate_lookup_table
 
 
-TABLE_DESC = [
-    0,     1000,  0,
-    0.1,   1000,  0.1,
-    0.2,    400,  0.1,
-    0.3,     50,  0.1,
-    0.37,    30,  0
-]
+TABLE_DESC = [0, 1000, 0,
+              0.1, 1000, 0.1,
+              0.2, 400, 0.1,
+              0.3, 50, 0.1,
+              0.37, 30, 0
+              ]
 
-TABLE_ASC = [
-    0.37,    30,  0,
-    0.3,     50,  0.1,
-    0.2,    400,  0.1,
-    0.1,   1000,  0.1,
-    0,     1000,  0
-]
+TABLE_ASC = [0.37, 30, 0,
+             0.3, 50, 0.1,
+             0.2, 400, 0.1,
+             0.1, 1000, 0.1,
+             0, 1000, 0
+             ]
 
 
 class TestMathUtils(unittest.TestCase):

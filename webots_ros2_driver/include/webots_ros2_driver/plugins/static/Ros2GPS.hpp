@@ -15,19 +15,17 @@
 #ifndef ROS2_GPS_HPP
 #define ROS2_GPS_HPP
 
-#include <webots/GPS.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
 #include <geometry_msgs/msg/vector3.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include <sensor_msgs/msg/nav_sat_status.hpp>
 #include <std_msgs/msg/float32.hpp>
-#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
+#include <webots/GPS.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
+#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 
-namespace webots_ros2_driver
-{
-  class Ros2GPS : public Ros2SensorPlugin
-  {
+namespace webots_ros2_driver {
+  class Ros2GPS : public Ros2SensorPlugin {
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
@@ -55,5 +53,5 @@ namespace webots_ros2_driver
     bool mIsEnabled;
   };
 
-}
+}  // namespace webots_ros2_driver
 #endif

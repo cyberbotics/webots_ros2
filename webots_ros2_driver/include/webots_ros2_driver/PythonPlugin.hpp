@@ -15,28 +15,26 @@
 #ifndef PYTHON_PLUGIN_HPP
 #define PYTHON_PLUGIN_HPP
 
-#include <unordered_map>
 #include <Python.h>
+#include <unordered_map>
 
 #include <webots_ros2_driver/PluginInterface.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 
-namespace webots_ros2_driver
-{
-    class PythonPlugin : public PluginInterface
-    {
-    public:
-        void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
-        void step() override;
+namespace webots_ros2_driver {
+  class PythonPlugin : public PluginInterface {
+  public:
+    void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
+    void step() override;
 
-        static std::shared_ptr<PythonPlugin> createFromType(const std::string &type);
+    static std::shared_ptr<PythonPlugin> createFromType(const std::string &type);
 
-    private:
-        PythonPlugin(PyObject *pyPlugin);
+  private:
+    PythonPlugin(PyObject *pyPlugin);
 
-        PyObject *mPyPlugin;
-        PyObject *getPyWebotsNodeInstance();
-    };
-}
+    PyObject *mPyPlugin;
+    PyObject *getPyWebotsNodeInstance();
+  };
+}  // namespace webots_ros2_driver
 
 #endif

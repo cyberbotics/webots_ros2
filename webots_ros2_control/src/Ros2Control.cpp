@@ -20,25 +20,22 @@
 #include <memory>
 #include <vector>
 
-#include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "hardware_interface/resource_manager.hpp"
 #include "hardware_interface/component_parser.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include "hardware_interface/resource_manager.hpp"
+#include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "pluginlib/class_list_macros.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 #include <iostream>
 
 const double CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS = 1.0;
 
-namespace webots_ros2_control
-{
+namespace webots_ros2_control {
 
-  void Ros2Control::step()
-  {
+  void Ros2Control::step() {
     const int nowMs = mNode->robot()->getTime() * 1000.0;
     const int periodMs = nowMs - mLastControlUpdateMs;
-    if (periodMs >= mControlPeriodMs)
-    {
+    if (periodMs >= mControlPeriodMs) {
       mControllerManager->read();
 #if FOXY
       mControllerManager->update();
@@ -51,41 +48,33 @@ namespace webots_ros2_control
     mControllerManager->write();
   }
 
-  void Ros2Control::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &)
-  {
+  void Ros2Control::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &) {
     mNode = node;
     mLastControlUpdateMs = 0;
 
     // Load hardware
-    try
-    {
+    try {
       mHardwareLoader.reset(new pluginlib::ClassLoader<webots_ros2_control::Ros2ControlSystemInterface>(
-          "webots_ros2_control",
-          "webots_ros2_control::Ros2ControlSystemInterface"));
-    }
-    catch (pluginlib::LibraryLoadException &ex)
-    {
+        "webots_ros2_control", "webots_ros2_control::Ros2ControlSystemInterface"));
+    } catch (pluginlib::LibraryLoadException &ex) {
       throw std::runtime_error("Hardware loader cannot be created: " + atoi(ex.what()));
     }
 
     // Control Hardware
     std::string urdfString;
     std::vector<hardware_interface::HardwareInfo> controlHardware;
-    std::unique_ptr<hardware_interface::ResourceManager> resourceManager = std::make_unique<hardware_interface::ResourceManager>();
-    try
-    {
+    std::unique_ptr<hardware_interface::ResourceManager> resourceManager =
+      std::make_unique<hardware_interface::ResourceManager>();
+    try {
       urdfString = mNode->urdf();
       controlHardware = hardware_interface::parse_control_resources_from_urdf(urdfString);
-    }
-    catch (const std::runtime_error &ex)
-    {
+    } catch (const std::runtime_error &ex) {
       throw std::runtime_error("URDF cannot be parsed by a `ros2_control` component parser: " + atoi(ex.what()));
     }
-    for (unsigned int i = 0; i < controlHardware.size(); i++)
-    {
+    for (unsigned int i = 0; i < controlHardware.size(); i++) {
       const std::string hardwareType = controlHardware[i].hardware_class_type;
       auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
-          mHardwareLoader->createUnmanagedInstance(hardwareType));
+        mHardwareLoader->createUnmanagedInstance(hardwareType));
       webotsSystem->init(mNode, controlHardware[i]);
 #if FOXY
       resourceManager->import_component(std::move(webotsSystem));
@@ -105,19 +94,23 @@ namespace webots_ros2_control
     int controlPeriodProductMs = mNode->robot()->getBasicTimeStep();
     while (controlPeriodProductMs < mControlPeriodMs)
       controlPeriodProductMs += mNode->robot()->getBasicTimeStep();
-      
+
     if (abs(controlPeriodProductMs - mControlPeriodMs) > CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS)
-      RCLCPP_WARN_STREAM(node->get_logger(), "Desired controller update period (" << mControlPeriodMs << "ms / " << updateRate << "Hz) is different from the Webots timestep (" << mNode->robot()->getBasicTimeStep() << "ms). Please adjust the `update_rate` parameter in the `controller_manager` or the `basicTimeStep` parameter in the Webots `WorldInfo` node.");
+      RCLCPP_WARN_STREAM(node->get_logger(), "Desired controller update period ("
+                                               << mControlPeriodMs << "ms / " << updateRate
+                                               << "Hz) is different from the Webots timestep ("
+                                               << mNode->robot()->getBasicTimeStep()
+                                               << "ms). Please adjust the `update_rate` parameter in the `controller_manager` "
+                                                  "or the `basicTimeStep` parameter in the Webots `WorldInfo` node.");
 
     // Spin
     mExecutor->add_node(mControllerManager);
-    auto spin = [this]()
-    {
+    auto spin = [this]() {
       while (rclcpp::ok())
         mExecutor->spin_once();
     };
     mThreadExecutor = std::thread(spin);
   }
-}
+}  // namespace webots_ros2_control
 
 PLUGINLIB_EXPORT_CLASS(webots_ros2_control::Ros2Control, webots_ros2_driver::PluginInterface)

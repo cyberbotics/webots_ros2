@@ -56,15 +56,14 @@ class TrajectoryFollower:
         self.__goal = None
         self.__mode = None
         self.__tolerances = {}
-        self.__server = ActionServer(
-            self.__node,
-            FollowJointTrajectory,
-            controller_name + '/follow_joint_trajectory',
-            execute_callback=self.__on_update,
-            goal_callback=self.__on_goal,
-            cancel_callback=self.__on_cancel,
-            handle_accepted_callback=self.__on_goal_accepted
-        )
+        self.__server = ActionServer(self.__node,
+                                     FollowJointTrajectory,
+                                     controller_name + '/follow_joint_trajectory',
+                                     execute_callback=self.__on_update,
+                                     goal_callback=self.__on_goal,
+                                     cancel_callback=self.__on_cancel,
+                                     handle_accepted_callback=self.__on_goal_accepted
+                                     )
 
     def log(self, *args):
         self.__node.get_logger().warn(' '.join([str(arg) for arg in args]))

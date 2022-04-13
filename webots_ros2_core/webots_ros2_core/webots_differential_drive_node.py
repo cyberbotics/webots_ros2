@@ -159,13 +159,10 @@ class WebotsDifferentialDriveNode(WebotsNode):
         k31 = v * sin(self._prev_angle + time_diff_s * k22 / 2)
         k32 = omega
         position = [
-            self._prev_position[0] + (time_diff_s / 6) *
-            (k00 + 2 * (k10 + k20) + k30),
-            self._prev_position[1] + (time_diff_s / 6) *
-            (k01 + 2 * (k11 + k21) + k31)
+            self._prev_position[0] + (time_diff_s / 6) * (k00 + 2 * (k10 + k20) + k30),
+            self._prev_position[1] + (time_diff_s / 6) * (k01 + 2 * (k11 + k21) + k31)
         ]
-        angle = self._prev_angle + \
-            (time_diff_s / 6) * (k02 + 2 * (k12 + k22) + k32)
+        angle = self._prev_angle + (time_diff_s / 6) * (k02 + 2 * (k12 + k22) + k32)
 
         # Update variables
         self._prev_position = position.copy()

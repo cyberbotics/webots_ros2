@@ -14,14 +14,13 @@
 
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
-#include <webots_ros2_driver/WebotsNode.hpp>
 #include <webots/vehicle/Driver.hpp>
+#include <webots_ros2_driver/WebotsNode.hpp>
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
 
-  webots::Supervisor* robot;
+  webots::Supervisor *robot;
 
   // Check if the robot can be a driver, if not create a simple Supervisor
   if (webots::Driver::isInitialisationPossible())

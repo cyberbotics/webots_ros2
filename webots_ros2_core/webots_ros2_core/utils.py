@@ -153,12 +153,12 @@ def __get_webots_home(target_version, condition='ge'):
         # The `which` command not available
         pass
 
-    # Look at standard installation pathes
+    # Look at standard installation paths
     paths = [
         '/usr/local/webots',                                    # Linux default install
         '/snap/webots/current/usr/share/webots',                # Linux snap install
         '/Applications/Webots.app',                             # macOS default install
-        'C:\\Program Files\\Webots',                           # Windows default install
+        'C:\\Program Files\\Webots',                            # Windows default install
         os.getenv('LOCALAPPDATA', '') + '\\Programs\\Webots'    # Windows user install
     ]
     if target_version is not None:
@@ -232,7 +232,7 @@ def __install_webots(installation_directory):
     target_version = WebotsVersion.target()
 
     def on_download_progress_changed(count, block_size, total_size):
-        percent = count*block_size*100/total_size
+        percent = count * block_size * 100 / total_size
         sys.stdout.write(f'\rDownloading... {percent:.2f}%')
         sys.stdout.flush()
 

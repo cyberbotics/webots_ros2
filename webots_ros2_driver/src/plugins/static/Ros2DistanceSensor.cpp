@@ -16,23 +16,25 @@
 
 #include <webots_ros2_driver/utils/Math.hpp>
 
-namespace webots_ros2_driver
-{
-  void Ros2DistanceSensor::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {
+namespace webots_ros2_driver {
+  void Ros2DistanceSensor::init(webots_ros2_driver::WebotsNode *node,
+                                std::unordered_map<std::string, std::string> &parameters) {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
     mDistanceSensor = mNode->robot()->getDistanceSensor(parameters["name"]);
 
     assert(mDistanceSensor != NULL);
 
-    mLookupTable.assign(mDistanceSensor->getLookupTable(), mDistanceSensor->getLookupTable() + mDistanceSensor->getLookupTableSize() * 3);
+    mLookupTable.assign(mDistanceSensor->getLookupTable(),
+                        mDistanceSensor->getLookupTable() + mDistanceSensor->getLookupTableSize() * 3);
 
     const int size = mLookupTable.size();
     const double maxValue = std::max(mLookupTable[0], mLookupTable[size - 3]);
     const double minValue = std::min(mLookupTable[0], mLookupTable[size - 3]);
-    const double lowerStd = (mLookupTable[0] < mLookupTable[size - 3]) ? mLookupTable[2] * mLookupTable[0] : mLookupTable[size - 1] * mLookupTable[size - 3];
-    const double upperStd = (mLookupTable[0] > mLookupTable[size - 3]) ? mLookupTable[2] * mLookupTable[0] : mLookupTable[size - 1] * mLookupTable[size - 3];
+    const double lowerStd = (mLookupTable[0] < mLookupTable[size - 3]) ? mLookupTable[2] * mLookupTable[0] :
+                                                                         mLookupTable[size - 1] * mLookupTable[size - 3];
+    const double upperStd = (mLookupTable[0] > mLookupTable[size - 3]) ? mLookupTable[2] * mLookupTable[0] :
+                                                                         mLookupTable[size - 1] * mLookupTable[size - 3];
     const double minRange = minValue + lowerStd;
     const double maxRange = maxValue - upperStd;
 
@@ -49,8 +51,7 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2DistanceSensor::step()
-  {
+  void Ros2DistanceSensor::step() {
     if (!preStep())
       return;
 
@@ -62,8 +63,7 @@ namespace webots_ros2_driver
 
     // Enable/Disable sensor
     const bool shouldBeEnabled = mPublisher->get_subscription_count() > 0;
-    if (shouldBeEnabled != mIsEnabled)
-    {
+    if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         mDistanceSensor->enable(mPublishTimestepSyncedMs);
       else
@@ -72,8 +72,7 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2DistanceSensor::publishRange()
-  {
+  void Ros2DistanceSensor::publishRange() {
     const double value = mDistanceSensor->getValue();
     if (std::isnan(value))
       return;
@@ -81,4 +80,4 @@ namespace webots_ros2_driver
     mMessage.range = interpolateLookupTable(value, mLookupTable);
     mPublisher->publish(mMessage);
   }
-}
+}  // namespace webots_ros2_driver

@@ -15,8 +15,8 @@
 #ifndef WEBOTS_NODE_HPP
 #define WEBOTS_NODE_HPP
 
-#include <memory>
 #include <chrono>
+#include <memory>
 #include <unordered_map>
 
 #include <tinyxml2.h>
@@ -24,19 +24,17 @@
 #include <webots/Node.hpp>
 #include <webots/Supervisor.hpp>
 
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp/clock.hpp>
-#include <rosgraph_msgs/msg/clock.hpp>
 #include <pluginlib/class_loader.hpp>
+#include <rclcpp/clock.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <rosgraph_msgs/msg/clock.hpp>
 
 #include "webots_ros2_driver/PluginInterface.hpp"
 
-namespace webots_ros2_driver
-{
+namespace webots_ros2_driver {
   class PluginInterface;
 
-  class WebotsNode : public rclcpp::Node
-  {
+  class WebotsNode : public rclcpp::Node {
   public:
     WebotsNode(std::string name, webots::Supervisor *robot);
     void init();
@@ -66,6 +64,6 @@ namespace webots_ros2_driver
     rosgraph_msgs::msg::Clock mClockMessage;
   };
 
-} // end namespace webots_ros2_driver
+}  // namespace webots_ros2_driver
 
 #endif

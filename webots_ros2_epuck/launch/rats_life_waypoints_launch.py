@@ -31,7 +31,7 @@ from geometry_msgs.msg import Quaternion
 
 
 class WaypointCollection:
-    """Creates a list of Navigation2 compatibile waypoints out of [x, y, theta] parameters defined for the each point."""
+    """Creates a list of Navigation2 compatible waypoints out of [x, y, theta] parameters defined for the each point."""
 
     def __init__(self, frame_id='odom'):
         self.__waypoints = {'poses': []}
@@ -67,33 +67,33 @@ def get_waypoints():
     collection = WaypointCollection()
 
     collection.add(position=[0, 0], orientation=0)      # Initial pose
-    collection.add(orientation=-pi/2)                   # Explore the hall, rotate
+    collection.add(orientation=-pi / 2)                 # Explore the hall, rotate
     collection.add(orientation=0)                       # Explore the hall, rotate
     collection.add(position=[0.28, 0], orientation=0)   # Move near RED entrance
-    collection.add(orientation=pi/2)                    # Rotate towards RED
+    collection.add(orientation=pi / 2)                  # Rotate towards RED
     collection.add(position=[0.28, 0.2])                # Move inside RED
     collection.add(orientation=0)                       # Explore RED, rotate
     collection.add(orientation=-pi)                     # Explore RED, rotate
-    collection.add(orientation=-pi/2)                   # Rotate towards BLUE
+    collection.add(orientation=-pi / 2)                 # Rotate towards BLUE
     collection.add(position=[0.23, -0.2])               # Move inside BLUE
     collection.add(orientation=0)                       # Explore BLUE, rotate
-    collection.add(orientation=pi/3)                    # Explore BLUE, rotate
-    collection.add(orientation=-pi/2)                   # Explore BLUE, rotate
-    collection.add(orientation=-2.7*pi)                 # Explore BLUE, rotate
-    collection.add(orientation=pi/2)                    # Rotate towards the hall
+    collection.add(orientation=pi / 3)                  # Explore BLUE, rotate
+    collection.add(orientation=-pi / 2)                 # Explore BLUE, rotate
+    collection.add(orientation=-2.7 * pi)               # Explore BLUE, rotate
+    collection.add(orientation=pi / 2)                  # Rotate towards the hall
     collection.add(position=[0.23, 0])                  # Go to the hall
-    collection.add(orientation=1/3*pi)                  # Explore the hall, rotate
+    collection.add(orientation=1 / 3 * pi)              # Explore the hall, rotate
     collection.add(orientation=pi)                      # Rotate towards back
     collection.add(position=[-0.1, 0])                  # Go to the GREEN entrance
-    collection.add(orientation=pi/2)                    # Explore hall, rotate
-    collection.add(orientation=pi/4)                    # Explore hall, rotate
-    collection.add(orientation=2/3*pi)                  # Explore hall, rotate
-    collection.add(orientation=-pi/2)                   # Rotate towards the GREEN
+    collection.add(orientation=pi / 2)                  # Explore hall, rotate
+    collection.add(orientation=pi / 4)                  # Explore hall, rotate
+    collection.add(orientation=2 / 3 * pi)              # Explore hall, rotate
+    collection.add(orientation=-pi / 2)                 # Rotate towards the GREEN
     collection.add(position=[-0.1, -0.2])               # Move inside GREEN
     collection.add(orientation=0)                       # Explore GREEN, rotate
-    collection.add(orientation=pi/3)                    # Explore GREEN, rotate
-    collection.add(orientation=-pi/2)                   # Explore GREEN, rotate
-    collection.add(orientation=3/4*pi)                  # Explore GREEN, rotate
+    collection.add(orientation=pi / 3)                  # Explore GREEN, rotate
+    collection.add(orientation=-pi / 2)                 # Explore GREEN, rotate
+    collection.add(orientation=3 / 4 * pi)              # Explore GREEN, rotate
 
     return collection.export()
 

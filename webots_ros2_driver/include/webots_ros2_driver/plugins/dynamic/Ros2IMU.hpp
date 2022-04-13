@@ -17,20 +17,18 @@
 
 #include <unordered_map>
 
-#include <webots/InertialUnit.hpp>
-#include <webots/Gyro.hpp>
 #include <webots/Accelerometer.hpp>
+#include <webots/Gyro.hpp>
+#include <webots/InertialUnit.hpp>
 
 #include <sensor_msgs/msg/imu.hpp>
 
-#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
+#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 
-namespace webots_ros2_driver
-{
+namespace webots_ros2_driver {
 
-  class Ros2IMU : public Ros2SensorPlugin
-  {
+  class Ros2IMU : public Ros2SensorPlugin {
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
@@ -50,6 +48,6 @@ namespace webots_ros2_driver
     bool mIsEnabled;
   };
 
-}
+}  // namespace webots_ros2_driver
 
 #endif

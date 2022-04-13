@@ -17,10 +17,8 @@
 #include <sensor_msgs/image_encodings.hpp>
 #include <std_msgs/msg/color_rgba.hpp>
 
-namespace webots_ros2_driver
-{
-  void Ros2RangeFinder::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {
+namespace webots_ros2_driver {
+  void Ros2RangeFinder::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
     mRangeFinder = mNode->robot()->getRangeFinder(parameters["name"]);
@@ -41,7 +39,8 @@ namespace webots_ros2_driver
     mImageMessage.encoding = sensor_msgs::image_encodings::TYPE_32FC1;
 
     // CameraInfo publisher
-    mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", rclcpp::SensorDataQoS().reliable());
+    mCameraInfoPublisher =
+      mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", rclcpp::SensorDataQoS().reliable());
     mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = height;
@@ -51,17 +50,13 @@ namespace webots_ros2_driver
     const double focalLengthY = 0.5 * height * (1 / tan(0.5 * mRangeFinder->getFov()));
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
-    mCameraInfoMessage.k = {
-        focalLengthX, 0.0, (double)width / 2,
-        0.0, focalLengthY, (double)height / 2,
-        0.0, 0.0, 1.0};
-    mCameraInfoMessage.p = {
-        focalLengthX, 0.0, (double)width / 2, 0.0,
-        0.0, focalLengthY, (double)height / 2, 0.0,
-        0.0, 0.0, 1.0, 0.0};
+    mCameraInfoMessage.k = {focalLengthX, 0.0, (double)width / 2, 0.0, focalLengthY, (double)height / 2, 0.0, 0.0, 1.0};
+    mCameraInfoMessage.p = {focalLengthX, 0.0, (double)width / 2, 0.0, 0.0, focalLengthY, (double)height / 2, 0.0, 0.0, 0.0,
+                            1.0,          0.0};
 
     // Point cloud publisher
-    mPointCloudPublisher = mNode->create_publisher<sensor_msgs::msg::PointCloud2>(mTopicName + "/point_cloud", rclcpp::SensorDataQoS().reliable());
+    mPointCloudPublisher =
+      mNode->create_publisher<sensor_msgs::msg::PointCloud2>(mTopicName + "/point_cloud", rclcpp::SensorDataQoS().reliable());
     mPointCloudMessage.header.frame_id = mFrameName;
     mPointCloudMessage.fields.resize(3);
     mPointCloudMessage.fields[0].name = "x";
@@ -89,8 +84,7 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2RangeFinder::step()
-  {
+  void Ros2RangeFinder::step() {
     if (!preStep())
       return;
 
@@ -107,8 +101,7 @@ namespace webots_ros2_driver
 
     // Enable/Disable sensor
     const bool shouldBeEnabled = mImagePublisher->get_subscription_count() > 0;
-    if (shouldBeEnabled != mIsEnabled)
-    {
+    if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         mRangeFinder->enable(mPublishTimestepSyncedMs);
       else
@@ -117,11 +110,9 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2RangeFinder::publishImage()
-  {
+  void Ros2RangeFinder::publishImage() {
     auto image = mRangeFinder->getRangeImage();
-    if (image)
-    {
+    if (image) {
       mImageMessage.header.stamp = mNode->get_clock()->now();
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
       mImagePublisher->publish(mImageMessage);
@@ -129,11 +120,9 @@ namespace webots_ros2_driver
   }
 
   // To be redesigned when mRangeFinder->getPointCloud() will be implemented on Webots side.
-  void Ros2RangeFinder::publishPointCloud()
-  {
+  void Ros2RangeFinder::publishPointCloud() {
     auto image = mRangeFinder->getRangeImage();
-    if (image)
-    {
+    if (image) {
       mPointCloudMessage.header.stamp = mNode->get_clock()->now();
 
       const int width = mCameraInfoMessage.width;
@@ -146,16 +135,14 @@ namespace webots_ros2_driver
       int idx;
       float x, y, z;
 
-      float* data = (float*)mPointCloudMessage.data.data();
-      for (int j = 0; j < height; j++)
-      {
-        for (int i = 0; i < width; i++)
-        {
+      float *data = (float *)mPointCloudMessage.data.data();
+      for (int j = 0; j < height; j++) {
+        for (int i = 0; i < width; i++) {
           idx = i + j * width;
           x = image[idx];
           y = -(i - cx) * x / fx;
           z = -(j - cy) * x / fy;
-          memcpy(data + idx * 3    , &x, sizeof(float));
+          memcpy(data + idx * 3, &x, sizeof(float));
           memcpy(data + idx * 3 + 1, &y, sizeof(float));
           memcpy(data + idx * 3 + 2, &z, sizeof(float));
         }
@@ -163,4 +150,4 @@ namespace webots_ros2_driver
       mPointCloudPublisher->publish(mPointCloudMessage);
     }
   }
-}
+}  // namespace webots_ros2_driver

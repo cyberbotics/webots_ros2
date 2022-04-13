@@ -30,7 +30,7 @@ class RobotDevice(Device):
 
     Creates suitable ROS2 interface based on Webots [Robot](https://cyberbotics.com/doc/reference/robot) node.
 
-    It allows the following functinalities:
+    It allows the following functionalities:
     - Updates `robot_description` parameter of `robot_state_publisher` node based on obtained URDF.
 
     Args:

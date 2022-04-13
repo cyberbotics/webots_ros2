@@ -20,21 +20,18 @@
 #include <webots_ros2_driver/PluginInterface.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 
-
-namespace webots_ros2_driver
-{
+namespace webots_ros2_driver {
 
   /// Utility class for common Webots sensors
-  class Ros2SensorPlugin : public PluginInterface
-  {
+  class Ros2SensorPlugin : public PluginInterface {
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
 
   protected:
     /// Checks if a sensor has data ready and updates the last update time
     /**
-    * \return Should publishing from the sensor be considered
-    */
+     * \return Should publishing from the sensor be considered
+     */
     bool preStep();
 
     webots_ros2_driver::WebotsNode *mNode;
@@ -47,6 +44,6 @@ namespace webots_ros2_driver
 
     double mLastUpdate;
   };
-}
+}  // namespace webots_ros2_driver
 
 #endif

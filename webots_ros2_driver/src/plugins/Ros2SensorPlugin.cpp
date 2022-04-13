@@ -15,10 +15,8 @@
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/utils/Utils.hpp>
 
-namespace webots_ros2_driver
-{
-  void Ros2SensorPlugin::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {
+namespace webots_ros2_driver {
+  void Ros2SensorPlugin::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
     mNode = node;
     mLastUpdate = 0;
 
@@ -31,12 +29,11 @@ namespace webots_ros2_driver
     mPublishTimestepSyncedMs = getDeviceTimestepMsFromPublishTimestep(mPublishTimestep, mNode->robot()->getBasicTimeStep());
   }
 
-  bool Ros2SensorPlugin::preStep()
-  {
+  bool Ros2SensorPlugin::preStep() {
     // Update only if needed
     if (mNode->robot()->getTime() - mLastUpdate < mPublishTimestep)
       return false;
     mLastUpdate = mNode->robot()->getTime();
     return true;
   }
-}
+}  // namespace webots_ros2_driver

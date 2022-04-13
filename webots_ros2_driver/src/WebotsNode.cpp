@@ -20,31 +20,31 @@
 
 #include <webots/Device.hpp>
 
-#include "webots_ros2_driver/PluginInterface.hpp"
-#include <webots_ros2_driver/plugins/static/Ros2Lidar.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Camera.hpp>
-#include <webots_ros2_driver/plugins/static/Ros2GPS.hpp>
-#include <webots_ros2_driver/plugins/static/Ros2RangeFinder.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2DistanceSensor.hpp>
-#include <webots_ros2_driver/plugins/static/Ros2LightSensor.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2GPS.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2LED.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2Lidar.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2LightSensor.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2RangeFinder.hpp>
+#include "webots_ros2_driver/PluginInterface.hpp"
 
 #include "webots_ros2_driver/PluginInterface.hpp"
 #include "webots_ros2_driver/PythonPlugin.hpp"
 
-namespace webots_ros2_driver
-{
+namespace webots_ros2_driver {
   const char *gDeviceReferenceAttribute = "reference";
   const char *gDeviceRosTag = "ros";
   const char *gPluginInterface = "webots_ros2_driver::PluginInterface";
   const char *gPluginInterfaceName = "webots_ros2_driver";
 
-  WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
-  {
+  WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) :
+    Node(name),
+    mRobot(robot),
+    mPluginLoader(gPluginInterfaceName, gPluginInterface) {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
     mSetRobotStatePublisher = this->declare_parameter<bool>("set_robot_state_publisher", false);
-    if (mRobotDescription != "")
-    {
+    if (mRobotDescription != "") {
       mRobotDescriptionDocument = std::make_shared<tinyxml2::XMLDocument>();
       mRobotDescriptionDocument->Parse(mRobotDescription.c_str());
       if (!mRobotDescriptionDocument)
@@ -53,9 +53,7 @@ namespace webots_ros2_driver
       if (!robotXMLElement)
         throw std::runtime_error("Invalid URDF, it doesn't contain a <robot> tag");
       mWebotsXMLElement = robotXMLElement->FirstChildElement("webots");
-    }
-    else
-    {
+    } else {
       mWebotsXMLElement = NULL;
       RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
     }
@@ -63,15 +61,12 @@ namespace webots_ros2_driver
     mClockPublisher = create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
   }
 
-  std::unordered_map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement) const
-  {
+  std::unordered_map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement) const {
     std::unordered_map<std::string, std::string> properties;
 
-    if (pluginElement)
-    {
+    if (pluginElement) {
       tinyxml2::XMLElement *deviceChild = pluginElement->FirstChildElement();
-      while (deviceChild)
-      {
+      while (deviceChild) {
         properties[deviceChild->Name()] = deviceChild->GetText();
         deviceChild = deviceChild->NextSiblingElement();
       }
@@ -80,8 +75,7 @@ namespace webots_ros2_driver
     return properties;
   }
 
-  std::unordered_map<std::string, std::string> WebotsNode::getDeviceRosProperties(const std::string &name) const
-  {
+  std::unordered_map<std::string, std::string> WebotsNode::getDeviceRosProperties(const std::string &name) const {
     std::unordered_map<std::string, std::string> properties({{"enabled", "true"}});
 
     // No URDF file specified
@@ -89,8 +83,7 @@ namespace webots_ros2_driver
       return properties;
 
     tinyxml2::XMLElement *deviceChild = mWebotsXMLElement->FirstChildElement();
-    while (deviceChild)
-    {
+    while (deviceChild) {
       if (deviceChild->Attribute(gDeviceReferenceAttribute) && deviceChild->Attribute(gDeviceReferenceAttribute) == name)
         break;
       deviceChild = deviceChild->NextSiblingElement();
@@ -102,8 +95,7 @@ namespace webots_ros2_driver
 
     // Store ROS properties
     tinyxml2::XMLElement *propertyChild = deviceChild->FirstChildElement(gDeviceRosTag)->FirstChildElement();
-    while (propertyChild)
-    {
+    while (propertyChild) {
       properties[propertyChild->Name()] = propertyChild->GetText();
       propertyChild = propertyChild->NextSiblingElement();
     }
@@ -111,8 +103,7 @@ namespace webots_ros2_driver
     return properties;
   }
 
-  void WebotsNode::init()
-  {
+  void WebotsNode::init() {
     if (mSetRobotStatePublisher)
       setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
 
@@ -123,8 +114,7 @@ namespace webots_ros2_driver
     // The static plugins will try to guess parameter based on the robot model,
     // but one can overwrite the default behavior in the <webots> section.
     // Typical static plugins are ROS 2 interfaces for Webots devices.
-    for (int i = 0; i < mRobot->getNumberOfDevices(); i++)
-    {
+    for (int i = 0; i < mRobot->getNumberOfDevices(); i++) {
       webots::Device *device = mRobot->getDeviceByIndex(i);
 
       // Prepare parameters
@@ -134,32 +124,30 @@ namespace webots_ros2_driver
       parameters["name"] = device->getName();
 
       std::shared_ptr<PluginInterface> plugin = nullptr;
-      switch (device->getNodeType())
-      {
-      case webots::Node::LIDAR:
-        plugin = std::make_shared<webots_ros2_driver::Ros2Lidar>();
-        break;
-      case webots::Node::CAMERA:
-        plugin = std::make_shared<webots_ros2_driver::Ros2Camera>();
-        break;
-      case webots::Node::GPS:
-        plugin = std::make_shared<webots_ros2_driver::Ros2GPS>();
-        break;
-      case webots::Node::RANGE_FINDER:
-        plugin = std::make_shared<webots_ros2_driver::Ros2RangeFinder>();
-        break;
-      case webots::Node::DISTANCE_SENSOR:
-        plugin = std::make_shared<webots_ros2_driver::Ros2DistanceSensor>();
-        break;
-      case webots::Node::LIGHT_SENSOR:
-        plugin = std::make_shared<webots_ros2_driver::Ros2LightSensor>();
-        break;
-      case webots::Node::LED:
-        plugin = std::make_shared<webots_ros2_driver::Ros2LED>();
-        break;
+      switch (device->getNodeType()) {
+        case webots::Node::LIDAR:
+          plugin = std::make_shared<webots_ros2_driver::Ros2Lidar>();
+          break;
+        case webots::Node::CAMERA:
+          plugin = std::make_shared<webots_ros2_driver::Ros2Camera>();
+          break;
+        case webots::Node::GPS:
+          plugin = std::make_shared<webots_ros2_driver::Ros2GPS>();
+          break;
+        case webots::Node::RANGE_FINDER:
+          plugin = std::make_shared<webots_ros2_driver::Ros2RangeFinder>();
+          break;
+        case webots::Node::DISTANCE_SENSOR:
+          plugin = std::make_shared<webots_ros2_driver::Ros2DistanceSensor>();
+          break;
+        case webots::Node::LIGHT_SENSOR:
+          plugin = std::make_shared<webots_ros2_driver::Ros2LightSensor>();
+          break;
+        case webots::Node::LED:
+          plugin = std::make_shared<webots_ros2_driver::Ros2LED>();
+          break;
       }
-      if (plugin)
-      {
+      if (plugin) {
         plugin->init(this, parameters);
         mPlugins.push_back(plugin);
       }
@@ -173,10 +161,10 @@ namespace webots_ros2_driver
       return;
 
     tinyxml2::XMLElement *pluginElement = mWebotsXMLElement->FirstChildElement("plugin");
-    while (pluginElement)
-    {
+    while (pluginElement) {
       if (!pluginElement->Attribute("type"))
-        throw std::runtime_error("Invalid URDF, a plugin is missing a `type` property at line " + std::to_string(pluginElement->GetLineNum()));
+        throw std::runtime_error("Invalid URDF, a plugin is missing a `type` property at line " +
+                                 std::to_string(pluginElement->GetLineNum()));
 
       const std::string type = pluginElement->Attribute("type");
 
@@ -189,20 +177,14 @@ namespace webots_ros2_driver
     }
   }
 
-  std::shared_ptr<PluginInterface> WebotsNode::loadPlugin(const std::string &type)
-  {
+  std::shared_ptr<PluginInterface> WebotsNode::loadPlugin(const std::string &type) {
     // First, we assume the plugin is C++
-    try
-    {
+    try {
       std::shared_ptr<PluginInterface> plugin(mPluginLoader.createUnmanagedInstance(type));
       return plugin;
-    }
-    catch (const pluginlib::LibraryLoadException &e)
-    {
+    } catch (const pluginlib::LibraryLoadException &e) {
       // It may be a Python plugin
-    }
-    catch (const pluginlib::CreateClassException &e)
-    {
+    } catch (const pluginlib::CreateClassException &e) {
       throw std::runtime_error("The " + type + " class cannot be initialized.");
     }
 
@@ -213,8 +195,7 @@ namespace webots_ros2_driver
     return plugin;
   }
 
-  int WebotsNode::step()
-  {
+  int WebotsNode::step() {
     const int result = mRobot->step(mStep);
     if (result == -1)
       return result;
@@ -225,13 +206,13 @@ namespace webots_ros2_driver
     mClockPublisher->publish(mClockMessage);
 
     return result;
-}
+  }
 
-  void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue)
-  {
+  void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue) {
     mClient = create_client<rcl_interfaces::srv::SetParameters>(get_namespace() + anotherNodeName + "/set_parameters");
     mClient->wait_for_service(std::chrono::seconds(1));
-    rcl_interfaces::srv::SetParameters::Request::SharedPtr request = std::make_shared<rcl_interfaces::srv::SetParameters::Request>();
+    rcl_interfaces::srv::SetParameters::Request::SharedPtr request =
+      std::make_shared<rcl_interfaces::srv::SetParameters::Request>();
     rcl_interfaces::msg::Parameter parameter;
     parameter.name = parameterName;
     parameter.value.string_value = parameterValue;
@@ -239,4 +220,4 @@ namespace webots_ros2_driver
     request->parameters.push_back(parameter);
     mClient->async_send_request(request);
   }
-} // end namespace webots_ros2_driver
+}  // end namespace webots_ros2_driver

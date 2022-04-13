@@ -27,7 +27,7 @@ class RangeFinderDevice(SensorDevice):
     Creates suitable ROS2 interface based on Webots
     [RangeFinder](https://cyberbotics.com/doc/reference/rangefinder) node instance:
 
-    It allows the following functinalities:
+    It allows the following functionalities:
     - Publishes raw depth image of type `sensor_msgs/Image`
 
     Args:

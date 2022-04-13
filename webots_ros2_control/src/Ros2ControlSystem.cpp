@@ -159,10 +159,10 @@ namespace webots_ros2_control
 
     for (Joint &joint : mJoints)
     {
-      const double position = joint.sensor->getValue();
-      const double velocity = std::isnan(joint.position) ? NAN : (position - joint.position) / deltaTime;
-
       if (joint.sensor) {
+        const double position = joint.sensor->getValue();
+        const double velocity = std::isnan(joint.position) ? NAN : (position - joint.position) / deltaTime;
+
         if (!std::isnan(joint.velocity))
           joint.acceleration = (joint.velocity - velocity) / deltaTime;
         joint.velocity = velocity;

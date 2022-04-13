@@ -125,7 +125,6 @@ namespace webots_ros2_driver
       setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
 
     mStep = mRobot->getBasicTimeStep();
-    mTimer = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&WebotsNode::timerCallback, this));
 
     // Load static plugins
     // Static plugins are automatically configured based on the robot model.
@@ -222,7 +221,7 @@ namespace webots_ros2_driver
     return plugin;
   }
 
-  void WebotsNode::timerCallback()
+  int WebotsNode::step()
   {
     if (gShutdownSignalReceived && !mWaitingForUrdfRobotToBeRemoved)
     {
@@ -230,14 +229,17 @@ namespace webots_ros2_driver
       mRemoveUrdfRobotPublisher->publish(mRemoveUrdfRobotMessage);
       mWaitingForUrdfRobotToBeRemoved = true;
     }
-    if (mRobot->step(mStep) == -1)
-    {
-      mTimer->cancel();
-      exit(0);
-      return;
-    }
+
+    const int result = mRobot->step(mStep);
+    if (result == -1)
+      return result;
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
+
+    mClockMessage.clock = rclcpp::Time(mRobot->getTime() * 1e9);
+    mClockPublisher->publish(mClockMessage);
+
+    return result;
   }
 
   void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue)

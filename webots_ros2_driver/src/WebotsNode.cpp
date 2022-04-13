@@ -236,9 +236,6 @@ namespace webots_ros2_driver
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)
       plugin->step();
 
-    mClockMessage.clock = rclcpp::Time(mRobot->getTime() * 1e9);
-    mClockPublisher->publish(mClockMessage);
-
     return result;
   }
 

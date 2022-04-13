@@ -26,7 +26,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/qos.hpp>
-#include <rosgraph_msgs/msg/clock.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <pluginlib/class_loader.hpp>
 
 #include "webots_ros2_driver/PluginInterface.hpp"
@@ -66,9 +66,6 @@ namespace webots_ros2_driver
     tinyxml2::XMLElement *mWebotsXMLElement;
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;
     std::shared_ptr<PluginInterface> loadPlugin(const std::string &type);
-
-    rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr mClockPublisher;
-    rosgraph_msgs::msg::Clock mClockMessage;
   };
 
 } // end namespace webots_ros2_driver

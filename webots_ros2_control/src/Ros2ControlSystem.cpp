@@ -87,13 +87,13 @@ namespace webots_ros2_control
     return hardware_interface::return_type::OK;
   }
 #else
-  CallbackReturn Ros2ControlSystem::on_init(const hardware_interface::HardwareInfo &info)
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_init(const hardware_interface::HardwareInfo &info)
   {
-    if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS)
+    if (hardware_interface::SystemInterface::on_init(info) != rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS)
     {
-      return CallbackReturn::ERROR;
+      return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::ERROR;
     }
-    return CallbackReturn::SUCCESS;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
 #endif
 
@@ -139,14 +139,14 @@ namespace webots_ros2_control
     return hardware_interface::return_type::OK;
   }
 #else
-  CallbackReturn Ros2ControlSystem::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
   {
-    return CallbackReturn::SUCCESS;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
 
-  CallbackReturn Ros2ControlSystem::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
   {
-    return CallbackReturn::SUCCESS;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
 #endif
 

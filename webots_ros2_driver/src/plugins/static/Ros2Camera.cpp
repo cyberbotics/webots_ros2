@@ -151,8 +151,8 @@ namespace webots_ros2_driver
       hypothesis.pose.pose.position = position;
       hypothesis.pose.pose.orientation = orientation;
       detection.results.push_back(hypothesis);
-      detection.bbox.center.x = objects[i].position_on_image[0];
-      detection.bbox.center.y = objects[i].position_on_image[1];
+      detection.bbox.center.position.x = objects[i].position_on_image[0];
+      detection.bbox.center.position.y = objects[i].position_on_image[1];
       detection.bbox.size_x = objects[i].size_on_image[0];
       detection.bbox.size_y = objects[i].size_on_image[1];
       mRecognitionMessage.detections.push_back(detection);
@@ -163,8 +163,8 @@ namespace webots_ros2_driver
       recognitionWebotsObject.model = std::string(objects[i].model);
       recognitionWebotsObject.pose.pose.position = position;
       recognitionWebotsObject.pose.pose.orientation = orientation;
-      recognitionWebotsObject.bbox.center.x = objects[i].position_on_image[0];
-      recognitionWebotsObject.bbox.center.y = objects[i].position_on_image[1];
+      recognitionWebotsObject.bbox.center.position.x = objects[i].position_on_image[0];
+      recognitionWebotsObject.bbox.center.position.y = objects[i].position_on_image[1];
       recognitionWebotsObject.bbox.size_x = objects[i].size_on_image[0];
       recognitionWebotsObject.bbox.size_y = objects[i].size_on_image[1];
       for (size_t j = 0; j < objects[i].number_of_colors; j++)

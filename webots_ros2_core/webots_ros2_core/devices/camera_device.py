@@ -188,8 +188,8 @@ class CameraDevice(SensorDevice):
                         hyp.pose.pose.position = position
                         hyp.pose.pose.orientation = orientation
                         reco_obj.results.append(hyp)
-                        reco_obj.bbox.center.x = obj_center[0]
-                        reco_obj.bbox.center.y = obj_center[1]
+                        reco_obj.bbox.center.position.x = obj_center[0]
+                        reco_obj.bbox.center.position.y = obj_center[1]
                         reco_obj.bbox.size_x = obj_size[0]
                         reco_obj.bbox.size_y = obj_size[1]
                         reco_msg.detections.append(reco_obj)
@@ -200,8 +200,8 @@ class CameraDevice(SensorDevice):
                         reco_webots_obj.model = obj_model
                         reco_webots_obj.pose.pose.position = position
                         reco_webots_obj.pose.pose.orientation = orientation
-                        reco_webots_obj.bbox.center.x = obj_center[0]
-                        reco_webots_obj.bbox.center.y = obj_center[1]
+                        reco_webots_obj.bbox.center.position.x = obj_center[0]
+                        reco_webots_obj.bbox.center.position.y = obj_center[1]
                         reco_webots_obj.bbox.size_x = obj_size[0]
                         reco_webots_obj.bbox.size_y = obj_size[1]
                         for i in range(0, obj.get_number_of_colors()):

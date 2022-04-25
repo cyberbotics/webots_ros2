@@ -24,7 +24,7 @@ find_package(vision_msgs REQUIRED)
 find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
-find_package(PythonLibs 3.8 EXACT REQUIRED)
+find_package(PythonLibs 3.10 EXACT REQUIRED)
 
 if (UNIX AND NOT APPLE)
   set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
@@ -85,7 +85,7 @@ else()
 endif()
 
 ament_python_install_package(${PROJECT_NAME}_webots
-  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python38)
+  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python310)
 
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})

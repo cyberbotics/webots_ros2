@@ -16,6 +16,7 @@
 #define PLUGIN_INTERFACE
 
 #include <unordered_map>
+#include <string>
 
 namespace webots_ros2_driver
 {

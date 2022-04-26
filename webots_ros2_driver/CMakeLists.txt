@@ -4,6 +4,13 @@ project(webots_ros2_driver)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Check which ROS distribution is used, vision_msgs depends of that
+if($ENV{ROS_DISTRO} MATCHES "foxy")
+  add_compile_definitions(FOXY)
+elseif($ENV{ROS_DISTRO} MATCHES "galactic")
+  add_compile_definitions(GALACTIC)
+endif()
+
 # ROS2 Packages
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)

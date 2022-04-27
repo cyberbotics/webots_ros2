@@ -36,13 +36,17 @@ class CameraDevice(SensorDevice):
     - Publishes raw image of type `sensor_msgs/Image`
     - Publishes intrinsic camera parameters of type `sensor_msgs/CameraInfo` (latched topic)
 
-    Args:
-        node (WebotsNode): The ROS2 node.
-        device_key (str): Unique identifier of the device used for configuration.
-        wb_device (Camera): Webots node of type Camera.
 
-    Kwargs:
-        params (dict): Inherited from `SensorDevice`
+    Parameters
+    ----------
+    node : WebotsNode
+      The ROS2 node.
+    device_key : str
+      Unique identifier of the device used for configuration.
+    wb_device : Camera
+      Webots node of type Camera.
+    params : dict
+      Inherited from `SensorDevice`
 
     """
 

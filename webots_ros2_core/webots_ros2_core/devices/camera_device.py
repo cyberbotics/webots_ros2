@@ -39,13 +39,13 @@ class CameraDevice(SensorDevice):
 
     Parameters
     ----------
-    node : WebotsNode
+    node: WebotsNode
       The ROS2 node.
-    device_key : str
+    device_key: str
       Unique identifier of the device used for configuration.
-    wb_device : Camera
+    wb_device: Camera
       Webots node of type Camera.
-    params : dict
+    params: dict
       Inherited from `SensorDevice`
 
     """

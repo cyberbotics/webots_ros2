@@ -45,7 +45,7 @@ def generate_launch_description():
 
     diffdrive_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['diffdrive_controller'] + controller_manager_timeout,
@@ -53,7 +53,7 @@ def generate_launch_description():
 
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,

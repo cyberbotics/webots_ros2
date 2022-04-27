@@ -47,7 +47,7 @@ def generate_launch_description():
 
     trajectory_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['ur_joint_trajectory_controller'] + controller_manager_timeout,
@@ -55,7 +55,7 @@ def generate_launch_description():
 
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['ur_joint_state_broadcaster'] + controller_manager_timeout,

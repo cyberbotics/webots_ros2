@@ -71,28 +71,28 @@ def generate_launch_description():
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
     ur5e_trajectory_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['ur_joint_trajectory_controller', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
     )
     ur5e_joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['ur_joint_state_broadcaster', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
     )
     abb_trajectory_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['abb_joint_trajectory_controller', '-c', 'abb/controller_manager'] + controller_manager_timeout,
     )
     abb_joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['abb_joint_state_broadcaster', '-c', 'abb/controller_manager'] + controller_manager_timeout,

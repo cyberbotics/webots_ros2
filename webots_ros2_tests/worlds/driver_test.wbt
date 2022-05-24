@@ -17,6 +17,7 @@ CardboardBox {
 }
 Pioneer3at {
   controller "<extern>"
+  name "Pioneer_3_AT"
   supervisor TRUE
   extensionSlot [
     RobotisLds01 {

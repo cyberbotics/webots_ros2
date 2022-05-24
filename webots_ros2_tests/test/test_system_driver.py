@@ -62,7 +62,7 @@ def generate_test_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'Pioneer3-AT'},
+        additional_env={'WEBOTS_CONTROLLER_URL': 'Pioneer_3_AT'},
         parameters=[{'robot_description': robot_description, 'use_sim_time': True}]
     )
 

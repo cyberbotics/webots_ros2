@@ -655,6 +655,7 @@ TiagoIron {
   translation 0.962153 -4.80117 0.235361
   rotation -0.006363227570975 -0.002646197037686 -0.999976253206104 0.78447116344273
   controller "<extern>"
+  name "Tiago_Iron"
   supervisor TRUE
   cameraSlot [
     DEF camera Camera {

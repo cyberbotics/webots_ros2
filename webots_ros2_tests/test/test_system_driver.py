@@ -54,7 +54,7 @@ def generate_test_description():
         package='webots_ros2_driver',
         executable='ros2_supervisor.py',
         output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
+        additional_env={'WEBOTS_CONTROLLER_URL': 'Ros2Supervisor'},
         respawn=True,
     )
 

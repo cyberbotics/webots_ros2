@@ -237,6 +237,8 @@ namespace webots_ros2_driver
 
     mClockMessage.clock = rclcpp::Time(mRobot->getTime() * 1e9);
     mClockPublisher->publish(mClockMessage);
+
+    return result;
   }
 
   void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue)

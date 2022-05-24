@@ -14,7 +14,6 @@
 
 """Camera device."""
 
-import os
 from sensor_msgs.msg import Image, CameraInfo
 from vision_msgs.msg import Detection2D, Detection2DArray, ObjectHypothesisWithPose
 from geometry_msgs.msg import Point, Quaternion
@@ -36,17 +35,13 @@ class CameraDevice(SensorDevice):
     - Publishes raw image of type `sensor_msgs/Image`
     - Publishes intrinsic camera parameters of type `sensor_msgs/CameraInfo` (latched topic)
 
+    Args:
+        node (WebotsNode): The ROS2 node.
+        device_key (str): Unique identifier of the device used for configuration.
+        wb_device (Camera): Webots node of type Camera.
 
-    Parameters
-    ----------
-    node: WebotsNode
-      The ROS2 node.
-    device_key: str
-      Unique identifier of the device used for configuration.
-    wb_device: Camera
-      Webots node of type Camera.
-    params: dict
-      Inherited from `SensorDevice`
+    Kwargs:
+        params (dict): Inherited from `SensorDevice`
 
     """
 
@@ -193,12 +188,8 @@ class CameraDevice(SensorDevice):
                         hyp.pose.pose.position = position
                         hyp.pose.pose.orientation = orientation
                         reco_obj.results.append(hyp)
-                        if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ('foxy', 'galactic'):
-                            reco_obj.bbox.center.x = obj_center[0]
-                            reco_obj.bbox.center.y = obj_center[1]
-                        else:
-                            reco_obj.bbox.center.position.x = obj_center[0]
-                            reco_obj.bbox.center.position.y = obj_center[1]
+                        reco_obj.bbox.center.x = obj_center[0]
+                        reco_obj.bbox.center.y = obj_center[1]
                         reco_obj.bbox.size_x = obj_size[0]
                         reco_obj.bbox.size_y = obj_size[1]
                         reco_msg.detections.append(reco_obj)
@@ -209,12 +200,8 @@ class CameraDevice(SensorDevice):
                         reco_webots_obj.model = obj_model
                         reco_webots_obj.pose.pose.position = position
                         reco_webots_obj.pose.pose.orientation = orientation
-                        if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ('foxy', 'galactic'):
-                            reco_webots_obj.bbox.center.x = obj_center[0]
-                            reco_webots_obj.bbox.center.y = obj_center[1]
-                        else:
-                            reco_webots_obj.bbox.center.position.x = obj_center[0]
-                            reco_webots_obj.bbox.center.position.y = obj_center[1]
+                        reco_webots_obj.bbox.center.x = obj_center[0]
+                        reco_webots_obj.bbox.center.y = obj_center[1]
                         reco_webots_obj.bbox.size_x = obj_size[0]
                         reco_webots_obj.bbox.size_y = obj_size[1]
                         for i in range(0, obj.get_number_of_colors()):

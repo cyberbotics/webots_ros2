@@ -41,12 +41,12 @@ namespace webots_ros2_driver
   public:
     WebotsNode(std::string name, webots::Supervisor *robot);
     void init();
-    int step();
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
     static void handleSignals();
 
   private:
+    void timerCallback();
     std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
     std::unordered_map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement) const;
     void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);

@@ -41,7 +41,11 @@ namespace webots_ros2_driver
     mImageMessage.encoding = sensor_msgs::image_encodings::TYPE_32FC1;
 
     // CameraInfo publisher
-    mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", rclcpp::SensorDataQoS().reliable());
+    rclcpp::QoS cameraInfoQos(1);
+    cameraInfoQos.reliable();
+    cameraInfoQos.transient_local();
+    cameraInfoQos.keep_last(1);
+    mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", cameraInfoQos);
     mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = height;
@@ -59,6 +63,7 @@ namespace webots_ros2_driver
         focalLengthX, 0.0, (double)width / 2, 0.0,
         0.0, focalLengthY, (double)height / 2, 0.0,
         0.0, 0.0, 1.0, 0.0};
+    mCameraInfoPublisher->publish(mCameraInfoMessage);
 
     // Point cloud publisher
     mPointCloudPublisher = mNode->create_publisher<sensor_msgs::msg::PointCloud2>(mTopicName + "/point_cloud", rclcpp::SensorDataQoS().reliable());
@@ -98,9 +103,6 @@ namespace webots_ros2_driver
       publishImage();
       publishPointCloud();
     }
-
-    if (mCameraInfoPublisher->get_subscription_count() > 0)
-      mCameraInfoPublisher->publish(mCameraInfoMessage);
 
     if (mAlwaysOn)
       return;

@@ -92,19 +92,15 @@ install(TARGETS
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
-install(
-  DIRECTORY include/
-  DESTINATION include
-)
 ament_export_include_directories(
   include
 )
+
 ament_export_dependencies(
   hardware_interface
   pluginlib
   rclcpp
   rclcpp_lifecycle
-  webots_ros2_driver
 )
 ament_export_libraries(
   ${PROJECT_NAME}

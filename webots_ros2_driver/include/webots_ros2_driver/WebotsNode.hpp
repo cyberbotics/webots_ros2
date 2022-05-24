@@ -27,6 +27,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/qos.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <rosgraph_msgs/msg/clock.hpp>
 #include <pluginlib/class_loader.hpp>
 
 #include "webots_ros2_driver/PluginInterface.hpp"

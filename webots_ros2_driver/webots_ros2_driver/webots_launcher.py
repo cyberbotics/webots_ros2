@@ -153,7 +153,7 @@ class Ros2SupervisorLauncher(Node):
             package='webots_ros2_driver',
             executable='ros2_supervisor.py',
             output=output,
-            additional_env={'WEBOTS_ROBOT_NAME': 'Ros2Supervisor'},
+            additional_env={'WEBOTS_CONTROLLER_URL': 'Ros2Supervisor'},
             respawn=respawn,
             **kwargs
         )

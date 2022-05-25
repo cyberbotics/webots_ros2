@@ -65,6 +65,7 @@ def generate_launch_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
+        additional_env={'WEBOTS_CONTROLLER_URL': 'TurtleBot3Burger'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,

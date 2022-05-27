@@ -21,7 +21,7 @@ apt install -y /tmp/webots.deb xvfb
 # The following packages are only available in the ROS 2 Foxy/Galactic distribution. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
 if [ "${ROS_DISTRO}" = "foxy" ]; then
     apt install -y ros-foxy-turtlebot3-cartographer ros-foxy-turtlebot3-navigation2
-if [ "${ROS_DISTRO}" = "galactic" ]; then
+elif [ "${ROS_DISTRO}" = "galactic" ]; then
     apt install -y ros-galactic-turtlebot3-cartographer ros-galactic-turtlebot3-navigation2
 fi
 

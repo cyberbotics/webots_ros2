@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_turtlebot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.2.3 (2022-02-22)
+1.2.3 (2022-05-30)
 ------------------
 * Fix warnings with the example plugin.
 

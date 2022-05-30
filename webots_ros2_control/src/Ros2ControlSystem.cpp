@@ -178,7 +178,7 @@ namespace webots_ros2_control
   }
 
 #if FOXY || GALACTIC
-  hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time & time, const rclcpp::Duration & period)
+  hardware_interface::return_type Ros2ControlSystem::write()
 #else  // HUMBLE, ROLLING
   hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time & time, const rclcpp::Duration & period)
 #endif

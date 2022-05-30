@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.2.3 (2022-02-22)
+1.2.3 (2022-05-30)
 ------------------
 * Add option to set 'robot_description' parameter for 'robot_state_publisher' node.
 * Fix recognition camera.

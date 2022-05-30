@@ -35,9 +35,9 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()
-    # If ROS_DISTRO is not foxy, skip the test as some required packages are missing (cf. ci_after_init.bash)
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] != 'foxy':
-        pytest.skip('ROS_DISTRO is rolling, humble or galactic, skipping this test')
+    # If ROS_DISTRO is rolling or humble, skip the test as some required packages are missing (cf. ci_after_init.bash)
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] != 'foxy' and os.environ['ROS_DISTRO'] != 'galactic':
+        pytest.skip('ROS_DISTRO is rolling or humble, skipping this test')
 
     tiago_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

@@ -44,7 +44,7 @@ namespace webots_ros2_control
     double velocityCommand;
     double velocity;
     double effortCommand;
-    double effort;
+    double acceleration;
     bool controlPosition;
     bool controlVelocity;
     bool controlEffort;
@@ -63,9 +63,9 @@ namespace webots_ros2_control
       hardware_interface::return_type start() override;
       hardware_interface::return_type stop() override;
     #else
-      CallbackReturn on_init(const hardware_interface::HardwareInfo &info) override;
-      CallbackReturn on_activate(const rclcpp_lifecycle::State & /*previous_state*/) override;
-      CallbackReturn on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) override;
+      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(const hardware_interface::HardwareInfo &info) override;
+      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(const rclcpp_lifecycle::State & /*previous_state*/) override;
+      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) override;
     #endif
 
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;

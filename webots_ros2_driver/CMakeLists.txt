@@ -4,6 +4,13 @@ project(webots_ros2_driver)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Check which ROS distribution is used, vision_msgs depends of that
+if($ENV{ROS_DISTRO} MATCHES "foxy")
+  add_compile_definitions(FOXY)
+elseif($ENV{ROS_DISTRO} MATCHES "galactic")
+  add_compile_definitions(GALACTIC)
+endif()
+
 # ROS2 Packages
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
@@ -20,7 +27,7 @@ find_package(TinyXML2 REQUIRED)
 if($ENV{ROS_DISTRO} MATCHES "foxy" OR $ENV{ROS_DISTRO} MATCHES "galactic")
   find_package(PythonLibs 3.8 EXACT REQUIRED)
 else()
-  find_package(PythonLibs 3.9 EXACT REQUIRED)
+  find_package(PythonLibs 3.10 EXACT REQUIRED)
 endif()
 
 if (UNIX AND NOT APPLE)
@@ -81,8 +88,13 @@ else()
   )
 endif()
 
-ament_python_install_package(${PROJECT_NAME}_webots
-  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python38)
+if($ENV{ROS_DISTRO} MATCHES "foxy" OR $ENV{ROS_DISTRO} MATCHES "galactic")
+  ament_python_install_package(${PROJECT_NAME}_webots
+    PACKAGE_DIR ${WEBOTS_LIB_BASE}/python38)
+else()
+  ament_python_install_package(${PROJECT_NAME}_webots
+    PACKAGE_DIR ${WEBOTS_LIB_BASE}/python310)
+endif()
 
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})

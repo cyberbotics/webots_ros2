@@ -38,9 +38,6 @@ setup(
     license='Apache License, Version 2.0',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [
-            'mavic_driver = webots_ros2_mavic.mavic_driver:main'
-        ],
         'launch.frontend.launch_extension': ['launch_ros = launch_ros']
     }
 )

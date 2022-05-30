@@ -19,7 +19,7 @@ wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_NIGHTLY_VE
 apt install -y /tmp/webots.deb xvfb
 
 # The following packages are only available in the ROS 2 Foxy/Galactic distributions. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
-if [ "${ROS_DISTRO}" = "foxy" ] || [ "${ROS_DISTRO}" = "galaxy" ]; then
+if [[ "${ROS_DISTRO}" == "foxy" || "${ROS_DISTRO}" == "galaxy" ]]; then
     apt install -y ros-${ROS_DISTRO}-turtlebot3-cartographer ros-${ROS_DISTRO}-turtlebot3-navigation2
 fi
 

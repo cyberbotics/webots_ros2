@@ -36,10 +36,9 @@ def generate_test_description():
     if 'CI' in os.environ and os.environ['CI'] == '1':
         pytest.skip('RViz might crash in CI, skipping this test')
 
-    # If ROS_DISTRO is rolling or galactic, skip the test as some required packages are missing (cf. ci_after_init.bash)
-    if 'ROS_DISTRO' in os.environ and \
-            (os.environ['ROS_DISTRO'] == 'rolling' or os.environ['ROS_DISTRO'] == 'galactic'):
-        pytest.skip('ROS_DISTRO is rolling or galactic, skipping this test')
+    # If ROS_DISTRO is not foxy, skip the test as some required packages are missing (cf. ci_after_init.bash)
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] != 'foxy':
+        pytest.skip('ROS_DISTRO is rolling, humble or galactic, skipping this test')
 
     # Webots
     turtlebot_webots = IncludeLaunchDescription(

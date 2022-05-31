@@ -20,10 +20,8 @@ apt install -y /tmp/webots.deb xvfb
 
 # The following packages are only available in the ROS 2 Foxy/Galactic distributions. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
 
-if [ "${ROS_DISTRO}" = "foxy" ]; then
-    apt install -y ros-foxy-turtlebot3-cartographer ros-foxy-turtlebot3-navigation2
-elif [ "${ROS_DISTRO}" = "galactic" ]; then
-    apt install -y ros-galactic-turtlebot3-cartographer ros-galactic-turtlebot3-navigation2
+if [[ "${ROS_DISTRO}" == "foxy" || "${ROS_DISTRO}" == "galactic" ]]; then
+    apt install -y ros-${ROS_DISTRO}-turtlebot3-cartographer ros-${ROS_DISTRO}-turtlebot3-navigation2
 fi
 
 # Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).

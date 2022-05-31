@@ -19,9 +19,7 @@ wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_NIGHTLY_VE
 apt install -y /tmp/webots.deb xvfb
 
 # OpenSSL patch for ubuntu 22
-echo $(lsb_release -rs)
-echo ${WEBOTS_RELEASE_VERSION}
-if [[ $(lsb_release -rs) == "22.04" && ${WEBOTS_RELEASE_VERSION} == "R2022a" ]]; then
+if [[ $(lsb_release -rs) == "22.04" && ${WEBOTS_RELEASE_VERSION} == "2022a" ]]; then
   echo applying openssl patch
   wget https://cyberbotics.com/files/repository/dependencies/linux64/release/libssl_1.1.tar.xz
   tar xvf libssl_1.1.tar.xz

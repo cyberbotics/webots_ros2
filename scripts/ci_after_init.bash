@@ -23,7 +23,8 @@ if [[ $(lsb_release -rs) == "22.04" && ${WEBOTS_RELEASE_VERSION} == "2022a" ]]; 
   echo applying openssl patch
   wget https://cyberbotics.com/files/repository/dependencies/linux64/release/libssl_1.1.tar.xz -O /tmp/libssl_1.1.tar.xz
   tar xvf /tmp/libssl_1.1.tar.xz -C /tmp
-  mv /tmp/openssl-1.1/* $(whereis webots)/lib/webots/
+  mv /tmp/openssl-1.1/* $(whereis webots | awk '{print $2}')/lib/webots/
+  whereis webots
 fi
 
 # The following packages are only available in the ROS 2 Foxy/Galactic distributions. Therefore, we cannot include them in the package.xml, but we have to install them manually here.

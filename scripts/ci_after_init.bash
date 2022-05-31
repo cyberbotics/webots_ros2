@@ -20,9 +20,11 @@ apt install -y /tmp/webots.deb xvfb
 
 # OpenSSL patch for ubuntu 22
 if [[ $(lsb_release -rs) == "22.04" && ${WEBOTS_RELEASE_VERSION} == "R2022a" ]]; then
+  echo applying openssl patch
   wget https://cyberbotics.com/files/repository/dependencies/linux64/release/libssl_1.1.tar.xz
   tar xvf libssl_1.1.tar.xz
   sudo mv openssl-1.1/* $(whereis webots)/lib/webots/
+  ls -la $(whereis webots)/lib/webots/
 fi
 
 # The following packages are only available in the ROS 2 Foxy/Galactic distributions. Therefore, we cannot include them in the package.xml, but we have to install them manually here.

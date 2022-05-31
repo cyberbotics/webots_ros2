@@ -74,8 +74,8 @@ namespace webots_ros2_control
     hardware_interface::return_type read() override;
     hardware_interface::return_type write() override;
 #else  // ROLLING
-    hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
-    hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
+    hardware_interface::return_type read(const rclcpp::Time &time, const rclcpp::Duration &period) override;
+    hardware_interface::return_type write(const rclcpp::Time &time, const rclcpp::Duration &period) override;
 #endif
 
   private:

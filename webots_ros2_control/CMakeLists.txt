@@ -6,6 +6,10 @@ if($ENV{ROS_DISTRO} MATCHES "foxy")
   add_compile_definitions(FOXY)
 elseif($ENV{ROS_DISTRO} MATCHES "galactic")
   add_compile_definitions(GALACTIC)
+elseif($ENV{ROS_DISTRO} MATCHES "humble")
+  add_compile_definitions(HUMBLE)
+elseif($ENV{ROS_DISTRO} MATCHES "rolling")
+  add_compile_definitions(ROLLING)
 endif()
 
 # Default to C99

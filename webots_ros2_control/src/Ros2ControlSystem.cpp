@@ -150,10 +150,10 @@ namespace webots_ros2_control
   }
 #endif
 
-#if FOXY || GALACTIC
+#if FOXY || GALACTIC || HUMBLE
   hardware_interface::return_type Ros2ControlSystem::read()
-#else  // HUMBLE, ROLLING
-  hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time & time, const rclcpp::Duration & period)
+#else  // ROLLING
+  hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time &time, const rclcpp::Duration &period)
 #endif
   {
     static double lastReadTime = 0;
@@ -177,10 +177,10 @@ namespace webots_ros2_control
     return hardware_interface::return_type::OK;
   }
 
-#if FOXY || GALACTIC
+#if FOXY || GALACTIC || HUMBLE
   hardware_interface::return_type Ros2ControlSystem::write()
-#else  // HUMBLE, ROLLING
-  hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time & time, const rclcpp::Duration & period)
+#else  // ROLLING
+  hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time &time, const rclcpp::Duration &period)
 #endif
   {
     for (Joint &joint : mJoints)

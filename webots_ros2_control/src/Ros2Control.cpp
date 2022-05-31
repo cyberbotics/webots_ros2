@@ -40,22 +40,25 @@ namespace webots_ros2_control
     const rclcpp::Duration dt = rclcpp::Duration::from_seconds(mControlPeriodMs / 1000.0);
     if (periodMs >= mControlPeriodMs)
     {
-#if FOXY
+#if FOXY || GALACTIC || HUMBLE
       mControllerManager->read();
-      mControllerManager->update();
-#elif GALACTIC
-      mControllerManager->read();
-      mControllerManager->update(mNode->get_clock()->now(), dt);
-#else  // HUMBLE, ROLLING
+#else
       mControllerManager->read(mNode->get_clock()->now(), dt);
 #endif
+
+#if FOXY
+      mControllerManager->update();
+#else
+      mControllerManager->update(mNode->get_clock()->now(), dt);
       mLastControlUpdateMs = nowMs;
-    }
-#if FOXY || GALACTIC
+#endif
+
+#if FOXY || GALACTIC || HUMBLE
     mControllerManager->write();
-#else  // HUMBLE, ROLLING
+#else  // ROLLING
     mControllerManager->write(mNode->get_clock()->now(), dt);
 #endif
+    }
   }
 
   void Ros2Control::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &)

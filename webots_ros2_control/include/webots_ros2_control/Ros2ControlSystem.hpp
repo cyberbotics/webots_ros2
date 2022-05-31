@@ -70,10 +70,10 @@ namespace webots_ros2_control
 
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
-#if FOXY || GALACTIC
+#if FOXY || GALACTIC || HUMBLE
     hardware_interface::return_type read() override;
     hardware_interface::return_type write() override;
-#else  // HUMBLE, ROLLING
+#else  // ROLLING
     hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) override;
     hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) override;
 #endif

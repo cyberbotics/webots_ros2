@@ -103,7 +103,7 @@ namespace webots_ros2_control
       resourceManager->import_component(std::move(webotsSystem), controlHardware[i]);
 #endif
 
-#if HUMBLE || ROLLING
+#if HUMBLE
       resourceManager->activate_all_components();
 #endif
     }

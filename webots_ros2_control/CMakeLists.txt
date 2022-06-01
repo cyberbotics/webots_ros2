@@ -4,6 +4,17 @@ project(webots_ros2_control)
 # Check which ROS distribution is used, ros2control depends of that
 if($ENV{ROS_DISTRO} MATCHES "foxy")
   add_compile_definitions(FOXY)
+elseif($ENV{ROS_DISTRO} MATCHES "galactic")
+  add_compile_definitions(GALACTIC)
+elseif($ENV{ROS_DISTRO} MATCHES "humble")
+  add_compile_definitions(HUMBLE)
+elseif($ENV{ROS_DISTRO} MATCHES "rolling")
+  add_compile_definitions(ROLLING)
+endif()
+
+# Check which repo is used (main or testing)
+if($ENV{ROS_REPO} MATCHES "main")
+  add_compile_definitions(MAIN_REPO)
 endif()
 
 # Default to C99

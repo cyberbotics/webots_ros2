@@ -17,6 +17,7 @@
 
 #include <unordered_map>
 #include <Python.h>
+#include <string>
 
 #include <webots_ros2_driver/PluginInterface.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>

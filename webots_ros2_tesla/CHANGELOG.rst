@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_tesla
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.3 (2022-06-01)
+------------------
+* Fixed support for Humble and Rolling.
+
 1.2.0 (2021-12-21)
 ------------------
 * Adapt the worlds to the new R2022a FLU convention.

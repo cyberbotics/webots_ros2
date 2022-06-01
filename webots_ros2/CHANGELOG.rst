@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.3 (2022-06-01)
+------------------
+* Fixed support for Humble and Rolling.
+
 1.1.2 (2021-11-03)
 ------------------
 * Adapted the 'webots_ros2_driver' package to be also a python alternative to the 'webots_ros2_core' package.

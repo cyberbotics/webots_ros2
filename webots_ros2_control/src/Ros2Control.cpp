@@ -40,7 +40,7 @@ namespace webots_ros2_control
     const rclcpp::Duration dt = rclcpp::Duration::from_seconds(mControlPeriodMs / 1000.0);
     if (periodMs >= mControlPeriodMs)
     {
-#if FOXY || GALACTIC || HUMBLE
+#if FOXY || GALACTIC || (HUMBLE && !REPO_TESTING)
       mControllerManager->read();
 #else
       mControllerManager->read(mNode->get_clock()->now(), dt);

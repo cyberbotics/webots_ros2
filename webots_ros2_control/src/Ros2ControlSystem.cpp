@@ -150,7 +150,7 @@ namespace webots_ros2_control
   }
 #endif
 
-#if FOXY || GALACTIC || HUMBLE
+#if FOXY || GALACTIC || (HUMBLE && MAIN_REPO)
   hardware_interface::return_type Ros2ControlSystem::read()
 #else  // ROLLING
   hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/)

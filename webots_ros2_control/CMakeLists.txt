@@ -14,7 +14,7 @@ endif()
 
 # Check which repo is used (main or testing)
 if($ENV{ROS_REPO} MATCHES "main")
-  add_compile_definitions(REPO_TESTING)
+  add_compile_definitions(MAIN_REPO)
 endif()
 
 # Default to C99

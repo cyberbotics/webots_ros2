@@ -53,7 +53,7 @@ namespace webots_ros2_control
       mLastControlUpdateMs = nowMs;
 #endif
 
-#if FOXY || GALACTIC || HUMBLE
+#if FOXY || GALACTIC || (HUMBLE && !REPO_TESTING)
     mControllerManager->write();
 #else  // ROLLING
     mControllerManager->write(mNode->get_clock()->now(), dt);

@@ -16,8 +16,8 @@ elseif($ENV{ROS_DISTRO} MATCHES "rolling")
 endif()
 
 # Check which repo is used (main or testing)
-if($ENV{ROS_REPO} MATCHES "main")
-  add_compile_definitions(MAIN_REPO)
+if($ENV{ROS_REPO} MATCHES "testing")
+  add_compile_definitions(TESTING_REPO)
 endif()
 
 # ROS2 Packages

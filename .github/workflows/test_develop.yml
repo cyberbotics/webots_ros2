@@ -1,8 +1,8 @@
 name: ROS2 tests (develop)
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled, unlabeled]
+  schedule:
+    - cron:  '0 23 * * *'
 
 jobs:
   industrial_ci:

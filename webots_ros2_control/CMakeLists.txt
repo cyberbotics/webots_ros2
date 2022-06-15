@@ -12,14 +12,6 @@ elseif($ENV{ROS_DISTRO} MATCHES "rolling")
   add_compile_definitions(ROLLING)
 endif()
 
-# Check which repo is used (main or testing)
-if($ENV{ROS_REPO} MATCHES "testing")
-  add_compile_definitions(TESTING_REPO)
-endif()
-if($ENV{ROS_DISTRO} MATCHES "galactic")
-  add_compile_definitions(GALACTIC)
-endif()
-
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)

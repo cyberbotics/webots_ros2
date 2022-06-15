@@ -23,11 +23,6 @@ elseif($ENV{ROS_DISTRO} MATCHES "rolling")
   add_compile_definitions(ROLLING)
 endif()
 
-# Check which repo is used (main or testing)
-if($ENV{ROS_REPO} MATCHES "testing")
-  add_compile_definitions(TESTING_REPO)
-endif()
-
 # ROS2 Packages
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)

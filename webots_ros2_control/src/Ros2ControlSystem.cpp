@@ -150,9 +150,9 @@ namespace webots_ros2_control
   }
 #endif
 
-#if FOXY || GALACTIC || (HUMBLE && !TESTING_REPO)
+#if FOXY || GALACTIC
   hardware_interface::return_type Ros2ControlSystem::read()
-#else  // ROLLING
+#else  // HUMBLE, ROLLING
   hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/)
 #endif
   {
@@ -177,9 +177,9 @@ namespace webots_ros2_control
     return hardware_interface::return_type::OK;
   }
 
-#if FOXY || GALACTIC || (HUMBLE && !TESTING_REPO)
+#if FOXY || GALACTIC
   hardware_interface::return_type Ros2ControlSystem::write()
-#else  // ROLLING
+#else  // HUMBLE, ROLLING
   hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/)
 #endif
   {

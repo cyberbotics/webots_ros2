@@ -43,7 +43,7 @@ def get_ros2_nodes(*args):
     abb_control_params = os.path.join(package_dir, 'resource', 'ros2_control_abb_config.yaml')
 
     # Define your URDF robots here
-    # The name of an URDF robot has to match the WEBOTS_ROBOT_NAME of the driver node
+    # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node
     # You can specify the URDF content to use with robot_description
     # In case you have relative paths in your URDF, specifiy the relative_path_prefix as the directory of your xacro file
     spawn_URDF_ur5e = URDFSpawner(
@@ -56,14 +56,14 @@ def get_ros2_nodes(*args):
 
     # Driver nodes
     # When having multiple robot it is enough to specify the `additional_env` argument.
-    # The `WEBOTS_ROBOT_NAME` has to match the robot name in the world file.
+    # The `WEBOTS_CONTROLLER_URL` has to match the robot name in the world file.
     # You can check for more information at:
     # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#single-simulation-and-multiple-extern-robot-controllers
     ur5e_driver = Node(
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'UR5e'},
+        additional_env={'WEBOTS_CONTROLLER_URL': 'UR5e'},
         namespace='ur5e',
         parameters=[
             {'robot_description': ur5e_description},
@@ -77,7 +77,7 @@ def get_ros2_nodes(*args):
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_ROBOT_NAME': 'abbirb4600'},
+        additional_env={'WEBOTS_CONTROLLER_URL': 'abbirb4600'},
         namespace='abb',
         parameters=[
             {'robot_description': abb_description},

@@ -63,15 +63,20 @@ namespace webots_ros2_control
       hardware_interface::return_type start() override;
       hardware_interface::return_type stop() override;
     #else
-      CallbackReturn on_init(const hardware_interface::HardwareInfo &info) override;
-      CallbackReturn on_activate(const rclcpp_lifecycle::State & /*previous_state*/) override;
-      CallbackReturn on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) override;
+      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(const hardware_interface::HardwareInfo &info) override;
+      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(const rclcpp_lifecycle::State & /*previous_state*/) override;
+      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) override;
     #endif
 
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
+#if FOXY || GALACTIC || (HUMBLE && !TESTING_REPO)
     hardware_interface::return_type read() override;
     hardware_interface::return_type write() override;
+#else  // ROLLING
+    hardware_interface::return_type read(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) override;
+    hardware_interface::return_type write(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) override;
+#endif
 
   private:
     webots_ros2_driver::WebotsNode *mNode;

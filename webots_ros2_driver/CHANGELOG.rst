@@ -2,8 +2,11 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.x.x (2022-xx-xx)
+1.2.3 (2022-05-30)
 ------------------
+* Add option to set 'robot_description' parameter for 'robot_state_publisher' node.
+* Fix recognition camera.
+* Add a 'PointCloud2' publisher for the 'RangeFinder' device.
 * Added an URDF importer feature to spawn robots from URDF files.
 
 1.2.2 (2022-01-19)

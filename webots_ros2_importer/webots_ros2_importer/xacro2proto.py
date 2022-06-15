@@ -53,14 +53,17 @@ def main(args=None):
 
         # remove arguments specific to the urdf2proto converter
         args_for_urdf2proto = [
+            '--output',
             '--normal',
             '--box-collision',
             '--disable-mesh-optimization',
-            '--output',
             '--multi-file',
-            '--static-base',
             '--tool-slot',
-            '--rotation'
+            '--translation',
+            '--rotation',
+            '--init-pos',
+            '--link-to-def',
+            '--joint-to-def'
         ]
         for arg in saved_argv:
             for arg_for_urdf2proto in args_for_urdf2proto:

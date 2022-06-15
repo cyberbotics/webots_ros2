@@ -53,9 +53,11 @@ def generate_launch_description():
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
 
+    use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
+
     diffdrive_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['diffdrive_controller'] + controller_manager_timeout,
@@ -63,11 +65,16 @@ def generate_launch_description():
 
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner.py',
+        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
+
+    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
+    if ('ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling') or \
+       ('ROS_REPO' in os.environ and os.environ['ROS_REPO'] == 'testing'):
+        mappings.append(('/diffdrive_controller/odom', '/odom'))
 
     tiago_driver = Node(
         package='webots_ros2_driver',
@@ -80,9 +87,7 @@ def generate_launch_description():
              'set_robot_state_publisher': True},
             ros2_control_params
         ],
-        remappings=[
-            ('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')
-        ]
+        remappings=mappings
     )
 
     robot_state_publisher = Node(

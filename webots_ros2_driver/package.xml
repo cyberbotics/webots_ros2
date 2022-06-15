@@ -1,13 +1,15 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>webots_ros2_driver</name>
-  <version>1.2.2</version>
+  <version>1.2.3</version>
   <description>Implementation of the Webots - ROS 2 interface</description>
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
   <license>Apache License 2.0</license>
   <url type="website">http://wiki.ros.org/webots_ros2</url>
   <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
+
+  <build_depend>ros_environment</build_depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>python_cmake_module</buildtool_depend>

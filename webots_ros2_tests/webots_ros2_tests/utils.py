@@ -24,8 +24,8 @@ import rclpy
 from rosgraph_msgs.msg import Clock
 
 
-DEFAULT_TIMEOUT = 60.0
-DEFAULT_CLOCK_TIMEOUT = 5 * DEFAULT_TIMEOUT
+DEFAULT_TIMEOUT = 120.0
+DEFAULT_CLOCK_TIMEOUT = 15 * DEFAULT_TIMEOUT
 
 
 class TestWebots(unittest.TestCase):

@@ -70,7 +70,7 @@ def generate_launch_description():
     )
 
     mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling':
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
         mappings.append(('/diffdrive_controller/odom', '/odom'))
 
     tiago_driver = Node(

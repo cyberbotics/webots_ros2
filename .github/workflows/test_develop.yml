@@ -1,10 +1,8 @@
-name: ROS2 tests
+name: ROS2 tests (develop)
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
-  schedule:
-    - cron:  '0 23 * * *'
 
 jobs:
   industrial_ci:
@@ -22,6 +20,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
          submodules: recursive
+         ref: develop
       - uses: 'ros-industrial/industrial_ci@master'
         env:
           ROS_REPO: ${{matrix.ROS_REPO}}
@@ -30,6 +29,6 @@ jobs:
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2
         with:
-          name: generic_artifacts_${{matrix.ROS_REPO}}_${{matrix.ROS_DISTRO}}
+          name: generic_artifacts_develop_${{matrix.ROS_REPO}}_${{matrix.ROS_DISTRO}}
           path: /artifacts
           retention-days: 5

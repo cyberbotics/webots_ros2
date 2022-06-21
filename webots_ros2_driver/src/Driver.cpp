@@ -45,7 +45,7 @@ int main(int argc, char **argv)
   std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
   node->init();
   while (true) {
-    if (node->step())
+    if (node->step() == -1)
       break;
     rclcpp::spin_some(node);
   }

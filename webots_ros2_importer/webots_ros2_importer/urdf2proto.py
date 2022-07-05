@@ -34,7 +34,8 @@ def main(args=None, urdfInput=None):
     parser.add_option('--box-collision', dest='boxCollision', action='store_true', default=False,
                       help='If set, the bounding objects are approximated using boxes.')
     parser.add_option('--tool-slot', dest='toolSlot', default=None,
-                      help='Specify the link that you want to add a tool slot too (exact link name from URDF, for PROTO conversion only).')
+                      help='Specify the link that you want to add a tool slot too (exact link name from URDF, for PROTO '
+                      'conversion only).')
     parser.add_option('--translation', dest='initTranslation', default='0 0 0',
                       help='Set the translation field of your PROTO file or Webots VRML robot string.')
     parser.add_option('--rotation', dest='initRotation', default='0 0 1 0',
@@ -44,11 +45,11 @@ def main(args=None, urdfInput=None):
                       'set the first 3 joints of your robot to the specified values, and leave the rest with their '
                       'default value.')
     parser.add_option('--link-to-def', dest='linkToDef', action='store_true', default=False,
-                      help='Creates a DEF with the link name for each solid to be able to access it using getFromProtoDef(defName) '
-                      '(for PROTO conversion only).')
+                      help='Creates a DEF with the link name for each solid to be able to access it using '
+                      'getFromProtoDef(defName) (for PROTO conversion only).')
     parser.add_option('--joint-to-def', dest='jointToDef', action='store_true', default=False,
-                      help='Creates a DEF with the joint name for each joint to be able to access it using getFromProtoDef(defName) '
-                      '(for PROTO conversion only).')
+                      help='Creates a DEF with the joint name for each joint to be able to access it using '
+                      'getFromProtoDef(defName) (for PROTO conversion only).')
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
     arguments, _ = parser.parse_known_args()
     file = os.path.abspath(urdfInput) if urdfInput is not None else os.path.abspath(arguments.inputConversion)

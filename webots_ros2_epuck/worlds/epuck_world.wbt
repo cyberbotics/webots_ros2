@@ -1,4 +1,12 @@
-#VRML_SIM R2022a utf8
+#VRML_SIM R2022b utf8
+
+EXTERNPROTO "webots://projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "webots://projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "webots://projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "webots://projects/objects/factory/containers/protos/WoodenBox.proto"
+EXTERNPROTO "webots://projects/robots/gctronic/e-puck/protos/E-puck.proto"
+EXTERNPROTO "webots://projects/robots/gctronic/e-puck/protos/Pi-puck.proto"
+
 WorldInfo {
   info [
     "Simple e-puck simulation that can be controlled with ROS2."
@@ -44,8 +52,8 @@ WoodenBox {
 E-puck {
   translation 0.0530459 0.00806403 0.001
   rotation 0 0 1 3.1415
-  controller "<extern>"
   name "epuck"
+  controller "<extern>"
   version "2"
   camera_width 640
   camera_height 480

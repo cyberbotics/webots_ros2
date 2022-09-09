@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.2.3 (2022-05-30)
+------------------
+* Fixed support for Humble and Rolling.
+
 1.2.0 (2021-12-21)
 ------------------
 * Fix the controller_manager update rate.

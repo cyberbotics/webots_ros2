@@ -1,4 +1,43 @@
-#VRML_SIM R2022a utf8
+#VRML_SIM R2022b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/BakelitePlastic.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/apartment_structure/protos/Radiator.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/tables/protos/Desk.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/cabinet/protos/Cabinet.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/GlossyPaint.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/factory/tools/protos/PlatformCart.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/telephone/protos/OfficeTelephone.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/computers/protos/Monitor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/computers/protos/Keyboard.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/computers/protos/DesktopComputer.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/factory/containers/protos/CardboardBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/factory/fire_extinguisher/protos/FireExtinguisher.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/street_furniture/protos/ElectricalCabinet.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/factory/manhole/protos/SquareManhole.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/factory/pipes/protos/PipeSection.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/HammeredCopper.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/factory/pipes/protos/LJoint.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/robots/abb/irb/protos/Irb4600-40.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/devices/robotiq/protos/Robotiq3fGripper.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/RustyMetal.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/factory/conveyors/protos/ConveyorBelt.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/drinks/protos/Can.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/tables/protos/Table.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/BrushedSteel.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/OldSteel.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/solids/protos/SolidBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/BrushedAluminium.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/FormedConcrete.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/Roughcast.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/CorrugatedPlates.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/CorrodedMetal.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/geometries/protos/Extrusion.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/factory/pallet/protos/WoodenPalletStack.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/lights/protos/ConstructionLamp.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/factory/containers/protos/PlasticCrate.proto"
+
 WorldInfo {
   title "ROS2-Webots Armed Robots Demo"
   basicTimeStep 16
@@ -83,7 +122,7 @@ ElectricalCabinet {
 }
 SquareManhole {
   translation 3.24031 1.59301 -0.04
-  rotation 0.7071067811841624 0.7071067811841624 0 -3.1415853071795863
+  rotation 0.7071067811865477 0.7071067811865477 0 -3.1415853071795863
 }
 PipeSection {
   translation 4.79 1.93 0.610012
@@ -280,7 +319,7 @@ DEF WALL Transform {
   ]
 }
 DEF ROOF Transform {
-  translation 0.79 0.69 3.0
+  translation 0.79 0.69 3
   rotation 1 0 0 3.14159
   children [
     Shape {
@@ -438,73 +477,73 @@ WoodenPalletStack {
   rotation 0 0 1 -1.5707953071795862
 }
 ConstructionLamp {
-  translation 3.86242 2.61396 3.0
+  translation 3.86242 2.61396 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(1)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation 2.06242 2.61396 3.0
+  translation 2.06242 2.61396 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(4)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation 0.26242 2.61396 3.0
+  translation 0.26242 2.61396 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(5)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation -1.54758 2.61396 3.0
+  translation -1.54758 2.61396 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(6)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation 3.86242 1.11396 3.0
+  translation 3.86242 1.11396 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(2)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation 2.06242 1.11396 3.0
+  translation 2.06242 1.11396 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(7)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation 0.26242 1.11396 3.0
+  translation 0.26242 1.11396 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(8)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation -1.53758 1.11396 3.0
+  translation -1.53758 1.11396 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(9)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation 3.86242 -0.38604 3.0
+  translation 3.86242 -0.38604 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(3)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation 2.06242 -0.38604 3.0
+  translation 2.06242 -0.38604 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(10)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation 0.26242 -0.38604 3.0
+  translation 0.26242 -0.38604 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(11)"
   spotLightIntensity 5
 }
 ConstructionLamp {
-  translation -1.53758 -0.38604 3.0
+  translation -1.53758 -0.38604 3
   rotation 0.5773522691865168 0.5773512691860505 -0.5773472691841857 2.0944
   name "construction lamp(12)"
   spotLightIntensity 5

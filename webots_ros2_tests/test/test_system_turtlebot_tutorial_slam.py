@@ -37,7 +37,7 @@ def generate_test_description():
     #    pytest.skip('RViz might crash in CI, skipping this test')
 
     # If ROS_DISTRO is rolling or humble, skip the test as some required packages are missing (cf. ci_after_init.bash)
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] != 'rolling':
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling':
         pytest.skip('ROS_DISTRO is rolling, skipping this test')
 
     # Webots

@@ -1,7 +1,7 @@
 /**:
   ros__parameters:
     # controller_manager
-    update_rate: 20
+    update_rate: 50
 
     abb_joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController

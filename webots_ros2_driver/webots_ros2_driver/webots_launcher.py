@@ -81,7 +81,7 @@ class WebotsLauncher(ExecuteProcess):
             cmd=xvfb_run_prefix + [
                 webots_path,
                 stream_argument,
-                no_rendering,
+                '--no-rendering',
                 stdout,
                 stderr,
                 minimize,

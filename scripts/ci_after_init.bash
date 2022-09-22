@@ -15,8 +15,10 @@ WEBOTS_NIGHTLY_VERSION="nightly_${NIGHTLY_DATE}"
 
 apt update
 apt install -y wget dialog apt-utils psmisc lsb-release
-wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_NIGHTLY_VERSION}/webots_${WEBOTS_RELEASE_VERSION}_amd64.deb -O /tmp/webots.deb
+#wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_NIGHTLY_VERSION}/webots_${WEBOTS_RELEASE_VERSION}_amd64.deb -O /tmp/webots.deb
+wget https://cyberbotics.com/test/webots.deb -O /tmp/webots.deb
 apt install -y /tmp/webots.deb xvfb
+
 
 # OpenSSL patch for ubuntu 22
 if [[ $(lsb_release -rs) == "22.04" && ${WEBOTS_RELEASE_VERSION} == "2022a" ]]; then

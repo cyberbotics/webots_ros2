@@ -40,7 +40,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/project
 
 WorldInfo {
   title "ROS2-Webots Armed Robots Demo"
-  basicTimeStep 10
+  basicTimeStep 16
   contactProperties [
     ContactProperties {
       bounce 0.3

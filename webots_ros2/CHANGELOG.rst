@@ -2,6 +2,12 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.0 (2022-09-23)
+------------------
+* Adapted controllers to communicate with Webots R2022b.
+* Added feature to import URDF on the fly.
+* Add PointCloud2 support for RangeFinder.
+
 1.2.3 (2022-06-01)
 ------------------
 * Fixed support for Humble and Rolling.

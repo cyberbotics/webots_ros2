@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.x.x (2022-xx-xx)
+2022.1.0 (2022-09-23)
 ------------------
 * Added URDF robot messages
 

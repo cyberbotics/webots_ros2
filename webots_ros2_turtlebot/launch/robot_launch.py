@@ -25,7 +25,7 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 
 
 def generate_launch_description():
@@ -38,6 +38,8 @@ def generate_launch_description():
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
+
+    ros2_supervisor = Ros2SupervisorLauncher()
 
     # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
     controller_manager_timeout = ['--controller-manager-timeout', '50']
@@ -69,6 +71,7 @@ def generate_launch_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
+        additional_env={'WEBOTS_CONTROLLER_URL': 'TurtleBot3Burger'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,
@@ -100,9 +103,10 @@ def generate_launch_description():
             default_value='turtlebot3_burger_example.wbt',
             description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
         ),
+        webots,
+        ros2_supervisor,
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
-        webots,
         robot_state_publisher,
         turtlebot_driver,
         footprint_publisher,

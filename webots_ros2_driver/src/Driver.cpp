@@ -19,15 +19,24 @@
 
 int main(int argc, char **argv)
 {
-  rclcpp::init(argc, argv);
-
-  webots::Supervisor* robot;
+  webots::Supervisor *robot;
 
   // Check if the robot can be a driver, if not create a simple Supervisor
   if (webots::Driver::isInitialisationPossible())
     robot = new webots::Driver();
   else
     robot = new webots::Supervisor();
+
+  // Let WebotsNode handle the system signals
+  webots_ros2_driver::WebotsNode::handleSignals();
+
+  rclcpp::InitOptions options{};
+#if FOXY || GALACTIC
+  options.shutdown_on_sigint = false;
+#else
+  options.shutdown_on_signal = false;
+#endif
+  rclcpp::init(argc, argv, options);
 
   std::string robotName = robot->getName();
   for (char notAllowedChar : " -.)(")
@@ -36,7 +45,7 @@ int main(int argc, char **argv)
   std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
   node->init();
   while (true) {
-    if (node->step())
+    if (node->step() == -1)
       break;
     rclcpp::spin_some(node);
   }

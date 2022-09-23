@@ -43,7 +43,9 @@ class LaneFollower(Node):
     def __on_camera_image(self, message):
         img = message.data
         img = np.frombuffer(img, dtype=np.uint8).reshape((message.height, message.width, 4))
-        img = img[380:420, :]
+        cv2.imwrite('raw.jpg', img)
+        img = img[160:190, :]
+        cv2.imwrite('min.jpg', img)
 
         # Segment the image by color in HSV color space
         img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)

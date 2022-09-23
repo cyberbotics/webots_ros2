@@ -1,4 +1,11 @@
-#VRML_SIM R2022a utf8
+#VRML_SIM R2022b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/ThreadMetalPlate.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/solids/protos/SolidBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/appearances/protos/GalvanizedMetal.proto"
+
 WorldInfo {
   info [
     "Unviversal Robot UR3e, UR5e and UR10e grasping cans using Robotiq 3F grippers."
@@ -30,21 +37,6 @@ Floor {
   size 20 20
   appearance ThreadMetalPlate {
   }
-}
-UR5e {
-  translation 0 0 0.6
-  rotation 0 0 1 -1.570796267678159
-  controller "<extern>"
-  supervisor TRUE
-  selfCollision FALSE
-  toolSlot [
-    Robotiq3fGripper {
-    }
-    DistanceSensor {
-      translation 0 0.1 0
-      rotation 0 0 1 1.570796
-    }
-  ]
 }
 SolidBox {
   translation 0 0 0.3

@@ -19,7 +19,7 @@ from sensor_msgs.msg import Image, CameraInfo
 from vision_msgs.msg import Detection2D, Detection2DArray, ObjectHypothesisWithPose
 from geometry_msgs.msg import Point, Quaternion
 from std_msgs.msg import ColorRGBA
-from webots_ros2_msgs.msg import WbCameraRecognitionObject, WbCameraRecognitionObjects
+from webots_ros2_msgs.msg import CameraRecognitionObject, CameraRecognitionObjects
 from rclpy.time import Time
 from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile, QoSReliabilityPolicy, qos_profile_sensor_data
 from .sensor_device import SensorDevice
@@ -84,7 +84,7 @@ class CameraDevice(SensorDevice):
                     qos_sensor_reliable
                 )
                 self._recognition_webots_publisher = self._node.create_publisher(
-                    WbCameraRecognitionObjects,
+                    CameraRecognitionObjects,
                     self._topic_name + '/recognitions/webots',
                     qos_sensor_reliable
                 )
@@ -163,7 +163,7 @@ class CameraDevice(SensorDevice):
 
                     # Recognition data
                     reco_msg = Detection2DArray()
-                    reco_msg_webots = WbCameraRecognitionObjects()
+                    reco_msg_webots = CameraRecognitionObjects()
                     reco_msg.header.stamp = stamp
                     reco_msg_webots.header.stamp = stamp
                     reco_msg.header.frame_id = self._frame_id
@@ -203,8 +203,8 @@ class CameraDevice(SensorDevice):
                         reco_obj.bbox.size_y = obj_size[1]
                         reco_msg.detections.append(reco_obj)
 
-                        # Object Info -> WbCameraRecognitionObject
-                        reco_webots_obj = WbCameraRecognitionObject()
+                        # Object Info -> CameraRecognitionObject
+                        reco_webots_obj = CameraRecognitionObject()
                         reco_webots_obj.id = obj_id
                         reco_webots_obj.model = obj_model
                         reco_webots_obj.pose.pose.position = position

@@ -25,7 +25,7 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 
 
 def generate_launch_description():
@@ -38,6 +38,8 @@ def generate_launch_description():
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
+
+    ros2_supervisor = Ros2SupervisorLauncher()
 
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -74,6 +76,7 @@ def generate_launch_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
+        additional_env={'WEBOTS_CONTROLLER_URL': 'epuck'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,
@@ -114,9 +117,10 @@ def generate_launch_description():
             default_value='epuck_world.wbt',
             description='Choose one of the world files from `/webots_ros2_epuck/world` directory'
         ),
+        webots,
+        ros2_supervisor,
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
-        webots,
         robot_state_publisher,
         epuck_driver,
         footprint_publisher,

@@ -25,8 +25,8 @@
 #include <webots/Supervisor.hpp>
 
 #include <rclcpp/rclcpp.hpp>
-#include <rclcpp/clock.hpp>
-#include <rosgraph_msgs/msg/clock.hpp>
+#include <rclcpp/qos.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <pluginlib/class_loader.hpp>
 
 #include "webots_ros2_driver/PluginInterface.hpp"
@@ -43,6 +43,7 @@ namespace webots_ros2_driver
     int step();
     webots::Supervisor *robot() { return mRobot; }
     std::string urdf() const { return mRobotDescription; };
+    static void handleSignals();
 
   private:
     std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
@@ -50,10 +51,14 @@ namespace webots_ros2_driver
     void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);
     rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
 
-    std::string mRobotName;
     std::string mRobotDescription;
     bool mSetRobotStatePublisher;
 
+    bool mWaitingForUrdfRobotToBeRemoved = false;
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mRemoveUrdfRobotPublisher;
+    std_msgs::msg::String mRemoveUrdfRobotMessage;
+
+    rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;
     webots::Supervisor *mRobot;
     std::vector<std::shared_ptr<PluginInterface>> mPlugins;
@@ -61,9 +66,6 @@ namespace webots_ros2_driver
     tinyxml2::XMLElement *mWebotsXMLElement;
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;
     std::shared_ptr<PluginInterface> loadPlugin(const std::string &type);
-
-    rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr mClockPublisher;
-    rosgraph_msgs::msg::Clock mClockMessage;
   };
 
 } // end namespace webots_ros2_driver

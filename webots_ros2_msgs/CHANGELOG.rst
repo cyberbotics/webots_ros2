@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.x.x (2022-xx-xx)
+------------------
+* Added URDF robot messages
+
 1.1.0 (2021-07-19)
 ------------------
 * Added camera recognition object messages

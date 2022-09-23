@@ -53,7 +53,6 @@ class _WebotsCommandSubstitution(Substitution):
                 '--stdout',
                 '--stderr',
                 '--batch',
-                '--no-sandbox',
                 '--minimize',
                 '--no-rendering'
             ]

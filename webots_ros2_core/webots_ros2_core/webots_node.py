@@ -60,7 +60,7 @@ class WebotsNode(Node):
         # Get robot name
         arguments, _ = parser.parse_known_args()
         if arguments.webots_robot_name:
-            os.environ['WEBOTS_ROBOT_NAME'] = arguments.webots_robot_name
+            os.environ['WEBOTS_CONTROLLER_URL'] = arguments.webots_robot_name
 
         self.robot = controller_class()
         self.timestep = int(self.robot.getBasicTimeStep())

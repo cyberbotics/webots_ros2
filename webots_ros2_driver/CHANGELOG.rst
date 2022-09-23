@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.0 (2022-09-23)
+------------------
+* Added an URDF importer feature to spawn robots from URDF files.
+
 1.2.3 (2022-05-30)
 ------------------
 * Add option to set 'robot_description' parameter for 'robot_state_publisher' node.

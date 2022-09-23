@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.x.x (2022-xx-xx)
+------------------
+* The 'robot' and 'moveit_demo' scenarios now show a use case of the new URDF importer.
+
 1.2.2 (2022-01-19)
 ------------------
 * Remove the 'moveit' dependency.

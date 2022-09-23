@@ -24,7 +24,7 @@ import tempfile
 import pytest
 import rclpy
 import launch_testing.actions
-from sensor_msgs.msg import Range
+from sensor_msgs.msg import Range, JointState
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -47,7 +47,7 @@ def generate_test_description():
     # Therefore, make sure to store all bag files under the `/tmp/artifacts`.
     rosbag = ExecuteProcess(
         cmd=[
-            'ros2', 'bag', 'record', '-a',
+            'ros2', 'bag', 'record', '-a', '--include-hidden-topics',
             '-o', os.path.join(
                 tempfile.gettempdir(),
                 'artifacts',
@@ -79,8 +79,20 @@ class TestUniversalRobot(TestWebots):
 
     def testAbbCaughtCan(self):
         # The robot should catch the can in the simulation.
-        self.wait_for_messages(self.__node, Range, '/abb/abbirb4600/object_present_sensor', timeout=400,
+        self.wait_for_messages(self.__node, Range, '/abb/abbirb4600/object_present_sensor', timeout=200,
                                condition=lambda message: message.range < 0.07)
+
+    def testUr5eJointStates(self):
+        # The robot should have been spawned and send JointState.
+        def on_joint_state_message_received(message):
+            # There should be at least one position greater than 0
+            for position in message.position:
+                if position > 0.0:
+                    return True
+            return False
+
+        self.wait_for_messages(self.__node, JointState, '/ur5e/joint_states', timeout=200,
+                               condition=on_joint_state_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

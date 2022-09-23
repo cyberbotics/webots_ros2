@@ -1,0 +1,9 @@
+string name
+string urdf_path
+string robot_description
+string relative_path_prefix
+string translation
+string rotation
+bool normal
+bool box_collision
+string init_pos

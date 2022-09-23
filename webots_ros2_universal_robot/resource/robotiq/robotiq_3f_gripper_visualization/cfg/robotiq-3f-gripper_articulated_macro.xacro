@@ -1,0 +1,70 @@
+<!--
+robotiq-3f-gripper_articulated_macro(prefix)
+
+Creates an articulated robotiq-3f-gripper hand with the passed in prefix.  If there
+is only one hand in the urdf then an empty prefix can be used "".  If
+there are multiple hands then a prefix followed by an "_" is needed.
+
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+        <xacro:include filename="$(find webots_ros2_universal_robot)/resource/robotiq/robotiq_3f_gripper_visualization/cfg/robotiq-3f-gripper_finger_articulated_macro.xacro" />
+        <xacro:macro name="robotiq-3f-gripper_articulated" params="prefix">
+        <xacro:robotiq-3f-gripper_finger_articulated prefix="${prefix}finger_1_"/>
+        <xacro:robotiq-3f-gripper_finger_articulated prefix="${prefix}finger_2_"/>
+        <xacro:robotiq-3f-gripper_finger_articulated prefix="${prefix}finger_middle_"/>
+		<!-- link list -->
+		<link name="${prefix}palm">
+			<visual>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/palm.dae" />
+				</geometry>
+				<material name="gray">
+					<color rgba="0.2 0.2 0.2 1"/>
+				</material>
+			</visual>
+			<collision>
+				<geometry>
+                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/palm.STL" />
+				</geometry>
+				<material name="yellow">
+					<color rgba="0 1 1 1"/>
+				</material>
+			</collision>
+		</link>
+
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="1.3"/>
+            <inertia ixx="0.006012" ixy="0.000079" ixz="-0.00024" iyy="0.012892" iyz="0" izz="0.002435" />
+        </inertial>
+		<!-- end of link list -->
+		<!-- joint list -->
+
+		<joint name="${prefix}palm_finger_1_joint" type="revolute">
+			<parent link="${prefix}palm"/>
+			<child link="${prefix}finger_1_link_0"/>
+			<axis xyz="0 1 0"/>
+			<origin xyz="-0.0455 0.0214 0.036" rpy="0 3.1416 -1.57"/>
+			<limit lower="-0.1784" upper="0.192" effort="100" velocity="100"/>
+		</joint>
+		<joint name="${prefix}palm_finger_2_joint" type="revolute">
+			<parent link="${prefix}palm"/>
+			<child link="${prefix}finger_2_link_0"/>
+			<axis xyz="0 1 0"/>
+			<origin xyz="-0.0455 0.0214 -0.036" rpy="0 3.1416 -1.57"/>
+			<limit lower="-0.192" upper="0.1784" effort="100" velocity="100"/>
+		</joint>
+		<joint name="${prefix}palm_finger_middle_joint" type="fixed">
+			<parent link="${prefix}palm"/>
+			<child link="${prefix}finger_middle_link_0"/>
+			<axis xyz="0 0 1"/>
+			<origin xyz="0.0455 0.0214 0" rpy="0 0 1.57"/>
+		</joint>
+		<joint name="${prefix}tool0_palm" type="fixed">
+    <parent link="${prefix}tool0"/>
+    <child link="${prefix}palm"/>
+    <origin xyz="0 0 0.045" rpy="1.5708 0 0"/>
+</joint>
+		<!-- end of joint list -->
+	</xacro:macro>
+</robot>

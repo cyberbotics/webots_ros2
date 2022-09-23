@@ -66,7 +66,7 @@ namespace webots_ros2_driver
           mTopicName + "/recognitions",
           rclcpp::SensorDataQoS().reliable());
       mWebotsRecognitionPublisher = mNode->create_publisher<
-          webots_ros2_msgs::msg::WbCameraRecognitionObjects>(
+          webots_ros2_msgs::msg::CameraRecognitionObjects>(
           mTopicName + "/recognitions/webots",
           rclcpp::SensorDataQoS().reliable());
       mRecognitionMessage.header.frame_id = mFrameName;
@@ -162,8 +162,8 @@ namespace webots_ros2_driver
       detection.bbox.size_y = objects[i].size_on_image[1];
       mRecognitionMessage.detections.push_back(detection);
 
-      // Object Info -> WbCameraRecognitionObject
-      webots_ros2_msgs::msg::WbCameraRecognitionObject recognitionWebotsObject;
+      // Object Info -> CameraRecognitionObject
+      webots_ros2_msgs::msg::CameraRecognitionObject recognitionWebotsObject;
       recognitionWebotsObject.id = objects[i].id;
       recognitionWebotsObject.model = std::string(objects[i].model);
       recognitionWebotsObject.pose.pose.position = position;

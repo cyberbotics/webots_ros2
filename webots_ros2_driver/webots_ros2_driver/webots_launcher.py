@@ -123,11 +123,11 @@ class WebotsLauncher(ExecuteProcess):
         # Add the Ros2Supervisor
         indent = '  '
         world_file = open(self.__world_copy.name, 'a')
-        world_file.write('Robot {\n')
-        world_file.write(indent + 'name "Ros2Supervisor"\n')
-        world_file.write(indent + 'controller "<extern>"\n')
-        world_file.write(indent + 'supervisor TRUE\n')
-        world_file.write('}\n')
+        #world_file.write('Robot {\n')
+        #world_file.write(indent + 'name "Ros2Supervisor"\n')
+        #world_file.write(indent + 'controller "<extern>"\n')
+        #world_file.write(indent + 'supervisor TRUE\n')
+        #world_file.write('}\n')
         world_file.close()
 
         return super().execute(context)

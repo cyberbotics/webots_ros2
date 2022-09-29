@@ -48,7 +48,7 @@ def generate_launch_description():
         mode=mode
     )
 
-    ros2_supervisor = Ros2SupervisorLauncher()
+    #ros2_supervisor = Ros2SupervisorLauncher()
 
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -146,7 +146,7 @@ def generate_launch_description():
             description='Webots startup mode'
         ),
         webots,
-        ros2_supervisor,
+        #ros2_supervisor,
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
         rviz,

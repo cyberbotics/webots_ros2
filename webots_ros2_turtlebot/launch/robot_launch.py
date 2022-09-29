@@ -39,7 +39,7 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    ros2_supervisor = Ros2SupervisorLauncher()
+    #ros2_supervisor = Ros2SupervisorLauncher()
 
     # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
     controller_manager_timeout = ['--controller-manager-timeout', '50']
@@ -104,7 +104,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
         ),
         webots,
-        ros2_supervisor,
+        #ros2_supervisor,
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
         robot_state_publisher,

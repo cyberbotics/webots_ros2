@@ -18,6 +18,10 @@ apt install -y wget dialog apt-utils psmisc lsb-release
 wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_NIGHTLY_VERSION}/webots_${WEBOTS_RELEASE_VERSION}_amd64.deb -O /tmp/webots.deb
 apt install -y /tmp/webots.deb xvfb
 
+wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_NIGHTLY_VERSION}/assets_2022b-rev1.zip -O /tmp/assets_2022b-rev1.zip
+unzip -q /tmp/assets_2022b-rev1.zip -d ~/.cache/Cyberbotics/Webots/assets
+
+
 # OpenSSL patch for ubuntu 22
 if [[ $(lsb_release -rs) == "22.04" && ${WEBOTS_RELEASE_VERSION} == "2022a" ]]; then
   echo applying openssl patch

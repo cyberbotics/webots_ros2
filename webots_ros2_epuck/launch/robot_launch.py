@@ -39,7 +39,7 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    #ros2_supervisor = Ros2SupervisorLauncher()
+    ros2_supervisor = Ros2SupervisorLauncher()
 
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -118,7 +118,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_epuck/world` directory'
         ),
         webots,
-        #ros2_supervisor,
+        ros2_supervisor,
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
         robot_state_publisher,

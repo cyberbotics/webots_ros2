@@ -37,7 +37,7 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    #ros2_supervisor = Ros2SupervisorLauncher()
+    ros2_supervisor = Ros2SupervisorLauncher()
 
     mavic_driver = Node(
         package='webots_ros2_driver',
@@ -56,7 +56,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_mavic/worlds` directory'
         ),
         webots,
-        #ros2_supervisor,
+        ros2_supervisor,
         mavic_driver,
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(

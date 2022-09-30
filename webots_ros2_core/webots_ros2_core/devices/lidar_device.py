@@ -27,7 +27,7 @@ class LidarDevice(SensorDevice):
 
     Creates suitable ROS2 interface based on Webots [Lidar](https://cyberbotics.com/doc/reference/lidar) node instance:
 
-    It allows the following functinalities:
+    It allows the following functionalities:
     - Publishes range measurements of type `sensor_msgs/LaserScan` if 2D Lidar is present
     - Publishes range measurements of type `sensor_msgs/PointCloud2` if 3D Lidar is present
 

@@ -49,11 +49,14 @@ class _ConditionalSubstitution(Substitution):
 
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
+        if sys.platform == 'win32':
+            sys.exit(f'Windows is not supported by the webots_ros2 package.')
         isWSL = 'microsoft-standard' in uname().release
+
         # Find Webots executable
         webots_path = get_webots_home(show_warning=True)
         if webots_path is None:
-            handle_webots_installation()
+            handle_webots_installation(isWSL)
             webots_path = get_webots_home()
         if isWSL:
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')

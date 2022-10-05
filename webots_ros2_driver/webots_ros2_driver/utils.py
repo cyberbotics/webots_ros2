@@ -134,7 +134,7 @@ def __get_webots_home(target_version, condition='ge'):
 
     # Use the 'which' command (Linux and Mac)
     try:
-        where_command = 'where' if sys.platform == 'win32' else 'which'
+        where_command = 'which'
         path = os.path.split(os.path.abspath(subprocess.check_output([where_command, 'webots'])))[0]
         path = path.decode('utf-8')
         if os.path.isdir(path) and version_condition(WebotsVersion.from_path(path), target_version):
@@ -153,7 +153,8 @@ def __get_webots_home(target_version, condition='ge'):
         '/snap/webots/current/usr/share/webots',                # Linux snap install
         '/Applications/Webots.app',                             # macOS default install
         'C:\\Program Files\\Webots',                            # Windows default install
-        os.getenv('LOCALAPPDATA', '') + '\\Programs\\Webots'    # Windows user install
+        os.getenv('LOCALAPPDATA', '') + '\\Programs\\Webots',   # Windows user 
+        '/mnt/c/Program Files/Webots'                           # WSL default Windows install
     ]
     if target_version is not None:
         paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + target_version.short(), 'webots'))

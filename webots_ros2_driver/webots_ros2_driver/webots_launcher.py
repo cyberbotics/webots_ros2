@@ -54,10 +54,10 @@ class WebotsLauncher(ExecuteProcess):
         isWSL = 'microsoft-standard' in uname().release
 
         # Find Webots executable
-        webots_path = get_webots_home(show_warning=True)
+        webots_path = get_webots_home(isWSL, show_warning=True)
         if webots_path is None:
             handle_webots_installation(isWSL)
-            webots_path = get_webots_home()
+            webots_path = get_webots_home(isWSL)
         if isWSL:
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
         else:

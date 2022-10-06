@@ -27,7 +27,6 @@ import urllib.request
 from pathlib import Path
 
 
-MINIMUM_VERSION_STR = 'R2022b'
 TARGET_VERSION_STR = 'R2022b'
 
 
@@ -52,10 +51,6 @@ class WebotsVersion:
         with open(version_file, 'r') as f:
             return WebotsVersion(f.read().strip())
         return None
-
-    @staticmethod
-    def minimum():
-        return WebotsVersion(MINIMUM_VERSION_STR)
 
     @staticmethod
     def target():
@@ -85,85 +80,52 @@ class WebotsVersion:
         return self.version.replace('revision ', 'rev').replace(' ', '-')
 
 
-def get_webots_home(target_version=None, minimum_version=None, show_warning=False):
-    # Normalize Webots version
-    if target_version is not None and isinstance(target_version, str):
-        target_version = WebotsVersion(target_version)
-    if minimum_version is not None and isinstance(minimum_version, str):
-        minimum_version = WebotsVersion(minimum_version)
-    if target_version is None:
-        target_version = WebotsVersion.target()
-    if minimum_version is None:
-        minimum_version = WebotsVersion.minimum()
-
-    # Search target
-    path = __get_webots_home(target_version, condition='eq')
-    if path is not None:
-        return path
-
-    # Fallback to minimum
-    path = __get_webots_home(target_version, condition='ge')
-    if path is not None:
-        found_version = WebotsVersion.from_path(path)
-        if show_warning:
-            print(f'WARNING: Target Webots version `{target_version}` is not found, fallback to `{found_version}`')
-        return path
-
-    return None
-
-
-def __get_webots_home(target_version, condition='ge'):
-    """Path to the Webots installation directory."""
-    def version_condition(found, target):
+def get_webots_home(isWSL, show_warning=False):
+    def version_equal(found, target):
         if target is None:
             return True
         if found is None:
             return False
-        if condition == 'eq':
-            return found == target
-        elif condition == 'ge':
-            return found >= target
-        raise Exception('`condition` can be `eq` or `ge`')
+        return found == target
 
     # Search in the environment variables
     environment_variables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
     for variable in environment_variables:
-        if variable in os.environ and version_condition(WebotsVersion.from_path(os.environ[variable]), target_version):
+        if variable in os.environ and os.path.isdir(os.environ[variable]) and WebotsVersion.from_path(os.environ[variable]):
             os.environ['WEBOTS_HOME'] = os.environ[variable]
             return os.environ[variable]
+        elif variable in os.environ and (not os.path.isdir(os.environ[variable]) or WebotsVersion.from_path(os.environ[variable]) is None):
+            print(f'WARNING: Webots directory `{os.environ[variable]}` specified in `{variable}` is not a valid Webots directory or is not found.')
 
-    # Use the 'which' command (Linux and Mac)
-    try:
-        where_command = 'which'
-        path = os.path.split(os.path.abspath(subprocess.check_output([where_command, 'webots'])))[0]
-        path = path.decode('utf-8')
-        if os.path.isdir(path) and version_condition(WebotsVersion.from_path(path), target_version):
-            os.environ['WEBOTS_HOME'] = path
-            return path
-    except subprocess.CalledProcessError:
-        # Webots not found
-        pass
-    except FileNotFoundError:
-        # The `which` command not available
-        pass
+    # Normalize Webots version
+    target_version = WebotsVersion.target()
 
     # Look at standard installation pathes
-    paths = [
-        '/usr/local/webots',                                    # Linux default install
-        '/snap/webots/current/usr/share/webots',                # Linux snap install
-        '/Applications/Webots.app',                             # macOS default install
-        'C:\\Program Files\\Webots',                            # Windows default install
-        os.getenv('LOCALAPPDATA', '') + '\\Programs\\Webots',   # Windows user 
-        '/mnt/c/Program Files/Webots'                           # WSL default Windows install
-    ]
-    if target_version is not None:
-        paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + target_version.short(), 'webots'))
-    for path in paths:
-        if os.path.isdir(path) and version_condition(WebotsVersion.from_path(path), target_version):
-            os.environ['WEBOTS_HOME'] = path
-            return path
-    return None
+    if isWSL:
+        paths = [
+            '/mnt/c/Program Files/Webots'                           # WSL default Windows install
+        ]
+    elif sys.platform == 'linux':
+        paths = [
+            '/usr/local/webots',                                    # Linux default install
+            '/snap/webots/current/usr/share/webots',                # Linux snap install
+        ]
+    elif sys.platform == 'darwin':
+        paths = [
+            '/Applications/Webots.app',                             # macOS default install
+        ]
+    # Add automatic installation path to pathes list
+    paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + target_version.short(), 'webots'))
 
+    # Check if default pathes contain target version of Webots
+    for path in paths:
+        if os.path.isdir(path) and version_equal(WebotsVersion.from_path(path), target_version):
+            os.environ['WEBOTS_HOME'] = path
+            if show_warning:
+                print(f'WARNING: No valid Webots directory specified in `ROS2_WEBOTS_HOME` and `WEBOTS_HOME`, fallback to default installation folder {path}.')
+            return path
+
+    return None
 
 def __install_webots(installation_directory, isWSL):
     target_version = WebotsVersion.target()

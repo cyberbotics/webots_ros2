@@ -26,6 +26,7 @@ from launch_ros.actions import Node
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
+from webots_ros2_driver.utils import (get_wsl_ip_address)
 
 
 def generate_launch_description():
@@ -39,7 +40,11 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    ros2_supervisor = Ros2SupervisorLauncher()
+    controller_url = ''
+    if webots._isWSL:
+        controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/'
+
+    ros2_supervisor = Ros2SupervisorLauncher(isWSL=webots._isWSL)
 
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -76,7 +81,7 @@ def generate_launch_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'epuck'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'epuck'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,

@@ -79,6 +79,28 @@ class WebotsVersion:
     def short(self):
         return self.version.replace('revision ', 'rev').replace(' ', '-')
 
+def get_wsl_ip_address():
+    try:
+        file = open('/etc/resolv.conf', 'r')
+    except IOError:
+        # /etc/resolv.conf doesn't exist, can't be read, etc.
+        # Use the default resolver configuration.
+        return '127.0.0.1'
+    try:
+        for line in file:
+            if len(line) == 0 or line[0] == '#' or line[0] == ';':
+                continue
+            tokens = line.split()
+            if len(tokens) == 0:
+                continue
+            if tokens[0] == 'nameserver':
+                file.close()
+                if len(tokens[1]) == 0:
+                    return '127.0.0.1'
+                return tokens[1]
+    finally:
+        file.close()
+    
 
 def get_webots_home(isWSL, show_warning=False):
     def version_equal(found, target):

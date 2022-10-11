@@ -22,7 +22,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from platform import uname
 
 from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
@@ -33,7 +32,8 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation,
-                                      get_wsl_ip_address)
+                                      get_wsl_ip_address,
+                                      is_wsl)
 
 
 class _ConditionalSubstitution(Substitution):
@@ -52,14 +52,14 @@ class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
         if sys.platform == 'win32':
             sys.exit(f'Windows is not supported by the webots_ros2 package.')
-        self._isWSL = 'microsoft-standard' in uname().release
+        self.__is_wsl = is_wsl()
 
         # Find Webots executable
-        webots_path = get_webots_home(self._isWSL, show_warning=True)
+        webots_path = get_webots_home(show_warning=True)
         if webots_path is None:
-            handle_webots_installation(self._isWSL)
-            webots_path = get_webots_home(self._isWSL)
-        if self._isWSL:
+            handle_webots_installation()
+            webots_path = get_webots_home()
+        if self.__is_wsl:
             webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
         else:
             webots_path = os.path.join(webots_path, 'webots')
@@ -71,7 +71,7 @@ class WebotsLauncher(ExecuteProcess):
         if not isinstance(world, Substitution):
             world = TextSubstitution(text=self.__world_copy.name)
 
-        if self._isWSL:
+        if self.__is_wsl:
             wsl_tmp_path = subprocess.check_output(['wslpath', '-w', self.__world_copy.name]).strip().decode("utf-8")
             world = TextSubstitution(text=wsl_tmp_path)
 
@@ -159,9 +159,9 @@ class WebotsLauncher(ExecuteProcess):
 
 
 class Ros2SupervisorLauncher(Node):
-    def __init__(self, output='screen', respawn=True, isWSL=False, **kwargs):
+    def __init__(self, output='screen', respawn=True, **kwargs):
         controller_url = ''
-        if isWSL:
+        if is_wsl():
             controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/'
 
         # Launch the Ros2Supervisor node

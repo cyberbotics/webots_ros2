@@ -25,6 +25,7 @@ import functools
 import subprocess
 import urllib.request
 from pathlib import Path
+from platform import uname
 
 
 TARGET_VERSION_STR = 'R2022b'
@@ -79,6 +80,9 @@ class WebotsVersion:
     def short(self):
         return self.version.replace('revision ', 'rev').replace(' ', '-')
 
+def is_wsl():
+    return 'microsoft-standard' in uname().release
+
 def get_wsl_ip_address():
     try:
         file = open('/etc/resolv.conf', 'r')
@@ -102,7 +106,7 @@ def get_wsl_ip_address():
         file.close()
     
 
-def get_webots_home(isWSL, show_warning=False):
+def get_webots_home(show_warning=False):
     def version_equal(found, target):
         if target is None:
             return True
@@ -123,7 +127,7 @@ def get_webots_home(isWSL, show_warning=False):
     target_version = WebotsVersion.target()
 
     # Look at standard installation pathes
-    if isWSL:
+    if is_wsl():
         paths = [
             '/mnt/c/Program Files/Webots'                           # WSL default Windows install
         ]
@@ -149,7 +153,7 @@ def get_webots_home(isWSL, show_warning=False):
 
     return None
 
-def __install_webots(installation_directory, isWSL):
+def __install_webots(installation_directory):
     target_version = WebotsVersion.target()
 
     def on_download_progress_changed(count, block_size, total_size):
@@ -160,7 +164,7 @@ def __install_webots(installation_directory, isWSL):
     print(f'Installing Webots {target_version}... This might take some time.')
 
     # Remove previous archive
-    if isWSL:
+    if is_wsl():
         archive_name = f'webots-{target_version.short()}_setup.exe'
         archive_path = os.path.join('/mnt/c/Temp', archive_name)
     else:
@@ -181,7 +185,7 @@ def __install_webots(installation_directory, isWSL):
         print(f'Using installation present at `{archive_path}`...')
 
     # Extract Webots archive
-    if isWSL:
+    if is_wsl():
         print('Installing...')
         subprocess.check_output(f'{archive_path} /SILENT /ALLUSERS', shell=True)
         os.remove(archive_path)
@@ -195,9 +199,9 @@ def __install_webots(installation_directory, isWSL):
         os.remove(archive_path)
         os.environ['WEBOTS_HOME'] = os.path.join(installation_path, 'webots')
 
-def handle_webots_installation(isWSL):
+def handle_webots_installation():
     target_version = WebotsVersion.target()
-    installation_directory = f'C:\\Program Files\\Webots' if isWSL else os.path.join(str(Path.home()), '.ros')
+    installation_directory = f'C:\\Program Files\\Webots' if is_wsl() else os.path.join(str(Path.home()), '.ros')
     webots_release_url = f'https://github.com/cyberbotics/webots/releases/tag/{target_version.short()}'
 
     print(
@@ -213,8 +217,8 @@ def handle_webots_installation(isWSL):
         f'Do you want Webots {target_version} to be automatically installed {location_text}([Y]es/[N]o)?: ')
 
     if method.lower() == 'y':
-        __install_webots(installation_directory, isWSL)
-        webots_path = get_webots_home(isWSL)
+        __install_webots(installation_directory)
+        webots_path = get_webots_home()
         if webots_path is None:
             sys.exit(f'Failed to install Webots {target_version}')
     else:

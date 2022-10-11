@@ -28,7 +28,7 @@ from pathlib import Path
 from platform import uname
 
 
-MINIMUM_VERSION_STR = 'R2023a'
+MINIMUM_VERSION_STR = 'R2022b'
 
 
 @functools.total_ordering

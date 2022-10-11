@@ -28,7 +28,7 @@ from pathlib import Path
 from platform import uname
 
 
-TARGET_VERSION_STR = 'R2023a'
+MINIMUM_VERSION_STR = 'R2023a'
 
 
 @functools.total_ordering
@@ -54,8 +54,8 @@ class WebotsVersion:
         return None
 
     @staticmethod
-    def target():
-        return WebotsVersion(TARGET_VERSION_STR)
+    def minimum():
+        return WebotsVersion(MINIMUM_VERSION_STR)
 
     def __eq__(self, other):
         if other.get_number() == self.get_number():
@@ -107,12 +107,12 @@ def get_wsl_ip_address():
     
 
 def get_webots_home(show_warning=False):
-    def version_equal(found, target):
-        if target is None:
+    def version_min(found, minimum):
+        if minimum is None:
             return True
         if found is None:
             return False
-        return found == target
+        return found >= minimum
 
     # Search in the environment variables
     environment_variables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
@@ -124,7 +124,7 @@ def get_webots_home(show_warning=False):
             print(f'WARNING: Webots directory `{os.environ[variable]}` specified in `{variable}` is not a valid Webots directory or is not found.')
 
     # Normalize Webots version
-    target_version = WebotsVersion.target()
+    minimum_version = WebotsVersion.minimum()
 
     # Look at standard installation pathes
     if is_wsl():
@@ -141,11 +141,11 @@ def get_webots_home(show_warning=False):
             '/Applications/Webots.app',                             # macOS default install
         ]
     # Add automatic installation path to pathes list
-    paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + target_version.short(), 'webots'))
+    paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + minimum_version.short(), 'webots'))
 
     # Check if default pathes contain target version of Webots
     for path in paths:
-        if os.path.isdir(path) and version_equal(WebotsVersion.from_path(path), target_version):
+        if os.path.isdir(path) and version_min(WebotsVersion.from_path(path), minimum_version):
             os.environ['WEBOTS_HOME'] = path
             if show_warning:
                 print(f'WARNING: No valid Webots directory specified in `ROS2_WEBOTS_HOME` and `WEBOTS_HOME`, fallback to default installation folder {path}.')
@@ -154,22 +154,22 @@ def get_webots_home(show_warning=False):
     return None
 
 def __install_webots(installation_directory):
-    target_version = WebotsVersion.target()
+    minimum_version = WebotsVersion.minimum()
 
     def on_download_progress_changed(count, block_size, total_size):
         percent = count * block_size * 100 / total_size
         sys.stdout.write(f'\rDownloading... {percent:.2f}%')
         sys.stdout.flush()
 
-    print(f'Installing Webots {target_version}... This might take some time.')
+    print(f'Installing Webots {minimum_version}... This might take some time.')
 
     # Remove previous archive
     if is_wsl():
-        archive_name = f'webots-{target_version.short()}_setup.exe'
+        archive_name = f'webots-{minimum_version.short()}_setup.exe'
         archive_path = os.path.join('/mnt/c/Temp', archive_name)
     else:
         installation_path = os.path.abspath(os.path.join(installation_directory, 'webots'))
-        archive_name = f'webots-{target_version.short()}-x86-64.tar.bz2'
+        archive_name = f'webots-{minimum_version.short()}-x86-64.tar.bz2'
         archive_path = os.path.join(installation_directory, archive_name)
 
         # Remove previous webots folder
@@ -178,7 +178,7 @@ def __install_webots(installation_directory):
 
     # Get Webots archive
     if not os.path.exists(archive_path):
-        url = f'https://github.com/cyberbotics/webots/releases/download/{target_version.short()}/'
+        url = f'https://github.com/cyberbotics/webots/releases/download/{minimum_version.short()}/'
         urllib.request.urlretrieve(url + archive_name, archive_path, reporthook=on_download_progress_changed)
         print('')
     else:
@@ -191,7 +191,7 @@ def __install_webots(installation_directory):
         os.remove(archive_path)
         os.environ['WEBOTS_HOME'] = '/mnt/c/Program Files/Webots'
     else:
-        installation_subdirectory = os.path.join(installation_directory, 'webots' + target_version.short())
+        installation_subdirectory = os.path.join(installation_directory, 'webots' + minimum_version.short())
         print('Extracting...')
         tar = tarfile.open(archive_path, 'r:bz2')
         tar.extractall(installation_subdirectory)
@@ -200,26 +200,26 @@ def __install_webots(installation_directory):
         os.environ['WEBOTS_HOME'] = os.path.join(installation_path, 'webots')
 
 def handle_webots_installation():
-    target_version = WebotsVersion.target()
+    minimum_version = WebotsVersion.minimum()
     installation_directory = f'C:\\Program Files\\Webots' if is_wsl() else os.path.join(str(Path.home()), '.ros')
-    webots_release_url = f'https://github.com/cyberbotics/webots/releases/tag/{target_version.short()}'
+    webots_release_url = f'https://github.com/cyberbotics/webots/releases/tag/{minimum_version.short()}'
 
     print(
-        f'Webots {target_version} was not found in your system.\n'
-        f'- If you want to manually install Webots {target_version} please download '
+        f'Webots {minimum_version} was not found in your system.\n'
+        f'- If you want to manually install Webots {minimum_version} please download '
         f'it from {webots_release_url}.\n'
-        f'- If you already have Webots {target_version} installed please then specify the '
+        f'- If you already have Webots {minimum_version} installed please then specify the '
         f'`WEBOTS_HOME` environment variable.\n'
     )
 
     location_text = f'in `{installation_directory}` '
     method = input(
-        f'Do you want Webots {target_version} to be automatically installed {location_text}([Y]es/[N]o)?: ')
+        f'Do you want Webots {minimum_version} to be automatically installed {location_text}([Y]es/[N]o)?: ')
 
     if method.lower() == 'y':
         __install_webots(installation_directory)
         webots_path = get_webots_home()
         if webots_path is None:
-            sys.exit(f'Failed to install Webots {target_version}')
+            sys.exit(f'Failed to install Webots {minimum_version}')
     else:
-        sys.exit(f'Missing Webots version {target_version}')
+        sys.exit(f'Missing Webots version {minimum_version}')

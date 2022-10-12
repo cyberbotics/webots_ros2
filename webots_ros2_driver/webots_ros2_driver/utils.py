@@ -134,11 +134,15 @@ def get_webots_home(show_warning=False):
     elif sys.platform == 'linux':
         paths = [
             '/usr/local/webots',                                    # Linux default install
-            '/snap/webots/current/usr/share/webots',                # Linux snap install
+            '/snap/webots/current/usr/share/webots'                 # Linux snap install
         ]
     elif sys.platform == 'darwin':
         paths = [
-            '/Applications/Webots.app',                             # macOS default install
+            '/Applications/Webots.app'                              # macOS default install
+        ]
+    elif sys.platform == 'win32':
+        paths = [
+            'C:\\Program Files\\Webots'
         ]
     # Add automatic installation path to pathes list
     paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + minimum_version.short(), 'webots'))
@@ -201,7 +205,7 @@ def __install_webots(installation_directory):
 
 def handle_webots_installation():
     minimum_version = WebotsVersion.minimum()
-    installation_directory = f'C:\\Program Files\\Webots' if is_wsl() else os.path.join(str(Path.home()), '.ros')
+    installation_directory = f'C:\\Program Files\\Webots' if (is_wsl() or sys.platform == 'win32') else os.path.join(str(Path.home()), '.ros')
     webots_release_url = f'https://github.com/cyberbotics/webots/releases/tag/{minimum_version.short()}'
 
     print(
@@ -212,9 +216,8 @@ def handle_webots_installation():
         f'`WEBOTS_HOME` environment variable.\n'
     )
 
-    location_text = f'in `{installation_directory}` '
     method = input(
-        f'Do you want Webots {minimum_version} to be automatically installed {location_text}([Y]es/[N]o)?: ')
+        f'Do you want Webots {minimum_version} to be automatically installed in {installation_directory} ([Y]es/[N]o)?: ')
 
     if method.lower() == 'y':
         __install_webots(installation_directory)

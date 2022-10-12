@@ -225,7 +225,6 @@ namespace webots_ros2_driver
   {
     if (gShutdownSignalReceived && !mWaitingForUrdfRobotToBeRemoved)
     {
-      RCLCPP_INFO(get_logger(), "test");
       mRemoveUrdfRobotPublisher->publish(mRemoveUrdfRobotMessage);
       mWaitingForUrdfRobotToBeRemoved = true;
     }

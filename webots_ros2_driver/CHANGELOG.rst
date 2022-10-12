@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.x.x (2022-xx-xx)
+2022.1.0 (2022-09-23)
 ------------------
 * Added an URDF importer feature to spawn robots from URDF files.
 

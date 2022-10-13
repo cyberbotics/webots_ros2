@@ -28,6 +28,7 @@ from pathlib import Path
 from platform import uname
 
 
+# The minimal version should be the last stable release of Webots (both on master and develop branches)
 MINIMUM_VERSION_STR = 'R2022b'
 
 

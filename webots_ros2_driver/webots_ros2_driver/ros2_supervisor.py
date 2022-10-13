@@ -23,11 +23,13 @@ import sys
 
 import rclpy
 import webots_ros2_driver_webots
+import webots_ros2_importer
 from rclpy.time import Time
 from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
 from rosgraph_msgs.msg import Clock
 from std_msgs.msg import String
+sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
 from urdf2webots.importer import convertUrdfFile, convertUrdfContent
 from webots_ros2_msgs.srv import SpawnUrdfRobot
 

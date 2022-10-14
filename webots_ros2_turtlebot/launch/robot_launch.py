@@ -40,9 +40,7 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    controller_url = ''
-    if is_wsl():
-        controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/'
+    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
 
     ros2_supervisor = Ros2SupervisorLauncher()
 

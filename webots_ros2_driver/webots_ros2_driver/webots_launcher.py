@@ -160,9 +160,7 @@ class WebotsLauncher(ExecuteProcess):
 
 class Ros2SupervisorLauncher(Node):
     def __init__(self, output='screen', respawn=True, **kwargs):
-        controller_url = ''
-        if is_wsl():
-            controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/'
+        controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
 
         # Launch the Ros2Supervisor node
         super().__init__(

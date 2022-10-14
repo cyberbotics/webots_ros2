@@ -35,9 +35,7 @@ def generate_launch_description():
     robot_description = pathlib.Path(ur5e_urdf_path).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
 
-    controller_url = ''
-    if is_wsl():
-        controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/'
+    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
 
     # Define your URDF robots here
     # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node

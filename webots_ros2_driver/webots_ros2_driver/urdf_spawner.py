@@ -31,7 +31,7 @@ def get_webots_driver_node(event, driver_node):
 class URDFSpawner(ExecuteProcess):
     def __init__(self, output='log', name=None, urdf_path=None, robot_description=None, relative_path_prefix=None, translation='0 0 0', rotation='0 0 1 0', normal=False, box_collision=False, init_pos=None, **kwargs):
         if is_wsl() and relative_path_prefix:
-            relative_path_prefix = subprocess.check_output(['wslpath', '-w', relative_path_prefix]).strip().decode("utf-8").replace('\\', '/')
+            relative_path_prefix = subprocess.check_output(['wslpath', '-w', relative_path_prefix]).strip().decode('utf-8').replace('\\', '/')
             
         message = '{robot: {'
 

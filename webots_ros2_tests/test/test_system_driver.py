@@ -51,9 +51,7 @@ def generate_test_description():
         mode='fast'
     )
 
-    controller_url = ''
-    if is_wsl():
-        controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/'
+    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
 
     ros2_supervisor = Node(
         package='webots_ros2_driver',

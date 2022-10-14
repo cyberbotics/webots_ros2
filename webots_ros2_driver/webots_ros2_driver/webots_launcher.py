@@ -72,7 +72,7 @@ class WebotsLauncher(ExecuteProcess):
             world = TextSubstitution(text=self.__world_copy.name)
 
         if self.__is_wsl:
-            wsl_tmp_path = subprocess.check_output(['wslpath', '-w', self.__world_copy.name]).strip().decode("utf-8")
+            wsl_tmp_path = subprocess.check_output(['wslpath', '-w', self.__world_copy.name]).strip().decode('utf-8')
             world = TextSubstitution(text=wsl_tmp_path)
 
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')

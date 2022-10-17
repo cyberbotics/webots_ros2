@@ -51,7 +51,7 @@ class _ConditionalSubstitution(Substitution):
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
         if sys.platform == 'win32':
-            print(f'WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Sub-system for Linux) environment instead.')
+            print(f'WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.')
             print(f'WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.')
         self.__is_wsl = is_wsl()
 

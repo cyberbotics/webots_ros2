@@ -19,6 +19,7 @@
 import os
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 
@@ -30,7 +31,9 @@ from launch.substitutions import TextSubstitution
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 
 from webots_ros2_driver.utils import (get_webots_home,
-                                      handle_webots_installation)
+                                      handle_webots_installation,
+                                      get_wsl_ip_address,
+                                      is_wsl)
 
 
 class _ConditionalSubstitution(Substitution):
@@ -47,14 +50,19 @@ class _ConditionalSubstitution(Substitution):
 
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
+        if sys.platform == 'win32':
+            sys.exit(f'Windows is not supported by the webots_ros2 package.')
+        self.__is_wsl = is_wsl()
+
         # Find Webots executable
         webots_path = get_webots_home(show_warning=True)
         if webots_path is None:
             handle_webots_installation()
             webots_path = get_webots_home()
-        if sys.platform == 'win32':
-            webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin')
-        webots_path = os.path.join(webots_path, 'webots')
+        if self.__is_wsl:
+            webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
+        else:
+            webots_path = os.path.join(webots_path, 'webots')
 
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 
@@ -62,6 +70,10 @@ class WebotsLauncher(ExecuteProcess):
         self.__world = world
         if not isinstance(world, Substitution):
             world = TextSubstitution(text=self.__world_copy.name)
+
+        if self.__is_wsl:
+            wsl_tmp_path = subprocess.check_output(['wslpath', '-w', self.__world_copy.name]).strip().decode('utf-8')
+            world = TextSubstitution(text=wsl_tmp_path)
 
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
@@ -148,12 +160,14 @@ class WebotsLauncher(ExecuteProcess):
 
 class Ros2SupervisorLauncher(Node):
     def __init__(self, output='screen', respawn=True, **kwargs):
+        controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
+
         # Launch the Ros2Supervisor node
         super().__init__(
             package='webots_ros2_driver',
             executable='ros2_supervisor.py',
             output=output,
-            additional_env={'WEBOTS_CONTROLLER_URL': 'Ros2Supervisor'},
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'Ros2Supervisor'},
             respawn=respawn,
             **kwargs
         )

@@ -35,6 +35,7 @@ import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
+from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl
 
 
 @pytest.mark.rostest
@@ -50,11 +51,13 @@ def generate_test_description():
         mode='fast'
     )
 
+    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
+
     ros2_supervisor = Node(
         package='webots_ros2_driver',
         executable='ros2_supervisor.py',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'Ros2Supervisor'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'Ros2Supervisor'},
         respawn=True,
     )
 
@@ -62,7 +65,7 @@ def generate_test_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'Pioneer_3_AT'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'Pioneer_3_AT'},
         parameters=[{'robot_description': robot_description, 'use_sim_time': True}]
     )
 

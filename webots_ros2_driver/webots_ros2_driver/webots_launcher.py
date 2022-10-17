@@ -65,6 +65,7 @@ class WebotsLauncher(ExecuteProcess):
         else:
             webots_path = os.path.join(webots_path, 'webots')
 
+        mode_str = mode
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 
         self.__world_copy = tempfile.NamedTemporaryFile(mode='w+', suffix='_world_with_URDF_robot.wbt', delete=False)
@@ -88,6 +89,18 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
+        with open('/home/yannick/shared/launch_args.txt', 'w') as file:
+            if(gui):
+                file.write('--no-rendering\n')
+                file.write('--stdout\n')
+                file.write('--stderr\n')
+                file.write('--minimize\n')
+            if(stream):
+                file.write('--stream\n')
+            file.write('--batch\n')
+            file.write('--mode=')
+            file.write(mode_str)  
+        
         # no_rendering, stdout, stderr, minimize
         super().__init__(
             output=output,
@@ -143,7 +156,10 @@ class WebotsLauncher(ExecuteProcess):
         world_file.write('}\n')
         world_file.close()
 
-        return super().execute(context)
+        shutil.copy(world_path, '/home/yannick/shared/' + os.path.basename(self.__world_copy.name))
+
+        return
+        #return super().execute(context)
 
     def _shutdown_process(self, context, *, send_sigint):
         # Remove copy of the world and the corresponding ".wbproj" file

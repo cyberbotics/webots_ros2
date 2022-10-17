@@ -130,10 +130,10 @@ def generate_launch_description():
         epuck_process,
 
         # This action will kill all nodes once the Webots simulation has exited
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
-                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
-            )
-        )
+        #launch.actions.RegisterEventHandler(
+        #    event_handler=launch.event_handlers.OnProcessExit(
+        #        target_action=webots,
+        #        on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+        #    )
+        #)
     ])

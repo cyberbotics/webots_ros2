@@ -33,7 +33,11 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation,
                                       get_wsl_ip_address,
-                                      is_wsl)
+                                      is_wsl,
+                                      is_macOS,
+                                      container_shared_folder,
+                                      host_shared_folder,
+                                      connect_to_host)
 
 
 class _ConditionalSubstitution(Substitution):
@@ -54,16 +58,20 @@ class WebotsLauncher(ExecuteProcess):
             print(f'WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.')
             print(f'WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.')
         self.__is_wsl = is_wsl()
+        self.__is_macOS = is_macOS()
 
         # Find Webots executable
-        webots_path = get_webots_home(show_warning=True)
-        if webots_path is None:
-            handle_webots_installation()
-            webots_path = get_webots_home()
-        if self.__is_wsl:
-            webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
+        if not self.__is_macOS:
+            webots_path = get_webots_home(show_warning=True)
+            if webots_path is None:
+                handle_webots_installation()
+                webots_path = get_webots_home()
+            if self.__is_wsl:
+                webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
+            else:
+                webots_path = os.path.join(webots_path, 'webots')
         else:
-            webots_path = os.path.join(webots_path, 'webots')
+            webots_path = ''
 
         mode_str = mode
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
@@ -89,18 +97,19 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
-        with open('/home/yannick/shared/launch_args.txt', 'w') as file:
-            if(gui):
-                file.write('--no-rendering\n')
-                file.write('--stdout\n')
-                file.write('--stderr\n')
-                file.write('--minimize\n')
-            if(stream):
-                file.write('--stream\n')
-            file.write('--batch\n')
-            file.write('--mode=')
-            file.write(mode_str)  
-        
+        if self.__is_macOS:
+            with open(os.path.join(container_shared_folder(), 'launch_args.txt'), 'w') as file:
+                if not gui:
+                    file.write('--no-rendering\n')
+                    file.write('--stdout\n')
+                    file.write('--stderr\n')
+                    file.write('--minimize\n')
+                if(stream):
+                    file.write('--stream\n')
+                file.write('--mode=')
+                file.write(mode_str + '\n')
+                file.write('--batch\n')
+
         # no_rendering, stdout, stderr, minimize
         super().__init__(
             output=output,
@@ -156,10 +165,17 @@ class WebotsLauncher(ExecuteProcess):
         world_file.write('}\n')
         world_file.close()
 
-        shutil.copy(world_path, '/home/yannick/shared/' + os.path.basename(self.__world_copy.name))
-
-        return
-        #return super().execute(context)
+        if self.__is_macOS:
+            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
+            message = ''
+            while(message == ''):
+                message = connect_to_host()
+                if message == 'FAIL0' or message == 'FAIL1' or message =='FAIL2':
+                    sys.exit(message)
+                if message == 'ACK':
+                    return
+                print(f"Webots server is not found on the host. Please start the server to launch Webots.")
+        return super().execute(context)
 
     def _shutdown_process(self, context, *, send_sigint):
         # Remove copy of the world and the corresponding ".wbproj" file
@@ -177,7 +193,11 @@ class WebotsLauncher(ExecuteProcess):
 
 class Ros2SupervisorLauncher(Node):
     def __init__(self, output='screen', respawn=True, **kwargs):
-        controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
+        if is_macOS():
+            tcp_url = "host.docker.internal"
+        elif is_wsl():
+            tcp_url = get_wsl_ip_address()
+        controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or is_macOS()) else ''
 
         # Launch the Ros2Supervisor node
         super().__init__(

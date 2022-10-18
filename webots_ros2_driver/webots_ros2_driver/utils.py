@@ -20,6 +20,7 @@ import os
 import re
 import sys
 import shutil
+import socket
 import tarfile
 import functools
 import subprocess
@@ -105,7 +106,24 @@ def get_wsl_ip_address():
                 return tokens[1]
     finally:
         file.close()
-    
+
+def is_macOS():
+    return 'WEBOTS_SHARED_FOLDERS' in os.environ
+
+def host_shared_folder():
+    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDERS'].split(':')
+    return shared_folder_list[0]
+
+def container_shared_folder():
+    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDERS'].split(':')
+    return shared_folder_list[1]
+
+def connect_to_host():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(("host.docker.internal", 2000))
+        s.sendall(host_shared_folder().encode("utf-8"))
+        data = s.recv(1024)
+    return data.decode("utf-8")
 
 def get_webots_home(show_warning=False):
     def version_min(found, minimum):
@@ -143,7 +161,7 @@ def get_webots_home(show_warning=False):
         ]
     elif sys.platform == 'win32':
         paths = [
-            'C:\\Program Files\\Webots'                             # Windows default install       
+            'C:\\Program Files\\Webots'                             # Windows default install
         ]
     # Add automatic installation path to pathes list
     paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + minimum_version.short(), 'webots'))

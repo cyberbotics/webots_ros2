@@ -3,11 +3,12 @@ name: Libcontroller Submodule Updater
 on:
   pull_request:
     types: [labeled, unlabeled]
-  schedule:
-    - cron:  '0 09 * * *'
+  #schedule:
+  #  - cron:  '0 09 * * *'
 
 env:
   SUBMODULE_TARGET_BRANCH: R2022b
+  REPO_BRANCH: master
 
 jobs:
   automatic-submodule-sync:
@@ -18,7 +19,7 @@ jobs:
         with:
           submodules: "true"
           fetch-depth: 0
-          ref: master
+          ref: ${{ env.REPO_BRANCH }}
       - name: Update Submodule And Define Unique Branch Name
         run: |
           cd webots_ros2_driver/webots
@@ -47,7 +48,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: ${{ env.BRANCH_NAME }}
-          destination_branch: master
+          destination_branch: ${{ env.REPO_BRANCH }}
           pr_title: Sync libcontroller
           pr_body: Synchronizes libcontroller to the latest commit of branch ${{ env.SUBMODULE_TARGET_BRANCH }}
           pr_reviewer: Maintainers

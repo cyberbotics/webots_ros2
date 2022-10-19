@@ -1,0 +1,53 @@
+name: Libcontroller Submodule Updater
+
+on:
+  pull_request:
+    types: [labeled, unlabeled]
+  schedule:
+    - cron:  '0 09 * * *'
+
+env:
+  SUBMODULE_TARGET_BRANCH: R2022b
+
+jobs:
+  automatic-submodule-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          submodules: "true"
+          fetch-depth: 0
+          ref: master
+      - name: Update Submodule And Define Unique Branch Name
+        run: |
+          cd webots_ros2_driver/webots
+          git checkout ${{ env.SUBMODULE_TARGET_BRANCH }} && git pull origin ${{ env.SUBMODULE_TARGET_BRANCH }}
+          echo "BRANCH_NAME=sync-develop-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          cd ../..
+      - name: Create commit if necessary
+        id: create-commit
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Submodule needs sync!";
+            git config --global user.name ${GITHUB_ACTOR}
+            git config --global user.email ${GITHUB_ACTOR}@github.com
+            git checkout -b ${{ env.BRANCH_NAME }}
+            git add .
+            git commit -m "Sync submodule"
+            git push origin ${{ env.BRANCH_NAME }}
+            echo "create_pull_request=1" >> $GITHUB_OUTPUT
+          else
+            echo "Submodule is up to date";
+            echo "create_pull_request=0" >> $GITHUB_OUTPUT
+          fi
+      - name: Create Pull Request
+        if: ${{ steps.create-commit.outputs.create_pull_request == 1 }}
+        uses: repo-sync/pull-request@v2.6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          source_branch: ${{ env.BRANCH_NAME }}
+          destination_branch: master
+          pr_title: Sync libcontroller
+          pr_body: Synchronizes libcontroller to the latest commit of branch ${{ env.SUBMODULE_TARGET_BRANCH }}
+          pr_reviewer: Maintainers

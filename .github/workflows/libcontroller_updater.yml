@@ -6,7 +6,7 @@ on:
 
 env:
   SUBMODULE_TARGET_BRANCH: R2022b
-  REPO_BRANCH: master
+  WEBOTS_ROS2_BRANCH: master
 
 jobs:
   automatic-submodule-sync:
@@ -17,12 +17,12 @@ jobs:
         with:
           submodules: "true"
           fetch-depth: 0
-          ref: ${{ env.REPO_BRANCH }}
+          ref: ${{ env.WEBOTS_ROS2_BRANCH }}
       - name: Update Submodule And Define Unique Branch Name
         run: |
           cd webots_ros2_driver/webots
           git checkout ${{ env.SUBMODULE_TARGET_BRANCH }} && git pull origin ${{ env.SUBMODULE_TARGET_BRANCH }}
-          echo "BRANCH_NAME=sync-develop-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "BRANCH_NAME=sync-${{ env.WEBOTS_ROS2_BRANCH }}-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           cd ../..
       - name: Create commit if necessary
         id: create-commit

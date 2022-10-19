@@ -1,10 +1,8 @@
 name: Libcontroller Submodule Updater
 
 on:
-  pull_request:
-    types: [labeled, unlabeled]
-  #schedule:
-  #  - cron:  '0 09 * * *'
+  schedule:
+    - cron:  '0 09 * * *'
 
 env:
   SUBMODULE_TARGET_BRANCH: R2022b
@@ -39,7 +37,7 @@ jobs:
             git push origin ${{ env.BRANCH_NAME }}
             echo "create_pull_request=1" >> $GITHUB_OUTPUT
           else
-            echo "Submodule is up to date";
+            echo "Submodule is already up to date.";
             echo "create_pull_request=0" >> $GITHUB_OUTPUT
           fi
       - name: Create Pull Request

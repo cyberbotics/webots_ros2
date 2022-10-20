@@ -26,7 +26,7 @@ from launch_ros.actions import Node
 import launch
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
-from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl
+from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl, is_macOS
 
 
 def generate_launch_description():
@@ -40,7 +40,12 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
-    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
+    if is_macOS():
+        tcp_url = "host.docker.internal"
+    elif is_wsl():
+        tcp_url = get_wsl_ip_address()
+
+    controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or is_macOS()) else ''
 
     ros2_supervisor = Ros2SupervisorLauncher()
 

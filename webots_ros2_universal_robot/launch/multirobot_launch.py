@@ -28,6 +28,7 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.actions import Node
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
+from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -41,6 +42,8 @@ def get_ros2_nodes(*args):
     abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
     ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
     abb_control_params = os.path.join(package_dir, 'resource', 'ros2_control_abb_config.yaml')
+
+    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
 
     # Define your URDF robots here
     # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node
@@ -63,7 +66,7 @@ def get_ros2_nodes(*args):
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'UR5e'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'UR5e'},
         namespace='ur5e',
         parameters=[
             {'robot_description': ur5e_description},
@@ -77,7 +80,7 @@ def get_ros2_nodes(*args):
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'abbirb4600'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'abbirb4600'},
         namespace='abb',
         parameters=[
             {'robot_description': abb_description},

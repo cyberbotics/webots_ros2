@@ -34,7 +34,7 @@ from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation,
                                       get_wsl_ip_address,
                                       is_wsl,
-                                      is_macOS,
+                                      has_shared_folder,
                                       container_shared_folder,
                                       host_shared_folder,
                                       connect_to_host)
@@ -58,7 +58,7 @@ class WebotsLauncher(ExecuteProcess):
             print(f'WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.')
             print(f'WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.')
         self.__is_wsl = is_wsl()
-        self.__is_macOS = is_macOS()
+        self.__is_macOS = has_shared_folder()
 
         # Find Webots executable
         if not self.__is_macOS:
@@ -194,11 +194,11 @@ class WebotsLauncher(ExecuteProcess):
 
 class Ros2SupervisorLauncher(Node):
     def __init__(self, output='screen', respawn=True, **kwargs):
-        if is_macOS():
+        if has_shared_folder():
             tcp_url = 'host.docker.internal'
         elif is_wsl():
             tcp_url = get_wsl_ip_address()
-        controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or is_macOS()) else ''
+        controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or has_shared_folder()) else ''
 
         # Launch the Ros2Supervisor node
         super().__init__(

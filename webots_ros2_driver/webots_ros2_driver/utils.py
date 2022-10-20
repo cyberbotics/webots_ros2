@@ -107,7 +107,7 @@ def get_wsl_ip_address():
     finally:
         file.close()
 
-def is_macOS():
+def has_shared_folder():
     return 'WEBOTS_SHARED_FOLDERS' in os.environ
 
 def host_shared_folder():

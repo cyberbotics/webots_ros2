@@ -23,7 +23,7 @@ from launch_ros.actions import Node
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
-from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl, is_macOS
+from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl, has_shared_folder
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -35,12 +35,12 @@ def generate_launch_description():
     robot_description = pathlib.Path(ur5e_urdf_path).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
 
-    if is_macOS():
+    if has_shared_folder():
         tcp_url = 'host.docker.internal'
     elif is_wsl():
         tcp_url = get_wsl_ip_address()
 
-    controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or is_macOS()) else ''
+    controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or has_shared_folder()) else ''
 
     # Define your URDF robots here
     # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node

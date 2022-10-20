@@ -35,7 +35,7 @@ import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
-from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl, is_macOS
+from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl, has_shared_folder
 
 
 @pytest.mark.rostest
@@ -51,12 +51,12 @@ def generate_test_description():
         mode='fast'
     )
 
-    if is_macOS():
+    if has_shared_folder():
         tcp_url = 'host.docker.internal'
     elif is_wsl():
         tcp_url = get_wsl_ip_address()
 
-    controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or is_macOS()) else ''
+    controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or has_shared_folder()) else ''
 
     ros2_supervisor = Node(
         package='webots_ros2_driver',

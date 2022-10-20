@@ -36,7 +36,7 @@ def generate_launch_description():
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
 
     if is_macOS():
-        tcp_url = "host.docker.internal"
+        tcp_url = 'host.docker.internal'
     elif is_wsl():
         tcp_url = get_wsl_ip_address()
 

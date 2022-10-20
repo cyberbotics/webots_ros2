@@ -167,18 +167,15 @@ class WebotsLauncher(ExecuteProcess):
 
         if self.__is_macOS:
             shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
-            message = ''
-            while(message == ''):
-                message = connect_to_host()
-                if message == 'FAIL0':
-                    sys.exit('The shared folder could not be found.')
-                elif message == 'FAIL1':
-                    sys.exit('No world could be found in the shared folder.')
-                elif message =='FAIL2':
-                    sys.exit('More than one world was found in the shared folder.')
-                if message == 'ACK':
-                    return
-                print(f"Waiting for Webots server response.")
+            message = connect_to_host()
+            if message == 'FAIL0':
+                sys.exit('The Webots server could not find the shared folder.')
+            elif message == 'FAIL1':
+                sys.exit('No world could be found in the shared folder.')
+            elif message =='FAIL2':
+                sys.exit('More than one world was found in the shared folder.')
+            if message == 'ACK':
+                return
         return super().execute(context)
 
     def _shutdown_process(self, context, *, send_sigint):

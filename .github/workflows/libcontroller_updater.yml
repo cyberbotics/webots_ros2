@@ -1,15 +1,20 @@
 name: Libcontroller Submodule Updater
 
 on:
-  schedule:
-    - cron:  '0 09 * * *'
-
-env:
-  SUBMODULE_TARGET_BRANCH: R2022b
-  WEBOTS_ROS2_BRANCH: master
+  #schedule:
+  #  - cron:  '0 09 * * *'
+  pull_request:
+    types: [labeled, unlabeled]
 
 jobs:
   automatic-submodule-sync:
+    strategy:
+    matrix:
+      include:
+        - submodule_target_branch: R2022b
+          webots_ros2_branch: master
+        - submodule_target_branch: R2023a
+          webots_ros2_branch: develop
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
@@ -17,12 +22,12 @@ jobs:
         with:
           submodules: "true"
           fetch-depth: 0
-          ref: ${{ env.WEBOTS_ROS2_BRANCH }}
+          ref: ${{ matrix.webots_ros2_branch }}
       - name: Update Submodule And Define Unique Branch Name
         run: |
           cd webots_ros2_driver/webots
-          git checkout ${{ env.SUBMODULE_TARGET_BRANCH }} && git pull origin ${{ env.SUBMODULE_TARGET_BRANCH }}
-          echo "BRANCH_NAME=sync-${{ env.WEBOTS_ROS2_BRANCH }}-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          git checkout ${{ matrix.submodule_target_branch }} && git pull origin ${{ matrix.submodule_target_branch }}
+          echo "BRANCH_NAME=sync-${{ matrix.webots_ros2_branch }}-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           cd ../..
       - name: Create commit if necessary
         id: create-commit
@@ -46,7 +51,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: ${{ env.BRANCH_NAME }}
-          destination_branch: ${{ env.REPO_BRANCH }}
+          destination_branch: ${{ matrix.webots_ros2_branch }}
           pr_title: Sync libcontroller
-          pr_body: Synchronizes libcontroller to the latest commit of branch ${{ env.SUBMODULE_TARGET_BRANCH }}
+          pr_body: Synchronizes libcontroller to the latest commit of branch ${{ env.submodule_target_branch }}
           pr_reviewer: Maintainers

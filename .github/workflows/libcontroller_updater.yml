@@ -2,7 +2,7 @@ name: Libcontroller Submodule Updater
 
 on:
   schedule:
-    - cron:  '0 09 * * *'
+    - cron:  '0 10 * * *'
 
 jobs:
   automatic-submodule-sync:

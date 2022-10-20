@@ -2,7 +2,7 @@ name: ROS2 tests (develop)
 
 on:
   schedule:
-    - cron:  '0 03 * * *'
+    - cron:  '0 02 * * *'
 
 jobs:
   industrial_ci:

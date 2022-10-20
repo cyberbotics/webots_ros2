@@ -195,7 +195,7 @@ class WebotsLauncher(ExecuteProcess):
 class Ros2SupervisorLauncher(Node):
     def __init__(self, output='screen', respawn=True, **kwargs):
         if is_macOS():
-            tcp_url = "host.docker.internal"
+            tcp_url = 'host.docker.internal'
         elif is_wsl():
             tcp_url = get_wsl_ip_address()
         controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or is_macOS()) else ''

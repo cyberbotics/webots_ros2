@@ -50,7 +50,7 @@ def generate_launch_description():
     )
 
     if is_macOS():
-        tcp_url = "host.docker.internal"
+        tcp_url = 'host.docker.internal'
     elif is_wsl():
         tcp_url = get_wsl_ip_address()
 

@@ -9,12 +9,12 @@ on:
 jobs:
   automatic-submodule-sync:
     strategy:
-    matrix:
-      include:
-        - submodule_target_branch: R2022b
-          webots_ros2_branch: master
-        - submodule_target_branch: R2023a
-          webots_ros2_branch: develop
+      matrix:
+        include:
+          - submodule_target_branch: R2022b
+            webots_ros2_branch: master
+          - submodule_target_branch: R2023a
+            webots_ros2_branch: develop
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch

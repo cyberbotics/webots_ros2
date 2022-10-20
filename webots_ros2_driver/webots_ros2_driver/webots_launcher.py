@@ -170,11 +170,15 @@ class WebotsLauncher(ExecuteProcess):
             message = ''
             while(message == ''):
                 message = connect_to_host()
-                if message == 'FAIL0' or message == 'FAIL1' or message =='FAIL2':
-                    sys.exit(message)
+                if message == 'FAIL0':
+                    sys.exit('The shared folder could not be found.')
+                elif message == 'FAIL1':
+                    sys.exit('No world could be found in the shared folder.')
+                elif message =='FAIL2':
+                    sys.exit('More than one world was found in the shared folder.')
                 if message == 'ACK':
                     return
-                print(f"Webots server is not found on the host. Please start the server to launch Webots.")
+                print(f"Waiting for Webots server response.")
         return super().execute(context)
 
     def _shutdown_process(self, context, *, send_sigint):

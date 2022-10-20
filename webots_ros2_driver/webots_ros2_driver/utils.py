@@ -120,7 +120,9 @@ def container_shared_folder():
 
 def connect_to_host():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(("host.docker.internal", 2000))
+        while s.connect_ex(("host.docker.internal", 2000)) != 0:
+            print(f'WARNING: Unable to start Webots. Please start the local simulation server on your host machine. Next connection attempt in 1 second.')
+            sleep(1)
         s.sendall(host_shared_folder().encode("utf-8"))
         data = s.recv(1024)
     return data.decode("utf-8")

@@ -106,9 +106,9 @@ class WebotsLauncher(ExecuteProcess):
                     file.write('--minimize\n')
                 if(stream):
                     file.write('--stream\n')
-                file.write('--mode=')
-                file.write(mode_str + '\n')
                 file.write('--batch\n')
+                file.write('--mode=')
+                file.write(mode_str)
 
         # no_rendering, stdout, stderr, minimize
         super().__init__(

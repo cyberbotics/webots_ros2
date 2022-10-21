@@ -36,7 +36,7 @@ class URDFSpawner(ExecuteProcess):
             relative_path_prefix = subprocess.check_output(['wslpath', '-w', relative_path_prefix]).strip().decode('utf-8').replace('\\', '/')
         if has_shared_folder() and relative_path_prefix:
             shutil.copytree(relative_path_prefix, os.path.join(container_shared_folder(), os.path.basename(relative_path_prefix)))
-            relative_path_prefix = container_shared_folder(), os.path.basename(relative_path_prefix)
+            relative_path_prefix = os.path.join(container_shared_folder(), os.path.basename(relative_path_prefix))
 
         message = '{robot: {'
 

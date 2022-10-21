@@ -171,7 +171,7 @@ class WebotsLauncher(ExecuteProcess):
                 sys.exit('The Webots server could not find the shared folder.')
             elif message == 'FAIL1':
                 sys.exit('No world could be found in the shared folder.')
-            elif message =='FAIL2':
+            elif message == 'FAIL2':
                 sys.exit('More than one world was found in the shared folder.')
             if message == 'ACK':
                 return

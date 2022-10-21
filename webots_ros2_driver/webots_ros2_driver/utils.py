@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""This launcher simply starts Webots."""
+"""Utilitary functions for the package."""
 
 import os
 import re
@@ -82,8 +82,10 @@ class WebotsVersion:
     def short(self):
         return self.version.replace('revision ', 'rev').replace(' ', '-')
 
+
 def is_wsl():
     return 'microsoft-standard' in uname().release
+
 
 def get_wsl_ip_address():
     try:
@@ -107,16 +109,20 @@ def get_wsl_ip_address():
     finally:
         file.close()
 
+
 def has_shared_folder():
     return 'WEBOTS_SHARED_FOLDER' in os.environ
+
 
 def host_shared_folder():
     shared_folder_list = os.environ['WEBOTS_SHARED_FOLDER'].split(':')
     return shared_folder_list[0]
 
+
 def container_shared_folder():
     shared_folder_list = os.environ['WEBOTS_SHARED_FOLDER'].split(':')
     return shared_folder_list[1]
+
 
 def connect_to_host():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -126,6 +132,7 @@ def connect_to_host():
         s.sendall(host_shared_folder().encode('utf-8'))
         data = s.recv(1024)
     return data.decode('utf-8')
+
 
 def get_webots_home(show_warning=False):
     def version_min(found, minimum):
@@ -178,6 +185,7 @@ def get_webots_home(show_warning=False):
 
     return None
 
+
 def __install_webots(installation_directory):
     minimum_version = WebotsVersion.minimum()
 
@@ -223,6 +231,7 @@ def __install_webots(installation_directory):
         tar.close()
         os.remove(archive_path)
         os.environ['WEBOTS_HOME'] = os.path.join(installation_path, 'webots')
+
 
 def handle_webots_installation():
     minimum_version = WebotsVersion.minimum()

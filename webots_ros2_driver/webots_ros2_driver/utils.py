@@ -108,24 +108,24 @@ def get_wsl_ip_address():
         file.close()
 
 def has_shared_folder():
-    return 'WEBOTS_SHARED_FOLDERS' in os.environ
+    return 'WEBOTS_SHARED_FOLDER' in os.environ
 
 def host_shared_folder():
-    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDERS'].split(':')
+    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDER'].split(':')
     return shared_folder_list[0]
 
 def container_shared_folder():
-    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDERS'].split(':')
+    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDER'].split(':')
     return shared_folder_list[1]
 
 def connect_to_host():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        while s.connect_ex(("host.docker.internal", 2000)) != 0:
+        while s.connect_ex(('host.docker.internal', 2000)) != 0:
             print(f'WARNING: Unable to start Webots. Please start the local simulation server on your host machine. Next connection attempt in 1 second.')
             sleep(1)
-        s.sendall(host_shared_folder().encode("utf-8"))
+        s.sendall(host_shared_folder().encode('utf-8'))
         data = s.recv(1024)
-    return data.decode("utf-8")
+    return data.decode('utf-8')
 
 def get_webots_home(show_warning=False):
     def version_min(found, minimum):

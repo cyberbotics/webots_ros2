@@ -21,7 +21,7 @@ import shutil
 import subprocess
 
 from launch.actions import ExecuteProcess
-from webots_ros2_driver.utils import is_wsl, has_shared_folder, container_shared_folder
+from webots_ros2_driver.utils import is_wsl, has_shared_folder, container_shared_folder, host_shared_folder
 
 def get_webots_driver_node(event, driver_node):
     """Return the driver node in case the service response is successful."""
@@ -36,7 +36,7 @@ class URDFSpawner(ExecuteProcess):
             relative_path_prefix = subprocess.check_output(['wslpath', '-w', relative_path_prefix]).strip().decode('utf-8').replace('\\', '/')
         if has_shared_folder() and relative_path_prefix:
             shutil.copytree(relative_path_prefix, os.path.join(container_shared_folder(), os.path.basename(relative_path_prefix)))
-            relative_path_prefix = os.path.join(container_shared_folder(), os.path.basename(relative_path_prefix))
+            relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(relative_path_prefix))
 
         message = '{robot: {'
 

@@ -17,7 +17,7 @@ data_files.append(('share/' + package_name + '/worlds', ['worlds/default.wbt', '
 
 setup(
     name=package_name,
-    version='2022.1.1',
+    version='2022.1.2',
     packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

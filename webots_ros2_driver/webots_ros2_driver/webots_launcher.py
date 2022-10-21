@@ -36,7 +36,6 @@ from webots_ros2_driver.utils import (get_webots_home,
                                       is_wsl,
                                       has_shared_folder,
                                       container_shared_folder,
-                                      host_shared_folder,
                                       connect_to_host)
 
 
@@ -58,10 +57,10 @@ class WebotsLauncher(ExecuteProcess):
             print(f'WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.')
             print(f'WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.')
         self.__is_wsl = is_wsl()
-        self.__is_macOS = has_shared_folder()
+        self.__has_shared_folder = has_shared_folder()
 
         # Find Webots executable
-        if not self.__is_macOS:
+        if not self.__has_shared_folder:
             webots_path = get_webots_home(show_warning=True)
             if webots_path is None:
                 handle_webots_installation()
@@ -97,7 +96,7 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
-        if self.__is_macOS:
+        if self.__has_shared_folder:
             with open(os.path.join(container_shared_folder(), 'launch_args.txt'), 'w') as file:
                 if not gui:
                     file.write('--no-rendering\n')
@@ -165,7 +164,7 @@ class WebotsLauncher(ExecuteProcess):
         world_file.write('}\n')
         world_file.close()
 
-        if self.__is_macOS:
+        if self.__has_shared_folder:
             shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
             message = connect_to_host()
             if message == 'FAIL0':

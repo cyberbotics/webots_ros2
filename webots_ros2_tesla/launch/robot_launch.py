@@ -26,6 +26,7 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
+from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl
 
 
 def generate_launch_description():
@@ -37,13 +38,15 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
 
+    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
+
     ros2_supervisor = Ros2SupervisorLauncher()
 
     tesla_driver = Node(
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'vehicle'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'vehicle'},
         parameters=[
             {'robot_description': robot_description},
         ]

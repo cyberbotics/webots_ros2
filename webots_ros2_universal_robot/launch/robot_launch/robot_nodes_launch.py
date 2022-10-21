@@ -23,6 +23,7 @@ from launch_ros.actions import Node
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
+from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -33,6 +34,8 @@ def generate_launch_description():
     ur5e_urdf_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf')
     robot_description = pathlib.Path(ur5e_urdf_path).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
+
+    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
 
     # Define your URDF robots here
     # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node
@@ -53,7 +56,7 @@ def generate_launch_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'UR5e'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'UR5e'},
         parameters=[
             {'robot_description': robot_description},
             {'use_sim_time': True},

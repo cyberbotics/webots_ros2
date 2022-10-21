@@ -28,6 +28,7 @@ from ament_index_python.packages import get_package_share_directory, get_package
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
+from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl
 
 
 def generate_launch_description():
@@ -47,6 +48,8 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world]),
         mode=mode
     )
+
+    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
 
     ros2_supervisor = Ros2SupervisorLauncher()
 
@@ -79,7 +82,7 @@ def generate_launch_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'Tiago_Iron'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'Tiago_Iron'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,

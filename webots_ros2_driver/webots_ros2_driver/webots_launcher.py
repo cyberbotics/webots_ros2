@@ -29,6 +29,7 @@ from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
+from ament_index_python.packages import get_package_share_directory
 
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation,
@@ -108,23 +109,32 @@ class WebotsLauncher(ExecuteProcess):
                 file.write('--batch\n')
                 file.write('--mode=')
                 file.write(mode_str)
-
-        # no_rendering, stdout, stderr, minimize
-        super().__init__(
-            output=output,
-            cmd=xvfb_run_prefix + [
-                webots_path,
-                stream_argument,
-                no_rendering,
-                stdout,
-                stderr,
-                minimize,
-                world,
-                '--batch',
-                ['--mode=', mode],
-            ],
-            **kwargs
-        )
+            python_file = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'launch', 'tcp_client.py'))
+            super().__init__(
+                output=output,
+                cmd=[
+                    'python3',
+                    python_file,
+                ],
+                **kwargs
+            )
+        else:
+            # no_rendering, stdout, stderr, minimize
+            super().__init__(
+                output=output,
+                cmd=xvfb_run_prefix + [
+                    webots_path,
+                    stream_argument,
+                    no_rendering,
+                    stdout,
+                    stderr,
+                    minimize,
+                    world,
+                    '--batch',
+                    ['--mode=', mode],
+                ],
+                **kwargs
+            )
 
     def execute(self, context: LaunchContext):
         # User can give a PathJoinSubstitution world or an absolute path world

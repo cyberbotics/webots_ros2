@@ -120,16 +120,16 @@ def host_shared_folder():
     return shared_folder_list[0]
 
 
+def container_shared_folder():
+    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDER'].split(':')
+    return shared_folder_list[1]
+
+
 def controller_url_prefix():
     if has_shared_folder() or is_wsl():
         return 'tcp://' + ('host.docker.internal' if has_shared_folder() else get_wsl_ip_address()) + ':1234/'
     else:
         return ''
-
-
-def container_shared_folder():
-    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDER'].split(':')
-    return shared_folder_list[1]
 
 
 def get_webots_home(show_warning=False):

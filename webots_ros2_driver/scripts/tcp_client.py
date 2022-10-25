@@ -32,7 +32,7 @@ def host_shared_folder():
     return shared_folder_list[0]
 
 
-while tcp_socket.connect_ex(HOST, PORT) != 0:
+while tcp_socket.connect_ex((HOST, PORT)) != 0:
     print('WARNING: Unable to start Webots. Please start the local simulation server on your host machine. Next connection attempt in 1 second.', file=sys.stderr)
     time.sleep(1)
 tcp_socket.sendall(host_shared_folder().encode('utf-8'))

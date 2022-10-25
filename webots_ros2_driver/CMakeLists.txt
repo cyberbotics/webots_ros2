@@ -5,6 +5,7 @@ project(webots_ros2_driver)
 if($ENV{ROS_DISTRO} MATCHES "foxy")
   add_compile_definitions(FOXY)
 endif()
+
 if($ENV{ROS_DISTRO} MATCHES "galactic")
   add_compile_definitions(GALACTIC)
 endif()
@@ -36,21 +37,24 @@ find_package(vision_msgs REQUIRED)
 find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
+
 if($ENV{ROS_DISTRO} MATCHES "foxy" OR $ENV{ROS_DISTRO} MATCHES "galactic")
   find_package(PythonLibs 3.8 EXACT REQUIRED)
 else()
   find_package(PythonLibs 3.10 EXACT REQUIRED)
 endif()
 
-if (UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
   set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
-endif ()
-if (APPLE)
+endif()
+
+if(APPLE)
   set(WEBOTS_LIB_BASE webots/lib/darwin19)
-endif ()
-if (MSVC OR MSYS OR MINGW OR WIN32)
+endif()
+
+if(MSVC OR MSYS OR MINGW OR WIN32)
   set(WEBOTS_LIB_BASE webots/lib/msys)
-endif ()
+endif()
 
 include_directories(
   include
@@ -61,10 +65,9 @@ include_directories(
 
 link_directories(${WEBOTS_LIB_BASE})
 
-if (MSVC OR MSYS OR MINGW OR WIN32)
+if(MSVC OR MSYS OR MINGW OR WIN32)
   # Windows requires the libController C++ part to be compiled.
   # See more here: https://cyberbotics.com/doc/guide/using-your-ide#visual-studio
-
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
   file(GLOB CppController_SRC CONFIGURE_DEPENDS "webots/source/cpp/*.cpp")
   file(GLOB CppCarDriver_SRC CONFIGURE_DEPENDS "webots/source/cpp/vehicle/*.cpp")
@@ -185,7 +188,8 @@ install(TARGETS ${PROJECT_NAME}_imu
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
 )
-if (MSVC OR MSYS OR MINGW OR WIN32)
+
+if(MSVC OR MSYS OR MINGW OR WIN32)
   # Windows requires the library to be placed with executable
   install(
     FILES "${WEBOTS_LIB_BASE}/${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}"
@@ -235,6 +239,12 @@ pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
 # Install ROS 2 nodes
 install(PROGRAMS ${PROJECT_NAME}/ros2_supervisor.py
   DESTINATION lib/${PROJECT_NAME}
+)
+
+# Install scripts
+install(
+  DIRECTORY scripts/
+  DESTINATION share/${PROJECT_NAME}/scripts
 )
 
 # Ament export

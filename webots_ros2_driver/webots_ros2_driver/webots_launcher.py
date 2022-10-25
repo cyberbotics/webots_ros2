@@ -36,8 +36,7 @@ from webots_ros2_driver.utils import (get_webots_home,
                                       get_wsl_ip_address,
                                       is_wsl,
                                       has_shared_folder,
-                                      container_shared_folder,
-                                      connect_to_host)
+                                      container_shared_folder)
 
 
 class _ConditionalSubstitution(Substitution):

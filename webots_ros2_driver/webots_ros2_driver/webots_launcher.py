@@ -196,6 +196,19 @@ class WebotsLauncher(ExecuteProcess):
             world_copy_secondary_file = os.path.join(path, '.' + file[:-1] + 'proj')
             if os.path.isfile(world_copy_secondary_file):
                 os.unlink(world_copy_secondary_file)
+
+        # Clean the content of the shared directory for next run
+        if self.__has_shared_folder:
+            for filename in os.listdir(container_shared_folder()):
+                file_path = os.path.join(container_shared_folder(), filename)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path) and filename != 'ros2_ws':
+                        shutil.rmtree(file_path)
+                except Exception as error:
+                    print(f'Failed to delete {file_path}. Reason: {error}.')
+
         return super()._shutdown_process(context, send_sigint=send_sigint)
 
 

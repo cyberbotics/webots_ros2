@@ -26,7 +26,7 @@ from launch_ros.actions import Node
 import launch
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
-from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl, has_shared_folder
+from webots_ros2_driver.utils import controller_url_prefix
 
 
 def generate_launch_description():
@@ -39,13 +39,6 @@ def generate_launch_description():
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world])
     )
-
-    if has_shared_folder():
-        tcp_url = 'host.docker.internal'
-    elif is_wsl():
-        tcp_url = get_wsl_ip_address()
-
-    controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or has_shared_folder()) else ''
 
     ros2_supervisor = Ros2SupervisorLauncher()
 
@@ -79,7 +72,7 @@ def generate_launch_description():
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'TurtleBot3Burger'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'TurtleBot3Burger'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,

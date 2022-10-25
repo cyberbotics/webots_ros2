@@ -124,6 +124,7 @@ class WebotsLauncher(ExecuteProcess):
 
             # Absolute path or Webots relative path or Web paths
             if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') or url_path.startswith('https://'):
+              continue
 
             new_url_path = '"' + os.path.split(world_path)[0] + '/' + url_path + '"'
             url_path = '"' + url_path + '"'

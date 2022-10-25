@@ -109,7 +109,7 @@ class WebotsLauncher(ExecuteProcess):
                 file.write('--batch\n')
                 file.write('--mode=')
                 file.write(mode_str)
-            python_file = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'launch', 'tcp_client.py'))
+            python_file = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'tcp_client.py'))
             super().__init__(
                 output=output,
                 cmd=[
@@ -176,13 +176,6 @@ class WebotsLauncher(ExecuteProcess):
 
         if self.__has_shared_folder:
             shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
-            message = connect_to_host()
-            if message.startswith('FAIL'):
-                sys.exit(message)
-            elif message == 'ACK':
-                return
-            else:
-                sys.exit('Unknown message.')
 
         return super().execute(context)
 

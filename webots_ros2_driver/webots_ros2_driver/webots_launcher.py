@@ -33,10 +33,10 @@ from ament_index_python.packages import get_package_share_directory
 
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation,
-                                      get_wsl_ip_address,
                                       is_wsl,
                                       has_shared_folder,
-                                      container_shared_folder)
+                                      container_shared_folder,
+                                      controller_url_prefix)
 
 
 class _ConditionalSubstitution(Substitution):
@@ -199,18 +199,12 @@ class WebotsLauncher(ExecuteProcess):
 
 class Ros2SupervisorLauncher(Node):
     def __init__(self, output='screen', respawn=True, **kwargs):
-        if has_shared_folder():
-            tcp_url = 'host.docker.internal'
-        elif is_wsl():
-            tcp_url = get_wsl_ip_address()
-        controller_url = 'tcp://' + tcp_url + ':1234/' if (is_wsl() or has_shared_folder()) else ''
-
         # Launch the Ros2Supervisor node
         super().__init__(
             package='webots_ros2_driver',
             executable='ros2_supervisor.py',
             output=output,
-            additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'Ros2Supervisor'},
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor'},
             respawn=respawn,
             **kwargs
         )

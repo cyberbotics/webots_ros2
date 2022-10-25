@@ -117,6 +117,7 @@ class WebotsLauncher(ExecuteProcess):
                     'python3',
                     webots_tcp_client,
                 ],
+                name='webots_tcp_client',
                 **kwargs
             )
         # Initialize command to start Webots locally
@@ -135,6 +136,7 @@ class WebotsLauncher(ExecuteProcess):
                     '--batch',
                     ['--mode=', mode],
                 ],
+                name='webots',
                 **kwargs
             )
 

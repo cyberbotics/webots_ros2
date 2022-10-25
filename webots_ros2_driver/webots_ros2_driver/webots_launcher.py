@@ -54,8 +54,8 @@ class _ConditionalSubstitution(Substitution):
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
         if sys.platform == 'win32':
-            print(f'WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.')
-            print(f'WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.')
+            print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
+            print('WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.', file=sys.stderr)
         self.__is_wsl = is_wsl()
         self.__has_shared_folder = has_shared_folder()
 
@@ -72,7 +72,7 @@ class WebotsLauncher(ExecuteProcess):
         else:
             webots_path = ''
 
-        mode_str = mode
+        mode_string = mode
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 
         self.__world_copy = tempfile.NamedTemporaryFile(mode='w+', suffix='_world_with_URDF_robot.wbt', delete=False)
@@ -96,6 +96,7 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
+        # Create arguments file and initialize command to start Webots remotely through TCP
         if self.__has_shared_folder:
             with open(os.path.join(container_shared_folder(), 'launch_args.txt'), 'w') as file:
                 if not gui:
@@ -107,16 +108,18 @@ class WebotsLauncher(ExecuteProcess):
                     file.write('--stream\n')
                 file.write('--batch\n')
                 file.write('--mode=')
-                file.write(mode_str)
-            python_file = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'tcp_client.py'))
+                file.write(mode_string)
+
+            webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots_tcp_client.py'))
             super().__init__(
                 output=output,
                 cmd=[
                     'python3',
-                    python_file,
+                    webots_tcp_client,
                 ],
                 **kwargs
             )
+        # Initialize command to start Webots locally
         else:
             # no_rendering, stdout, stderr, minimize
             super().__init__(
@@ -173,9 +176,11 @@ class WebotsLauncher(ExecuteProcess):
         world_file.write('}\n')
         world_file.close()
 
+        # Copy world file to shared folder
         if self.__has_shared_folder:
             shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
 
+        # Execute process
         return super().execute(context)
 
     def _shutdown_process(self, context, *, send_sigint):

@@ -21,8 +21,8 @@ import socket
 import sys
 import time
 
-HOST = 'host.docker.internal'  # Any host can connect
-PORT = 2000  # Port to listen on
+HOST = 'host.docker.internal'  # Connect to host of the container
+PORT = 2000  # Port to connect to
 
 tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -45,11 +45,14 @@ elif message == 'ACK':
 else:
     sys.exit('Unknown message.')
 
+# Check connection for closing message
 data = tcp_socket.recv(1024)
 message = data.decode('utf-8')
 if not data:
+    tcp_socket.close()
     sys.exit('Server interrupted connection.')
 elif message == 'CLOSED':
+    tcp_socket.close()
     sys.exit('Webots process was ended.')
 else:
     print(f'Server sent: {message}')

@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_epuck
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.2 (2022-10-21)
+------------------
+* Added WSL support.
+
 1.2.3 (2022-05-30)
 ------------------
 * Fixed support for Humble and Rolling.

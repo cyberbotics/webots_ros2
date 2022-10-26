@@ -170,6 +170,15 @@ def generate_launch_description():
     # Starts the Ros2Supervisor node, with by default respawn=True
     ros2_supervisor = Ros2SupervisorLauncher()
 
+    # The following line is important!
+    # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
+    reset_handler = launch.actions.RegisterEventHandler(
+        event_handler=launch.event_handlers.OnProcessExit(
+            target_action=ros2_supervisor,
+            on_exit=get_ros2_nodes,
+        )
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -183,16 +192,15 @@ def generate_launch_description():
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
-                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+                on_exit=[
+                    launch.actions.UnregisterEventHandler(
+                        event_handler=reset_handler.event_handler
+                    ),
+                    launch.actions.EmitEvent(event=launch.events.Shutdown())
+                ],
             )
         ),
 
-        # The following line is important!
-        # This event respawns the ROS 2 nodes on simulation reset.
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=ros2_supervisor,
-                on_exit=get_ros2_nodes,
-            )
-        )
+        # Add the reset event handler
+        reset_handler
     ] + get_ros2_nodes())

@@ -2,7 +2,11 @@ name: ROS2 tests (develop)
 
 on:
   schedule:
-    - cron:  '0 23 * * *'
+    - cron:  '0 02 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   industrial_ci:

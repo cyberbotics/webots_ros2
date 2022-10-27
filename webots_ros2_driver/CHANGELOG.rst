@@ -2,6 +2,11 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.2 (2022-10-21)
+------------------
+* Fix issue where relatively defined PROTO were not found.
+* Added WSL support.
+
 2022.1.0 (2022-09-23)
 ------------------
 * Added an URDF importer feature to spawn robots from URDF files.

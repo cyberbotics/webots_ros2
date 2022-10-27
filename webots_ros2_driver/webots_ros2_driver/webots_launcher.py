@@ -204,7 +204,7 @@ class WebotsLauncher(ExecuteProcess):
                 try:
                     if os.path.isfile(file_path):
                         os.unlink(file_path)
-                    elif os.path.isdir(file_path) and filename != 'ros2_ws':
+                    elif os.path.isdir(file_path):
                         shutil.rmtree(file_path)
                 except Exception as error:
                     print(f'Failed to delete {file_path}. Reason: {error}.')

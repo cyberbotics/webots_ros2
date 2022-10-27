@@ -175,8 +175,8 @@ class WebotsLauncher(ExecuteProcess):
         world_file.close()
 
         # Copy world file to shared folder
-        #if self.__has_shared_folder:
-            #shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
+        if self.__has_shared_folder:
+            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
 
         # Execute process
         return super().execute(context)

@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_tesla
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.2 (2022-10-21)
+------------------
+* Added WSL support.
+
 1.2.3 (2022-06-01)
 ------------------
 * Fixed support for Humble and Rolling.

@@ -119,11 +119,11 @@ class WebotsLauncher(ExecuteProcess):
         with open(self.__world_copy.name, 'r') as file:
             content = file.read()
 
-        for match in re.finditer('url\s*\[?\s*\"(.*?)\"', content):
+        for match in re.finditer('\"((?:[^\"]*)\\.(?:jpe?g|png|hdr|obj|stl|dae|wav|mp3|proto))\"', content):
             url_path = match.group(1)
 
             # Absolute path or Webots relative path or Web paths
-            if os.path.isabs(url_path) or 'webots://' in url_path or 'http://' in url_path or 'https://' in url_path:
+            if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') or url_path.startswith('https://'):
                 continue
 
             new_url_path = '"' + os.path.split(world_path)[0] + '/' + url_path + '"'

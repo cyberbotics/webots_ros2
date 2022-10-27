@@ -1,0 +1,55 @@
+name: Libcontroller Submodule Updater
+
+on:
+  schedule:
+    - cron:  '0 04 * * *'
+
+jobs:
+  automatic-submodule-sync:
+    strategy:
+      matrix:
+        include:
+          - submodule_target_branch: R2022b-revision-1
+            webots_ros2_branch: master
+          - submodule_target_branch: R2023a
+            webots_ros2_branch: develop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        with:
+          submodules: "true"
+          fetch-depth: 0
+          ref: ${{ matrix.webots_ros2_branch }}
+      - name: Update Submodule And Define Unique Branch Name
+        run: |
+          cd webots_ros2_driver/webots
+          git checkout ${{ matrix.submodule_target_branch }} && git pull origin ${{ matrix.submodule_target_branch }}
+          echo "BRANCH_NAME=sync-${{ matrix.webots_ros2_branch }}-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          cd ../..
+      - name: Create commit if necessary
+        id: create-commit
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Submodule needs sync!";
+            git config --global user.name ${GITHUB_ACTOR}
+            git config --global user.email ${GITHUB_ACTOR}@github.com
+            git checkout -b ${{ env.BRANCH_NAME }}
+            git add .
+            git commit -m "Sync submodule"
+            git push origin ${{ env.BRANCH_NAME }}
+            echo "create_pull_request=1" >> $GITHUB_OUTPUT
+          else
+            echo "Submodule is already up to date.";
+            echo "create_pull_request=0" >> $GITHUB_OUTPUT
+          fi
+      - name: Create Pull Request
+        if: ${{ steps.create-commit.outputs.create_pull_request == 1 }}
+        uses: repo-sync/pull-request@v2.6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          source_branch: ${{ env.BRANCH_NAME }}
+          destination_branch: ${{ matrix.webots_ros2_branch }}
+          pr_title: Sync libcontroller ${{ matrix.submodule_target_branch }}
+          pr_body: Synchronizes libcontroller to the latest commit of branch ${{ matrix.submodule_target_branch }}.
+          pr_reviewer: Maintainers

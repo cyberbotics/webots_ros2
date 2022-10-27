@@ -98,17 +98,11 @@ class WebotsLauncher(ExecuteProcess):
 
         # Create arguments file and initialize command to start Webots remotely through TCP
         if self.__has_shared_folder:
-            with open(os.path.join(container_shared_folder(), 'launch_args.txt'), 'w') as file:
-                if not gui:
-                    file.write('--no-rendering\n')
-                    file.write('--stdout\n')
-                    file.write('--stderr\n')
-                    file.write('--minimize\n')
-                if stream:
-                    file.write('--stream\n')
-                file.write('--batch\n')
-                file.write('--mode=')
-                file.write(mode_string)
+            launch_arguments = ['--batch', ' --mode=' + mode_string]
+            if not gui:
+                launch_arguments.extend([' --no-rendering', ' --stdout', ' --stderr', ' --minimize']) 
+            if stream:
+                launch_arguments.append(' --stream')
 
             webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots_tcp_client.py'))
             super().__init__(
@@ -116,6 +110,8 @@ class WebotsLauncher(ExecuteProcess):
                 cmd=[
                     'python3',
                     webots_tcp_client,
+                    os.path.basename(self.__world_copy.name),
+                    launch_arguments,
                 ],
                 name='webots_tcp_client',
                 **kwargs
@@ -179,8 +175,8 @@ class WebotsLauncher(ExecuteProcess):
         world_file.close()
 
         # Copy world file to shared folder
-        if self.__has_shared_folder:
-            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
+        #if self.__has_shared_folder:
+            #shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
 
         # Execute process
         return super().execute(context)

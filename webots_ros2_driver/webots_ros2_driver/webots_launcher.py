@@ -110,8 +110,8 @@ class WebotsLauncher(ExecuteProcess):
                 cmd=[
                     'python3',
                     webots_tcp_client,
-                    os.path.basename(self.__world_copy.name),
                     launch_arguments,
+                    os.path.basename(self.__world_copy.name),
                 ],
                 name='webots_tcp_client',
                 **kwargs

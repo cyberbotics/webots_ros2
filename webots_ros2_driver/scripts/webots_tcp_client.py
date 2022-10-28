@@ -25,8 +25,8 @@ HOST = 'host.docker.internal'  # Connect to host of the container
 PORT = 2000  # Port to connect to
 
 tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-world_name = sys.argv[1]
-launch_arguments = sys.argv[2]
+launch_arguments = sys.argv[1]
+world_name = sys.argv[2]
 
 
 def host_shared_folder():
@@ -37,7 +37,7 @@ def host_shared_folder():
 while tcp_socket.connect_ex((HOST, PORT)) != 0:
     print('WARNING: Unable to start Webots. Please start the local simulation server on your host machine. Next connection attempt in 1 second.', file=sys.stderr)
     time.sleep(1)
-command = 'webots ' + os.path.join(host_shared_folder(), world_name) + ' ' + launch_arguments
+command = '/Applications/Webots.app/Contents/MacOS/webots ' + os.path.join(host_shared_folder(), world_name) + ' ' + launch_arguments
 tcp_socket.sendall(command.encode('utf-8'))
 data = tcp_socket.recv(1024)
 message = data.decode('utf-8')

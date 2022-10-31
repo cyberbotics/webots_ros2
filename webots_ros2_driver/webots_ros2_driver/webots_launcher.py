@@ -29,11 +29,14 @@ from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
+from ament_index_python.packages import get_package_share_directory
 
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation,
-                                      get_wsl_ip_address,
-                                      is_wsl)
+                                      is_wsl,
+                                      has_shared_folder,
+                                      container_shared_folder,
+                                      controller_url_prefix)
 
 
 class _ConditionalSubstitution(Substitution):
@@ -51,20 +54,25 @@ class _ConditionalSubstitution(Substitution):
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
         if sys.platform == 'win32':
-            print(f'WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.')
-            print(f'WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.')
+            print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
+            print('WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.', file=sys.stderr)
         self.__is_wsl = is_wsl()
+        self.__has_shared_folder = has_shared_folder()
 
         # Find Webots executable
-        webots_path = get_webots_home(show_warning=True)
-        if webots_path is None:
-            handle_webots_installation()
-            webots_path = get_webots_home()
-        if self.__is_wsl:
-            webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
+        if not self.__has_shared_folder:
+            webots_path = get_webots_home(show_warning=True)
+            if webots_path is None:
+                handle_webots_installation()
+                webots_path = get_webots_home()
+            if self.__is_wsl:
+                webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
+            else:
+                webots_path = os.path.join(webots_path, 'webots')
         else:
-            webots_path = os.path.join(webots_path, 'webots')
+            webots_path = ''
 
+        mode_string = mode
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 
         self.__world_copy = tempfile.NamedTemporaryFile(mode='w+', suffix='_world_with_URDF_robot.wbt', delete=False)
@@ -88,22 +96,45 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
-        # no_rendering, stdout, stderr, minimize
-        super().__init__(
-            output=output,
-            cmd=xvfb_run_prefix + [
-                webots_path,
-                stream_argument,
-                no_rendering,
-                stdout,
-                stderr,
-                minimize,
-                world,
-                '--batch',
-                ['--mode=', mode],
-            ],
-            **kwargs
-        )
+        # Create arguments file and initialize command to start Webots remotely through TCP
+        if self.__has_shared_folder:
+            launch_arguments = ['--batch', ' --mode=' + mode_string]
+            if not gui:
+                launch_arguments.extend([' --no-rendering', ' --stdout', ' --stderr', ' --minimize']) 
+            if stream:
+                launch_arguments.append(' --stream')
+
+            webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots_tcp_client.py'))
+            super().__init__(
+                output=output,
+                cmd=[
+                    'python3',
+                    webots_tcp_client,
+                    launch_arguments,
+                    os.path.basename(self.__world_copy.name),
+                ],
+                name='webots_tcp_client',
+                **kwargs
+            )
+        # Initialize command to start Webots locally
+        else:
+            # no_rendering, stdout, stderr, minimize
+            super().__init__(
+                output=output,
+                cmd=xvfb_run_prefix + [
+                    webots_path,
+                    stream_argument,
+                    no_rendering,
+                    stdout,
+                    stderr,
+                    minimize,
+                    world,
+                    '--batch',
+                    ['--mode=', mode],
+                ],
+                name='webots',
+                **kwargs
+            )
 
     def execute(self, context: LaunchContext):
         # User can give a PathJoinSubstitution world or an absolute path world
@@ -143,6 +174,11 @@ class WebotsLauncher(ExecuteProcess):
         world_file.write('}\n')
         world_file.close()
 
+        # Copy world file to shared folder
+        if self.__has_shared_folder:
+            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
+
+        # Execute process
         return super().execute(context)
 
     def _shutdown_process(self, context, *, send_sigint):
@@ -156,19 +192,30 @@ class WebotsLauncher(ExecuteProcess):
             world_copy_secondary_file = os.path.join(path, '.' + file[:-1] + 'proj')
             if os.path.isfile(world_copy_secondary_file):
                 os.unlink(world_copy_secondary_file)
+
+        # Clean the content of the shared directory for next run
+        if self.__has_shared_folder:
+            for filename in os.listdir(container_shared_folder()):
+                file_path = os.path.join(container_shared_folder(), filename)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except Exception as error:
+                    print(f'Failed to delete {file_path}. Reason: {error}.')
+
         return super()._shutdown_process(context, send_sigint=send_sigint)
 
 
 class Ros2SupervisorLauncher(Node):
     def __init__(self, output='screen', respawn=True, **kwargs):
-        controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
-
         # Launch the Ros2Supervisor node
         super().__init__(
             package='webots_ros2_driver',
             executable='ros2_supervisor.py',
             output=output,
-            additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'Ros2Supervisor'},
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor'},
             respawn=respawn,
             **kwargs
         )

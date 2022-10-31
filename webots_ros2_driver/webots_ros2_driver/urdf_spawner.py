@@ -16,10 +16,12 @@
 
 """This process simply sends urdf information to the Spawner through a service."""
 
+import os
+import shutil
 import subprocess
 
 from launch.actions import ExecuteProcess
-from webots_ros2_driver.utils import is_wsl
+from webots_ros2_driver.utils import is_wsl, has_shared_folder, container_shared_folder, host_shared_folder
 
 def get_webots_driver_node(event, driver_node):
     """Return the driver node in case the service response is successful."""
@@ -32,7 +34,10 @@ class URDFSpawner(ExecuteProcess):
     def __init__(self, output='log', name=None, urdf_path=None, robot_description=None, relative_path_prefix=None, translation='0 0 0', rotation='0 0 1 0', normal=False, box_collision=False, init_pos=None, **kwargs):
         if is_wsl() and relative_path_prefix:
             relative_path_prefix = subprocess.check_output(['wslpath', '-w', relative_path_prefix]).strip().decode('utf-8').replace('\\', '/')
-            
+        if has_shared_folder() and relative_path_prefix and not os.path.isdir(os.path.join(container_shared_folder(), os.path.basename(relative_path_prefix))):
+            shutil.copytree(relative_path_prefix, os.path.join(container_shared_folder(), os.path.basename(relative_path_prefix)))
+            relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(relative_path_prefix))
+
         message = '{robot: {'
 
         if name:

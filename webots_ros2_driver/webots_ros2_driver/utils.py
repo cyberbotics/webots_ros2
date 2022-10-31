@@ -14,15 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""This launcher simply starts Webots."""
+"""Utilitary functions for the package."""
 
 import os
 import re
 import sys
 import shutil
+import socket
 import tarfile
 import functools
 import subprocess
+import time
 import urllib.request
 from pathlib import Path
 from platform import uname
@@ -81,8 +83,10 @@ class WebotsVersion:
     def short(self):
         return self.version.replace('revision ', 'rev').replace(' ', '-')
 
+
 def is_wsl():
     return 'microsoft-standard' in uname().release
+
 
 def get_wsl_ip_address():
     try:
@@ -105,7 +109,28 @@ def get_wsl_ip_address():
                 return tokens[1]
     finally:
         file.close()
-    
+
+
+def has_shared_folder():
+    return 'WEBOTS_SHARED_FOLDER' in os.environ
+
+
+def host_shared_folder():
+    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDER'].split(':')
+    return shared_folder_list[0]
+
+
+def container_shared_folder():
+    shared_folder_list = os.environ['WEBOTS_SHARED_FOLDER'].split(':')
+    return shared_folder_list[1]
+
+
+def controller_url_prefix():
+    if has_shared_folder() or is_wsl():
+        return 'tcp://' + ('host.docker.internal' if has_shared_folder() else get_wsl_ip_address()) + ':1234/'
+    else:
+        return ''
+
 
 def get_webots_home(show_warning=False):
     def version_min(found, minimum):
@@ -143,7 +168,7 @@ def get_webots_home(show_warning=False):
         ]
     elif sys.platform == 'win32':
         paths = [
-            'C:\\Program Files\\Webots'                             # Windows default install       
+            'C:\\Program Files\\Webots'                             # Windows default install
         ]
     # Add automatic installation path to pathes list
     paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + minimum_version.short(), 'webots'))
@@ -157,6 +182,7 @@ def get_webots_home(show_warning=False):
             return path
 
     return None
+
 
 def __install_webots(installation_directory):
     minimum_version = WebotsVersion.minimum()
@@ -203,6 +229,7 @@ def __install_webots(installation_directory):
         tar.close()
         os.remove(archive_path)
         os.environ['WEBOTS_HOME'] = os.path.join(installation_path, 'webots')
+
 
 def handle_webots_installation():
     minimum_version = WebotsVersion.minimum()

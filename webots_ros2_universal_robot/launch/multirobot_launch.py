@@ -28,7 +28,7 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.actions import Node
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
-from webots_ros2_driver.utils import get_wsl_ip_address, is_wsl
+from webots_ros2_driver.utils import controller_url_prefix
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -42,8 +42,6 @@ def get_ros2_nodes(*args):
     abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
     ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
     abb_control_params = os.path.join(package_dir, 'resource', 'ros2_control_abb_config.yaml')
-
-    controller_url = 'tcp://' + get_wsl_ip_address() + ':1234/' if is_wsl() else ''
 
     # Define your URDF robots here
     # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node
@@ -66,7 +64,7 @@ def get_ros2_nodes(*args):
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'UR5e'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'UR5e'},
         namespace='ur5e',
         parameters=[
             {'robot_description': ur5e_description},
@@ -80,7 +78,7 @@ def get_ros2_nodes(*args):
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url + 'abbirb4600'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'abbirb4600'},
         namespace='abb',
         parameters=[
             {'robot_description': abb_description},
@@ -172,6 +170,15 @@ def generate_launch_description():
     # Starts the Ros2Supervisor node, with by default respawn=True
     ros2_supervisor = Ros2SupervisorLauncher()
 
+    # The following line is important!
+    # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
+    reset_handler = launch.actions.RegisterEventHandler(
+        event_handler=launch.event_handlers.OnProcessExit(
+            target_action=ros2_supervisor,
+            on_exit=get_ros2_nodes,
+        )
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -185,16 +192,15 @@ def generate_launch_description():
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
-                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+                on_exit=[
+                    launch.actions.UnregisterEventHandler(
+                        event_handler=reset_handler.event_handler
+                    ),
+                    launch.actions.EmitEvent(event=launch.events.Shutdown())
+                ],
             )
         ),
 
-        # The following line is important!
-        # This event respawns the ROS 2 nodes on simulation reset.
-        launch.actions.RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=ros2_supervisor,
-                on_exit=get_ros2_nodes,
-            )
-        )
+        # Add the reset event handler
+        reset_handler
     ] + get_ros2_nodes())

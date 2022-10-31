@@ -16,7 +16,7 @@ there are multiple hands then a prefix followed by an "_" is needed.
 		<link name="${prefix}palm">
 			<visual>
 				<geometry>
-                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/palm.dae" />
+                                        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/visual/palm.dae" />
 				</geometry>
 				<material name="gray">
 					<color rgba="0.2 0.2 0.2 1"/>
@@ -24,7 +24,7 @@ there are multiple hands then a prefix followed by an "_" is needed.
 			</visual>
 			<collision>
 				<geometry>
-                                        <mesh filename="package://webots_ros2_universal_robot/resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/palm.STL" />
+                                        <mesh filename="package://resource/robotiq/robotiq_3f_gripper_visualization/meshes/robotiq-3f-gripper_articulated/collision/palm.STL" />
 				</geometry>
 				<material name="yellow">
 					<color rgba="0 1 1 1"/>

@@ -29,18 +29,11 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLau
 from webots_ros2_driver.utils import controller_url_prefix
 
 
-def generate_launch_description():
+def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
-    world = LaunchConfiguration('world')
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
-
-    webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world])
-    )
-
-    ros2_supervisor = Ros2SupervisorLauncher()
 
     # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
     controller_manager_timeout = ['--controller-manager-timeout', '50']
@@ -98,6 +91,34 @@ def generate_launch_description():
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
+    return [
+        joint_state_broadcaster_spawner,
+        diffdrive_controller_spawner,
+        robot_state_publisher,
+        turtlebot_driver,
+        footprint_publisher,
+    ]
+
+
+def generate_launch_description():
+    package_dir = get_package_share_directory('webots_ros2_turtlebot')
+    world = LaunchConfiguration('world')
+
+    webots = WebotsLauncher(
+        world=PathJoinSubstitution([package_dir, 'worlds', world])
+    )
+
+    ros2_supervisor = Ros2SupervisorLauncher()
+
+    # The following line is important!
+    # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
+    reset_handler = launch.actions.RegisterEventHandler(
+        event_handler=launch.event_handlers.OnProcessExit(
+            target_action=ros2_supervisor,
+            on_exit=get_ros2_nodes,
+        )
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -106,15 +127,20 @@ def generate_launch_description():
         ),
         webots,
         ros2_supervisor,
-        joint_state_broadcaster_spawner,
-        diffdrive_controller_spawner,
-        robot_state_publisher,
-        turtlebot_driver,
-        footprint_publisher,
+
+        # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
-                on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+                on_exit=[
+                    launch.actions.UnregisterEventHandler(
+                        event_handler=reset_handler.event_handler
+                    ),
+                    launch.actions.EmitEvent(event=launch.events.Shutdown())
+                ],
             )
-        )
-    ])
+        ),
+
+        # Add the reset event handler
+        reset_handler
+    ] + get_ros2_nodes())

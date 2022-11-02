@@ -201,6 +201,6 @@ def generate_launch_description():
             )
         ),
 
-        # Add the reset event handler
+        # Add the reset event handle
         reset_handler
     ] + get_ros2_nodes())

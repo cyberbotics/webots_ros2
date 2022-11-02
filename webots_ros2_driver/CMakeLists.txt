@@ -144,6 +144,9 @@ ament_target_dependencies(driver
   tinyxml2_vendor
   TinyXML2
 )
+add_dependencies(driver
+  compile-lib-vehicle
+)
 target_link_libraries(driver
   ${WEBOTS_LIB}
   ${PYTHON_LIBRARIES}
@@ -171,6 +174,9 @@ ament_target_dependencies(${PROJECT_NAME}_imu
   webots_ros2_msgs
   pluginlib
   tf2_ros
+)
+add_dependencies(${PROJECT_NAME}_imu
+  compile-lib-vehicle
 )
 target_link_libraries(${PROJECT_NAME}_imu
   ${WEBOTS_LIB}

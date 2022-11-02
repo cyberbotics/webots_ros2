@@ -44,22 +44,23 @@ else()
   find_package(PythonLibs 3.10 EXACT REQUIRED)
 endif()
 
-if(UNIX AND NOT APPLE)
-  set(WEBOTS_LIB_BASE webots/lib/linux-gnu)
-endif()
+add_custom_target(compile-lib-controller ALL 
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
+)
 
-if(APPLE)
-  set(WEBOTS_LIB_BASE webots/lib/darwin19)
-endif()
+add_custom_target(compile-lib-vehicle ALL 
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+  DEPENDS compile-lib-controller
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
+)
 
-if(MSVC OR MSYS OR MINGW OR WIN32)
-  set(WEBOTS_LIB_BASE webots/lib/msys)
-endif()
+set(WEBOTS_LIB_BASE webots/lib/controller)
 
 include_directories(
   include
-  webots/include/c
-  webots/include/cpp
+  webots/include/controller/c
+  webots/include/controller/cpp
   ${PYTHON_INCLUDE_DIRS}
 )
 
@@ -176,11 +177,11 @@ target_link_libraries(${PROJECT_NAME}_imu
 )
 
 install(
-  DIRECTORY webots/include/c
+  DIRECTORY webots/include/controller/c
   DESTINATION include/webots
 )
 install(
-  DIRECTORY webots/include/cpp
+  DIRECTORY webots/include/controller/cpp
   DESTINATION include/webots
 )
 install(TARGETS ${PROJECT_NAME}_imu

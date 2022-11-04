@@ -21,7 +21,7 @@ jobs:
     env:
       AFTER_INIT: ./scripts/ci_after_init.bash ${ROS_DISTRO} ${ROS_REPO}
       BEFORE_INIT_EMBED: source scripts/ci_before_init_embed.bash
-      DOCKER_RUN_OPTS: -v /artifacts:/tmp/artifacts
+      DOCKER_RUN_OPTS: -v /artifacts:/root/target_ws
     steps:
       - uses: actions/checkout@v3
         with:
@@ -30,14 +30,10 @@ jobs:
         env:
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}
-      - name: Copy out file from volume
-        if: ${{ failure() }}
-        run: |
-          sudo cp -r /root/target_ws /home/
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         if: ${{ failure() }}
         with:
           name: generic_artifacts_${{matrix.ROS_REPO}}_${{matrix.ROS_DISTRO}}
-          path: /home/target_ws
+          path: /artifacts
           retention-days: 5

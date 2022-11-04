@@ -27,6 +27,7 @@ jobs:
         with:
          submodules: recursive
       - uses: 'ros-industrial/industrial_ci@master'
+        timeout-minutes: 15
         env:
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}

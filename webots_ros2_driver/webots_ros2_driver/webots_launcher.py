@@ -61,10 +61,10 @@ class WebotsLauncher(ExecuteProcess):
 
         # Find Webots executable
         if not self.__has_shared_folder:
-            # webots_path = get_webots_home(show_warning=True)
-            # if webots_path is None:
-            #     handle_webots_installation()
-            #     webots_path = get_webots_home()
+            webots_path = get_webots_home(show_warning=True)
+            if webots_path is None:
+                handle_webots_installation()
+                webots_path = get_webots_home()
             handle_webots_installation()
             webots_path = get_webots_home()
             if self.__is_wsl:

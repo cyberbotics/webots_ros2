@@ -65,8 +65,6 @@ class WebotsLauncher(ExecuteProcess):
             if webots_path is None:
                 handle_webots_installation()
                 webots_path = get_webots_home()
-            handle_webots_installation()
-            webots_path = get_webots_home()
             if self.__is_wsl:
                 webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
             else:

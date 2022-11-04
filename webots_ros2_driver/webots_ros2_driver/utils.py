@@ -140,6 +140,7 @@ def get_webots_home(show_warning=False):
             return False
         return found >= minimum
 
+    print('============================================================= HELLO', file=sys.stderr)
     # Search in the environment variables
     environment_variables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
     for variable in environment_variables:
@@ -179,6 +180,7 @@ def get_webots_home(show_warning=False):
             os.environ['WEBOTS_HOME'] = path
             if show_warning:
                 print(f'WARNING: No valid Webots directory specified in `ROS2_WEBOTS_HOME` and `WEBOTS_HOME`, fallback to default installation folder {path}.')
+            print(f'============================================================= {path}', file=sys.stderr)
             return path
 
     return None

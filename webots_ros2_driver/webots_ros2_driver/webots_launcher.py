@@ -72,6 +72,7 @@ class WebotsLauncher(ExecuteProcess):
         else:
             webots_path = ''
 
+        print(f'============================================================= {webots_path}', file=sys.stderr)
         mode_string = mode
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 

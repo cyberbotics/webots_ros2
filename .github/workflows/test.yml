@@ -31,6 +31,7 @@ jobs:
           ROS_REPO: ${{matrix.ROS_REPO}}
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}
       - name: Copy out file from volume
+        if: ${{ failure() }}
         run: |
           sudo cp -r /root/target_ws/log /home/
       - name: Upload Artifact

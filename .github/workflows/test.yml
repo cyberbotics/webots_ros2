@@ -34,5 +34,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: generic_artifacts_${{matrix.ROS_REPO}}_${{matrix.ROS_DISTRO}}
-          path: /artifacts
+          path: ../../log
           retention-days: 5

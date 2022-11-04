@@ -33,11 +33,11 @@ jobs:
       - name: Copy out file from volume
         if: ${{ failure() }}
         run: |
-          sudo cp -r /root/target_ws/log /home/
+          sudo cp -r /root/target_ws /home/
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         if: ${{ failure() }}
         with:
           name: generic_artifacts_${{matrix.ROS_REPO}}_${{matrix.ROS_DISTRO}}
-          path: /home/log
+          path: /home/target_ws
           retention-days: 5

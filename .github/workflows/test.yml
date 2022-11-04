@@ -35,5 +35,5 @@ jobs:
         if: ${{ failure() }}
         with:
           name: generic_artifacts_${{matrix.ROS_REPO}}_${{matrix.ROS_DISTRO}}
-          path: ../../log
+          path: scripts
           retention-days: 5

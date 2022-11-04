@@ -32,6 +32,7 @@ jobs:
           ROS_DISTRO: ${{matrix.ROS_DISTRO}}
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
+        if: ${{ failure() }}
         with:
           name: generic_artifacts_${{matrix.ROS_REPO}}_${{matrix.ROS_DISTRO}}
           path: ../../log

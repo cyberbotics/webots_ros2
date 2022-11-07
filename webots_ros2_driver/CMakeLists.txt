@@ -104,13 +104,12 @@ else()
   )
 endif()
 
-if($ENV{ROS_DISTRO} MATCHES "foxy" OR $ENV{ROS_DISTRO} MATCHES "galactic")
-  ament_python_install_package(${PROJECT_NAME}_webots
-    PACKAGE_DIR ${WEBOTS_LIB_BASE}/python38)
-else()
-  ament_python_install_package(${PROJECT_NAME}_webots
-    PACKAGE_DIR ${WEBOTS_LIB_BASE}/python310)
-endif()
+
+ament_python_install_package(${PROJECT_NAME}_controller
+  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python/controller)
+
+ament_python_install_package(${PROJECT_NAME}_vehicle
+  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python/vehicle)
 
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})

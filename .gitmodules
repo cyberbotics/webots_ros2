@@ -3,4 +3,4 @@
 	url = https://github.com/cyberbotics/urdf2webots.git
 [submodule "webots_ros2_driver/webots"]
 	path = webots_ros2_driver/webots
-	url = https://github.com/cyberbotics/webots-libcontroller.git
+	url = https://github.com/cyberbotics/webots.git

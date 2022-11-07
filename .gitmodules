@@ -4,3 +4,4 @@
 [submodule "webots_ros2_driver/webots"]
 	path = webots_ros2_driver/webots
 	url = https://github.com/cyberbotics/webots.git
+	shallow = true

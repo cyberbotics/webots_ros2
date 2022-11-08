@@ -44,9 +44,7 @@ namespace webots_ros2_driver
     mCameraInfoMessage.distortion_model = "plumb_bob";
 
     // Convert FoV to focal length.
-    // Reference: https://en.wikipedia.org/wiki/Focal_length#In_photography
-    const double diagonal = sqrt(pow(mCamera->getWidth(), 2) + pow(mCamera->getHeight(), 2));
-    const double focalLength =  0.5 * diagonal * (cos(0.5 * mCamera->getFov()) / sin(0.5 * mCamera->getFov()));
+    const double focalLength = mCamera->getWidth() / (2 * tan(mCamera->getFov() / 2));
 
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};

@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.4 (2022-XX-XX)
+------------------
+* Fix the camera focal length in the CameraInfo topic.
+
 2022.1.3 (2022-11-02)
 ------------------
 * Added macOS support.

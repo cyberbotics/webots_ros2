@@ -103,6 +103,9 @@ else()
   )
 endif()
 
+ament_python_install_package(${PROJECT_NAME}_webots
+  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python)
+
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})
 

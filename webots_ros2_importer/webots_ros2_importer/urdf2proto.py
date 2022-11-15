@@ -52,14 +52,14 @@ def main(args=None, urdfInput=None):
                         'getFromProtoDef(defName) (for PROTO conversion only).')
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
     arguments, _ = parser.parse_known_args()
-    file = os.path.abspath(urdfInput) if urdfInput is not None else os.path.abspath(arguments.inputConversion)
+    file = os.path.abspath(urdfInput) if urdfInput is not None else os.path.abspath(arguments.input)
     if not file:
         sys.exit('Input file not specified (should be specified with the "--input" argument).')
     if not os.path.isfile(file):
-        sys.exit('"%s" file does not exist.' % arguments.inputConversion)
+        sys.exit('"%s" file does not exist.' % arguments.input)
     elif not file.endswith('.urdf'):
         sys.exit('"%s" is not an urdf file.' % file)
-    convertUrdfFile(input=arguments.inputConversion,
+    convertUrdfFile(input=arguments.input,
                     output=arguments.output,
                     normal=arguments.normal,
                     boxCollision=arguments.boxCollision,

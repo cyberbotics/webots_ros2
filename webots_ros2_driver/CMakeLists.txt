@@ -44,12 +44,12 @@ else()
   find_package(PythonLibs 3.10 EXACT REQUIRED)
 endif()
 
-add_custom_target(compile-lib-controller ALL 
+add_custom_target(compile-lib-controller ALL
   COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
 )
 
-add_custom_target(compile-lib-vehicle ALL 
+add_custom_target(compile-lib-vehicle ALL
   COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
   DEPENDS compile-lib-controller
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
@@ -149,7 +149,13 @@ add_dependencies(${PROJECT_NAME}_imu
 target_link_libraries(${PROJECT_NAME}_imu
   ${WEBOTS_LIB}
 )
+install(TARGETS ${PROJECT_NAME}_imu
+  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+)
 
+# libController
 install(
   DIRECTORY webots/include/controller/c
   DESTINATION include/webots
@@ -158,12 +164,6 @@ install(
   DIRECTORY webots/include/controller/cpp
   DESTINATION include/webots
 )
-install(TARGETS ${PROJECT_NAME}_imu
-  RUNTIME DESTINATION bin
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-)
-
 install(
   DIRECTORY ${WEBOTS_LIB_BASE}/
   DESTINATION lib/controller
@@ -176,6 +176,18 @@ install(
   PATTERN "*driver*"
   PATTERN "*CppDriver*"
 )
+
+# Create symlinks of libController
+macro(lib_symlink filename)
+  install(CODE "execute_process(COMMAND ln -sf ${CMAKE_INSTALL_PREFIX}/lib/controller/${filename} ${CMAKE_INSTALL_PREFIX}/lib/${filename})")
+endmacro(lib_symlink)
+
+lib_symlink(libController.so)
+lib_symlink(libcar.so)
+lib_symlink(libCppCar.so)
+lib_symlink(libCppController.so)
+lib_symlink(libCppDriver.so)
+lib_symlink(libdriver.so)
 
 # Prevent pluginlib from using boost
 target_compile_definitions(driver PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

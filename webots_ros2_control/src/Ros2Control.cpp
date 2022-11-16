@@ -26,6 +26,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "pluginlib/class_list_macros.hpp"
 
+#include <webots/robot.h>
+
 #include <iostream>
 
 const double CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS = 1.0;
@@ -35,7 +37,7 @@ namespace webots_ros2_control
 
   void Ros2Control::step()
   {
-    const int nowMs = mNode->robot()->getTime() * 1000.0;
+    const int nowMs = wb_robot_get_time() * 1000.0;
     const int periodMs = nowMs - mLastControlUpdateMs;
     const rclcpp::Duration dt = rclcpp::Duration::from_seconds(mControlPeriodMs / 1000.0);
     if (periodMs >= mControlPeriodMs)
@@ -116,12 +118,12 @@ namespace webots_ros2_control
     const int updateRate = mControllerManager->get_parameter("update_rate").as_int();
     mControlPeriodMs = (1.0 / updateRate) * 1000.0;
 
-    int controlPeriodProductMs = mNode->robot()->getBasicTimeStep();
+    int controlPeriodProductMs = wb_robot_get_basic_time_step();
     while (controlPeriodProductMs < mControlPeriodMs)
-      controlPeriodProductMs += mNode->robot()->getBasicTimeStep();
+      controlPeriodProductMs += wb_robot_get_basic_time_step();
 
     if (abs(controlPeriodProductMs - mControlPeriodMs) > CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS)
-      RCLCPP_WARN_STREAM(node->get_logger(), "Desired controller update period (" << mControlPeriodMs << "ms / " << updateRate << "Hz) is different from the Webots timestep (" << mNode->robot()->getBasicTimeStep() << "ms). Please adjust the `update_rate` parameter in the `controller_manager` or the `basicTimeStep` parameter in the Webots `WorldInfo` node.");
+      RCLCPP_WARN_STREAM(node->get_logger(), "Desired controller update period (" << mControlPeriodMs << "ms / " << updateRate << "Hz) is different from the Webots timestep (" << wb_robot_get_basic_time_step() << "ms). Please adjust the `update_rate` parameter in the `controller_manager` or the `basicTimeStep` parameter in the Webots `WorldInfo` node.");
 
     // Spin
     mExecutor->add_node(mControllerManager);

@@ -29,7 +29,7 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "webots_ros2_driver/PluginInterface.hpp"
-#include <webots/Supervisor.hpp>
+#include <webots/supervisor.h>
 #include "webots_ros2_driver/WebotsNode.hpp"
 
 namespace webots_ros2_control

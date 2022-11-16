@@ -16,17 +16,19 @@
 
 #include <webots_ros2_driver/utils/Math.hpp>
 
+#include <webots/robot.h>
+
 namespace webots_ros2_driver
 {
   void Ros2DistanceSensor::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
   {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
-    mDistanceSensor = mNode->robot()->getDistanceSensor(parameters["name"]);
+    mDistanceSensor = wb_robot_get_device(parameters["name"].c_str());
 
-    assert(mDistanceSensor != NULL);
+    assert(mDistanceSensor != 0);
 
-    mLookupTable.assign(mDistanceSensor->getLookupTable(), mDistanceSensor->getLookupTable() + mDistanceSensor->getLookupTableSize() * 3);
+    mLookupTable.assign(wb_distance_sensor_get_lookup_table(mDistanceSensor), wb_distance_sensor_get_lookup_table(mDistanceSensor) + wb_distance_sensor_get_lookup_table_size(mDistanceSensor) * 3);
 
     const int size = mLookupTable.size();
     const double maxValue = std::max(mLookupTable[0], mLookupTable[size - 3]);
@@ -38,13 +40,13 @@ namespace webots_ros2_driver
 
     mPublisher = mNode->create_publisher<sensor_msgs::msg::Range>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mMessage.header.frame_id = mFrameName;
-    mMessage.field_of_view = mDistanceSensor->getAperture();
+    mMessage.field_of_view = wb_distance_sensor_get_aperture(mDistanceSensor);
     mMessage.min_range = minRange;
     mMessage.max_range = maxRange;
     mMessage.radiation_type = sensor_msgs::msg::Range::INFRARED;
 
     if (mAlwaysOn) {
-      mDistanceSensor->enable(mPublishTimestepSyncedMs);
+      wb_distance_sensor_enable(mDistanceSensor, mPublishTimestepSyncedMs);
       mIsEnabled = true;
     }
   }
@@ -65,16 +67,16 @@ namespace webots_ros2_driver
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
-        mDistanceSensor->enable(mPublishTimestepSyncedMs);
+        wb_distance_sensor_enable(mDistanceSensor, mPublishTimestepSyncedMs);
       else
-        mDistanceSensor->disable();
+        wb_distance_sensor_disable(mDistanceSensor);
       mIsEnabled = shouldBeEnabled;
     }
   }
 
   void Ros2DistanceSensor::publishRange()
   {
-    const double value = mDistanceSensor->getValue();
+    const double value = wb_distance_sensor_get_value(mDistanceSensor);
     if (std::isnan(value))
       return;
     mMessage.header.stamp = mNode->get_clock()->now();

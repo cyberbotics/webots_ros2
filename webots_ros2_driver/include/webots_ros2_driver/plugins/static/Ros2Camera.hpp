@@ -17,7 +17,7 @@
 
 #include <unordered_map>
 
-#include <webots/Camera.hpp>
+#include <webots/camera.h>
 
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/point.hpp>
@@ -49,7 +49,7 @@ namespace webots_ros2_driver
     void publishImage();
     void publishRecognition();
 
-    webots::Camera* mCamera;
+    WbDeviceTag mCamera;
 
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
     sensor_msgs::msg::Image mImageMessage;

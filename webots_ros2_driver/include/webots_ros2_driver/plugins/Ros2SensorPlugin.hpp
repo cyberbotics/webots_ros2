@@ -16,7 +16,7 @@
 #define ROS2_SENSOR_PLUGIN_HPP
 
 #include <unordered_map>
-#include <webots/RangeFinder.hpp>
+#include <webots/range_finder.h>
 #include <webots_ros2_driver/PluginInterface.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 

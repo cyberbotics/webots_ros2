@@ -17,7 +17,7 @@
 
 #include <unordered_map>
 #include <sensor_msgs/msg/illuminance.hpp>
-#include <webots/LightSensor.hpp>
+#include <webots/light_sensor.h>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 
@@ -35,7 +35,7 @@ namespace webots_ros2_driver
     void publishValue();
     double findVariance(double rawValue);
 
-    webots::LightSensor* mLightSensor;
+    WbDeviceTag mLightSensor;
 
     rclcpp::Publisher<sensor_msgs::msg::Illuminance>::SharedPtr mPublisher;
     sensor_msgs::msg::Illuminance mMessage;

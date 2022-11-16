@@ -31,11 +31,11 @@ namespace webots_ros2_driver
             R"EOT(
 import os
 import sys
-import webots_ros2_driver_webots
+import controller
 
 # As Driver need the controller library, we extend the path here
 # to avoid to load another library named "controller" when loading vehicle library
-sys.path.insert(1, os.path.dirname(webots_ros2_driver_webots.__file__))
+sys.path.insert(1, os.path.dirname(controller.__file__))
 from vehicle import Driver
 
 class WebotsNode:

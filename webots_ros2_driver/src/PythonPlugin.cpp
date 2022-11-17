@@ -31,7 +31,10 @@ namespace webots_ros2_driver
             R"EOT(
 import os
 import sys
+from ament_index_python.packages import get_package_prefix 
+os.environ['WEBOTS_HOME'] = get_package_prefix('webots_ros2_driver')
 import controller
+from controller import Supervisor
 
 # As Driver need the controller library, we extend the path here
 # to avoid to load another library named "controller" when loading vehicle library
@@ -41,9 +44,9 @@ from vehicle import Driver
 class WebotsNode:
     def __init__(self):
         if Driver.isInitialisationPossible():
-            self.robot = Driver.getDriverInstance()
+            self.robot = Driver()
         else:
-            self.robot = Driver.getSupervisorInstance()
+            self.robot = Supervisor()
 )EOT",
             "webots_extra", Py_file_input);
 

@@ -5,6 +5,7 @@ Changelog for package webots_ros2
 2022.1.4 (2022-XX-XX)
 ------------------
 * Fix the camera focal length in the CameraInfo topic.
+* Upgraded to urdf2webots 2.0.3
 
 2022.1.3 (2022-11-02)
 ------------------

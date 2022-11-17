@@ -132,7 +132,8 @@ class TestDriver(TestWebots):
             self.assertAlmostEqual(message.objects[0].pose.pose.position.z, 0.55, delta=0.01)
             return True
 
-        self.wait_for_messages(self.__node, CameraRecognitionObjects, '/Pioneer_3_AT/camera/recognitions/webots', condition=on_objects_received)
+        self.wait_for_messages(self.__node, CameraRecognitionObjects, '/Pioneer_3_AT/camera/recognitions/webots',
+                               condition=on_objects_received)
 
     def testPythonPluginService(self):
         client = self.__node.create_client(Trigger, 'move_forward')

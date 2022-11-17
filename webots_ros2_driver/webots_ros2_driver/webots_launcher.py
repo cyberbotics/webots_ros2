@@ -215,6 +215,8 @@ class Ros2SupervisorLauncher(Node):
             package='webots_ros2_driver',
             executable='ros2_supervisor.py',
             output=output,
+            # Set WEBOTS_HOME to the webots_ros2_driver installation folder
+            # to load the correct libController libraries from the Python API
             additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor',
                             'WEBOTS_HOME': get_package_prefix('webots_ros2_driver')},
             respawn=respawn,

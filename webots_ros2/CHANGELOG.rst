@@ -2,6 +2,12 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.4 (2022-XX-XX)
+------------------
+* Add support for the new Python API of Webots R2023a
+* Convert C++ controller API functions to C
+* Replace libController submodule by commited source files
+
 2022.1.0 (2022-09-23)
 ------------------
 * Adapted controllers to communicate with Webots R2022b.

@@ -1,11 +1,9 @@
 # Implementation of the interface for Webots and ROS 2
 
-The main functionalities of the package: 
+The main functionalities of the package:
 - It automatically creates a ROS 2 interface out of a Webots robot model.
 - It allows users to configure the ROS 2 interface in URDF files.
 - It allows users to extend the interface using the pluginlib plugin mechanism.
-
-> This package aims to replace the `webots_ros2_core` package.
 
 Please use the following links for more details:
 

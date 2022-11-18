@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2022.1.4 (2022-XX-XX)
+2023.0.0 (2022-XX-XX)
 ------------------
 * Convert C++ controller API functions to C
 

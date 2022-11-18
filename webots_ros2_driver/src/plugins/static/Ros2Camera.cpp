@@ -44,9 +44,7 @@ namespace webots_ros2_driver
     mCameraInfoMessage.distortion_model = "plumb_bob";
 
     // Convert FoV to focal length.
-    // Reference: https://en.wikipedia.org/wiki/Focal_length#In_photography
-    const double diagonal = sqrt(pow(mCamera->getWidth(), 2) + pow(mCamera->getHeight(), 2));
-    const double focalLength =  0.5 * diagonal * (cos(0.5 * mCamera->getFov()) / sin(0.5 * mCamera->getFov()));
+    const double focalLength = mCamera->getWidth() / (2 * tan(mCamera->getFov() / 2));
 
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
@@ -138,18 +136,25 @@ namespace webots_ros2_driver
     for (size_t i = 0; i < mCamera->getRecognitionNumberOfObjects(); i++)
     {
       // Getting Object Info
-      geometry_msgs::msg::Point position;
-      geometry_msgs::msg::Quaternion orientation;
-      position.x = objects[i].position[0];
-      position.y = objects[i].position[1];
-      position.z = objects[i].position[2];
-      axisAngleToQuaternion(objects[i].orientation, orientation);
+      geometry_msgs::msg::PoseStamped pose;
+      pose.pose.position.x = objects[i].position[0];
+      pose.pose.position.y = objects[i].position[1];
+      pose.pose.position.z = objects[i].position[2];
+      axisAngleToQuaternion(objects[i].orientation, pose.pose.orientation);
+
+      // Transform to ROS camera coordinate frame
+      // rpy = (0, pi/2, -pi/2)
+      geometry_msgs::msg::TransformStamped transform;
+      transform.transform.rotation.x = 0.5;
+      transform.transform.rotation.y = -0.5;
+      transform.transform.rotation.z = 0.5;
+      transform.transform.rotation.w = 0.5;
+      tf2::doTransform(pose, pose, transform);
 
       // Object Info -> Detection2D
       vision_msgs::msg::Detection2D detection;
       vision_msgs::msg::ObjectHypothesisWithPose hypothesis;
-      hypothesis.pose.pose.position = position;
-      hypothesis.pose.pose.orientation = orientation;
+      hypothesis.pose.pose = pose.pose;
       detection.results.push_back(hypothesis);
       #if FOXY || GALACTIC
       detection.bbox.center.x = objects[i].position_on_image[0];
@@ -166,8 +171,7 @@ namespace webots_ros2_driver
       webots_ros2_msgs::msg::CameraRecognitionObject recognitionWebotsObject;
       recognitionWebotsObject.id = objects[i].id;
       recognitionWebotsObject.model = std::string(objects[i].model);
-      recognitionWebotsObject.pose.pose.position = position;
-      recognitionWebotsObject.pose.pose.orientation = orientation;
+      recognitionWebotsObject.pose = pose;
       #if FOXY || GALACTIC
       recognitionWebotsObject.bbox.center.x = objects[i].position_on_image[0];
       recognitionWebotsObject.bbox.center.y = objects[i].position_on_image[1];

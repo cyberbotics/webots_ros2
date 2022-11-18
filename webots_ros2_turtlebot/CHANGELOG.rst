@@ -2,6 +2,11 @@
 Changelog for package webots_ros2_turtlebot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.3 (2022-11-02)
+------------------
+* Added macOS support.
+* Added reset handler to support simulation reset from Webots.
+
 2022.1.2 (2022-10-21)
 ------------------
 * Added WSL support.

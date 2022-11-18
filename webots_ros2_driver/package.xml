@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>webots_ros2_driver</name>
-  <version>2022.1.2</version>
+  <version>2022.1.4</version>
   <description>Implementation of the Webots - ROS 2 interface</description>
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
   <license>Apache License 2.0</license>
@@ -21,6 +21,7 @@
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
+  <depend>tf2_geometry_msgs</depend>
   <depend>tf2_ros</depend>
   <depend>vision_msgs</depend>
   <depend>tinyxml2_vendor</depend>

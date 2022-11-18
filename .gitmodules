@@ -4,5 +4,5 @@
 [submodule "webots_ros2_driver/webots"]
 	path = webots_ros2_driver/webots
 	url = https://github.com/cyberbotics/webots.git
-	branch = libcontroller-develop
+	branch = 717732e9a1bf21b559b8f834fa5cae94d9f116ee
 	shallow = true

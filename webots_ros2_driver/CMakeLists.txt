@@ -45,22 +45,22 @@ else()
 endif()
 
 add_custom_target(compile-lib-controller ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/libcontroller" make release -f Makefile > /dev/null 2>&1
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libcontroller/src/controller
 )
 
 add_custom_target(compile-lib-vehicle ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/libcontroller" make release -f Makefile > /dev/null 2>&1
   DEPENDS compile-lib-controller
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/libcontroller/projects/default/libraries/vehicle
 )
 
-set(WEBOTS_LIB_BASE webots/lib/controller)
+set(WEBOTS_LIB_BASE libcontroller/lib/controller)
 
 include_directories(
   include
-  webots/include/controller/c
-  webots/include/controller/cpp
+  libcontroller/include/controller/c
+  libcontroller/include/controller/cpp
   ${PYTHON_INCLUDE_DIRS}
 )
 
@@ -157,11 +157,11 @@ install(TARGETS ${PROJECT_NAME}_imu
 
 # libController
 install(
-  DIRECTORY webots/include/controller/c
+  DIRECTORY libcontroller/include/controller/c
   DESTINATION include/webots
 )
 install(
-  DIRECTORY webots/include/controller/cpp
+  DIRECTORY libcontroller/include/controller/cpp
   DESTINATION include/webots
 )
 install(

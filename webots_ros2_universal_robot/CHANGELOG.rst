@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.3 (2022-11-02)
+------------------
+* Added macOS support.
+
 2022.1.2 (2022-10-21)
 ------------------
 * Added WSL support.

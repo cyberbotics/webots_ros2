@@ -21,6 +21,8 @@
 
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/transform_stamped.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>

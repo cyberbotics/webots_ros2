@@ -28,6 +28,7 @@ from std_srvs.srv import Trigger
 from sensor_msgs.msg import Range, Image, Imu, Illuminance
 from std_msgs.msg import Int32, Float32
 from geometry_msgs.msg import PointStamped, Vector3
+from webots_ros2_msgs.msg import CameraRecognitionObjects
 from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
@@ -123,6 +124,16 @@ class TestDriver(TestWebots):
             return True
 
         self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/kinect_color', condition=on_image_received)
+
+    def testRecognition(self):
+        def on_objects_received(message):
+            self.assertAlmostEqual(message.objects[0].pose.pose.position.x, 0.08, delta=0.01)
+            self.assertAlmostEqual(message.objects[0].pose.pose.position.y, -0.09, delta=0.01)
+            self.assertAlmostEqual(message.objects[0].pose.pose.position.z, 0.55, delta=0.01)
+            return True
+
+        self.wait_for_messages(self.__node, CameraRecognitionObjects, '/Pioneer_3_AT/camera/recognitions/webots',
+                               condition=on_objects_received)
 
     def testPythonPluginService(self):
         client = self.__node.create_client(Trigger, 'move_forward')

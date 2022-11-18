@@ -2,10 +2,23 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.4 (2022-11-18)
+------------------
+* Fix the camera focal length in the CameraInfo topic.
+* Update the calculation of CameraRecognitionObject messages to the RDF convention of R2022b.
+
+2022.1.3 (2022-11-02)
+------------------
+* Added macOS support.
+
 2022.1.2 (2022-10-21)
 ------------------
 * Fix issue where relatively defined PROTO were not found.
 * Added WSL support.
+
+2022.1.1 (2022-10-11)
+------------------
+* Simplified the detection of Webots installation folder.
 
 2022.1.0 (2022-09-23)
 ------------------

@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.0 (2022-XX-XX)
+------------------
+* Removed 'webots_ros2_core' package (deprecated).
+
 2022.1.4 (2022-11-18)
 ------------------
 * Fix the camera focal length in the CameraInfo topic.
@@ -21,7 +25,7 @@ Changelog for package webots_ros2
 ------------------
 * Adapted controllers to communicate with Webots R2022b.
 * Added feature to import URDF on the fly.
-* Add PointCloud2 support for RangeFinder.
+* Added PointCloud2 support for RangeFinder.
 
 1.2.3 (2022-06-01)
 ------------------

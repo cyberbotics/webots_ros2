@@ -8,7 +8,7 @@
 `webots_ros2` is a package that provides the necessary interfaces to simulate a robot in the [Webots](https://cyberbotics.com/) open-source 3D robots simulator.
 It integrates with ROS2 using ROS2 messages, services and actions.
 
-![Webots](docs/cover.png)
+![Webots](images/cover.png)
 
 Please visit the [documentation](https://github.com/cyberbotics/webots_ros2/wiki) that contains the following sections:
 - [Getting Started](https://github.com/cyberbotics/webots_ros2/wiki/Getting-Started)
@@ -25,13 +25,13 @@ Please visit the [documentation](https://github.com/cyberbotics/webots_ros2/wiki
        alt="rosin_logo" height="60" >
 </a></br>
 
-Supported by ROSIN - ROS-Industrial Quality-Assured Robot Software Components.  
+Supported by ROSIN - ROS-Industrial Quality-Assured Robot Software Components.
 More information: <a href="http://rosin-project.eu">rosin-project.eu</a>
 
 <img src="http://rosin-project.eu/wp-content/uploads/rosin_eu_flag.jpg"
-     alt="eu_flag" height="45" align="left" >  
+     alt="eu_flag" height="45" align="left" >
 
-This project has received funding from the European Union’s Horizon 2020  
+This project has received funding from the European Union’s Horizon 2020
 research and innovation programme under grant agreement no. 732287.
 
 <br>
@@ -41,11 +41,11 @@ research and innovation programme under grant agreement no. 732287.
        alt="opendr_logo" height="60" >
 </a></br>
 
-Supported by OpenDR - Open Deep Learning Toolkit for Robotics.  
+Supported by OpenDR - Open Deep Learning Toolkit for Robotics.
 More information: <a href="https://opendr.eu/">opendr.eu</a>
 
 <img src="https://opendr.csd.auth.gr/wp-content/uploads/2019/12/Flag_of_Europe-300x200.png"
-     alt="eu_flag" height="45" align="left" >  
+     alt="eu_flag" height="45" align="left" >
 
-This project has received funding from the European Union’s Horizon 2020  
+This project has received funding from the European Union’s Horizon 2020
 research and innovation programme under grant agreement no. 871449.

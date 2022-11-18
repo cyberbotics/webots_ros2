@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.2.2 (2022-11-17)
+2022.1.4 (2022-11-18)
 ------------------
 * Add a system test for the R2022b RDF convention for cameras.
 

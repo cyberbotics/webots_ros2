@@ -35,7 +35,9 @@ namespace webots_ros2_control
       joint.name = component.name;
 
       webots::Motor *motor = mNode->robot()->getMotor(joint.name);
-      webots::PositionSensor *sensor = mNode->robot()->getPositionSensor(joint.name);
+      webots::PositionSensor *sensor = (component.parameters.count("sensor") == 0) ? 
+        mNode->robot()->getPositionSensor(joint.name) : 
+        mNode->robot()->getPositionSensor(component.parameters.at("sensor"));
       joint.motor = (motor) ? motor : sensor->getMotor();
       joint.sensor = (sensor) ? sensor : motor->getPositionSensor();
       if (joint.sensor)

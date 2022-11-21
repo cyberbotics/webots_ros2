@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.5 (2022-XX-XX)
+------------------
+* Allow custom motor-encoder pair.
+
 1.2.3 (2022-05-30)
 ------------------
 * Fixed support for Humble and Rolling.

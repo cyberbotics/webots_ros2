@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<robot name="rosbot_webots">
+    <webots>
+      <plugin type="webots_ros2_control::Ros2Control" />
+
+      <device reference="lidar_link" type="Lidar">
+        <ros>
+          <topicName>/scan</topicName>
+        </ros>
+      </device>
+
+      <device reference="range_left_front" type="DistanceSensor">
+        <ros>
+          <topicName>/range/left_front</topicName>
+        </ros>
+      </device>
+
+      <device reference="range_right_front" type="DistanceSensor">
+        <ros>
+          <topicName>/range/right_front</topicName>
+        </ros>
+      </device>
+
+      <device reference="range_left_rear" type="DistanceSensor">
+        <ros>
+          <topicName>/range/left_rear</topicName>
+        </ros>
+      </device>
+
+      <device reference="range_right_rear" type="DistanceSensor">
+        <ros>
+          <topicName>/range/right_rear</topicName>
+        </ros>
+      </device>
+
+      <plugin type="webots_ros2_driver::Ros2IMU">
+        <enabled>true</enabled>
+        <topicName>/imu_broadcaster/imu</topicName>
+        <alwaysOn>true</alwaysOn>
+        <frameName>imu_link</frameName>
+        <gyroName>imu gyro</gyroName>
+        <accelerometerName>imu accelerometer</accelerometerName>
+        <inertialUnitName>imu inertial_unit</inertialUnitName>
+      </plugin>
+
+    </webots>
+
+    <ros2_control name="WebotsControl" type="system">
+      <hardware>
+        <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
+      </hardware>
+      <joint name="front_left_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="front_right_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="rear_left_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="rear_right_wheel_joint">
+        <command_interface name="velocity"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+</robot>

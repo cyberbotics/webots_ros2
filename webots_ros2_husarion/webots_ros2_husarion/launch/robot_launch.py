@@ -14,10 +14,9 @@ def generate_launch_description():
     rosbot_bringup = get_package_share_directory('rosbot_bringup')
 
     robot_description = os.path.join(
-        rosbot_description, 'models', 'rosbot', 'rosbot.urdf.xacro')
+        rosbot_description, 'urdf', 'rosbot.urdf.xacro')
 
-    robot_webots_description = pathlib.Path(os.path.join(
-        package_dir, 'resource', 'rosbot_webots.urdf')).read_text()
+    robot_description_urdf = launch.substitutions.Command(['xacro ', robot_description, ' use_sim:=true simulation_engine:=webots'])
 
     ros2_control_params = os.path.join(
         package_dir, 'resource', 'rosbot_controllers.yaml')
@@ -36,7 +35,7 @@ def generate_launch_description():
         executable='driver',
         additional_env={'WEBOTS_CONTROLLER_URL': 'rosbot'},
         parameters=[
-            {'robot_description': robot_webots_description,
+            {'robot_description': robot_description_urdf,
              'set_robot_state_publisher': True},
             ros2_control_params
         ],
@@ -51,7 +50,7 @@ def generate_launch_description():
         executable='robot_state_publisher',
         output='screen',
         parameters=[{
-            'robot_description': launch.substitutions.Command(['xacro ', robot_description, ' use_webots:=True'])
+            'robot_description': robot_description_urdf
         }],
     )
 

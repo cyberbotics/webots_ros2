@@ -4,3 +4,6 @@
 [submodule "webots_ros2_driver/webots"]
 	path = webots_ros2_driver/webots
 	url = https://github.com/cyberbotics/webots-libcontroller.git
+[submodule "webots_ros2_husarion/rosbot_ros"]
+	path = webots_ros2_husarion/rosbot_ros
+	url = https://github.com/husarion/rosbot_ros/tree/humble

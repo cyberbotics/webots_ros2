@@ -1,8 +1,7 @@
-### ekf config file ###
 ekf_filter_node:
     ros__parameters:
         predict_to_current_time: false
-        frequency: 30.0
+        frequency: 25.0
         sensor_timeout: 0.06
         two_d_mode: true
         print_diagnostics: true
@@ -15,7 +14,7 @@ ekf_filter_node:
 
         odom0: /rosbot_base_controller/odom
         odom0_config: [true, true, true, # X , Y , Z
-                      false, false, true, # roll , pitch ,yaw
+                      false, false, false, # roll , pitch ,yaw
                       false, false, false, # dX , dY , dZ
                       false, false, false, # droll , dpitch ,dyaw
                       false, false, false] # ddX , ddY , ddZ

@@ -22,19 +22,19 @@ cd /tmp/webots
 WEBOTS_HOME=/tmp/webots
 
 # Don't publish the libcontroller if it hasn't changed since yesterday
-LAST_COMMIT_YESTERDAY=$(git log -1 --pretty=format:"%H" --before=yesterday)
+#LAST_COMMIT_YESTERDAY=$(git log -1 --pretty=format:"%H" --before=yesterday)
 LAST_COMMIT=$(git log -1 --pretty=format:"%H")
 echo "BRANCH_NAME=sync-${BRANCH}-${LAST_COMMIT}" >> $GITHUB_ENV
-INCLUDE_DIFF_SINCE_YESTERDAY=$(git diff ${LAST_COMMIT_YESTERDAY}..${LAST_COMMIT} -- include/controller)
-SOURCE_DIFF_SINCE_YESTERDAY=$(git diff ${LAST_COMMIT_YESTERDAY}..${LAST_COMMIT} -- src/controller)
-VEHICLE_DIFF_SINCE_YESTERDAY=$(git diff ${LAST_COMMIT_YESTERDAY}..${LAST_COMMIT} -- projects/default/librairies/vehicle)
-WINDOW_DIFF_SINCE_YESTERDAY=$(git diff ${LAST_COMMIT_YESTERDAY}..${LAST_COMMIT} -- resources/projects/libraries/generic_robot_window)
-if [ -z "${INCLUDE_DIFF_SINCE_YESTERDAY}" ] && [ -z "${SOURCE_DIFF_SINCE_YESTERDAY}" ] && [ -z "${VEHICLE_DIFF_SINCE_YESTERDAY}" ] && [ -z "${WINDOW_DIFF_SINCE_YESTERDAY}" ]; then
-    echo "There are no changes in 'include/controller', 'src/controller', 'projects/default/librairies/vehicle' and 'resources/projects/libraries/generic_robot_window' since yesterday"
-    echo "Last commit yesterday: ${LAST_COMMIT_YESTERDAY}"
-    echo "Last commit today: ${LAST_COMMIT}"
-    exit 0
-fi
+#INCLUDE_DIFF_SINCE_YESTERDAY=$(git diff ${LAST_COMMIT_YESTERDAY}..${LAST_COMMIT} -- include/controller)
+#SOURCE_DIFF_SINCE_YESTERDAY=$(git diff ${LAST_COMMIT_YESTERDAY}..${LAST_COMMIT} -- src/controller)
+#VEHICLE_DIFF_SINCE_YESTERDAY=$(git diff ${LAST_COMMIT_YESTERDAY}..${LAST_COMMIT} -- projects/default/librairies/vehicle)
+#WINDOW_DIFF_SINCE_YESTERDAY=$(git diff ${LAST_COMMIT_YESTERDAY}..${LAST_COMMIT} -- resources/projects/libraries/generic_robot_window)
+#if [ -z "${INCLUDE_DIFF_SINCE_YESTERDAY}" ] && [ -z "${SOURCE_DIFF_SINCE_YESTERDAY}" ] && [ -z "${VEHICLE_DIFF_SINCE_YESTERDAY}" ] && [ -z "${WINDOW_DIFF_SINCE_YESTERDAY}" ]; then
+    #echo "There are no changes in 'include/controller', 'src/controller', 'projects/default/librairies/vehicle' and 'resources/projects/libraries/generic_robot_window' since yesterday"
+    #echo "Last commit yesterday: ${LAST_COMMIT_YESTERDAY}"
+    #echo "Last commit today: ${LAST_COMMIT}"
+    #exit 0
+#fi
 
 # Copy headers and source code
 cd ${ROS2_HOME}

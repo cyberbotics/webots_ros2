@@ -13,7 +13,7 @@ if [ ! -z "${GITHUB_ACTOR}" ]; then
     git config --global user.name ${GITHUB_ACTOR}
     git config --global user.email ${GITHUB_ACTOR}@github.com
 fi
-git clone --recurse-submodules -b ${BRANCH} git@github.com:cyberbotics/webots.git /tmp/webots
+git clone --recurse-submodules -b ${BRANCH} https://github.com/cyberbotics/webots.git /tmp/webots
 if [ ! -d /tmp/webots ]; then
     echo 'The repository is not properly cloned'
     exit 1

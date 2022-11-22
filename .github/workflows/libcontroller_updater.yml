@@ -1,4 +1,4 @@
-name: Libcontroller Submodule Updater
+name: Libcontroller Updater
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
     - cron:  '0 04 * * *'
 
 jobs:
-  automatic-submodule-sync:
+  automatic-libcontroller-sync:
     strategy:
       matrix:
         include:

@@ -39,30 +39,34 @@ echo "BRANCH_NAME=sync-${BRANCH}-${LAST_COMMIT}" >> $GITHUB_ENV
 # Copy headers and source code
 cd ${ROS2_HOME}
 rm -rf include
-mkdir -p include
-cp -r ${WEBOTS_HOME}/include/controller/* include
-cp -r ${WEBOTS_HOME}/include/plugins/* include
+mkdir -p include/controller
+mkdir -p include/plugins
+cp -r ${WEBOTS_HOME}/include/controller/* include/controller
+cp -r ${WEBOTS_HOME}/include/plugins/* include/plugins
 cp ${WEBOTS_HOME}/include/controller/c/webots/plugins/robot_window/{robot_window.h,robot_wwi.h} include
 
 rm -rf lib
-mkdir -p lib/controller
+mkdir -p lib/controller/python
 cp ${WEBOTS_HOME}/lib/controller/.gitignore lib/controller
-cp -r ${WEBOTS_HOME}/lib/controller/python/* lib/controller
+cp -r ${WEBOTS_HOME}/lib/controller/python/* lib/controller/python
 
 rm -rf projects
-mkdir -p projects/default/libraries/vehicle
-cp -r ${WEBOTS_HOME}/projects/default/libraries/vehicle/c/* projects/default/libraries/vehicle
-cp -r ${WEBOTS_HOME}/projects/default/libraries/vehicle/cpp/* projects/default/libraries/vehicle
-cp -r ${WEBOTS_HOME}/projects/default/libraries/vehicle/java/* projects/default/libraries/vehicle
+mkdir -p projects/default/libraries/vehicle/c
+mkdir -p projects/default/libraries/vehicle/cpp
+mkdir -p projects/default/libraries/vehicle/java
+cp -r ${WEBOTS_HOME}/projects/default/libraries/vehicle/c/* projects/default/libraries/vehicle/c
+cp -r ${WEBOTS_HOME}/projects/default/libraries/vehicle/cpp/* projects/default/libraries/vehicle/cpp
+cp -r ${WEBOTS_HOME}/projects/default/libraries/vehicle/java/* projects/default/libraries/vehicle/java
 cp ${WEBOTS_HOME}/projects/default/libraries/vehicle/Makefile projects/default/libraries/vehicle
 
 rm -rf resources
-mkdir -p resources/projects/libraries
-cp -r ${WEBOTS_HOME}/resources/projects/libraries/generic_robot_window/* resources/projects/libraries
+mkdir -p resources/projects/libraries/generic_robot_window
+cp -r ${WEBOTS_HOME}/resources/projects/libraries/generic_robot_window/* resources/projects/libraries/generic_robot_window
 cp ${WEBOTS_HOME}/resources/Makefile.include resources
 cp ${WEBOTS_HOME}/resources/Makefile.os.include resources
 
 rm -rf src
-mkdir -p src
-cp -r ${WEBOTS_HOME}/src/controller/* include
-cp -r ${WEBOTS_HOME}/src/stb/* include
+mkdir -p src/controller
+mkdir -p src/stb
+cp -r ${WEBOTS_HOME}/src/controller/* src/controller
+cp -r ${WEBOTS_HOME}/src/stb/* src/stb

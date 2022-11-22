@@ -16,14 +16,16 @@
 
 #include <webots_ros2_driver/utils/Math.hpp>
 
+#include <webots/robot.h>
+
 namespace webots_ros2_driver
 {
   void Ros2LED::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
   {
     mNode = node;
-    mLED = mNode->robot()->getLED(parameters["name"]);
+    mLED = wb_robot_get_device(parameters["name"].c_str());
 
-    assert(mLED != NULL);
+    assert(mLED != 0);
 
     const std::string topicName = parameters.count("topicName") ? parameters["topicName"] : "~/" + getFixedNameString(parameters["name"]);
     mSubscriber = mNode->create_subscription<std_msgs::msg::Int32>(topicName, rclcpp::SensorDataQoS().reliable(), std::bind(&Ros2LED::onMessageReceived, this, std::placeholders::_1));
@@ -35,6 +37,6 @@ namespace webots_ros2_driver
 
   void Ros2LED::onMessageReceived(const std_msgs::msg::Int32::SharedPtr message)
   {
-    mLED->set(message->data);
+    wb_led_set(mLED, message->data);
   }
 }

@@ -17,9 +17,9 @@
 
 #include <unordered_map>
 
-#include <webots/InertialUnit.hpp>
-#include <webots/Gyro.hpp>
-#include <webots/Accelerometer.hpp>
+#include <webots/inertial_unit.h>
+#include <webots/gyro.h>
+#include <webots/accelerometer.h>
 
 #include <sensor_msgs/msg/imu.hpp>
 
@@ -43,9 +43,9 @@ namespace webots_ros2_driver
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr mPublisher;
     sensor_msgs::msg::Imu mMessage;
 
-    webots::InertialUnit *mInertialUnit;
-    webots::Gyro *mGyro;
-    webots::Accelerometer *mAccelerometer;
+    WbDeviceTag mInertialUnit;
+    WbDeviceTag mGyro;
+    WbDeviceTag mAccelerometer;
 
     bool mIsEnabled;
   };

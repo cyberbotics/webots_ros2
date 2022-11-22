@@ -15,7 +15,7 @@
 #ifndef ROS2_GPS_HPP
 #define ROS2_GPS_HPP
 
-#include <webots/GPS.hpp>
+#include <webots/gps.h>
 #include <geometry_msgs/msg/point_stamped.hpp>
 #include <geometry_msgs/msg/vector3.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
@@ -38,7 +38,7 @@ namespace webots_ros2_driver
     void publishSpeed();
     void publishSpeedVector();
 
-    webots::GPS *mGPS;
+    WbDeviceTag mGPS;
 
     rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr mGPSPublisher;
     sensor_msgs::msg::NavSatFix mGPSMessage;

@@ -16,6 +16,8 @@
 
 #include <webots_ros2_driver/utils/Math.hpp>
 
+#include <webots/robot.h>
+
 namespace webots_ros2_driver
 {
   const double gIrradianceToIlluminance = 120.0;
@@ -24,17 +26,17 @@ namespace webots_ros2_driver
   {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
-    mLightSensor = mNode->robot()->getLightSensor(parameters["name"]);
+    mLightSensor = wb_robot_get_device(parameters["name"].c_str());
 
-    assert(mLightSensor != NULL);
+    assert(mLightSensor != 0);
 
     mPublisher = mNode->create_publisher<sensor_msgs::msg::Illuminance>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mMessage.header.frame_id = mFrameName;
 
-    mLookupTable.assign(mLightSensor->getLookupTable(), mLightSensor->getLookupTable() + mLightSensor->getLookupTableSize() * 3);
+    mLookupTable.assign(wb_light_sensor_get_lookup_table(mLightSensor), wb_light_sensor_get_lookup_table(mLightSensor) + wb_light_sensor_get_lookup_table_size(mLightSensor) * 3);
 
     if (mAlwaysOn) {
-      mLightSensor->enable(mPublishTimestepSyncedMs);
+      wb_light_sensor_enable(mLightSensor, mPublishTimestepSyncedMs);
       mIsEnabled = true;
     }
   }
@@ -55,16 +57,16 @@ namespace webots_ros2_driver
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
-        mLightSensor->enable(mPublishTimestepSyncedMs);
+        wb_light_sensor_enable(mLightSensor, mPublishTimestepSyncedMs);
       else
-        mLightSensor->disable();
+        wb_light_sensor_disable(mLightSensor);
       mIsEnabled = shouldBeEnabled;
     }
   }
 
   void Ros2LightSensor::publishValue()
   {
-    const double value = mLightSensor->getValue();
+    const double value = wb_light_sensor_get_value(mLightSensor);
     mMessage.header.stamp = mNode->get_clock()->now();
     mMessage.illuminance = interpolateLookupTable(value, mLookupTable);
     mMessage.variance = findVariance(value);

@@ -17,7 +17,7 @@
 
 #include <unordered_map>
 #include <sensor_msgs/msg/range.hpp>
-#include <webots/DistanceSensor.hpp>
+#include <webots/distance_sensor.h>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 
@@ -34,7 +34,7 @@ namespace webots_ros2_driver
   private:
     void publishRange();
 
-    webots::DistanceSensor* mDistanceSensor;
+    WbDeviceTag mDistanceSensor;
 
     rclcpp::Publisher<sensor_msgs::msg::Range>::SharedPtr mPublisher;
     sensor_msgs::msg::Range mMessage;

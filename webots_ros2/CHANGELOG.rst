@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.5 (2022-XX-XX)
+------------------
+* Allow custom motor-encoder pair.
+
 2022.1.4 (2022-11-18)
 ------------------
 * Fix the camera focal length in the CameraInfo topic.

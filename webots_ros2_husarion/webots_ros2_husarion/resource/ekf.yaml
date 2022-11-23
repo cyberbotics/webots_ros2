@@ -13,9 +13,9 @@ ekf_filter_node:
         world_frame: odom
 
         odom0: /rosbot_base_controller/odom
-        odom0_config: [true, true, true, # X , Y , Z
+        odom0_config: [false, false, false, # X , Y , Z
                       false, false, false, # roll , pitch ,yaw
-                      false, false, false, # dX , dY , dZ
+                      true, true, false, # dX , dY , dZ
                       false, false, false, # droll , dpitch ,dyaw
                       false, false, false] # ddX , ddY , ddZ
 

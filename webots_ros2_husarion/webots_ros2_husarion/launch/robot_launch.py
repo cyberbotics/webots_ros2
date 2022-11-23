@@ -6,12 +6,13 @@ from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_launcher import Ros2SupervisorLauncher
 from launch.event_handlers import OnProcessExit
-from launch.actions import RegisterEventHandler
+from launch.actions import RegisterEventHandler, DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_husarion')
     rosbot_description = get_package_share_directory('rosbot_description')
-    rosbot_bringup = get_package_share_directory('rosbot_bringup')
+    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     robot_description = os.path.join(
         rosbot_description, 'urdf', 'rosbot.urdf.xacro')
@@ -35,9 +36,10 @@ def generate_launch_description():
         executable='driver',
         additional_env={'WEBOTS_CONTROLLER_URL': 'rosbot'},
         parameters=[
-            {'robot_description': robot_description_urdf,
-             'set_robot_state_publisher': True},
-            ros2_control_params
+            {'robot_description': robot_description_urdf},
+            {'set_robot_state_publisher': True},
+            {'use_sim_time': use_sim_time},
+            ros2_control_params,
         ],
         remappings=[
             ("rosbot_base_controller/cmd_vel_unstamped", "cmd_vel"),
@@ -49,9 +51,10 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
-        parameters=[{
-            'robot_description': robot_description_urdf
-        }],
+        parameters=[
+            {'robot_description': robot_description_urdf},
+            {'use_sim_time': use_sim_time},
+        ],
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -64,6 +67,9 @@ def generate_launch_description():
             "--controller-manager-timeout",
             "120",
         ],
+        # parameters=[
+        #     {'use_sim_time': use_sim_time},
+        # ],
     )
 
     robot_controller_spawner = Node(
@@ -76,6 +82,9 @@ def generate_launch_description():
             "--controller-manager-timeout",
             "120",
         ],
+        # parameters=[
+        #     {'use_sim_time': use_sim_time},
+        # ],
     )
 
     # Delay start of robot_controller after joint_state_broadcaster
@@ -93,11 +102,16 @@ def generate_launch_description():
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[ekf_config]
+        parameters=[
+            ekf_config,
+            {'use_sim_time': use_sim_time}
+        ]
     )
 
     # Standard ROS 2 launch description
     return launch.LaunchDescription([
+        DeclareLaunchArgument(name='use_sim_time', default_value='True',
+                                            description='Flag to enable use_sim_time'),
 
         # Start the Webots node
         webots,

@@ -667,7 +667,7 @@ PROTO Rosbot [
       }
       DEF LIDAR_SLOT Transform {
         translation 0.02 0 0.1
-        rotation 0.000000 0.000000 1.000000 3.14000000
+        rotation 0.000000 0.000000 1.000000 3.141592
         children IS lidarSlot
       }
     ]

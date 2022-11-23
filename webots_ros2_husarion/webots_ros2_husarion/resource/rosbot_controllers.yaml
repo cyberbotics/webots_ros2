@@ -14,7 +14,7 @@ rosbot_base_controller:
     right_wheel_names: ["fr_wheel_joint", "rr_wheel_joint"]
 
     wheel_separation: 0.186
-    wheel_radius: 0.0425
+    wheel_radius: 0.043
     wheel_separation_multiplier: 1.45
 
     use_stamped_vel: false

@@ -8,6 +8,7 @@ data_files.append(('share/' + package_name + '/launch', ['launch/robot_launch.py
 data_files.append(('share/' + package_name + '/resource', ['resource/rosbot_controllers.yaml']))
 data_files.append(('share/' + package_name + '/resource', ['resource/ekf.yaml']))
 data_files.append(('share/' + package_name + '/resource/', ['resource/Rosbot.proto']))
+data_files.append(('share/' + package_name + '/resource/', ['resource/RpLidarA2.proto']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/black_ports.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/body.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/cover.obj']))
@@ -16,6 +17,9 @@ data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/mes
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/screw.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/wheel_rim.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/wheel_tire.obj']))
+data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/rplidar_bottom.obj']))
+data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/rplidar_top.obj']))
+
 
 data_files.append(('share/' + package_name + '/worlds', ['worlds/rosbot.wbt']))
 data_files.append(('share/' + package_name, ['package.xml']))

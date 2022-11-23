@@ -9,8 +9,8 @@ EXTERNPROTO "webots://projects/appearances/protos/MattePaint.proto"
 EXTERNPROTO "webots://projects/appearances/protos/BrushedAluminium.proto"
 EXTERNPROTO "webots://projects/appearances/protos/Rubber.proto"
 EXTERNPROTO "webots://projects/devices/tdk/protos/Mpu-9250.proto"
-EXTERNPROTO "webots://projects/devices/slamtec/protos/RpLidarA2.proto"
 EXTERNPROTO "webots://projects/devices/orbbec/protos/Astra.proto"
+EXTERNPROTO "./RpLidarA2.proto"
 
 PROTO Rosbot [
   field  SFVec3f     translation     0 0 0

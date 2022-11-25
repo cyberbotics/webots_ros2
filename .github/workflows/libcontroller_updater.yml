@@ -1,8 +1,6 @@
 name: Libcontroller Updater
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled, unlabeled]
   schedule:
     - cron:  '0 04 * * *'
 
@@ -20,6 +18,7 @@ jobs:
         with:
           submodules: "true"
           fetch-depth: 0
+          ref: ${{ matrix.webots_ros2_branch }}
       - name: Copy Webots libController files
         run: scripts/sync_controller_lib.sh ${{ matrix.webots_ros2_branch }}
       - name: Create commit if necessary

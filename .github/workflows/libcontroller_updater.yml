@@ -20,7 +20,6 @@ jobs:
         with:
           submodules: "true"
           fetch-depth: 0
-          ref: ${{ matrix.webots_ros2_branch }}
       - name: Copy Webots libController files
         run: scripts/sync_controller_lib.sh ${{ matrix.webots_ros2_branch }}
       - name: Create commit if necessary

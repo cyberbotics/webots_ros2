@@ -128,7 +128,7 @@ class Ros2Supervisor(Node):
             return response
         # Insert the object.
         self.__node_list.append(object_name)
-        self.__insertion_obj_place.importMFNodeFromString(-1, object_string)
+        self.__insertion_robot_place.importMFNodeFromString(-1, object_string)
         self.get_logger().info('Ros2Supervisor has imported the mdt object named "' + str(object_name) + '".')
 
         response.success = True

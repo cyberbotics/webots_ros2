@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2021 Cyberbotics Ltd.
+# Copyright 1996-2023 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ from platform import uname
 
 
 # The minimal version should be the last stable release of Webots (both on master and develop branches)
-MINIMUM_VERSION_STR = 'R2022b'
+MINIMUM_VERSION_STR = 'R2023a'
 
 
 @functools.total_ordering

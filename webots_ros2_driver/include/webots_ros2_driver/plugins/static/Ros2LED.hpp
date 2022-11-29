@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 #include <unordered_map>
 #include <std_msgs/msg/int32.hpp>
-#include <webots/LED.hpp>
+#include <webots/led.h>
 #include <webots_ros2_driver/utils/Utils.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 #include <webots_ros2_driver/PluginInterface.hpp>
@@ -34,7 +34,7 @@ namespace webots_ros2_driver
   private:
     void onMessageReceived(const std_msgs::msg::Int32::SharedPtr message);
 
-    webots::LED *mLED;
+    WbDeviceTag mLED;
     webots_ros2_driver::WebotsNode *mNode;
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr mSubscriber;
   };

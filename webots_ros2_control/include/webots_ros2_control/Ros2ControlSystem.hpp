@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@
 #include "webots_ros2_driver/WebotsNode.hpp"
 
 #include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
-#include "webots/Motor.hpp"
-#include "webots/PositionSensor.hpp"
+#include "webots/motor.h"
+#include "webots/position_sensor.h"
 
 namespace webots_ros2_control
 {
@@ -49,8 +49,8 @@ namespace webots_ros2_control
     bool controlVelocity;
     bool controlEffort;
     std::string name;
-    webots::Motor* motor;
-    webots::PositionSensor* sensor;
+    WbDeviceTag motor;
+    WbDeviceTag sensor;
   };
 
   class Ros2ControlSystem : public Ros2ControlSystemInterface

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2021 Cyberbotics Ltd.
+# Copyright 1996-2023 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_share_directory, get_package_prefix
 
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation,
@@ -215,7 +215,10 @@ class Ros2SupervisorLauncher(Node):
             package='webots_ros2_driver',
             executable='ros2_supervisor.py',
             output=output,
-            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor'},
+            # Set WEBOTS_HOME to the webots_ros2_driver installation folder
+            # to load the correct libController libraries from the Python API
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor',
+                            'WEBOTS_HOME': get_package_prefix('webots_ros2_driver')},
             respawn=respawn,
             **kwargs
         )

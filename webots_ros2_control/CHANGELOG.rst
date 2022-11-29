@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.0 (2022-XX-XX)
+------------------
+* Convert C++ controller API functions to C
+
 1.2.3 (2022-05-30)
 ------------------
 * Fixed support for Humble and Rolling.

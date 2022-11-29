@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <webots/RangeFinder.hpp>
+#include <webots/range_finder.h>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 
@@ -37,7 +37,7 @@ namespace webots_ros2_driver
     void publishImage();
     void publishPointCloud();
 
-    webots::RangeFinder* mRangeFinder;
+    WbDeviceTag mRangeFinder;
 
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
     sensor_msgs::msg::Image mImageMessage;

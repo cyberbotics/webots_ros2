@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +14,16 @@
 
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <webots/vehicle/driver.h>
+#include <webots/robot.h>
 #include <webots_ros2_driver/WebotsNode.hpp>
-#include <webots/vehicle/Driver.hpp>
 
-int main(int argc, char **argv)
-{
-  webots::Supervisor *robot;
-
+int main(int argc, char **argv) {
   // Check if the robot can be a driver, if not create a simple Supervisor
-  if (webots::Driver::isInitialisationPossible())
-    robot = new webots::Driver();
+  if (wbu_driver_initialization_is_possible())
+    wbu_driver_init();
   else
-    robot = new webots::Supervisor();
+    wb_robot_init();
 
   // Let WebotsNode handle the system signals
   webots_ros2_driver::WebotsNode::handleSignals();
@@ -38,18 +36,19 @@ int main(int argc, char **argv)
 #endif
   rclcpp::init(argc, argv, options);
 
-  std::string robotName = robot->getName();
+  std::string robotName(wb_robot_get_name());
   for (char notAllowedChar : " -.)(")
     std::replace(robotName.begin(), robotName.end(), notAllowedChar, '_');
 
-  std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, robot);
+  std::shared_ptr<webots_ros2_driver::WebotsNode> node =
+      std::make_shared<webots_ros2_driver::WebotsNode>(robotName);
   node->init();
   while (true) {
     if (node->step() == -1)
       break;
     rclcpp::spin_some(node);
   }
-  delete robot;
+  wb_robot_cleanup();
   rclcpp::shutdown();
   return 0;
 }

@@ -30,7 +30,7 @@ set(msg_files
 set(srv_files
   "srv/SetInt.srv"
   "srv/SpawnUrdfRobot.srv"
-  "srv/SpawnMdtObject.srv"
+  "srv/SpawnWbtObject.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}

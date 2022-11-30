@@ -36,7 +36,7 @@ namespace webots_ros2_control
     {
       Joint joint;
       joint.name = component.name;
-      
+
       WbDeviceTag device = wb_robot_get_device(joint.name.c_str());
       WbNodeType type = wb_device_get_node_type(device);
       joint.motor = (type == WB_NODE_LINEAR_MOTOR || type == WB_NODE_ROTATIONAL_MOTOR) ? device : wb_position_sensor_get_motor(device);
@@ -45,7 +45,7 @@ namespace webots_ros2_control
         wb_robot_get_device(component.parameters.at("sensor").c_str());
       type = wb_device_get_node_type(device);
       joint.sensor = (type == WB_NODE_POSITION_SENSOR) ? device : wb_motor_get_position_sensor(device);
-      
+
       if (joint.sensor)
         wb_position_sensor_enable(joint.sensor, wb_robot_get_basic_time_step());
       if (!joint.sensor && !joint.motor)

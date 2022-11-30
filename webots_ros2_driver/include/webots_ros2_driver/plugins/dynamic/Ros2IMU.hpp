@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 
 #include <unordered_map>
 
-#include <webots/InertialUnit.hpp>
-#include <webots/Gyro.hpp>
-#include <webots/Accelerometer.hpp>
+#include <webots/inertial_unit.h>
+#include <webots/gyro.h>
+#include <webots/accelerometer.h>
 
 #include <sensor_msgs/msg/imu.hpp>
 
@@ -43,9 +43,9 @@ namespace webots_ros2_driver
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr mPublisher;
     sensor_msgs::msg::Imu mMessage;
 
-    webots::InertialUnit *mInertialUnit;
-    webots::Gyro *mGyro;
-    webots::Accelerometer *mAccelerometer;
+    WbDeviceTag mInertialUnit;
+    WbDeviceTag mGyro;
+    WbDeviceTag mAccelerometer;
 
     bool mIsEnabled;
   };

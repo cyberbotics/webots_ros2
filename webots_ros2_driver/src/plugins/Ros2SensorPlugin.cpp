@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/utils/Utils.hpp>
 
+#include <webots/robot.h>
+
 namespace webots_ros2_driver
 {
   void Ros2SensorPlugin::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
@@ -28,15 +30,15 @@ namespace webots_ros2_driver
     mFrameName = parameters.count("frameName") ? parameters["frameName"] : getFixedNameString(parameters["name"]);
 
     // Calculate timestep
-    mPublishTimestepSyncedMs = getDeviceTimestepMsFromPublishTimestep(mPublishTimestep, mNode->robot()->getBasicTimeStep());
+    mPublishTimestepSyncedMs = getDeviceTimestepMsFromPublishTimestep(mPublishTimestep, wb_robot_get_basic_time_step());
   }
 
   bool Ros2SensorPlugin::preStep()
   {
     // Update only if needed
-    if (mNode->robot()->getTime() - mLastUpdate < mPublishTimestep)
+    if (wb_robot_get_time() - mLastUpdate < mPublishTimestep)
       return false;
-    mLastUpdate = mNode->robot()->getTime();
+    mLastUpdate = wb_robot_get_time();
     return true;
   }
 }

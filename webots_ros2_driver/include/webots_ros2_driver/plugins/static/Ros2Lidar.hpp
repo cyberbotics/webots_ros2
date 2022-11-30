@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 #define ROS2_LIDAR_HPP
 
 #include <unordered_map>
-#include <webots/Lidar.hpp>
+#include <webots/lidar.h>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
@@ -36,7 +36,7 @@ namespace webots_ros2_driver
     void publishPointCloud();
     void publishLaserScan();
 
-    webots::Lidar *mLidar;
+    WbDeviceTag mLidar;
 
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr mLaserPublisher;
     sensor_msgs::msg::LaserScan mLaserMessage;

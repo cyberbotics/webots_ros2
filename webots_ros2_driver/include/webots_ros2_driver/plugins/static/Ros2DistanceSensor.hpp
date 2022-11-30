@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 #include <unordered_map>
 #include <sensor_msgs/msg/range.hpp>
-#include <webots/DistanceSensor.hpp>
+#include <webots/distance_sensor.h>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 
@@ -34,7 +34,7 @@ namespace webots_ros2_driver
   private:
     void publishRange();
 
-    webots::DistanceSensor* mDistanceSensor;
+    WbDeviceTag mDistanceSensor;
 
     rclcpp::Publisher<sensor_msgs::msg::Range>::SharedPtr mPublisher;
     sensor_msgs::msg::Range mMessage;

@@ -8,6 +8,7 @@ Changelog for package webots_ros2
 * Convert C++ controller API functions to C
 * Replace libController submodule by commited source files
 * Removed 'webots_ros2_core' package (deprecated).
+* Allow custom motor-encoder pair.
 
 2022.1.4 (2022-11-18)
 ------------------

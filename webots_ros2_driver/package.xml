@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>webots_ros2_driver</name>
-  <version>2022.1.4</version>
+  <version>2023.0.0</version>
   <description>Implementation of the Webots - ROS 2 interface</description>
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
   <license>Apache License 2.0</license>

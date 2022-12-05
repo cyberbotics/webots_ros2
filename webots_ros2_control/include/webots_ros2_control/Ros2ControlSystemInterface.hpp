@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "webots_ros2_driver/PluginInterface.hpp"
-#include <webots/Supervisor.hpp>
+#include <webots/supervisor.h>
 #include "webots_ros2_driver/WebotsNode.hpp"
 
 namespace webots_ros2_control

@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>webots_ros2</name>
-  <version>2022.1.4</version>
+  <version>2023.0.0</version>
   <description>Interface between Webots and ROS2</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -15,7 +15,6 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>webots_ros2_control</exec_depend>
-  <exec_depend>webots_ros2_core</exec_depend>
   <exec_depend>webots_ros2_driver</exec_depend>
   <exec_depend>webots_ros2_epuck</exec_depend>
   <exec_depend>webots_ros2_importer</exec_depend>

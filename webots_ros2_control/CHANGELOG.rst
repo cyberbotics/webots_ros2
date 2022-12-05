@@ -2,6 +2,11 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.0 (2022-11-30)
+------------------
+* Convert C++ controller API functions to C
+* Allow custom motor-encoder pair.
+
 1.2.3 (2022-05-30)
 ------------------
 * Fixed support for Humble and Rolling.

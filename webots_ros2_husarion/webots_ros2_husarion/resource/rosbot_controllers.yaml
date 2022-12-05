@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    # Adjusted to the Webots timestep (32ms) 1s/0.032.
+    # Adjusted to the Webots step time (32ms) 1s/0.032.
     update_rate: 32 # Hz
 
     joint_state_broadcaster:

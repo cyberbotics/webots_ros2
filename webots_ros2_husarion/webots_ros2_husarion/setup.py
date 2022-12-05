@@ -19,8 +19,6 @@ data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/mes
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/wheel_tire.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/rplidar_bottom.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/rplidar_top.obj']))
-
-
 data_files.append(('share/' + package_name + '/worlds', ['worlds/rosbot.wbt']))
 data_files.append(('share/' + package_name, ['package.xml']))
 

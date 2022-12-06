@@ -3,23 +3,11 @@
 
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/floors/protos/Floor.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/apartment_structure/protos/Door.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/appearances/protos/GlossyPaint.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/tables/protos/Table.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/factory/containers/protos/CardboardBox.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/apartment_structure/protos/Wall.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/appearances/protos/Roughcast.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/cabinet/protos/Cabinet.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/hospital/protos/EmergencyExitSign.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/appearances/protos/CarpetFibers.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/apartment_structure/protos/Window.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/chairs/protos/OfficeChair.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/computers/protos/Monitor.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/computers/protos/Laptop.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/computers/protos/Keyboard.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/computers/protos/DesktopComputer.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/computers/protos/ComputerMouse.proto"
+
 EXTERNPROTO "/tmp/protos/Rosbot.proto"
+EXTERNPROTO "/tmp/protos/HusarionWorld.proto"
+
 
 WorldInfo {
   info [
@@ -50,81 +38,12 @@ Floor {
     colorOverride 0.6 0.6 0.6
   }
 }
-Wall {
-  translation 0 0.79 0
-  name "wall(1)"
-  size 12 0.2 3
-  appearance Roughcast {
-    textureTransform TextureTransform {
-      scale 5 1.75
-    }
-  }
+
+
+HusarionWorld {
 }
-Wall {
-  translation 0 -9.4 0
-  name "wall(2)"
-  size 12 0.2 3
-  appearance Roughcast {
-    textureTransform TextureTransform {
-      scale 5 1.75
-    }
-  }
-}
-Wall {
-  translation 5.9 0.485 0
-  rotation 0 0 1 1.5708
-  name "wall(3)"
-  size 0.41 0.2 3
-  appearance Roughcast {
-    textureTransform TextureTransform {
-      scale 4.125 1.725
-    }
-  }
-}
-Wall {
-  translation 5.9 -2.635 0
-  rotation 0 0 1 1.5708
-  name "wall(4)"
-  size 2.23 0.2 3
-  appearance Roughcast {
-    textureTransform TextureTransform {
-      scale 4.125 1.725
-    }
-  }
-}
-Wall {
-  translation 5.9 -5.818 0
-  rotation 0 0 1 1.5708
-  name "wall(5)"
-  size 2.34 0.2 3
-  appearance Roughcast {
-    textureTransform TextureTransform {
-      scale 4.125 1.725
-    }
-  }
-}
-Wall {
-  translation 5.9 -9.048 0
-  rotation 0 0 1 1.5708
-  name "wall(6)"
-  size 0.52 0.2 3
-  appearance Roughcast {
-    textureTransform TextureTransform {
-      scale 4.125 1.725
-    }
-  }
-}
-Wall {
-  translation -5.89 -4.298 0
-  rotation 0 0 1 1.5708
-  name "wall(7)"
-  size 10 0.2 3
-  appearance Roughcast {
-    textureTransform TextureTransform {
-      scale 4.125 1.725
-    }
-  }
-}
+
+
 
 Rosbot {
   translation 1.11204 -4.71646 0

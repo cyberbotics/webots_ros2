@@ -9,6 +9,7 @@ data_files.append(('share/' + package_name + '/resource', ['resource/rosbot_cont
 data_files.append(('share/' + package_name + '/resource', ['resource/ekf.yaml']))
 data_files.append(('share/' + package_name + '/resource/', ['resource/Rosbot.proto']))
 data_files.append(('share/' + package_name + '/resource/', ['resource/RpLidarA2.proto']))
+data_files.append(('share/' + package_name + '/resource/', ['resource/HusarionWorld.proto']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/black_ports.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/body.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/cover.obj']))
@@ -19,6 +20,8 @@ data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/mes
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/wheel_tire.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/rplidar_bottom.obj']))
 data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/rplidar_top.obj']))
+data_files.append(('share/' + package_name + '/resource/meshes/', ['resource/meshes/husarion_world.dae']))
+
 data_files.append(('share/' + package_name + '/worlds', ['worlds/rosbot.wbt']))
 data_files.append(('share/' + package_name, ['package.xml']))
 

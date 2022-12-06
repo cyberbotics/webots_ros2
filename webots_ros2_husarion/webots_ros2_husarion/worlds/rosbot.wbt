@@ -18,8 +18,8 @@ WorldInfo {
   lineScale 0.15
 }
 Viewpoint {
-  orientation 0.1336198810158717 0.3568305491181132 -0.9245635114005799 0.7696250777392638
-  position -0.5375822526649872 -2.9628782014437167 0.8149990172036142
+  orientation 0.247297 -0.168564 -0.954165 -1.93179
+  position 6.40263 -11.291 6.82282
   follow "Rosbot"
 }
 TexturedBackground {
@@ -32,21 +32,17 @@ TexturedBackground {
 }
 Floor {
   translation 0 -4.3 0
-  size 12 10
+  size 40 40
   tileSize 1 1
   appearance CarpetFibers {
     colorOverride 0.6 0.6 0.6
   }
 }
-
-
 HusarionWorld {
+  translation -26.6 16.8 0
 }
-
-
-
 Rosbot {
-  translation 1.11204 -4.71646 0
+  translation 3 -2 0
   controller "<extern>"
   name "rosbot"
 }

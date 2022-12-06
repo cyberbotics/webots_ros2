@@ -9,6 +9,7 @@ PROTO HusarionWorld [
         translation IS translation
         rotation IS rotation
         name IS name
+        scale 10 10 10 
         children [
             DEF BORDER Shape {
                 geometry Mesh {

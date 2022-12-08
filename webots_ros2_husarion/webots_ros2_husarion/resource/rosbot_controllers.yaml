@@ -19,3 +19,24 @@ rosbot_base_controller:
 
     use_stamped_vel: false
     enable_odom_tf: false
+    linear:
+      x:
+        has_velocity_limits: true
+        has_acceleration_limits: true
+        has_jerk_limits: false
+        max_velocity: 1.0 # m/s
+        # min_velocity -  When unspecified, -max_velocity is used
+        max_acceleration: 1.0 # m/s^2
+        # min_acceleration - When unspecified, -max_acceleration is used.
+        max_jerk: 0.0 # m/s^3
+
+    angular:
+      z:
+        has_velocity_limits: true
+        has_acceleration_limits: true
+        has_jerk_limits: false
+        max_velocity: 3.0 # rad/s
+        # min_velocity -  When unspecified, -max_velocity is used
+        max_acceleration: 4.0 # rad/s^2
+        # min_acceleration - When unspecified, -max_acceleration is used.
+        max_jerk: 0.0 # rad/s^3

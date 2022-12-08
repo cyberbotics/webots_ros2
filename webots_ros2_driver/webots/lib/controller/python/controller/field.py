@@ -264,44 +264,44 @@ class Field:
 
     @property
     def value(self) -> typing.Union[bool, int, float, str, typing.List[float]]:
-        if self.type == Field.SF_BOOL:
+        if hasattr(self, "type") and self.type == Field.SF_BOOL:
             return wb.wb_supervisor_field_get_sf_bool(self._ref)
-        elif self.type == Field.SF_INT32:
+        elif hasattr(self, "type") and self.type == Field.SF_INT32:
             return wb.wb_supervisor_field_get_sf_int32(self._ref)
-        elif self.type == Field.SF_FLOAT:
+        elif hasattr(self, "type") and self.type == Field.SF_FLOAT:
             return wb.wb_supervisor_field_get_sf_float(self._ref)
-        elif self.type == Field.SF_STRING:
+        elif hasattr(self, "type") and self.type == Field.SF_STRING:
             return wb.wb_supervisor_field_get_sf_string(self._ref).decode()
-        elif self.type == Field.SF_VEC2F:
+        elif hasattr(self, "type") and self.type == Field.SF_VEC2F:
             return wb.wb_supervisor_field_get_sf_vec2f(self._ref)[:2]
-        elif self.type == Field.SF_VEC3F:
+        elif hasattr(self, "type") and self.type == Field.SF_VEC3F:
             return wb.wb_supervisor_field_get_sf_vec3f(self._ref)[:3]
-        elif self.type == Field.SF_ROTATION:
+        elif hasattr(self, "type") and self.type == Field.SF_ROTATION:
             return wb.wb_supervisor_field_get_sf_rotation(self._ref)[:4]
-        elif self.type == Field.SF_COLOR:
+        elif hasattr(self, "type") and self.type == Field.SF_COLOR:
             return wb.wb_supervisor_field_get_sf_color(self._ref)[:3]
-        elif self.type == Field.SF_NODE:
+        elif hasattr(self, "type") and self.type == Field.SF_NODE:
             return self.getSFNode()
         else:
             return None
 
     @value.setter
     def value(self, value: typing.Union[bool, int, float, str, typing.List[float]]):
-        if self.type == Field.SF_BOOL and isinstance(value, bool):
+        if hasattr(self, "type") and self.type == Field.SF_BOOL and isinstance(value, bool):
             wb.wb_supervisor_field_set_sf_bool(self._ref, 1 if value else 0)
-        elif self.type == Field.SF_INT32 and isinstance(value, int):
+        elif hasattr(self, "type") and self.type == Field.SF_INT32 and isinstance(value, int):
             wb.wb_supervisor_field_set_sf_int32(self._ref, value)
-        elif self.type == Field.SF_FLOAT and isinstance(value, float):
+        elif hasattr(self, "type") and self.type == Field.SF_FLOAT and isinstance(value, float):
             wb.wb_supervisor_field_set_sf_float(self._ref, ctypes.c_double(value))
-        elif self.type == Field.SF_STRING and isinstance(value, str):
+        elif hasattr(self, "type") and self.type == Field.SF_STRING and isinstance(value, str):
             wb.wb_supervisor_field_set_sf_string(self._ref, str.encode(value))
-        elif self.type == Field.SF_VEC2F and isinstance(value, list) and len(value) == 2:
+        elif hasattr(self, "type") and self.type == Field.SF_VEC2F and isinstance(value, list) and len(value) == 2:
             wb.wb_supervisor_field_set_sf_vec2f(self._ref, (ctypes.c_double * 2)(*value))
-        elif self.type == Field.SF_VEC3F and isinstance(value, list) and len(value) == 3:
+        elif hasattr(self, "type") and self.type == Field.SF_VEC3F and isinstance(value, list) and len(value) == 3:
             wb.wb_supervisor_field_set_sf_vec3f(self._ref, (ctypes.c_double * 3)(*value))
-        elif self.type == Field.SF_ROTATION and isinstance(value, list) and len(value) == 4:
+        elif hasattr(self, "type") and self.type == Field.SF_ROTATION and isinstance(value, list) and len(value) == 4:
             wb.wb_supervisor_field_set_sf_rotation(self._ref, (ctypes.c_double * 4)(*value))
-        elif self.type == Field.SF_COLOR and isinstance(value, list) and len(value) == 3:
+        elif hasattr(self, "type") and self.type == Field.SF_COLOR and isinstance(value, list) and len(value) == 3:
             wb.wb_supervisor_field_set_sf_color(self._ref, (ctypes.c_double * 3)(*value))
         else:
             print("Error: new field value has wrong type or length.", file=sys.stderr)

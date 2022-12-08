@@ -31,7 +31,7 @@ from rosgraph_msgs.msg import Clock
 from std_msgs.msg import String
 sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
 from urdf2webots.importer import convertUrdfFile, convertUrdfContent
-from webots_ros2_msgs.srv import SpawnUrdfRobot, SpawnWbtObject
+from webots_ros2_msgs.srv import SpawnUrdfRobot, SpawnNodeFromString
 import re 
 
 # As Ros2Supervisor needs the controller library, we extend the path here
@@ -51,15 +51,14 @@ class Ros2Supervisor(Node):
         self.create_timer(1 / 1000, self.__supervisor_step_callback)
         self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
 
-        # Spawn Nodes (URDF Robots / WBT Objects)
+        # Spawn Nodes (URDF Robots / VRML Objects)
         root_node = self.__robot.getRoot()
-        self.__insertion_robot_place = root_node.getField('children')
+        self.__insertion_node_place = root_node.getField('children')
         self.__node_list=[]
         
         # Services
         self.create_service(SpawnUrdfRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
-        self.create_service(SpawnWbtObject, 'spawn_wbt_obj', self.__spawn_wbt_obj_callback)
-        
+        self.create_service(SpawnNodeFromString, 'spawn_node_from_string', self.__spawn_node_from_string_callback)        
         # Subscriptions        
         self.create_subscription(String, 'remove_node', self.__remove_node_callback, qos_profile_services_default)
         
@@ -99,49 +98,50 @@ class Ros2Supervisor(Node):
             self.get_logger().info('Ros2Supervisor can not import a URDF file without a specified "urdf_path" or "robot_description" in the URDFSpawner object.')
             response.success = False
             return response
-        self.__insertion_robot_place.importMFNodeFromString(-1, robot_string)
+        self.__insertion_node_place.importMFNodeFromString(-1, robot_string)
         self.get_logger().info('Ros2Supervisor has imported the URDF robot named "' + str(robot_name) + '".')
         self.__node_list.append(robot_name)
         response.success = True
         return response
     
     
-    def __spawn_wbt_obj_callback(self, request, response):
+    def __spawn_node_from_string_callback(self, request, response):        
         object_string = request.data
         if(object_string == ""):
             self.get_logger().info('Ros2Supervisor cannot import an empty string.')
             response.success = False
             return response
-        # Extract name from wbt model string.
+        # Extract Webots node name from VRML string.
         name_match = re.search('name "[a-z0-9_]*"', object_string)
         object_name = name_match.group().replace("name ", "")
         object_name = object_name.replace('"', "")
         # Check that the name is not an empty string.
         if object_name == '':
-            self.get_logger().info('Ros2Supervisor cannot import an unnamed wbt object.')
+            self.get_logger().info('Ros2Supervisor cannot import an unnamed node.')            
             response.success = False
             return response
         # Check that the name is unique.
         if object_name in self.__node_list:
-            self.get_logger().info('Ros2Supervisor has found a duplicate wbt object named "' + str(object_name) + '". Please specifiy a unique name.')
+            self.get_logger().info('Ros2Supervisor has found a duplicate node in the world named "' + str(object_name) + '". Please specifiy a unique name.')
             response.success = False
             return response
         # Insert the object.
         self.__node_list.append(object_name)
-        self.__insertion_robot_place.importMFNodeFromString(-1, object_string)
-        self.get_logger().info('Ros2Supervisor has imported the wbt object named "' + str(object_name) + '".')
+        self.__insertion_node_place.importMFNodeFromString(-1, object_string)
+        self.get_logger().info('Ros2Supervisor has imported the node named "' + str(object_name) + '".')
 
         response.success = True
         return response
 
+    # Allows to remove any imported node (urdf robots / VRML Nodes) by name.
     def __remove_node_callback(self, message):
         name = message.data
 
         if name in self.__node_list:
             robot_node = None
 
-            for id_node in range(self.__insertion_robot_place.getCount()):
-                node = self.__insertion_robot_place.getMFNode(id_node)
+            for id_node in range(self.__insertion_node_place.getCount()):
+                node = self.__insertion_node_place.getMFNode(id_node)
                 node_name_field = node.getField('name')
                 if node_name_field and node_name_field.getSFString() == name:
                     robot_node = node

@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "pluginlib/class_list_macros.hpp"
 
+#include <webots/robot.h>
+#include <webots/device.h>
+
 namespace webots_ros2_control
 {
   void Ros2ControlSystem::init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info)
@@ -34,12 +37,17 @@ namespace webots_ros2_control
       Joint joint;
       joint.name = component.name;
 
-      webots::Motor *motor = mNode->robot()->getMotor(joint.name);
-      webots::PositionSensor *sensor = mNode->robot()->getPositionSensor(joint.name);
-      joint.motor = (motor) ? motor : sensor->getMotor();
-      joint.sensor = (sensor) ? sensor : motor->getPositionSensor();
+      WbDeviceTag device = wb_robot_get_device(joint.name.c_str());
+      WbNodeType type = wb_device_get_node_type(device);
+      joint.motor = (type == WB_NODE_LINEAR_MOTOR || type == WB_NODE_ROTATIONAL_MOTOR) ? device : wb_position_sensor_get_motor(device);
+      device = (component.parameters.count("sensor") == 0) ? 
+        wb_robot_get_device(joint.name.c_str()) : 
+        wb_robot_get_device(component.parameters.at("sensor").c_str());
+      type = wb_device_get_node_type(device);
+      joint.sensor = (type == WB_NODE_POSITION_SENSOR) ? device : wb_motor_get_position_sensor(device);
+
       if (joint.sensor)
-        joint.sensor->enable(node->robot()->getBasicTimeStep());
+        wb_position_sensor_enable(joint.sensor, wb_robot_get_basic_time_step());
       if (!joint.sensor && !joint.motor)
         throw std::runtime_error("Cannot find a Motor or PositionSensor with name " + joint.name);
 
@@ -68,8 +76,8 @@ namespace webots_ros2_control
       }
       if (joint.motor && joint.controlVelocity && !joint.controlPosition)
       {
-        joint.motor->setPosition(INFINITY);
-        joint.motor->setVelocity(0.0);
+        wb_motor_set_position(joint.motor, INFINITY);
+        wb_motor_set_velocity(joint.motor, 0.0);
       }
 
       mJoints.push_back(joint);
@@ -158,13 +166,13 @@ namespace webots_ros2_control
   {
     static double lastReadTime = 0;
 
-    const double deltaTime = mNode->robot()->getTime() - lastReadTime;
-    lastReadTime = mNode->robot()->getTime();
+    const double deltaTime = wb_robot_get_time() - lastReadTime;
+    lastReadTime = wb_robot_get_time();
 
     for (Joint &joint : mJoints)
     {
       if (joint.sensor) {
-        const double position = joint.sensor->getValue();
+        const double position = wb_position_sensor_get_value(joint.sensor);
         const double velocity = std::isnan(joint.position) ? NAN : (position - joint.position) / deltaTime;
 
         if (!std::isnan(joint.velocity))
@@ -188,15 +196,15 @@ namespace webots_ros2_control
       if (joint.motor)
       {
         if (joint.controlPosition && !std::isnan(joint.positionCommand))
-          joint.motor->setPosition(joint.positionCommand);
+          wb_motor_set_position(joint.motor, joint.positionCommand);
         if (joint.controlVelocity && !std::isnan(joint.velocityCommand))
         {
           // In the position control mode the velocity cannot be negative.
           const double velocityCommand = joint.controlPosition ? abs(joint.velocityCommand) : joint.velocityCommand;
-          joint.motor->setVelocity(velocityCommand);
+          wb_motor_set_velocity(joint.motor, velocityCommand);
         }
         if (joint.controlEffort && !std::isnan(joint.effortCommand))
-          joint.motor->setTorque(joint.effortCommand);
+          wb_motor_set_torque(joint.motor, joint.effortCommand);
       }
     }
     return hardware_interface::return_type::OK;

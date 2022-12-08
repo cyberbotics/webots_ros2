@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@
 #include <rclcpp/parameter_value.hpp>
 #include <rclcpp/timer.hpp>
 
-#include <webots/Device.hpp>
+#include <webots/robot.h>
+#include <webots/device.h>
 
 #include "webots_ros2_driver/PluginInterface.hpp"
 #include <webots_ros2_driver/plugins/static/Ros2Lidar.hpp>
@@ -46,7 +47,7 @@ namespace webots_ros2_driver
     gShutdownSignalReceived = true;
   }
 
-  WebotsNode::WebotsNode(std::string name, webots::Supervisor *robot) : Node(name), mRobot(robot), mPluginLoader(gPluginInterfaceName, gPluginInterface)
+  WebotsNode::WebotsNode(std::string name) : Node(name), mPluginLoader(gPluginInterfaceName, gPluginInterface)
   {
     mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
     mSetRobotStatePublisher = this->declare_parameter<bool>("set_robot_state_publisher", false);
@@ -121,48 +122,50 @@ namespace webots_ros2_driver
 
   void WebotsNode::init()
   {
-    if (mSetRobotStatePublisher)
-      setAnotherNodeParameter("robot_state_publisher", "robot_description", mRobot->getUrdf());
-
-    mStep = mRobot->getBasicTimeStep();
+    if (mSetRobotStatePublisher){
+      std::string prefix = "";
+      setAnotherNodeParameter("robot_state_publisher", "robot_description", wb_robot_get_urdf(prefix.c_str()));
+    }
+      
+    mStep = wb_robot_get_basic_time_step();
 
     // Load static plugins
     // Static plugins are automatically configured based on the robot model.
     // The static plugins will try to guess parameter based on the robot model,
     // but one can overwrite the default behavior in the <webots> section.
     // Typical static plugins are ROS 2 interfaces for Webots devices.
-    for (int i = 0; i < mRobot->getNumberOfDevices(); i++)
+    for (int i = 0; i < wb_robot_get_number_of_devices(); i++)
     {
-      webots::Device *device = mRobot->getDeviceByIndex(i);
+      WbDeviceTag device = wb_robot_get_device_by_index(i);
 
       // Prepare parameters
-      std::unordered_map<std::string, std::string> parameters = getDeviceRosProperties(device->getName());
+      std::unordered_map<std::string, std::string> parameters = getDeviceRosProperties(wb_device_get_name(device));
       if (parameters["enabled"] == "false")
         continue;
-      parameters["name"] = device->getName();
+      parameters["name"] = wb_device_get_name(device);
 
       std::shared_ptr<PluginInterface> plugin = nullptr;
-      switch (device->getNodeType())
+      switch (wb_device_get_node_type(device))
       {
-      case webots::Node::LIDAR:
+      case WB_NODE_LIDAR:
         plugin = std::make_shared<webots_ros2_driver::Ros2Lidar>();
         break;
-      case webots::Node::CAMERA:
+      case WB_NODE_CAMERA:
         plugin = std::make_shared<webots_ros2_driver::Ros2Camera>();
         break;
-      case webots::Node::GPS:
+      case WB_NODE_GPS:
         plugin = std::make_shared<webots_ros2_driver::Ros2GPS>();
         break;
-      case webots::Node::RANGE_FINDER:
+      case WB_NODE_RANGE_FINDER:
         plugin = std::make_shared<webots_ros2_driver::Ros2RangeFinder>();
         break;
-      case webots::Node::DISTANCE_SENSOR:
+      case WB_NODE_DISTANCE_SENSOR:
         plugin = std::make_shared<webots_ros2_driver::Ros2DistanceSensor>();
         break;
-      case webots::Node::LIGHT_SENSOR:
+      case WB_NODE_LIGHT_SENSOR:
         plugin = std::make_shared<webots_ros2_driver::Ros2LightSensor>();
         break;
-      case webots::Node::LED:
+      case WB_NODE_LED:
         plugin = std::make_shared<webots_ros2_driver::Ros2LED>();
         break;
       }
@@ -229,7 +232,7 @@ namespace webots_ros2_driver
       mWaitingForUrdfRobotToBeRemoved = true;
     }
 
-    const int result = mRobot->step(mStep);
+    const int result = wb_robot_step(mStep);
     if (result == -1)
       return result;
     for (std::shared_ptr<PluginInterface> plugin : mPlugins)

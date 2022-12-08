@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,18 +17,20 @@
 #include <sensor_msgs/image_encodings.hpp>
 #include <std_msgs/msg/color_rgba.hpp>
 
+#include <webots/robot.h>
+
 namespace webots_ros2_driver
 {
   void Ros2RangeFinder::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
   {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
-    mRangeFinder = mNode->robot()->getRangeFinder(parameters["name"]);
+    mRangeFinder = wb_robot_get_device(parameters["name"].c_str());
 
-    assert(mRangeFinder != NULL);
+    assert(mRangeFinder != 0);
 
-    const int width = mRangeFinder->getWidth();
-    const int height = mRangeFinder->getHeight();
+    const int width = wb_range_finder_get_width(mRangeFinder);
+    const int height = wb_range_finder_get_height(mRangeFinder);
 
     // Image publisher
     mImagePublisher = mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName, rclcpp::SensorDataQoS().reliable());
@@ -47,8 +49,8 @@ namespace webots_ros2_driver
     mCameraInfoMessage.height = height;
     mCameraInfoMessage.width = width;
     mCameraInfoMessage.distortion_model = "plumb_bob";
-    const double focalLengthX = 0.5 * width * (1 / tan(0.5 * mRangeFinder->getFov()));
-    const double focalLengthY = 0.5 * height * (1 / tan(0.5 * mRangeFinder->getFov()));
+    const double focalLengthX = 0.5 * width * (1 / tan(0.5 * wb_range_finder_get_fov(mRangeFinder)));
+    const double focalLengthY = 0.5 * height * (1 / tan(0.5 * wb_range_finder_get_fov(mRangeFinder)));
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     mCameraInfoMessage.k = {
@@ -84,7 +86,7 @@ namespace webots_ros2_driver
     mPointCloudMessage.data.resize(width * 12 * height);
 
     if (mAlwaysOn) {
-      mRangeFinder->enable(mPublishTimestepSyncedMs);
+      wb_range_finder_enable(mRangeFinder, mPublishTimestepSyncedMs);
       mIsEnabled = true;
     }
   }
@@ -110,16 +112,16 @@ namespace webots_ros2_driver
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
-        mRangeFinder->enable(mPublishTimestepSyncedMs);
+        wb_range_finder_enable(mRangeFinder, mPublishTimestepSyncedMs);
       else
-        mRangeFinder->disable();
+        wb_range_finder_disable(mRangeFinder);
       mIsEnabled = shouldBeEnabled;
     }
   }
 
   void Ros2RangeFinder::publishImage()
   {
-    auto image = mRangeFinder->getRangeImage();
+    auto image = wb_range_finder_get_range_image(mRangeFinder);
     if (image)
     {
       mImageMessage.header.stamp = mNode->get_clock()->now();
@@ -131,7 +133,7 @@ namespace webots_ros2_driver
   // To be redesigned when mRangeFinder->getPointCloud() will be implemented on Webots side.
   void Ros2RangeFinder::publishPointCloud()
   {
-    auto image = mRangeFinder->getRangeImage();
+    auto image = wb_range_finder_get_range_image(mRangeFinder);
     if (image)
     {
       mPointCloudMessage.header.stamp = mNode->get_clock()->now();

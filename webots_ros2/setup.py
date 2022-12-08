@@ -6,7 +6,7 @@ package_name = 'webots_ros2'
 
 setup(
     name=package_name,
-    version='2022.1.4',
+    version='2023.0.0',
     packages=[package_name],
     data_files=[
         ('share/' + package_name, ['package.xml']),

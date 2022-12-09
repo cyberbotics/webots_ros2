@@ -62,7 +62,7 @@ class Ros2Supervisor(Node):
         self.create_service(SpawnUrdfRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
         self.create_service(SpawnNodeFromString, 'spawn_node_from_string', self.__spawn_node_from_string_callback)        
         # Subscriptions        
-        self.create_subscription(String, 'remove_node', self.__remove_node_callback, qos_profile_services_default)
+        self.create_subscription(String, 'remove_node', self.__remove_imported_node_callback, qos_profile_services_default)
         
    
 
@@ -136,21 +136,21 @@ class Ros2Supervisor(Node):
         return response
 
     # Allows to remove any imported node (urdf robots / VRML Nodes) by name.
-    def __remove_node_callback(self, message):
+    def __remove_imported_node_callback(self, message):
         name = message.data
 
         if name in self.__node_list:
-            robot_node = None
+            node = None
 
             for id_node in range(self.__insertion_node_place.getCount()):
                 node = self.__insertion_node_place.getMFNode(id_node)
                 node_name_field = node.getField('name')
                 if node_name_field and node_name_field.getSFString() == name:
-                    robot_node = node
+                    node = node
                     break
 
-            if robot_node:
-                robot_node.remove()
+            if node:
+                node.remove()
                 self.__node_list.remove(name)
                 self.get_logger().info('Ros2Supervisor has removed the node named "' + str(name) + '".')
             else:

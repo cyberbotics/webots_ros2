@@ -1,13 +1,11 @@
 #VRML_SIM R2023a utf8
 
 
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/backgrounds/protos/TexturedBackground.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/objects/floors/protos/Floor.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/46717330a6f6a1eee6c5cf79ea3cb1f3778bd886/projects/appearances/protos/CarpetFibers.proto"
-
-EXTERNPROTO "/tmp/protos/Rosbot.proto"
-EXTERNPROTO "/tmp/protos/HusarionWorld.proto"
-
+EXTERNPROTO "webots://projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "webots://projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "webots://projects/appearances/protos/CarpetFibers.proto"
+EXTERNPROTO "webots://projects/robots/husarion/rosbot/protos/Rosbot.proto"
+EXTERNPROTO "webots://projects/objects/husarion_world/protos/HusarionWorld.proto"
 
 WorldInfo {
   info [

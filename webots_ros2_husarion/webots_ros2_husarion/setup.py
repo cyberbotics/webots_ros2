@@ -8,6 +8,7 @@ data_files.append(('share/' + package_name + '/launch', ['launch/robot_launch.py
 data_files.append(('share/' + package_name + '/resource', ['resource/rosbot_controllers.yaml']))
 data_files.append(('share/' + package_name + '/resource', ['resource/ekf.yaml']))
 data_files.append(('share/' + package_name + '/worlds', ['worlds/rosbot.wbt']))
+data_files.append(('share/' + package_name + '/worlds', ['worlds/rosbot-xl.wbt']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(

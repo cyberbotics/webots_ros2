@@ -1,0 +1,46 @@
+#VRML_SIM R2023a utf8
+
+
+EXTERNPROTO "webots://projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "webots://projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "webots://projects/appearances/protos/CarpetFibers.proto"
+EXTERNPROTO "webots://projects/robots/husarion/rosbot_xl/protos/RosbotXl.proto"
+EXTERNPROTO "webots://projects/objects/husarion_world/protos/HusarionWorld.proto"
+
+WorldInfo {
+  info [
+    "ROSbot robot (Husarion)."
+    "The ROSbot avoids obstacles using its distance sensors."
+  ]
+  title "ROSbot"
+  lineScale 0.15
+}
+Viewpoint {
+  orientation 0.247297 -0.168564 -0.954165 -1.93179
+  position 6.40263 -11.291 6.82282
+  follow "Rosbot"
+}
+TexturedBackground {
+  texture "empty_office"
+  luminosity 1.6
+  skybox FALSE
+  skyColor [
+    0.5 0.5 0.5
+  ]
+}
+Floor {
+  translation 0 -4.3 0
+  size 40 40
+  tileSize 1 1
+  appearance CarpetFibers {
+    colorOverride 0.6 0.6 0.6
+  }
+}
+HusarionWorld {
+  translation -26.6 16.8 0
+}
+RosbotXl {
+  translation 3 -2 0
+  controller "<extern>"
+  name "rosbot"
+}

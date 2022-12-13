@@ -7,3 +7,6 @@
 [submodule "webots_ros2_husarion/rosbot_ros"]
 	path = webots_ros2_husarion/rosbot_ros
 	url = https://github.com/husarion/rosbot_ros.git
+[submodule "webots_ros2_husarion/rosbot_xl_ros"]
+	path = webots_ros2_husarion/rosbot_xl_ros
+	url = https://github.com/husarion/rosbot_xl_ros

@@ -42,5 +42,5 @@ HusarionWorld {
 RosbotXl {
   translation 3 -2 0
   controller "<extern>"
-  name "rosbot"
+  name "rosbot_xl"
 }

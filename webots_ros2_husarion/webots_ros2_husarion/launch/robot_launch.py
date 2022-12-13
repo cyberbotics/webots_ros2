@@ -1,29 +1,41 @@
 import os
-import pathlib
 import launch
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_driver.webots_launcher import WebotsLauncher
-from webots_ros2_driver.webots_launcher import Ros2SupervisorLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 from launch.event_handlers import OnProcessExit
 from launch.actions import RegisterEventHandler, DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, Command
+from launch.conditions import LaunchConfigurationEquals
 
 def generate_launch_description():
-    package_dir = get_package_share_directory('webots_ros2_husarion')
-    rosbot_description = get_package_share_directory('rosbot_description')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    robot_description = os.path.join(
-        rosbot_description, 'urdf', 'rosbot.urdf.xacro')
+    package_dir = get_package_share_directory('webots_ros2_husarion')
 
-    robot_description_urdf = launch.substitutions.Command(['xacro ', robot_description, ' use_sim:=true simulation_engine:=webots'])
+    rosbot_description_package =  get_package_share_directory('rosbot_description')
+    rosbot_xl_description_package =  get_package_share_directory('rosbot_xl_description')
 
-    ros2_control_params = os.path.join(
+    rosbot_description = os.path.join(rosbot_description_package, 'urdf', 'rosbot.urdf.xacro')
+    rosbot_xl_description = os.path.join(rosbot_xl_description_package, 'urdf', 'rosbot_xl.urdf.xacro')
+
+
+    rosbot_description_urdf = Command(['xacro ', rosbot_description, ' use_sim:=true simulation_engine:=webots'])
+    rosbot_xl_description_urdf = Command(['xacro ', rosbot_xl_description, ' use_sim:=true simulation_engine:=webots'])
+
+
+    rosbot_ros2_control_params = os.path.join(
         package_dir, 'resource', 'rosbot_controllers.yaml')
+    rosbot_xl_ros2_control_params = os.path.join(
+        package_dir, 'resource', 'rosbot_xl_controllers.yaml')
 
-    webots = WebotsLauncher(
-        world=os.path.join(package_dir, 'worlds', 'rosbot.wbt')
+    rosbot_world = WebotsLauncher(
+        world=os.path.join(package_dir, 'worlds', 'rosbot.wbt'),
+        condition=LaunchConfigurationEquals('robot_name', 'rosbot')
+    )
+    rosbot_xl_world = WebotsLauncher(
+        world=os.path.join(package_dir, 'worlds', 'rosbot_xl.wbt'),
+        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
     )
 
     ekf_config = os.path.join(
@@ -31,30 +43,60 @@ def generate_launch_description():
 
     ros2_supervisor = Ros2SupervisorLauncher()
 
-    webots_robot_driver = Node(
+    rosbot_webots_robot_driver = Node(
         package='webots_ros2_driver',
         executable='driver',
         additional_env={'WEBOTS_CONTROLLER_URL': 'rosbot'},
         parameters=[
-            {'robot_description': robot_description_urdf},
+            {'robot_description': rosbot_description_urdf},
             {'set_robot_state_publisher': True},
             {'use_sim_time': use_sim_time},
-            ros2_control_params,
+            rosbot_ros2_control_params,
         ],
         remappings=[
             ("rosbot_base_controller/cmd_vel_unstamped", "cmd_vel"),
             ("odom", "rosbot_base_controller/odom"),
-        ]
+        ],
+        condition=LaunchConfigurationEquals('robot_name', 'rosbot')
     )
 
-    robot_state_publisher = Node(
+    rosbot_xl_webots_robot_driver = Node(
+        package='webots_ros2_driver',
+        executable='driver',
+        additional_env={'WEBOTS_CONTROLLER_URL': 'rosbot_xl'},
+        parameters=[
+            {'robot_description': rosbot_xl_description_urdf},
+            {'set_robot_state_publisher': True},
+            {'use_sim_time': use_sim_time},
+            rosbot_xl_ros2_control_params,
+        ],
+        remappings=[
+            ("rosbot_base_controller/cmd_vel_unstamped", "cmd_vel"),
+            ("odom", "rosbot_base_controller/odom"),
+        ],
+        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
+    )
+
+    rosbot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
         parameters=[
-            {'robot_description': robot_description_urdf},
+            {'robot_description': rosbot_description_urdf},
             {'use_sim_time': use_sim_time},
         ],
+        condition=LaunchConfigurationEquals('robot_name', 'rosbot')
+    )
+
+    rosbot_xl_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[
+            {'robot_description': rosbot_xl_description_urdf},
+            {'use_sim_time': use_sim_time},
+        ],
+        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -67,9 +109,6 @@ def generate_launch_description():
             "--controller-manager-timeout",
             "120",
         ],
-        # parameters=[
-        #     {'use_sim_time': use_sim_time},
-        # ],
     )
 
     robot_controller_spawner = Node(
@@ -82,9 +121,6 @@ def generate_launch_description():
             "--controller-manager-timeout",
             "120",
         ],
-        # parameters=[
-        #     {'use_sim_time': use_sim_time},
-        # ],
     )
 
     # Delay start of robot_controller after joint_state_broadcaster
@@ -112,18 +148,24 @@ def generate_launch_description():
     return launch.LaunchDescription([
         DeclareLaunchArgument(name='use_sim_time', default_value='True',
                                             description='Flag to enable use_sim_time'),
-
+        DeclareLaunchArgument(name='robot_name', default_value='rosbot',
+                                            description='Spawned robot name'),
         # Start the Webots node
-        webots,
+        rosbot_world,
+        rosbot_xl_world,
 
         # Start the Ros2Supervisor node
         ros2_supervisor,
 
         # Start the Webots robot driver
-        webots_robot_driver,
+        rosbot_webots_robot_driver,
+        rosbot_xl_webots_robot_driver,
+
 
         # Start the robot_state_publisher
-        robot_state_publisher,
+        rosbot_state_publisher,
+        rosbot_xl_state_publisher,
+
 
         # Start the ros2_controllers
         joint_state_broadcaster_spawner,
@@ -133,7 +175,7 @@ def generate_launch_description():
         # This action will kill all nodes once the Webots simulation has exited
         RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
-                target_action=webots,
+                target_action=rosbot_world,
                 on_exit=[launch.actions.EmitEvent(
                     event=launch.events.Shutdown())],
             )

@@ -179,5 +179,12 @@ def generate_launch_description():
                 on_exit=[launch.actions.EmitEvent(
                     event=launch.events.Shutdown())],
             )
+        ),
+        RegisterEventHandler(
+            event_handler=launch.event_handlers.OnProcessExit(
+                target_action=rosbot_xl_world,
+                on_exit=[launch.actions.EmitEvent(
+                    event=launch.events.Shutdown())],
+            )
         )
     ])

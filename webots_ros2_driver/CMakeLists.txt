@@ -181,7 +181,7 @@ install(
 
 # Create symlinks of libController
 macro(lib_symlink filename)
-  install(CODE "execute_process(COMMAND ln -sf ${CMAKE_INSTALL_PREFIX}/lib/controller/${filename} ${CMAKE_INSTALL_PREFIX}/lib/${filename})")
+  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_INSTALL_PREFIX}/lib/controller/${filename} ${CMAKE_INSTALL_PREFIX}/lib/${filename})")
 endmacro(lib_symlink)
 
 lib_symlink(libController.so)

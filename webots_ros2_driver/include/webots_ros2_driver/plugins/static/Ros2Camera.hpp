@@ -22,10 +22,10 @@
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/point.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
-#ifdef HUMBLE
+#if defined (HUMBLE) || defined (ROLLING)  
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #else
-// Deprecated in Humble
+// Deprecated in Humble and Rolling
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h> 
 #endif
 #include <sensor_msgs/image_encodings.hpp>

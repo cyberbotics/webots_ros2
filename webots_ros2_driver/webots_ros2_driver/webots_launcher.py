@@ -157,7 +157,10 @@ class WebotsLauncher(ExecuteProcess):
             if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') or url_path.startswith('https://'):
                 continue
 
-            new_url_path = '"' + os.path.split(world_path)[0] + '/' + url_path + '"'
+            new_url_path = os.path.split(world_path)[0] + '/' + url_path
+            if self.__is_wsl:
+                new_url_path = subprocess.check_output(['wslpath', '-w', new_url_path]).strip().decode('utf-8').replace('\\', '/')
+            new_url_path = '"' + new_url_path + '"'
             url_path = '"' + url_path + '"'
             content = content.replace(url_path, new_url_path)
 

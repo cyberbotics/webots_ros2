@@ -12,6 +12,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 
 # Check which ROS distribution is used, vision_msgs depends of that
 if($ENV{ROS_DISTRO} MATCHES "foxy")
@@ -85,6 +86,8 @@ ament_python_install_package(vehicle
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})
 
+# Driver
+set(CMAKE_INSTALL_RPATH "$ORIGIN/../controller")
 add_executable(driver
   src/Driver.cpp
   src/WebotsNode.cpp
@@ -100,8 +103,6 @@ add_executable(driver
   src/utils/Math.cpp
   src/utils/Utils.cpp
 )
-
-# Driver
 ament_target_dependencies(driver
   rosgraph_msgs
   rclcpp
@@ -131,6 +132,7 @@ install(TARGETS driver
 )
 
 # Dynamic IMU
+set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
 add_library(
   ${PROJECT_NAME}_imu
   SHARED
@@ -179,18 +181,6 @@ install(
   PATTERN "*CppDriver*"
 )
 
-# Create symlinks of libController
-macro(lib_symlink filename)
-  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_INSTALL_PREFIX}/lib/controller/${filename} ${CMAKE_INSTALL_PREFIX}/lib/${filename})")
-endmacro(lib_symlink)
-
-lib_symlink(libController.so)
-lib_symlink(libcar.so)
-lib_symlink(libCppCar.so)
-lib_symlink(libCppController.so)
-lib_symlink(libCppDriver.so)
-lib_symlink(libdriver.so)
-
 # Prevent pluginlib from using boost
 target_compile_definitions(driver PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 target_compile_definitions(${PROJECT_NAME}_imu PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
@@ -208,6 +198,15 @@ install(
 )
 
 # Ament export
+set(WEBOTS_LIB_PATH
+  controller/${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
+  controller/${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}
+  controller/${CMAKE_SHARED_LIBRARY_PREFIX}driver${CMAKE_SHARED_LIBRARY_SUFFIX}
+  controller/${CMAKE_SHARED_LIBRARY_PREFIX}CppDriver${CMAKE_SHARED_LIBRARY_SUFFIX}
+  controller/${CMAKE_SHARED_LIBRARY_PREFIX}car${CMAKE_SHARED_LIBRARY_SUFFIX}
+  controller/${CMAKE_SHARED_LIBRARY_PREFIX}CppCar${CMAKE_SHARED_LIBRARY_SUFFIX}
+)
+
 ament_export_include_directories(
   include
   include/webots/c
@@ -227,6 +226,6 @@ ament_export_dependencies(
 )
 ament_export_libraries(
   ${PROJECT_NAME}_imu
-  ${WEBOTS_LIB}
+  ${WEBOTS_LIB_PATH}
 )
 ament_package()

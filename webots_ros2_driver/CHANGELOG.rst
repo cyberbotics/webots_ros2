@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.1 (2023-XX-XX)
+------------------
+* Fix relative assets in WSL.
+
 2023.0.0 (2022-11-30)
 ------------------
 * Add support for the new Python API of Webots R2023a

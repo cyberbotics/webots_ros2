@@ -10,6 +10,8 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>webots_ros2_driver</exec_depend>
+  <exec_depend>rosbot_ros</exec_depend>
+  <exec_depend>rosbot_xl_ros</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

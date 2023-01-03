@@ -58,6 +58,7 @@ class Ros2Supervisor(Node):
         self.__insertion_node_place = root_node.getField('children')
         self.__node_list=[]
         
+    
         # Services
         self.create_service(SpawnUrdfRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
         self.create_service(SpawnNodeFromString, 'spawn_node_from_string', self.__spawn_node_from_string_callback)        
@@ -130,8 +131,24 @@ class Ros2Supervisor(Node):
         # Insert the object.
         self.__node_list.append(object_name)
         self.__insertion_node_place.importMFNodeFromString(-1, object_string)
-        self.get_logger().info('Ros2Supervisor has imported the node named "' + str(object_name) + '".')
+        
+        
+        # Check if the object has been imported into the world
+        node = None
+        node_imported_successfully = False
+        for id_node in range(self.__insertion_node_place.getCount()):
+            node = self.__insertion_node_place.getMFNode(id_node)
+            node_name_field = node.getField('name')
+            if(node_name_field and node_name_field.getSFString() == object_name):
+                node_imported_successfully = True
+                break
+        if(node_imported_successfully == False):
+            self.__node_list.remove(object_name)
+            self.get_logger().info('Ros2Supervisor could not import the node named "' + str(object_name) + '".')
+            response.success = False
+            return response
 
+        self.get_logger().info('Ros2Supervisor has imported the node named "' + str(object_name) + '".')
         response.success = True
         return response
 

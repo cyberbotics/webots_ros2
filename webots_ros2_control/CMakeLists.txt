@@ -40,6 +40,9 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(webots_ros2_driver REQUIRED)
 
+#
+message("USING HARDWARE_INTERFACE VERSION ${hardware_interface_VERSION}")
+
 if (MSVC OR MSYS OR MINGW OR WIN32)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()

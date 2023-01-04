@@ -36,7 +36,7 @@ find_package(rclcpp_lifecycle REQUIRED)
 find_package(webots_ros2_driver REQUIRED)
 
 # Necessary hotfix for renamed variables present in "hardware_interface" package for versions above 3.5 (https://github.com/cyberbotics/webots_ros2/pull/584)
-if(${hardware_interface_VERSION_MAJOR} MATCHES "3" AND ${hardware_interface_VERSION_MINOR} MATCHES "5")
+if(${hardware_interface_VERSION_MAJOR} GREATER_EQUAL "3" AND ${hardware_interface_VERSION_MINOR} GREATER_EQUAL "5")
   message("Using hardware_interface version ${hardware_interface_VERSION}")
   add_compile_definitions(HARDWARE_INTERFACE_VARIABLE_RENAMING)
 endif()

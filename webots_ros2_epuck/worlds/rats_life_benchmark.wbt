@@ -318,7 +318,6 @@ Floor {
 E-puck {
   translation 0 -0.05 0.0066
   rotation 0 0 1 3.14159
-  name "e-puck"
   controller "<extern>"
   version "2"
   camera_width 640

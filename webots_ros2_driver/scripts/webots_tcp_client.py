@@ -35,7 +35,7 @@ def get_host_ip():
         sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
 
 
-HOST = get_host_ip()  # Connect to host of the container
+HOST = get_host_ip()  # Connect to host of the VM
 PORT = 2000  # Port to connect to
 
 tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

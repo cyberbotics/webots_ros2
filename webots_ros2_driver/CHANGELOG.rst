@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.1 (2023-XX-XX)
+2023.0.1 (2023-01-05)
 ------------------
 * Fix relative assets in WSL.
 

@@ -72,7 +72,6 @@ class WebotsLauncher(ExecuteProcess):
         else:
             webots_path = ''
 
-        mode_string = mode
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 
         self.__world_copy = tempfile.NamedTemporaryFile(mode='w+', suffix='_world_with_URDF_robot.wbt', delete=False)
@@ -96,21 +95,21 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
-        # Create arguments file and initialize command to start Webots remotely through TCP
+        # Initialize command to start Webots remotely through TCP
         if self.__has_shared_folder:
-            launch_arguments = ['--batch', ' --mode=' + mode_string]
-            if not gui:
-                launch_arguments.extend([' --no-rendering', ' --stdout', ' --stderr', ' --minimize']) 
-            if stream:
-                launch_arguments.append(' --stream')
-
             webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots_tcp_client.py'))
             super().__init__(
                 output=output,
                 cmd=[
                     'python3',
                     webots_tcp_client,
-                    launch_arguments,
+                    stream_argument,
+                    no_rendering,
+                    stdout,
+                    stderr,
+                    minimize,
+                    '--batch',
+                    ['--mode=', mode],
                     os.path.basename(self.__world_copy.name),
                 ],
                 name='webots_tcp_client',

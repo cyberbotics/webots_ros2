@@ -2,7 +2,7 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.1 (2023-XX-XX)
+2023.0.1 (2023-01-05)
 ------------------
 * Fixed relative assets in WSL.
 * Fixed broken controller connection in Rats life example.

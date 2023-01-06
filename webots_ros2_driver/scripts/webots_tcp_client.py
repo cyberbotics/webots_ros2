@@ -39,8 +39,14 @@ HOST = get_host_ip()  # Connect to host of the container
 PORT = 2000  # Port to connect to
 
 tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-launch_arguments = sys.argv[1]
-world_name = sys.argv[2]
+launch_arguments = ''
+for arg in sys.argv:
+    if arg.endswith('.py') or arg == '':
+        continue
+    elif arg.endswith('.wbt'):
+        world_name = arg
+    else:
+        launch_arguments = launch_arguments + ' ' + arg
 
 
 def host_shared_folder():

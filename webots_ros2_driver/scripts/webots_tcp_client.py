@@ -18,15 +18,35 @@
 
 import os
 import socket
+import subprocess
 import sys
 import time
 
-HOST = 'host.docker.internal'  # Connect to host of the container
+
+def get_host_ip():
+    try:
+        output = subprocess.run(['ip', 'route'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
+        for line in output.stdout.split('\n'):
+            fields = line.split()
+            if fields and fields[0] == 'default':
+                return fields[2]
+        sys.exit('Unable to get host IP address.')
+    except subprocess.CalledProcessError:
+        sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
+
+
+HOST = get_host_ip()  # Connect to host of the VM
 PORT = 2000  # Port to connect to
 
 tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-launch_arguments = sys.argv[1]
-world_name = sys.argv[2]
+launch_arguments = ''
+for arg in sys.argv:
+    if arg.endswith('.py') or arg == '':
+        continue
+    elif arg.endswith('.wbt'):
+        world_name = arg
+    else:
+        launch_arguments = launch_arguments + ' ' + arg
 
 
 def host_shared_folder():

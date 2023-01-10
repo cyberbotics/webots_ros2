@@ -142,7 +142,7 @@ class Ros2Supervisor(Node):
             if(node_name_field and node_name_field.getSFString() == object_name):
                 node_imported_successfully = True
                 break
-        if(node_imported_successfully == False):
+        if not node_imported_successfully:
             self.__node_list.remove(object_name)
             self.get_logger().info('Ros2Supervisor could not import the node named "' + str(object_name) + '".')
             response.success = False

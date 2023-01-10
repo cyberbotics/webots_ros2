@@ -132,7 +132,6 @@ class Ros2Supervisor(Node):
         self.__node_list.append(object_name)
         self.__insertion_node_place.importMFNodeFromString(-1, object_string)
         
-        
         # Check if the object has been imported into the world
         node = None
         node_imported_successfully = False

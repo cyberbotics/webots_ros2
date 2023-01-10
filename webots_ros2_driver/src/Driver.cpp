@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   webots_ros2_driver::WebotsNode::handleSignals();
 
   rclcpp::InitOptions options{};
-#if FOXY || GALACTIC
+#if FOXY
   options.shutdown_on_sigint = false;
 #else
   options.shutdown_on_signal = false;

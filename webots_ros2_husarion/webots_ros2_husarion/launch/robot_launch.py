@@ -5,7 +5,7 @@ from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 from launch.event_handlers import OnProcessExit
 from launch.actions import RegisterEventHandler, DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, Command
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch.conditions import LaunchConfigurationEquals
 
 def generate_launch_description():
@@ -28,6 +28,8 @@ def generate_launch_description():
         package_dir, 'resource', 'rosbot_controllers.yaml')
     rosbot_xl_ros2_control_params = os.path.join(
         package_dir, 'resource', 'rosbot_xl_controllers.yaml')
+    rosbot_xl_scan_filter_params = os.path.join(
+        package_dir, 'resource', 'laser_filter.yaml')
 
     rosbot_world = WebotsLauncher(
         world=os.path.join(package_dir, 'worlds', 'rosbot.wbt'),
@@ -99,6 +101,13 @@ def generate_launch_description():
         condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
     )
 
+    laser_filter_node = Node(
+        package="laser_filters",
+        executable="scan_to_scan_filter_chain",
+        parameters=[ rosbot_xl_scan_filter_params],
+        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
+    )
+
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -165,6 +174,7 @@ def generate_launch_description():
         # Start the robot_state_publisher
         rosbot_state_publisher,
         rosbot_xl_state_publisher,
+        laser_filter_node,
 
 
         # Start the ros2_controllers

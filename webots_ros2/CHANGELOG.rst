@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.2 (2023-XX-XX)
+------------------
+* Drop support for Galactic.
+
 2023.0.1 (2023-01-05)
 ------------------
 * Fixed relative assets in WSL.

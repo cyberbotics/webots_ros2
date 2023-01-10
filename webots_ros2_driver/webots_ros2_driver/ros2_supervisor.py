@@ -110,7 +110,7 @@ class Ros2Supervisor(Node):
     
     def __spawn_node_from_string_callback(self, request, response):        
         object_string = request.data
-        if(object_string == ""):
+        if(object_string == ''):
             self.get_logger().info('Ros2Supervisor cannot import an empty string.')
             response.success = False
             return response

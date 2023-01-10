@@ -116,7 +116,7 @@ class Ros2Supervisor(Node):
             return response
         # Extract Webots node name from string.
         name_match = re.search('name "[a-z0-9_]*"', object_string)
-        object_name = name_match.group().replace("name ", "")
+        object_name = name_match.group().replace('name ', '')
         object_name = object_name.replace('"', "")
         # Check that the name is not an empty string.
         if object_name == '':

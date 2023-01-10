@@ -117,7 +117,7 @@ class Ros2Supervisor(Node):
         # Extract Webots node name from string.
         name_match = re.search('name "[a-z0-9_]*"', object_string)
         object_name = name_match.group().replace('name ', '')
-        object_name = object_name.replace('"', "")
+        object_name = object_name.replace('"', '')
         # Check that the name is not an empty string.
         if object_name == '':
             self.get_logger().info('Ros2Supervisor cannot import an unnamed node.')            

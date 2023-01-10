@@ -114,7 +114,7 @@ class Ros2Supervisor(Node):
             self.get_logger().info('Ros2Supervisor cannot import an empty string.')
             response.success = False
             return response
-        # Extract Webots node name from VRML string.
+        # Extract Webots node name from string.
         name_match = re.search('name "[a-z0-9_]*"', object_string)
         object_name = name_match.group().replace("name ", "")
         object_name = object_name.replace('"', "")

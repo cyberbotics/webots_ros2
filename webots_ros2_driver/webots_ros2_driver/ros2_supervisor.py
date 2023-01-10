@@ -53,7 +53,7 @@ class Ros2Supervisor(Node):
         self.create_timer(1 / 1000, self.__supervisor_step_callback)
         self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
 
-        # Spawn Nodes (URDF Robots / VRML Objects)
+        # Spawn Nodes (URDF robots or Webots objects)
         root_node = self.__robot.getRoot()
         self.__insertion_node_place = root_node.getField('children')
         self.__node_list=[]

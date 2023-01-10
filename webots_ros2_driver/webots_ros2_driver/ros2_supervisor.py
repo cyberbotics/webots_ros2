@@ -139,7 +139,7 @@ class Ros2Supervisor(Node):
         for id_node in range(self.__insertion_node_place.getCount()):
             node = self.__insertion_node_place.getMFNode(id_node)
             node_name_field = node.getField('name')
-            if(node_name_field and node_name_field.getSFString() == object_name):
+            if node_name_field and node_name_field.getSFString() == object_name:
                 node_imported_successfully = True
                 break
         if not node_imported_successfully:

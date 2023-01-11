@@ -20,24 +20,23 @@
 #include <vector>
 
 #if FOXY
-  #include "hardware_interface/base_interface.hpp"
-  #include "hardware_interface/types/hardware_interface_status_values.hpp"
+#include "hardware_interface/base_interface.hpp"
+#include "hardware_interface/types/hardware_interface_status_values.hpp"
 #endif
 
-#include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
+#include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "rclcpp/macros.hpp"
 #include "webots_ros2_driver/PluginInterface.hpp"
 #include "webots_ros2_driver/WebotsNode.hpp"
 
-#include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
 #include "webots/motor.h"
 #include "webots/position_sensor.h"
+#include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
 
-namespace webots_ros2_control
-{
+namespace webots_ros2_control {
   struct Joint {
     double positionCommand;
     double position;
@@ -53,20 +52,22 @@ namespace webots_ros2_control
     WbDeviceTag sensor;
   };
 
-  class Ros2ControlSystem : public Ros2ControlSystemInterface
-  {
+  class Ros2ControlSystem : public Ros2ControlSystemInterface {
   public:
     void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) override;
 
-    #if FOXY
-      hardware_interface::return_type configure(const hardware_interface::HardwareInfo &info) override;
-      hardware_interface::return_type start() override;
-      hardware_interface::return_type stop() override;
-    #else
-      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(const hardware_interface::HardwareInfo &info) override;
-      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(const rclcpp_lifecycle::State & /*previous_state*/) override;
-      rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/) override;
-    #endif
+#if FOXY
+    hardware_interface::return_type configure(const hardware_interface::HardwareInfo &info) override;
+    hardware_interface::return_type start() override;
+    hardware_interface::return_type stop() override;
+#else
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(
+      const hardware_interface::HardwareInfo &info) override;
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(
+      const rclcpp_lifecycle::State & /*previous_state*/) override;
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(
+      const rclcpp_lifecycle::State & /*previous_state*/) override;
+#endif
 
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
@@ -74,14 +75,14 @@ namespace webots_ros2_control
     hardware_interface::return_type read() override;
     hardware_interface::return_type write() override;
 #else  // HUMBLE, ROLLING
-    hardware_interface::return_type read(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) override;
-    hardware_interface::return_type write(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/) override;
+    hardware_interface::return_type read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
+    hardware_interface::return_type write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
 #endif
 
   private:
     webots_ros2_driver::WebotsNode *mNode;
     std::vector<Joint> mJoints;
   };
-}
+}  // namespace webots_ros2_control
 
 #endif

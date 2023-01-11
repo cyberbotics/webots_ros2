@@ -19,14 +19,14 @@
 
 #include <webots/camera.h>
 
-#include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
-#if defined (HUMBLE) || defined (ROLLING)  
+#if defined(HUMBLE) || defined(ROLLING)
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #else
 // Deprecated in Humble and Rolling
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h> 
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #endif
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
@@ -36,18 +36,15 @@
 #include <vision_msgs/msg/detection2_d_array.hpp>
 #include <vision_msgs/msg/object_hypothesis_with_pose.hpp>
 
+#include <webots_ros2_driver/WebotsNode.hpp>
+#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
+#include <webots_ros2_driver/utils/Math.hpp>
 #include <webots_ros2_msgs/msg/camera_recognition_object.hpp>
 #include <webots_ros2_msgs/msg/camera_recognition_objects.hpp>
-#include <webots_ros2_driver/utils/Math.hpp>
-#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
-#include <webots_ros2_driver/WebotsNode.hpp>
 
+namespace webots_ros2_driver {
 
-namespace webots_ros2_driver
-{
-
-  class Ros2Camera : public Ros2SensorPlugin
-  {
+  class Ros2Camera : public Ros2SensorPlugin {
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
@@ -73,6 +70,6 @@ namespace webots_ros2_driver
     bool mRecognitionIsEnabled;
   };
 
-}
+}  // namespace webots_ros2_driver
 
 #endif

@@ -33,7 +33,7 @@ from std_msgs.msg import String
 sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
 from urdf2webots.importer import convertUrdfFile, convertUrdfContent
 from webots_ros2_msgs.srv import SpawnUrdfRobot, SpawnNodeFromString
-import re 
+import re
 
 # As Ros2Supervisor needs the controller library, we extend the path here
 # to avoid to load another library named "controller" or "vehicle".
@@ -57,15 +57,15 @@ class Ros2Supervisor(Node):
         root_node = self.__robot.getRoot()
         self.__insertion_node_place = root_node.getField('children')
         self.__node_list=[]
-        
-    
+
+
         # Services
         self.create_service(SpawnUrdfRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
-        self.create_service(SpawnNodeFromString, 'spawn_node_from_string', self.__spawn_node_from_string_callback)        
-        # Subscriptions        
+        self.create_service(SpawnNodeFromString, 'spawn_node_from_string', self.__spawn_node_from_string_callback)
+        # Subscriptions
         self.create_subscription(String, 'remove_node', self.__remove_imported_node_callback, qos_profile_services_default)
-        
-   
+
+
 
     def __spawn_urdf_robot_callback(self, request, response):
         robot = request.robot
@@ -106,9 +106,9 @@ class Ros2Supervisor(Node):
         self.__node_list.append(robot_name)
         response.success = True
         return response
-    
-    
-    def __spawn_node_from_string_callback(self, request, response):        
+
+
+    def __spawn_node_from_string_callback(self, request, response):
         object_string = request.data
         if(object_string == ''):
             self.get_logger().info('Ros2Supervisor cannot import an empty string.')
@@ -120,7 +120,7 @@ class Ros2Supervisor(Node):
         object_name = object_name.replace('"', '')
         # Check that the name is not an empty string.
         if object_name == '':
-            self.get_logger().info('Ros2Supervisor cannot import an unnamed node.')            
+            self.get_logger().info('Ros2Supervisor cannot import an unnamed node.')
             response.success = False
             return response
         # Check that the name is unique.
@@ -131,7 +131,7 @@ class Ros2Supervisor(Node):
         # Insert the object.
         self.__node_list.append(object_name)
         self.__insertion_node_place.importMFNodeFromString(-1, object_string)
-        
+
         # Check if the object has been imported into the world
         node = None
         node_imported_successfully = False

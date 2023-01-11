@@ -17,42 +17,40 @@
 
 #include <memory>
 #include <string>
-#include <vector>
 #include <thread>
+#include <vector>
 
 #if FOXY
-  #include "hardware_interface/base_interface.hpp"
-  #include "hardware_interface/types/hardware_interface_status_values.hpp"
+#include "hardware_interface/base_interface.hpp"
+#include "hardware_interface/types/hardware_interface_status_values.hpp"
 #endif
 
-#include "hardware_interface/system_interface.hpp"
+#include "controller_manager/controller_manager.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
+#include "hardware_interface/system_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
-#include "controller_manager/controller_manager.hpp"
 #include "rclcpp/macros.hpp"
+#include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
 #include "webots_ros2_driver/PluginInterface.hpp"
 #include "webots_ros2_driver/WebotsNode.hpp"
-#include "webots_ros2_control/Ros2ControlSystemInterface.hpp"
 
-namespace webots_ros2_control
-{
-  class Ros2Control : public webots_ros2_driver::PluginInterface
-  {
+namespace webots_ros2_control {
+  class Ros2Control : public webots_ros2_driver::PluginInterface {
   public:
     void step() override;
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
 
-    private:
-      webots_ros2_driver::WebotsNode *mNode;
-      std::shared_ptr<pluginlib::ClassLoader<Ros2ControlSystemInterface>> mHardwareLoader;
-      std::shared_ptr<controller_manager::ControllerManager> mControllerManager;
-      int mControlPeriodMs;
-      int mLastControlUpdateMs;
+  private:
+    webots_ros2_driver::WebotsNode *mNode;
+    std::shared_ptr<pluginlib::ClassLoader<Ros2ControlSystemInterface>> mHardwareLoader;
+    std::shared_ptr<controller_manager::ControllerManager> mControllerManager;
+    int mControlPeriodMs;
+    int mLastControlUpdateMs;
 
-      std::thread mThreadExecutor;
-      rclcpp::executors::MultiThreadedExecutor::SharedPtr mExecutor;
+    std::thread mThreadExecutor;
+    rclcpp::executors::MultiThreadedExecutor::SharedPtr mExecutor;
   };
-}
+}  // namespace webots_ros2_control
 
 #endif

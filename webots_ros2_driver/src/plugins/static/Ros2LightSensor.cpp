@@ -18,12 +18,10 @@
 
 #include <webots/robot.h>
 
-namespace webots_ros2_driver
-{
+namespace webots_ros2_driver {
   const double gIrradianceToIlluminance = 120.0;
 
-  void Ros2LightSensor::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {
+  void Ros2LightSensor::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
     mLightSensor = wb_robot_get_device(parameters["name"].c_str());
@@ -33,7 +31,9 @@ namespace webots_ros2_driver
     mPublisher = mNode->create_publisher<sensor_msgs::msg::Illuminance>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mMessage.header.frame_id = mFrameName;
 
-    mLookupTable.assign(wb_light_sensor_get_lookup_table(mLightSensor), wb_light_sensor_get_lookup_table(mLightSensor) + wb_light_sensor_get_lookup_table_size(mLightSensor) * 3);
+    mLookupTable.assign(
+      wb_light_sensor_get_lookup_table(mLightSensor),
+      wb_light_sensor_get_lookup_table(mLightSensor) + wb_light_sensor_get_lookup_table_size(mLightSensor) * 3);
 
     if (mAlwaysOn) {
       wb_light_sensor_enable(mLightSensor, mPublishTimestepSyncedMs);
@@ -41,8 +41,7 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2LightSensor::step()
-  {
+  void Ros2LightSensor::step() {
     if (!preStep())
       return;
 
@@ -54,8 +53,7 @@ namespace webots_ros2_driver
 
     // Enable/Disable sensor
     const bool shouldBeEnabled = mPublisher->get_subscription_count() > 0;
-    if (shouldBeEnabled != mIsEnabled)
-    {
+    if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         wb_light_sensor_enable(mLightSensor, mPublishTimestepSyncedMs);
       else
@@ -64,8 +62,7 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2LightSensor::publishValue()
-  {
+  void Ros2LightSensor::publishValue() {
     const double value = wb_light_sensor_get_value(mLightSensor);
     mMessage.header.stamp = mNode->get_clock()->now();
     mMessage.illuminance = interpolateLookupTable(value, mLookupTable);
@@ -73,13 +70,12 @@ namespace webots_ros2_driver
     mPublisher->publish(mMessage);
   }
 
-  double Ros2LightSensor::findVariance(double rawValue)
-  {
+  double Ros2LightSensor::findVariance(double rawValue) {
     // Find relative standard deviation in lookup table
     double relativeStd = NAN;
     for (int i = 0; i < mLookupTable.size() - 3; i += 3)
-      if ((mLookupTable[i + 1] < rawValue < mLookupTable[i + 3 + 1]) || (mLookupTable[i + 1] > rawValue > mLookupTable[i + 3 + 1]))
-      {
+      if ((mLookupTable[i + 1] < rawValue < mLookupTable[i + 3 + 1]) ||
+          (mLookupTable[i + 1] > rawValue > mLookupTable[i + 3 + 1])) {
         relativeStd = mLookupTable[i + 2];
         break;
       }
@@ -93,4 +89,4 @@ namespace webots_ros2_driver
     double std = interpolateLookupTable(rawValue, mLookupTable) * gIrradianceToIlluminance * relativeStd;
     return std * std;
   }
-}
+}  // namespace webots_ros2_driver

@@ -16,6 +16,8 @@ rosbot_base_controller:
     wheel_separation: 0.252
     wheel_radius: 0.048
     wheel_separation_multiplier: 1.3
+    base_frame_id: "base_link"
+    odom_frame_id: "odom"
 
     use_stamped_vel: false
     enable_odom_tf: false

@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,17 @@
 
 #include <unordered_map>
 
-#include <webots/Camera.hpp>
+#include <webots/camera.h>
 
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/transform_stamped.hpp>
+#if defined (HUMBLE) || defined (ROLLING)  
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#else
+// Deprecated in Humble and Rolling
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h> 
+#endif
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -49,7 +56,7 @@ namespace webots_ros2_driver
     void publishImage();
     void publishRecognition();
 
-    webots::Camera* mCamera;
+    WbDeviceTag mCamera;
 
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
     sensor_msgs::msg::Image mImageMessage;

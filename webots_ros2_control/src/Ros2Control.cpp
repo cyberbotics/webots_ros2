@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "pluginlib/class_list_macros.hpp"
 
+#include <webots/robot.h>
+
 #include <iostream>
 
 const double CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS = 1.0;
@@ -35,12 +37,12 @@ namespace webots_ros2_control
 
   void Ros2Control::step()
   {
-    const int nowMs = mNode->robot()->getTime() * 1000.0;
+    const int nowMs = wb_robot_get_time() * 1000.0;
     const int periodMs = nowMs - mLastControlUpdateMs;
     const rclcpp::Duration dt = rclcpp::Duration::from_seconds(mControlPeriodMs / 1000.0);
     if (periodMs >= mControlPeriodMs)
     {
-#if FOXY || GALACTIC
+#if FOXY
       mControllerManager->read();
 #else
       mControllerManager->read(mNode->get_clock()->now(), dt);
@@ -53,7 +55,7 @@ namespace webots_ros2_control
       mLastControlUpdateMs = nowMs;
 #endif
 
-#if FOXY || GALACTIC
+#if FOXY
     mControllerManager->write();
 #else // HUMBLE, ROLLING
     mControllerManager->write(mNode->get_clock()->now(), dt);
@@ -93,9 +95,17 @@ namespace webots_ros2_control
     }
     for (unsigned int i = 0; i < controlHardware.size(); i++)
     {
+
+// Necessary hotfix for renamed variables present in "hardware_interface" package for versions above 3.5 (#590)
+#if HARDWARE_INTERFACE_VERSION_MAJOR >= 3 && HARDWARE_INTERFACE_VERSION_MINOR >= 5
+      const std::string pluginName = controlHardware[i].hardware_plugin_name;
+      auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
+          mHardwareLoader->createUnmanagedInstance(pluginName));
+#else
       const std::string hardwareType = controlHardware[i].hardware_class_type;
       auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
           mHardwareLoader->createUnmanagedInstance(hardwareType));
+#endif
       webotsSystem->init(mNode, controlHardware[i]);
 #if FOXY
       resourceManager->import_component(std::move(webotsSystem));
@@ -116,12 +126,12 @@ namespace webots_ros2_control
     const int updateRate = mControllerManager->get_parameter("update_rate").as_int();
     mControlPeriodMs = (1.0 / updateRate) * 1000.0;
 
-    int controlPeriodProductMs = mNode->robot()->getBasicTimeStep();
+    int controlPeriodProductMs = wb_robot_get_basic_time_step();
     while (controlPeriodProductMs < mControlPeriodMs)
-      controlPeriodProductMs += mNode->robot()->getBasicTimeStep();
+      controlPeriodProductMs += wb_robot_get_basic_time_step();
 
     if (abs(controlPeriodProductMs - mControlPeriodMs) > CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS)
-      RCLCPP_WARN_STREAM(node->get_logger(), "Desired controller update period (" << mControlPeriodMs << "ms / " << updateRate << "Hz) is different from the Webots timestep (" << mNode->robot()->getBasicTimeStep() << "ms). Please adjust the `update_rate` parameter in the `controller_manager` or the `basicTimeStep` parameter in the Webots `WorldInfo` node.");
+      RCLCPP_WARN_STREAM(node->get_logger(), "Desired controller update period (" << mControlPeriodMs << "ms / " << updateRate << "Hz) is different from the Webots timestep (" << wb_robot_get_basic_time_step() << "ms). Please adjust the `update_rate` parameter in the `controller_manager` or the `basicTimeStep` parameter in the Webots `WorldInfo` node.");
 
     // Spin
     mExecutor->add_node(mControllerManager);

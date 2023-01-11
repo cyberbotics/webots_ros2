@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2022.1.4 (2022-11-18)
+------------------
+* Add a system test for the R2022b RDF convention for cameras.
+
 1.2.1 (2022-01-10)
 ------------------
 * Add a system test for the FLU lidar device.

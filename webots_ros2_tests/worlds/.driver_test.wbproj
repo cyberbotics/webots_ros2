@@ -9,3 +9,4 @@ textFiles: -1
 consoles: Console:All:All
 renderingDevicePerspectives: Pioneer 3-AT:kinect color;1;1;0;0
 renderingDevicePerspectives: Pioneer 3-AT:kinect range;1;1;0;0
+renderingDevicePerspectives: Pioneer 3-AT:camera;0;1;0;0

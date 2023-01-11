@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2021 Cyberbotics Ltd.
+# Copyright 1996-2023 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ from platform import uname
 
 
 # The minimal version should be the last stable release of Webots (both on master and develop branches)
-MINIMUM_VERSION_STR = 'R2022b'
+MINIMUM_VERSION_STR = 'R2023a'
 
 
 @functools.total_ordering
@@ -125,9 +125,21 @@ def container_shared_folder():
     return shared_folder_list[1]
 
 
+def get_host_ip():
+    try:
+        output = subprocess.run(['ip', 'route'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
+        for line in output.stdout.split('\n'):
+            fields = line.split()
+            if fields and fields[0] == 'default':
+                return fields[2]
+        sys.exit('Unable to get host IP address.')
+    except subprocess.CalledProcessError:
+        sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
+
+
 def controller_url_prefix():
     if has_shared_folder() or is_wsl():
-        return 'tcp://' + ('host.docker.internal' if has_shared_folder() else get_wsl_ip_address()) + ':1234/'
+        return 'tcp://' + (get_host_ip() if has_shared_folder() else get_wsl_ip_address()) + ':1234/'
     else:
         return ''
 

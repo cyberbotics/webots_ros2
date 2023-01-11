@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 #define ROS2_SENSOR_PLUGIN_HPP
 
 #include <unordered_map>
-#include <webots/RangeFinder.hpp>
+#include <webots/range_finder.h>
 #include <webots_ros2_driver/PluginInterface.hpp>
 #include <webots_ros2_driver/WebotsNode.hpp>
 

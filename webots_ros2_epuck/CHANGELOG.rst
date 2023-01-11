@@ -2,6 +2,15 @@
 Changelog for package webots_ros2_epuck
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.1 (2023-01-05)
+------------------
+* Fixed broken controller connection in Rats life example.
+
+2022.1.3 (2022-11-02)
+------------------
+* Added macOS support.
+* Added reset handler to support simulation reset from Webots.
+
 2022.1.2 (2022-10-21)
 ------------------
 * Added WSL support.

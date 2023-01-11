@@ -2,10 +2,33 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.1 (2023-01-05)
+------------------
+* Fix relative assets in WSL.
+
+2023.0.0 (2022-11-30)
+------------------
+* Add support for the new Python API of Webots R2023a
+* Convert C++ controller API functions to C
+* Replace libController submodule by commited source files
+
+2022.1.4 (2022-11-18)
+------------------
+* Fix the camera focal length in the CameraInfo topic.
+* Update the calculation of CameraRecognitionObject messages to the RDF convention of R2022b.
+
+2022.1.3 (2022-11-02)
+------------------
+* Added macOS support.
+
 2022.1.2 (2022-10-21)
 ------------------
 * Fix issue where relatively defined PROTO were not found.
 * Added WSL support.
+
+2022.1.1 (2022-10-11)
+------------------
+* Simplified the detection of Webots installation folder.
 
 2022.1.0 (2022-09-23)
 ------------------

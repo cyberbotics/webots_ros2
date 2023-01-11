@@ -4,8 +4,6 @@ project(webots_ros2_control)
 # Check which ROS distribution is used, ros2control depends of that
 if($ENV{ROS_DISTRO} MATCHES "foxy")
   add_compile_definitions(FOXY)
-elseif($ENV{ROS_DISTRO} MATCHES "galactic")
-  add_compile_definitions(GALACTIC)
 elseif($ENV{ROS_DISTRO} MATCHES "humble")
   add_compile_definitions(HUMBLE)
 elseif($ENV{ROS_DISTRO} MATCHES "rolling")
@@ -34,6 +32,9 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(webots_ros2_driver REQUIRED)
+
+add_compile_definitions(HARDWARE_INTERFACE_VERSION_MAJOR=${hardware_interface_VERSION_MAJOR})
+add_compile_definitions(HARDWARE_INTERFACE_VERSION_MINOR=${hardware_interface_VERSION_MINOR})
 
 if (MSVC OR MSYS OR MINGW OR WIN32)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)

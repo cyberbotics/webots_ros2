@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 #include <webots_ros2_driver/plugins/static/Ros2Camera.hpp>
 
+#include <webots/robot.h>
+
 namespace webots_ros2_driver
 {
   void Ros2Camera::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
@@ -21,46 +23,44 @@ namespace webots_ros2_driver
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
     mRecognitionIsEnabled = false;
-    mCamera = mNode->robot()->getCamera(parameters["name"]);
+    mCamera = wb_robot_get_device(parameters["name"].c_str());
 
-    assert(mCamera != NULL);
+    assert(mCamera != 0);
 
     // Image publisher
     mImagePublisher = mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName, rclcpp::SensorDataQoS().reliable());
     mImageMessage.header.frame_id = mFrameName;
-    mImageMessage.height = mCamera->getHeight();
-    mImageMessage.width = mCamera->getWidth();
+    mImageMessage.height = wb_camera_get_height(mCamera);
+    mImageMessage.width = wb_camera_get_width(mCamera);
     mImageMessage.is_bigendian = false;
-    mImageMessage.step = sizeof(unsigned char) * 4 * mCamera->getWidth();
-    mImageMessage.data.resize(4 * mCamera->getWidth() * mCamera->getHeight());
+    mImageMessage.step = sizeof(unsigned char) * 4 * wb_camera_get_width(mCamera);
+    mImageMessage.data.resize(4 * wb_camera_get_width(mCamera) * wb_camera_get_height(mCamera));
     mImageMessage.encoding = sensor_msgs::image_encodings::BGRA8;
 
     // CameraInfo publisher
     mCameraInfoPublisher = mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", rclcpp::SensorDataQoS().reliable());
     mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
-    mCameraInfoMessage.height = mCamera->getHeight();
-    mCameraInfoMessage.width = mCamera->getWidth();
+    mCameraInfoMessage.height = wb_camera_get_height(mCamera);
+    mCameraInfoMessage.width = wb_camera_get_width(mCamera);
     mCameraInfoMessage.distortion_model = "plumb_bob";
 
     // Convert FoV to focal length.
-    // Reference: https://en.wikipedia.org/wiki/Focal_length#In_photography
-    const double diagonal = sqrt(pow(mCamera->getWidth(), 2) + pow(mCamera->getHeight(), 2));
-    const double focalLength =  0.5 * diagonal * (cos(0.5 * mCamera->getFov()) / sin(0.5 * mCamera->getFov()));
+    const double focalLength = wb_camera_get_width(mCamera) / (2 * tan(wb_camera_get_fov(mCamera) / 2));
 
     mCameraInfoMessage.d = {0.0, 0.0, 0.0, 0.0, 0.0};
     mCameraInfoMessage.r = {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     mCameraInfoMessage.k = {
-        focalLength, 0.0, (double)mCamera->getWidth() / 2,
-        0.0, focalLength, (double)mCamera->getHeight() / 2,
+        focalLength, 0.0, (double)wb_camera_get_width(mCamera) / 2,
+        0.0, focalLength, (double)wb_camera_get_height(mCamera) / 2,
         0.0, 0.0, 1.0};
     mCameraInfoMessage.p = {
-        focalLength, 0.0, (double)mCamera->getWidth() / 2, 0.0,
-        0.0, focalLength, (double)mCamera->getHeight() / 2, 0.0,
+        focalLength, 0.0, (double)wb_camera_get_width(mCamera) / 2, 0.0,
+        0.0, focalLength, (double)wb_camera_get_height(mCamera) / 2, 0.0,
         0.0, 0.0, 1.0, 0.0};
 
     // Recognition publisher
-    if (mCamera->hasRecognition())
+    if (wb_camera_has_recognition(mCamera))
     {
       mRecognitionPublisher = mNode->create_publisher<vision_msgs::msg::Detection2DArray>(
           mTopicName + "/recognitions",
@@ -89,18 +89,18 @@ namespace webots_ros2_driver
     if (shouldBeEnabled != mIsEnabled)
     {
       if (shouldBeEnabled)
-        mCamera->enable(mPublishTimestepSyncedMs);
+        wb_camera_enable(mCamera, mPublishTimestepSyncedMs);
       else
-        mCamera->disable();
+        wb_camera_disable(mCamera);
       mIsEnabled = shouldBeEnabled;
     }
 
     if (recognitionSubscriptionsExist != mRecognitionIsEnabled)
     {
       if (recognitionSubscriptionsExist)
-        mCamera->recognitionEnable(mPublishTimestepSyncedMs);
+        wb_camera_recognition_enable(mCamera, mPublishTimestepSyncedMs);
       else
-        mCamera->recognitionDisable();
+        wb_camera_recognition_disable(mCamera);
       mRecognitionIsEnabled = recognitionSubscriptionsExist;
     }
 
@@ -115,7 +115,7 @@ namespace webots_ros2_driver
 
   void Ros2Camera::publishImage()
   {
-    auto image = mCamera->getImage();
+    auto image = wb_camera_get_image(mCamera);
     if (image)
     {
       mImageMessage.header.stamp = mNode->get_clock()->now();
@@ -126,32 +126,39 @@ namespace webots_ros2_driver
 
   void Ros2Camera::publishRecognition()
   {
-    if (mCamera->getRecognitionNumberOfObjects() == 0)
+    if (wb_camera_recognition_get_number_of_objects(mCamera) == 0)
       return;
 
-    auto objects = mCamera->getRecognitionObjects();
+    auto objects = wb_camera_recognition_get_objects(mCamera);
     mRecognitionMessage.header.stamp = mNode->get_clock()->now();
     mWebotsRecognitionMessage.header.stamp = mNode->get_clock()->now();
     mRecognitionMessage.detections.clear();
     mWebotsRecognitionMessage.objects.clear();
 
-    for (size_t i = 0; i < mCamera->getRecognitionNumberOfObjects(); i++)
+    for (size_t i = 0; i < wb_camera_recognition_get_number_of_objects(mCamera); i++)
     {
       // Getting Object Info
-      geometry_msgs::msg::Point position;
-      geometry_msgs::msg::Quaternion orientation;
-      position.x = objects[i].position[0];
-      position.y = objects[i].position[1];
-      position.z = objects[i].position[2];
-      axisAngleToQuaternion(objects[i].orientation, orientation);
+      geometry_msgs::msg::PoseStamped pose;
+      pose.pose.position.x = objects[i].position[0];
+      pose.pose.position.y = objects[i].position[1];
+      pose.pose.position.z = objects[i].position[2];
+      axisAngleToQuaternion(objects[i].orientation, pose.pose.orientation);
+
+      // Transform to ROS camera coordinate frame
+      // rpy = (0, pi/2, -pi/2)
+      geometry_msgs::msg::TransformStamped transform;
+      transform.transform.rotation.x = 0.5;
+      transform.transform.rotation.y = -0.5;
+      transform.transform.rotation.z = 0.5;
+      transform.transform.rotation.w = 0.5;
+      tf2::doTransform(pose, pose, transform);
 
       // Object Info -> Detection2D
       vision_msgs::msg::Detection2D detection;
       vision_msgs::msg::ObjectHypothesisWithPose hypothesis;
-      hypothesis.pose.pose.position = position;
-      hypothesis.pose.pose.orientation = orientation;
+      hypothesis.pose.pose = pose.pose;
       detection.results.push_back(hypothesis);
-      #if FOXY || GALACTIC
+      #if FOXY
       detection.bbox.center.x = objects[i].position_on_image[0];
       detection.bbox.center.y = objects[i].position_on_image[1];
       #else
@@ -166,9 +173,8 @@ namespace webots_ros2_driver
       webots_ros2_msgs::msg::CameraRecognitionObject recognitionWebotsObject;
       recognitionWebotsObject.id = objects[i].id;
       recognitionWebotsObject.model = std::string(objects[i].model);
-      recognitionWebotsObject.pose.pose.position = position;
-      recognitionWebotsObject.pose.pose.orientation = orientation;
-      #if FOXY || GALACTIC
+      recognitionWebotsObject.pose = pose;
+      #if FOXY
       recognitionWebotsObject.bbox.center.x = objects[i].position_on_image[0];
       recognitionWebotsObject.bbox.center.y = objects[i].position_on_image[1];
       #else

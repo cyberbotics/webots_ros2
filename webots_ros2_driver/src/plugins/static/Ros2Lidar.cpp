@@ -1,4 +1,4 @@
-// Copyright 1996-2021 Cyberbotics Ltd.
+// Copyright 1996-2023 Cyberbotics Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 #include <sensor_msgs/msg/point_field.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 
+#include <webots/robot.h>
+
 namespace webots_ros2_driver
 {
   void Ros2Lidar::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
@@ -24,23 +26,23 @@ namespace webots_ros2_driver
     Ros2SensorPlugin::init(node, parameters);
     mIsSensorEnabled = false;
     mIsPointCloudEnabled = false;
-    mLidar = mNode->robot()->getLidar(parameters["name"]);
+    mLidar = wb_robot_get_device(parameters["name"].c_str());
 
-    assert(mLidar != NULL);
+    assert(mLidar != 0);
 
     // Laser publisher
-    if (mLidar->getNumberOfLayers() == 1)
+    if (wb_lidar_get_number_of_layers(mLidar) == 1)
     {
       mLaserPublisher = mNode->create_publisher<sensor_msgs::msg::LaserScan>(mTopicName, rclcpp::SensorDataQoS().reliable());
-      const int resolution = mLidar->getHorizontalResolution();
+      const int resolution = wb_lidar_get_horizontal_resolution(mLidar);
       mLaserMessage.header.frame_id = mFrameName;
-      mLaserMessage.angle_increment = -mLidar->getFov() / (resolution - 1);
-      mLaserMessage.angle_min = mLidar->getFov() / 2.0;
-      mLaserMessage.angle_max = -mLidar->getFov() / 2.0;
-      mLaserMessage.time_increment = (double)mLidar->getSamplingPeriod() / (1000.0 * resolution);
-      mLaserMessage.scan_time = (double)mLidar->getSamplingPeriod() / 1000.0;
-      mLaserMessage.range_min = mLidar->getMinRange();
-      mLaserMessage.range_max = mLidar->getMaxRange();
+      mLaserMessage.angle_increment = -wb_lidar_get_fov(mLidar) / (resolution - 1);
+      mLaserMessage.angle_min = wb_lidar_get_fov(mLidar) / 2.0;
+      mLaserMessage.angle_max = -wb_lidar_get_fov(mLidar) / 2.0;
+      mLaserMessage.time_increment = (double)wb_lidar_get_sampling_period(mLidar) / (1000.0 * resolution);
+      mLaserMessage.scan_time = (double)wb_lidar_get_sampling_period(mLidar) / 1000.0;
+      mLaserMessage.range_min = wb_lidar_get_min_range(mLidar);
+      mLaserMessage.range_max = wb_lidar_get_max_range(mLidar);
       mLaserMessage.ranges.resize(resolution);
     }
 
@@ -66,8 +68,8 @@ namespace webots_ros2_driver
     mPointCloudMessage.is_bigendian = false;
 
     if (mAlwaysOn) {
-      mLidar->enable(mPublishTimestepSyncedMs);
-      mLidar->enablePointCloud();
+      wb_lidar_enable(mLidar, mPublishTimestepSyncedMs);
+      wb_lidar_enable_point_cloud(mLidar);
       mIsSensorEnabled = true;
       mIsPointCloudEnabled = true;
     }
@@ -95,9 +97,9 @@ namespace webots_ros2_driver
     if (shouldSensorBeEnabled != mIsSensorEnabled)
     {
       if (shouldSensorBeEnabled)
-        mLidar->enable(mPublishTimestepSyncedMs);
+        wb_lidar_enable(mLidar, mPublishTimestepSyncedMs);
       else
-        mLidar->disable();
+        wb_lidar_disable(mLidar);
       mIsSensorEnabled = shouldSensorBeEnabled;
     }
 
@@ -105,22 +107,22 @@ namespace webots_ros2_driver
     if (shouldPointCloudBeEnabled != mIsPointCloudEnabled)
     {
       if (shouldPointCloudBeEnabled)
-        mLidar->enablePointCloud();
+        wb_lidar_enable_point_cloud(mLidar);
       else
-        mLidar->disablePointCloud();
+        wb_lidar_disable_point_cloud(mLidar);
       mIsPointCloudEnabled = shouldPointCloudBeEnabled;
     }
   }
 
   void Ros2Lidar::publishPointCloud()
   {
-    auto data = mLidar->getPointCloud();
+    auto data = wb_lidar_get_point_cloud(mLidar);
     if (data)
     {
       mPointCloudMessage.header.stamp = mNode->get_clock()->now();
 
-      mPointCloudMessage.width = mLidar->getNumberOfPoints();
-      mPointCloudMessage.row_step = 20 * mLidar->getNumberOfPoints();
+      mPointCloudMessage.width = wb_lidar_get_number_of_points(mLidar);
+      mPointCloudMessage.row_step = 20 * wb_lidar_get_number_of_points(mLidar);
       if (mPointCloudMessage.data.size() != mPointCloudMessage.row_step * mPointCloudMessage.height)
         mPointCloudMessage.data.resize(mPointCloudMessage.row_step * mPointCloudMessage.height);
 
@@ -131,7 +133,7 @@ namespace webots_ros2_driver
 
   void Ros2Lidar::publishLaserScan()
   {
-    auto rangeImage = mLidar->getLayerRangeImage(0);
+    auto rangeImage = wb_lidar_get_layer_range_image(mLidar, 0);
     if (rangeImage)
     {
       memcpy(mLaserMessage.ranges.data(), rangeImage, mLaserMessage.ranges.size() * sizeof(float));

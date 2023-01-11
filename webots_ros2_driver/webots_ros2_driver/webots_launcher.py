@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2021 Cyberbotics Ltd.
+# Copyright 1996-2023 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_share_directory, get_package_prefix
 
 from webots_ros2_driver.utils import (get_webots_home,
                                       handle_webots_installation,
@@ -72,7 +72,6 @@ class WebotsLauncher(ExecuteProcess):
         else:
             webots_path = ''
 
-        mode_string = mode
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 
         self.__world_copy = tempfile.NamedTemporaryFile(mode='w+', suffix='_world_with_URDF_robot.wbt', delete=False)
@@ -96,21 +95,21 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
-        # Create arguments file and initialize command to start Webots remotely through TCP
+        # Initialize command to start Webots remotely through TCP
         if self.__has_shared_folder:
-            launch_arguments = ['--batch', ' --mode=' + mode_string]
-            if not gui:
-                launch_arguments.extend([' --no-rendering', ' --stdout', ' --stderr', ' --minimize']) 
-            if stream:
-                launch_arguments.append(' --stream')
-
             webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots_tcp_client.py'))
             super().__init__(
                 output=output,
                 cmd=[
                     'python3',
                     webots_tcp_client,
-                    launch_arguments,
+                    stream_argument,
+                    no_rendering,
+                    stdout,
+                    stderr,
+                    minimize,
+                    '--batch',
+                    ['--mode=', mode],
                     os.path.basename(self.__world_copy.name),
                 ],
                 name='webots_tcp_client',
@@ -157,7 +156,10 @@ class WebotsLauncher(ExecuteProcess):
             if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') or url_path.startswith('https://'):
                 continue
 
-            new_url_path = '"' + os.path.split(world_path)[0] + '/' + url_path + '"'
+            new_url_path = os.path.split(world_path)[0] + '/' + url_path
+            if self.__is_wsl:
+                new_url_path = subprocess.check_output(['wslpath', '-w', new_url_path]).strip().decode('utf-8').replace('\\', '/')
+            new_url_path = '"' + new_url_path + '"'
             url_path = '"' + url_path + '"'
             content = content.replace(url_path, new_url_path)
 
@@ -215,7 +217,10 @@ class Ros2SupervisorLauncher(Node):
             package='webots_ros2_driver',
             executable='ros2_supervisor.py',
             output=output,
-            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor'},
+            # Set WEBOTS_HOME to the webots_ros2_driver installation folder
+            # to load the correct libController libraries from the Python API
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor',
+                            'WEBOTS_HOME': get_package_prefix('webots_ros2_driver')},
             respawn=respawn,
             **kwargs
         )

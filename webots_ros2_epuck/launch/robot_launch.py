@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 1996-2021 Cyberbotics Ltd.
+# Copyright 1996-2023 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ def get_ros2_nodes(*args):
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'epuck'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'e-puck'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,

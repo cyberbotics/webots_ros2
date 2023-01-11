@@ -42,7 +42,7 @@ namespace webots_ros2_control
     const rclcpp::Duration dt = rclcpp::Duration::from_seconds(mControlPeriodMs / 1000.0);
     if (periodMs >= mControlPeriodMs)
     {
-#if FOXY || GALACTIC
+#if FOXY
       mControllerManager->read();
 #else
       mControllerManager->read(mNode->get_clock()->now(), dt);
@@ -55,7 +55,7 @@ namespace webots_ros2_control
       mLastControlUpdateMs = nowMs;
 #endif
 
-#if FOXY || GALACTIC
+#if FOXY
     mControllerManager->write();
 #else // HUMBLE, ROLLING
     mControllerManager->write(mNode->get_clock()->now(), dt);
@@ -95,9 +95,17 @@ namespace webots_ros2_control
     }
     for (unsigned int i = 0; i < controlHardware.size(); i++)
     {
+
+// Necessary hotfix for renamed variables present in "hardware_interface" package for versions above 3.5 (#590)
+#if HARDWARE_INTERFACE_VERSION_MAJOR >= 3 && HARDWARE_INTERFACE_VERSION_MINOR >= 5
+      const std::string pluginName = controlHardware[i].hardware_plugin_name;
+      auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
+          mHardwareLoader->createUnmanagedInstance(pluginName));
+#else
       const std::string hardwareType = controlHardware[i].hardware_class_type;
       auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
           mHardwareLoader->createUnmanagedInstance(hardwareType));
+#endif
       webotsSystem->init(mNode, controlHardware[i]);
 #if FOXY
       resourceManager->import_component(std::move(webotsSystem));

@@ -158,7 +158,7 @@ namespace webots_ros2_driver
       vision_msgs::msg::ObjectHypothesisWithPose hypothesis;
       hypothesis.pose.pose = pose.pose;
       detection.results.push_back(hypothesis);
-      #if FOXY || GALACTIC
+      #if FOXY
       detection.bbox.center.x = objects[i].position_on_image[0];
       detection.bbox.center.y = objects[i].position_on_image[1];
       #else
@@ -174,7 +174,7 @@ namespace webots_ros2_driver
       recognitionWebotsObject.id = objects[i].id;
       recognitionWebotsObject.model = std::string(objects[i].model);
       recognitionWebotsObject.pose = pose;
-      #if FOXY || GALACTIC
+      #if FOXY
       recognitionWebotsObject.bbox.center.x = objects[i].position_on_image[0];
       recognitionWebotsObject.bbox.center.y = objects[i].position_on_image[1];
       #else

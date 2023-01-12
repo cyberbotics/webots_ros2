@@ -26,9 +26,8 @@ if [[ $(lsb_release -rs) == "22.04" && ${WEBOTS_RELEASE_VERSION} == "2022a" ]]; 
   mv /tmp/openssl-1.1/* /usr/local/webots/lib/webots/
 fi
 
-# The following packages are only available in the ROS 2 Foxy/Galactic distributions. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
-
-if [[ "${ROS_DISTRO}" == "foxy" || "${ROS_DISTRO}" == "galactic" ]]; then
+# The following packages are only available in the ROS 2 Foxy distribution. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
+if [[ "${ROS_DISTRO}" == "foxy" ]]; then
     apt install -y ros-${ROS_DISTRO}-turtlebot3-cartographer ros-${ROS_DISTRO}-turtlebot3-navigation2
 fi
 

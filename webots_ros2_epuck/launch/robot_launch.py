@@ -69,7 +69,7 @@ def get_ros2_nodes(*args):
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'epuck'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'e-puck'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,

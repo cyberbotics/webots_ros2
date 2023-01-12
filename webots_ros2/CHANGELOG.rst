@@ -2,16 +2,26 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.0 (2022-11-29)
+2023.0.2 (2023-XX-XX)
 ------------------
-* Add support for the new Python API of Webots R2023a
+* Drop support for Galactic.
+
+2023.0.1 (2023-01-05)
+------------------
+* Fixed relative assets in WSL.
+* Fixed broken controller connection in Rats life example.
+
+2023.0.0 (2022-11-30)
+------------------
+* Added support for the new Python API of Webots R2023a
 * Convert C++ controller API functions to C
 * Replace libController submodule by commited source files
 * Removed 'webots_ros2_core' package (deprecated).
+* Allow custom motor-encoder pair.
 
 2022.1.4 (2022-11-18)
 ------------------
-* Fix the camera focal length in the CameraInfo topic.
+* Fixed the camera focal length in the CameraInfo topic.
 * Upgraded to urdf2webots 2.0.3
 * Update the calculation of CameraRecognitionObject messages to the RDF convention of R2022b.
 

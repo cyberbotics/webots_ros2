@@ -20,11 +20,9 @@ import os
 import re
 import sys
 import shutil
-import socket
 import tarfile
 import functools
 import subprocess
-import time
 import urllib.request
 from pathlib import Path
 from platform import uname
@@ -158,8 +156,10 @@ def get_webots_home(show_warning=False):
         if variable in os.environ and os.path.isdir(os.environ[variable]) and WebotsVersion.from_path(os.environ[variable]):
             os.environ['WEBOTS_HOME'] = os.environ[variable]
             return os.environ[variable]
-        elif variable in os.environ and (not os.path.isdir(os.environ[variable]) or WebotsVersion.from_path(os.environ[variable]) is None):
-            print(f'WARNING: Webots directory `{os.environ[variable]}` specified in `{variable}` is not a valid Webots directory or is not found.')
+        elif variable in os.environ and \
+                (not os.path.isdir(os.environ[variable]) or WebotsVersion.from_path(os.environ[variable]) is None):
+            print(f'WARNING: Webots directory `{os.environ[variable]}` specified in `{variable}` is not a valid Webots '
+                  'directory or is not found.')
 
     # Normalize Webots version
     minimum_version = WebotsVersion.minimum()
@@ -190,7 +190,8 @@ def get_webots_home(show_warning=False):
         if os.path.isdir(path) and version_min(WebotsVersion.from_path(path), minimum_version):
             os.environ['WEBOTS_HOME'] = path
             if show_warning:
-                print(f'WARNING: No valid Webots directory specified in `ROS2_WEBOTS_HOME` and `WEBOTS_HOME`, fallback to default installation folder {path}.')
+                print('WARNING: No valid Webots directory specified in `ROS2_WEBOTS_HOME` and `WEBOTS_HOME`, fallback to '
+                      f'default installation folder {path}.')
             return path
 
     return None
@@ -245,7 +246,10 @@ def __install_webots(installation_directory):
 
 def handle_webots_installation():
     minimum_version = WebotsVersion.minimum()
-    installation_directory = f'C:\\Program Files\\Webots' if (is_wsl() or sys.platform == 'win32') else os.path.join(str(Path.home()), '.ros')
+    if (is_wsl() or sys.platform == 'win32'):
+        installation_directory = 'C:\\Program Files\\Webots'
+    else:
+        installation_directory = os.path.join(str(Path.home()), '.ros')
     webots_release_url = f'https://github.com/cyberbotics/webots/releases/tag/{minimum_version.short()}'
 
     print(

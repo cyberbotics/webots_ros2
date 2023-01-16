@@ -19,9 +19,10 @@ import unittest
 
 import _ast
 import fnmatch
-import pep8
+import pycodestyle
 import os
 import sys
+from io import open  # needed for compatibility with Python 2.7 for open(file, encoding='utf-8')
 
 from pyflakes import checker
 from pyflakes.reporter import Reporter
@@ -29,7 +30,7 @@ from pyflakes.reporter import Reporter
 ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 skippedDirectories = [
     '.git',
-    'webots_ros2_importer/webots_ros2_importer/urdf2webots/tests/sources/'
+    'webots_ros2_importer/webots_ros2_importer/urdf2webots/'
 ]
 skippedDirectoriesFull = [os.path.join(ROOT_FOLDER, os.path.normpath(path)) for path in skippedDirectories]
 
@@ -102,7 +103,7 @@ def checkFlakesPath(filename, reporter):
     checkFlakes(codestr.encode('utf-8'), filename, reporter)
 
 
-class CustomReport(pep8.StandardReport):
+class CustomReport(pycodestyle.StandardReport):
     """Collect report, and overload the string operator."""
 
     results = []
@@ -139,7 +140,7 @@ class TestCodeFormat(unittest.TestCase):
     """Unit test of the PEP8 format in the tests."""
 
     def setUp(self):
-        """Get all the world file."""
+        """Get all the python files."""
         self.files = []
         for rootPath, dirNames, fileNames in os.walk(ROOT_FOLDER):
             for fileName in fnmatch.filter(fileNames, '*.py'):
@@ -160,7 +161,7 @@ class TestCodeFormat(unittest.TestCase):
     def test_pep8_conformance(self):
         """Test that the tests are PEP8 compliant."""
         # Use pep8 module to detect 'W' and 'E' errors
-        checker = pep8.StyleGuide(
+        checker = pycodestyle.StyleGuide(
             quiet=True,
             paths=self.files,
             reporter=CustomReport,

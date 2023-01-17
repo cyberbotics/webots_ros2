@@ -38,7 +38,6 @@
 namespace webots_ros2_control {
   class Ros2Control : public webots_ros2_driver::PluginInterface {
   public:
-    Ros2Control();
     void step() override;
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
 

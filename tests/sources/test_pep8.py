@@ -30,8 +30,7 @@ from pyflakes.reporter import Reporter
 ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 skippedDirectories = [
     '.git',
-    'webots_ros2_importer/webots_ros2_importer/urdf2webots/',
-    'webots_ros2_driver/webots/lib'
+    'webots_ros2_importer/webots_ros2_importer/urdf2webots/'
 ]
 skippedDirectoriesFull = [os.path.join(ROOT_FOLDER, os.path.normpath(path)) for path in skippedDirectories]
 

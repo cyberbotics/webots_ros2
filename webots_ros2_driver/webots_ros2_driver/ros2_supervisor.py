@@ -32,6 +32,7 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
 from rosgraph_msgs.msg import Clock
 from std_msgs.msg import String
+sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
 from urdf2webots.importer import convertUrdfFile, convertUrdfContent
 from webots_ros2_msgs.srv import SpawnUrdfRobot, SpawnNodeFromString
 from controller import Supervisor
@@ -40,8 +41,7 @@ from controller import Supervisor
 # to avoid to load another library named "controller" or "vehicle".
 sys.path.insert(1, os.path.dirname(vehicle.__file__))
 sys.path.insert(1, os.path.dirname(controller.__file__))
-sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
-
+from controller import Supervisor
 
 class Ros2Supervisor(Node):
     def __init__(self):

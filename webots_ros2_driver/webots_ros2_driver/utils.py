@@ -246,7 +246,7 @@ def __install_webots(installation_directory):
 
 def handle_webots_installation():
     minimum_version = WebotsVersion.minimum()
-    if (is_wsl() or sys.platform == 'win32'):
+    if is_wsl() or sys.platform == 'win32':
         installation_directory = 'C:\\Program Files\\Webots'
     else:
         installation_directory = os.path.join(str(Path.home()), '.ros')

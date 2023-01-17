@@ -54,6 +54,7 @@ namespace webots_ros2_control {
 
   class Ros2ControlSystem : public Ros2ControlSystemInterface {
   public:
+    Ros2ControlSystem();
     void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) override;
 
 #if FOXY

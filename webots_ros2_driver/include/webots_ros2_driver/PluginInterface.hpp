@@ -15,29 +15,28 @@
 #ifndef PLUGIN_INTERFACE
 #define PLUGIN_INTERFACE
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
-namespace webots_ros2_driver
-{
-    class WebotsNode;
+namespace webots_ros2_driver {
+  class WebotsNode;
 
-    class PluginInterface
-    {
-    public:
-        /// Prepare your plugin in this method.
-        /// Fired before the node is spinned.
-        /// Parameters are passed from the WebotsNode and/or from URDF.
-        /**
-         * \param[in] node WebotsNode inherited from `rclcpp::Node` with a few extra methods related 
-         * \param[in] parameters Parameters (key-value pairs) located under a <plugin> (dynamically loaded plugins) or <ros> (statically loaded plugins).
-         */
-        virtual void init(WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) = 0;
+  class PluginInterface {
+  public:
+    /// Prepare your plugin in this method.
+    /// Fired before the node is spinned.
+    /// Parameters are passed from the WebotsNode and/or from URDF.
+    /**
+     * \param[in] node WebotsNode inherited from `rclcpp::Node` with a few extra methods related
+     * \param[in] parameters Parameters (key-value pairs) located under a <plugin> (dynamically loaded plugins) or <ros>
+     * (statically loaded plugins).
+     */
+    virtual void init(WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) = 0;
 
-        /// This method is called on each timestep.
-        /// You should not call `robot.step()` in this method as it is automatically called.
-        virtual void step() = 0;
-    };
-}
+    /// This method is called on each timestep.
+    /// You should not call `robot.step()` in this method as it is automatically called.
+    virtual void step() = 0;
+  };
+}  // namespace webots_ros2_driver
 
 #endif

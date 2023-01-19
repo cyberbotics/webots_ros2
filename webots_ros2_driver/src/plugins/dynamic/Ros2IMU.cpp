@@ -17,14 +17,11 @@
 #include <webots_ros2_driver/utils/Math.hpp>
 #include "pluginlib/class_list_macros.hpp"
 
-#include <webots/robot.h>
 #include <webots/device.h>
+#include <webots/robot.h>
 
-
-namespace webots_ros2_driver
-{
-  void Ros2IMU::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {
+namespace webots_ros2_driver {
+  void Ros2IMU::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
     mInertialUnit = 0;
@@ -32,24 +29,22 @@ namespace webots_ros2_driver
     mAccelerometer = 0;
 
     if (!parameters.count("inertialUnitName") && !parameters.count("gyroName") && !parameters.count("accelerometerName"))
-      throw std::runtime_error("The IMU plugins has to contain at least of: <inertialUnitName>, <gyroName>, or <accelerometerName>");
+      throw std::runtime_error(
+        "The IMU plugins has to contain at least of: <inertialUnitName>, <gyroName>, or <accelerometerName>");
 
-    if (parameters.count("inertialUnitName"))
-    {
+    if (parameters.count("inertialUnitName")) {
       mInertialUnit = wb_robot_get_device(parameters["inertialUnitName"].c_str());
       if (mInertialUnit == 0 || wb_device_get_node_type(mInertialUnit) != WB_NODE_INERTIAL_UNIT)
         throw std::runtime_error("Cannot find InertialUnit with name " + parameters["inertialUnitName"]);
     }
 
-    if (parameters.count("gyroName"))
-    {
+    if (parameters.count("gyroName")) {
       mGyro = wb_robot_get_device(parameters["gyroName"].c_str());
       if (mGyro == 0 || wb_device_get_node_type(mGyro) != WB_NODE_GYRO)
         throw std::runtime_error("Cannot find Gyro with name " + parameters["gyroName"]);
     }
 
-    if (parameters.count("accelerometerName"))
-    {
+    if (parameters.count("accelerometerName")) {
       mAccelerometer = wb_robot_get_device(parameters["accelerometerName"].c_str());
       if (mAccelerometer == 0 || wb_device_get_node_type(mAccelerometer) != WB_NODE_ACCELEROMETER)
         throw std::runtime_error("Cannot find Accelerometer with name " + parameters["accelerometerName"]);
@@ -64,8 +59,7 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2IMU::enable()
-  {
+  void Ros2IMU::enable() {
     if (mInertialUnit)
       wb_inertial_unit_enable(mInertialUnit, mPublishTimestepSyncedMs);
     if (mAccelerometer)
@@ -74,8 +68,7 @@ namespace webots_ros2_driver
       wb_gyro_enable(mGyro, mPublishTimestepSyncedMs);
   }
 
-  void Ros2IMU::disable()
-  {
+  void Ros2IMU::disable() {
     if (mInertialUnit)
       wb_inertial_unit_disable(mInertialUnit);
     if (mAccelerometer)
@@ -84,8 +77,7 @@ namespace webots_ros2_driver
       wb_gyro_disable(mGyro);
   }
 
-  void Ros2IMU::step()
-  {
+  void Ros2IMU::step() {
     if (!preStep())
       return;
 
@@ -97,8 +89,7 @@ namespace webots_ros2_driver
 
     // Enable/Disable sensor
     const bool shouldBeEnabled = mPublisher->get_subscription_count() > 0;
-    if (shouldBeEnabled != mIsEnabled)
-    {
+    if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         enable();
       else
@@ -107,25 +98,21 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2IMU::publishData()
-  {
+  void Ros2IMU::publishData() {
     mMessage.header.stamp = mNode->get_clock()->now();
-    if (mAccelerometer)
-    {
+    if (mAccelerometer) {
       const double *values = wb_accelerometer_get_values(mAccelerometer);
       mMessage.linear_acceleration.x = values[0];
       mMessage.linear_acceleration.y = values[1];
       mMessage.linear_acceleration.z = values[2];
     }
-    if (mGyro)
-    {
+    if (mGyro) {
       const double *values = wb_gyro_get_values(mGyro);
       mMessage.angular_velocity.x = values[0];
       mMessage.angular_velocity.y = values[1];
       mMessage.angular_velocity.z = values[2];
     }
-    if (mInertialUnit)
-    {
+    if (mInertialUnit) {
       const double *values = wb_inertial_unit_get_quaternion(mInertialUnit);
       mMessage.orientation.x = values[0];
       mMessage.orientation.y = values[1];
@@ -134,6 +121,6 @@ namespace webots_ros2_driver
     }
     mPublisher->publish(mMessage);
   }
-}
+}  // namespace webots_ros2_driver
 
 PLUGINLIB_EXPORT_CLASS(webots_ros2_driver::Ros2IMU, webots_ros2_driver::PluginInterface)

@@ -15,19 +15,16 @@
 #ifndef ROS2_LIDAR_HPP
 #define ROS2_LIDAR_HPP
 
-#include <unordered_map>
+#include <tf2_ros/static_transform_broadcaster.h>
 #include <webots/lidar.h>
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
+#include <unordered_map>
 #include <webots_ros2_driver/WebotsNode.hpp>
-#include <tf2_ros/static_transform_broadcaster.h>
+#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 
-
-namespace webots_ros2_driver
-{
-  class Ros2Lidar : public Ros2SensorPlugin
-  {
+namespace webots_ros2_driver {
+  class Ros2Lidar : public Ros2SensorPlugin {
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
@@ -49,6 +46,6 @@ namespace webots_ros2_driver
     bool mIsPointCloudEnabled;
   };
 
-} // end namespace webots_ros2_driver
+}  // end namespace webots_ros2_driver
 
 #endif

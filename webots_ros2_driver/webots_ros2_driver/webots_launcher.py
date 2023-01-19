@@ -54,8 +54,10 @@ class _ConditionalSubstitution(Substitution):
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
         if sys.platform == 'win32':
-            print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
-            print('WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.', file=sys.stderr)
+            print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a '
+                  'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
+            print('WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more '
+                  'information.', file=sys.stderr)
         self.__is_wsl = is_wsl()
         self.__has_shared_folder = has_shared_folder()
 
@@ -97,7 +99,8 @@ class WebotsLauncher(ExecuteProcess):
 
         # Initialize command to start Webots remotely through TCP
         if self.__has_shared_folder:
-            webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots_tcp_client.py'))
+            webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts',
+                                 'webots_tcp_client.py'))
             super().__init__(
                 output=output,
                 cmd=[
@@ -153,12 +156,14 @@ class WebotsLauncher(ExecuteProcess):
             url_path = match.group(1)
 
             # Absolute path or Webots relative path or Web paths
-            if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') or url_path.startswith('https://'):
+            if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') \
+                    or url_path.startswith('https://'):
                 continue
 
             new_url_path = os.path.split(world_path)[0] + '/' + url_path
             if self.__is_wsl:
-                new_url_path = subprocess.check_output(['wslpath', '-w', new_url_path]).strip().decode('utf-8').replace('\\', '/')
+                command = ['wslpath', '-w', new_url_path]
+                new_url_path = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
             new_url_path = '"' + new_url_path + '"'
             url_path = '"' + url_path + '"'
             content = content.replace(url_path, new_url_path)
@@ -178,7 +183,8 @@ class WebotsLauncher(ExecuteProcess):
 
         # Copy world file to shared folder
         if self.__has_shared_folder:
-            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
+            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(),
+                                                             os.path.basename(self.__world_copy.name)))
 
         # Execute process
         return super().execute(context)

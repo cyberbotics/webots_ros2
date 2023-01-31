@@ -92,10 +92,7 @@ class Ros2Supervisor(Node):
 
         # Choose the conversion according to the input + adapt path in function of platform
         if robot.urdf_path:
-            if is_wsl():
-                command = ['wslpath', '-w', robot.urdf_path]
-                robot.urdf_path = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
-            if has_shared_folder():
+            if has_shared_folder() or is_wsl():
                 if not os.path.isfile(robot.urdf_path):
                     sys.exit('Input file "%s" does not exists.' % robot.urdf_path)
                 if not robot.urdf_path.endswith('.urdf'):
@@ -119,7 +116,9 @@ class Ros2Supervisor(Node):
                 if (not os.path.isdir(shared_resource_dir)):
                     shutil.copytree(resource_dir, shared_resource_dir)
                 relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir), os.path.basename(resource_dir))
-                self.get_logger().info(relative_path_prefix)
+                if is_wsl():
+                    command = ['wslpath', '-w', relative_path_prefix]
+                    relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
 
                 robot_string = convertUrdfContent(input=urdfContent, robotName=robot_name, normal=normal,
                                               boxCollision=box_collision, initTranslation=robot_translation,

@@ -38,11 +38,24 @@ class URDFSpawner(ExecuteProcess):
         if is_wsl() and relative_path_prefix:
             command = ['wslpath', '-w', relative_path_prefix]
             relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
-        if has_shared_folder() and relative_path_prefix and not os.path.isdir(
-          os.path.join(container_shared_folder(), os.path.basename(relative_path_prefix))):
+        if is_wsl() and urdf_path:
+            command = ['wslpath', '-w', urdf_path]
+            urdf_path = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
+        if has_shared_folder() and relative_path_prefix and not os.path.isdir(os.path.join(container_shared_folder(),
+                                                                              os.path.basename(relative_path_prefix))):
             shutil.copytree(relative_path_prefix, os.path.join(container_shared_folder(),
-                                                               os.path.basename(relative_path_prefix)))
+                            os.path.basename(relative_path_prefix)))
             relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(relative_path_prefix))
+        if has_shared_folder() and relative_path_prefix:
+            components = urdf_path.split(os.path.sep)
+            for i, component in enumerate(reversed(components)):
+                if component == 'share':
+                    resource_dir = os.path.sep.join(components[:-i + 2])
+                    suffix = os.path.sep.join(components[-i + 2:])
+                    break
+            if (not os.path.isdir(os.path.join(container_shared_folder(), os.path.basename(resource_dir)))):
+                shutil.copytree(resource_dir, os.path.join(container_shared_folder(), os.path.basename(resource_dir)))
+                urdf_path = os.path.join(host_shared_folder(), suffix)
 
         message = '{robot: {'
 

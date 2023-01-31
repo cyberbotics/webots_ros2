@@ -109,14 +109,16 @@ class Ros2Supervisor(Node):
                         package_dir = os.path.sep.join(split_path[:i + 2])
                         resource_dir = os.path.sep.join(split_path[:i + 3])
                         break
-                shared_package_dir = os.path.join(container_shared_folder(), os.path.basename(package_dir))
-                shared_resource_dir = os.path.join(shared_package_dir, os.path.basename(resource_dir))
-                if (not os.path.isdir(shared_package_dir)):
-                    os.mkdir(shared_package_dir)
-                if (not os.path.isdir(shared_resource_dir)):
-                    shutil.copytree(resource_dir, shared_resource_dir)
-                relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir), os.path.basename(resource_dir))
+                if has_shared_folder():
+                    shared_package_dir = os.path.join(container_shared_folder(), os.path.basename(package_dir))
+                    shared_resource_dir = os.path.join(shared_package_dir, os.path.basename(resource_dir))
+                    if (not os.path.isdir(shared_package_dir)):
+                        os.mkdir(shared_package_dir)
+                    if (not os.path.isdir(shared_resource_dir)):
+                        shutil.copytree(resource_dir, shared_resource_dir)
+                    relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir), os.path.basename(resource_dir))
                 if is_wsl():
+                    relative_path_prefix = resource_dir
                     command = ['wslpath', '-w', relative_path_prefix]
                     relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
 

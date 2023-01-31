@@ -16,12 +16,7 @@
 
 """This process simply sends urdf information to the Spawner through a service."""
 
-import os
-import shutil
-import subprocess
-
 from launch.actions import ExecuteProcess
-from webots_ros2_driver.utils import is_wsl, has_shared_folder, container_shared_folder, host_shared_folder
 
 
 def get_webots_driver_node(event, driver_node):
@@ -35,27 +30,6 @@ def get_webots_driver_node(event, driver_node):
 class URDFSpawner(ExecuteProcess):
     def __init__(self, output='log', name=None, urdf_path=None, robot_description=None, relative_path_prefix=None,
                  translation='0 0 0', rotation='0 0 1 0', normal=False, box_collision=False, init_pos=None, **kwargs):
-        if is_wsl() and relative_path_prefix:
-            command = ['wslpath', '-w', relative_path_prefix]
-            relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
-        if is_wsl() and urdf_path:
-            command = ['wslpath', '-w', urdf_path]
-            urdf_path = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
-        if has_shared_folder() and relative_path_prefix and not os.path.isdir(os.path.join(container_shared_folder(),
-                                                                              os.path.basename(relative_path_prefix))):
-            shutil.copytree(relative_path_prefix, os.path.join(container_shared_folder(),
-                            os.path.basename(relative_path_prefix)))
-            relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(relative_path_prefix))
-        if has_shared_folder() and relative_path_prefix:
-            components = urdf_path.split(os.path.sep)
-            for i, component in enumerate(reversed(components)):
-                if component == 'share':
-                    resource_dir = os.path.sep.join(components[:-i + 2])
-                    suffix = os.path.sep.join(components[-i + 2:])
-                    break
-            if (not os.path.isdir(os.path.join(container_shared_folder(), os.path.basename(resource_dir)))):
-                shutil.copytree(resource_dir, os.path.join(container_shared_folder(), os.path.basename(resource_dir)))
-                urdf_path = os.path.join(host_shared_folder(), suffix)
 
         message = '{robot: {'
 

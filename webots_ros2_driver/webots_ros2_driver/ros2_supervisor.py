@@ -21,6 +21,8 @@
 import os
 import sys
 import re
+import subprocess
+import shutil
 
 import rclpy
 import vehicle
@@ -32,6 +34,7 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
 from rosgraph_msgs.msg import Clock
 from std_msgs.msg import String
+from webots_ros2_driver.utils import is_wsl, has_shared_folder, container_shared_folder, host_shared_folder
 sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
 from urdf2webots.importer import convertUrdfFile, convertUrdfContent  # noqa
 from webots_ros2_msgs.srv import SpawnUrdfRobot, SpawnNodeFromString  # noqa
@@ -87,13 +90,49 @@ class Ros2Supervisor(Node):
         box_collision = robot.box_collision if robot.box_collision else False
         init_pos = robot.init_pos if robot.init_pos else None
 
-        # Choose the conversion according to the input
+        # Choose the conversion according to the input + adapt path in function of platform
         if robot.urdf_path:
-            robot_string = convertUrdfFile(input=robot.urdf_path, robotName=robot_name, normal=normal,
-                                           boxCollision=box_collision, initTranslation=robot_translation,
-                                           initRotation=robot_rotation, initPos=init_pos)
+            if is_wsl():
+                command = ['wslpath', '-w', robot.urdf_path]
+                robot.urdf_path = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
+            if has_shared_folder():
+                if not os.path.isfile(robot.urdf_path):
+                    sys.exit('Input file "%s" does not exists.' % robot.urdf_path)
+                if not robot.urdf_path.endswith('.urdf'):
+                    sys.exit('"%s" is not a URDF file.' % robot.urdf_path)
+
+                with open(robot.urdf_path, 'r') as file:
+                    urdfContent = file.read()
+                if urdfContent is None:
+                    sys.exit('Could not read the URDF file.')
+
+                components = robot.urdf_path.split(os.path.sep)
+                for i, component in enumerate(reversed(components)):
+                    if component == 'share':
+                        resource_dir = os.path.sep.join(components[:-i + 2])
+                        break
+                if (not os.path.isdir(os.path.join(container_shared_folder(), os.path.basename(resource_dir)))):
+                    shutil.copytree(resource_dir, os.path.join(container_shared_folder(), os.path.basename(resource_dir)))
+                relative_path_prefix = os.path.dirname(robot.urdf_path)
+
+                robot_string = convertUrdfContent(input=urdfContent, robotName=robot_name, normal=normal,
+                                              boxCollision=box_collision, initTranslation=robot_translation,
+                                              initRotation=robot_rotation, initPos=init_pos,
+                                              relativePathPrefix=relative_path_prefix)
+            else:
+                robot_string = convertUrdfFile(input=robot.urdf_path, robotName=robot_name, normal=normal,
+                                               boxCollision=box_collision, initTranslation=robot_translation,
+                                               initRotation=robot_rotation, initPos=init_pos)
         elif robot.robot_description:
             relative_path_prefix = robot.relative_path_prefix if robot.relative_path_prefix else None
+            if is_wsl() and relative_path_prefix:
+                command = ['wslpath', '-w', relative_path_prefix]
+                relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
+            if has_shared_folder() and relative_path_prefix:
+                if not os.path.isdir(os.path.join(container_shared_folder(), os.path.basename(relative_path_prefix))):
+                    shutil.copytree(relative_path_prefix, os.path.join(container_shared_folder(),
+                                    os.path.basename(relative_path_prefix)))
+                relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(relative_path_prefix))              
             robot_string = convertUrdfContent(input=robot.robot_description, robotName=robot_name, normal=normal,
                                               boxCollision=box_collision, initTranslation=robot_translation,
                                               initRotation=robot_rotation, initPos=init_pos,

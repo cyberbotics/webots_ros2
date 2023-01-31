@@ -106,11 +106,11 @@ class Ros2Supervisor(Node):
                 if urdfContent is None:
                     sys.exit('Could not read the URDF file.')
 
-                components = robot.urdf_path.split(os.path.sep)
-                for i, component in enumerate(reversed(components)):
-                    if component == 'share':
-                        package_dir = os.path.sep.join(components[:-i + 1])
-                        resource_dir = os.path.sep.join(components[:-i + 2])
+                split_path = robot.urdf_path.split(os.path.sep)
+                for i, folder in (list(enumerate(split_path))):
+                    if folder == "share":
+                        package_dir = os.path.sep.join(split_path[:i + 2])
+                        resource_dir = os.path.sep.join(split_path[:i + 3])
                         break
                 shared_package_dir = os.path.join(container_shared_folder(), os.path.basename(package_dir))
                 shared_resource_dir = os.path.join(shared_package_dir, os.path.basename(resource_dir))
@@ -135,11 +135,11 @@ class Ros2Supervisor(Node):
                 command = ['wslpath', '-w', relative_path_prefix]
                 relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
             if has_shared_folder() and relative_path_prefix:
-                components = relative_path_prefix.split(os.path.sep)
-                for i, component in enumerate(reversed(components)):
-                    if component == 'share':
-                        package_dir = os.path.sep.join(components[:-i + 1])
-                        resource_dir = os.path.sep.join(components[:-i + 2])
+                split_path = relative_path_prefix.split(os.path.sep)
+                for i, folder in (list(enumerate(split_path))):
+                    if folder == "share":
+                        package_dir = os.path.sep.join(split_path[:i + 2])
+                        resource_dir = os.path.sep.join(split_path[:i + 3])
                         break
                 shared_package_dir = os.path.join(container_shared_folder(), os.path.basename(package_dir))
                 shared_resource_dir = os.path.join(shared_package_dir, os.path.basename(resource_dir))
@@ -147,7 +147,7 @@ class Ros2Supervisor(Node):
                     os.mkdir(shared_package_dir)
                 if (not os.path.isdir(shared_resource_dir)):
                     shutil.copytree(resource_dir, shared_resource_dir)
-                relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir), os.path.basename(resource_dir))              
+                relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir), os.path.basename(resource_dir))
             robot_string = convertUrdfContent(input=robot.robot_description, robotName=robot_name, normal=normal,
                                               boxCollision=box_collision, initTranslation=robot_translation,
                                               initRotation=robot_rotation, initPos=init_pos,

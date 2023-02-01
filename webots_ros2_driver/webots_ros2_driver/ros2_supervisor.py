@@ -121,7 +121,8 @@ class Ros2Supervisor(Node):
                         os.mkdir(shared_package_dir)
                     if (not os.path.isdir(shared_resource_dir)):
                         shutil.copytree(resource_dir, shared_resource_dir)
-                    relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir), os.path.basename(resource_dir))
+                    relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir),
+                                                        os.path.basename(resource_dir))
                 # In WSL, the prefix must be converted to WSL path to work in Webots running on native Windows
                 if is_wsl():
                     relative_path_prefix = resource_dir
@@ -129,9 +130,9 @@ class Ros2Supervisor(Node):
                     relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
 
                 robot_string = convertUrdfContent(input=urdfContent, robotName=robot_name, normal=normal,
-                                              boxCollision=box_collision, initTranslation=robot_translation,
-                                              initRotation=robot_rotation, initPos=init_pos,
-                                              relativePathPrefix=relative_path_prefix)
+                                                  boxCollision=box_collision, initTranslation=robot_translation,
+                                                  initRotation=robot_rotation, initPos=init_pos,
+                                                  relativePathPrefix=relative_path_prefix)
             else:
                 robot_string = convertUrdfFile(input=robot.urdf_path, robotName=robot_name, normal=normal,
                                                boxCollision=box_collision, initTranslation=robot_translation,
@@ -158,7 +159,8 @@ class Ros2Supervisor(Node):
                     os.mkdir(shared_package_dir)
                 if (not os.path.isdir(shared_resource_dir)):
                     shutil.copytree(resource_dir, shared_resource_dir)
-                relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir), os.path.basename(resource_dir))
+                relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir),
+                                                    os.path.basename(resource_dir))
             robot_string = convertUrdfContent(input=robot.robot_description, robotName=robot_name, normal=normal,
                                               boxCollision=box_collision, initTranslation=robot_translation,
                                               initRotation=robot_rotation, initPos=init_pos,

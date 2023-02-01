@@ -36,7 +36,6 @@ from webots_ros2_driver.utils import (get_webots_home,
                                       is_wsl,
                                       has_shared_folder,
                                       container_shared_folder,
-                                      host_shared_folder,
                                       controller_url_prefix)
 
 

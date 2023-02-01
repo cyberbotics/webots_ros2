@@ -19,10 +19,10 @@
 
 
 import os
-import sys
 import re
-import subprocess
 import shutil
+import subprocess
+import sys
 
 import rclpy
 import vehicle
@@ -90,25 +90,30 @@ class Ros2Supervisor(Node):
         box_collision = robot.box_collision if robot.box_collision else False
         init_pos = robot.init_pos if robot.init_pos else None
 
-        # Choose the conversion according to the input + adapt path in function of platform
+        # Choose the conversion according to the input and platform
         if robot.urdf_path:
             if has_shared_folder() or is_wsl():
+                # Check that the file exists and is an URDF
                 if not os.path.isfile(robot.urdf_path):
                     sys.exit('Input file "%s" does not exists.' % robot.urdf_path)
                 if not robot.urdf_path.endswith('.urdf'):
                     sys.exit('"%s" is not a URDF file.' % robot.urdf_path)
 
+                # Read the content of the URDF
                 with open(robot.urdf_path, 'r') as file:
                     urdfContent = file.read()
                 if urdfContent is None:
                     sys.exit('Could not read the URDF file.')
 
+                # Get the package name and parent resource directory from URDF path
                 split_path = robot.urdf_path.split(os.path.sep)
                 for i, folder in (list(enumerate(split_path))):
                     if folder == "share":
                         package_dir = os.path.sep.join(split_path[:i + 2])
                         resource_dir = os.path.sep.join(split_path[:i + 3])
                         break
+                # On macOS, the resources are copied to shared_folder/package_name/resource_folder
+                # The path prefix is updated to the path of the shared folder
                 if has_shared_folder():
                     shared_package_dir = os.path.join(container_shared_folder(), os.path.basename(package_dir))
                     shared_resource_dir = os.path.join(shared_package_dir, os.path.basename(resource_dir))
@@ -117,6 +122,7 @@ class Ros2Supervisor(Node):
                     if (not os.path.isdir(shared_resource_dir)):
                         shutil.copytree(resource_dir, shared_resource_dir)
                     relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir), os.path.basename(resource_dir))
+                # In WSL, the prefix must be converted to WSL path to work in Webots running on native Windows
                 if is_wsl():
                     relative_path_prefix = resource_dir
                     command = ['wslpath', '-w', relative_path_prefix]
@@ -132,16 +138,20 @@ class Ros2Supervisor(Node):
                                                initRotation=robot_rotation, initPos=init_pos)
         elif robot.robot_description:
             relative_path_prefix = robot.relative_path_prefix if robot.relative_path_prefix else None
+            # In WSL, the prefix must be converted to WSL path to work in Webots running on native Windows
             if is_wsl() and relative_path_prefix:
                 command = ['wslpath', '-w', relative_path_prefix]
                 relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
             if has_shared_folder() and relative_path_prefix:
+                # Get the package name and parent resource directory from URDF path
                 split_path = relative_path_prefix.split(os.path.sep)
                 for i, folder in (list(enumerate(split_path))):
                     if folder == "share":
                         package_dir = os.path.sep.join(split_path[:i + 2])
                         resource_dir = os.path.sep.join(split_path[:i + 3])
                         break
+                # On macOS, the resources are copied to shared_folder/package_name/resource_folder
+                # The path prefix is updated to the path of the shared folder
                 shared_package_dir = os.path.join(container_shared_folder(), os.path.basename(package_dir))
                 shared_resource_dir = os.path.join(shared_package_dir, os.path.basename(resource_dir))
                 if (not os.path.isdir(shared_package_dir)):

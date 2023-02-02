@@ -95,7 +95,7 @@ class Ros2Supervisor(Node):
             if has_shared_folder() or is_wsl():
                 # Check that the file exists and is an URDF
                 if not os.path.isfile(robot.urdf_path):
-                    sys.exit('Input file "%s" does not exists.' % robot.urdf_path)
+                    sys.exit('Input file "%s" does not exist.' % robot.urdf_path)
                 if not robot.urdf_path.endswith('.urdf'):
                     sys.exit('"%s" is not a URDF file.' % robot.urdf_path)
 

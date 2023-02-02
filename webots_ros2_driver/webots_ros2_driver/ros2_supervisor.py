@@ -102,8 +102,8 @@ class Ros2Supervisor(Node):
                 # Read the content of the URDF
                 with open(robot.urdf_path, 'r') as file:
                     urdfContent = file.read()
-                if urdfContent is None:
-                    sys.exit('Could not read the URDF file.')
+                    if urdfContent is None:
+                        sys.exit('Could not read the URDF file.')
 
                 # Get the package name and parent resource directory from URDF path
                 split_path = robot.urdf_path.split(os.path.sep)

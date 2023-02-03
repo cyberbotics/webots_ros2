@@ -40,8 +40,8 @@ namespace webots_ros2_control
       WbDeviceTag device = wb_robot_get_device(joint.name.c_str());
       WbNodeType type = wb_device_get_node_type(device);
       joint.motor = (type == WB_NODE_LINEAR_MOTOR || type == WB_NODE_ROTATIONAL_MOTOR) ? device : wb_position_sensor_get_motor(device);
-      device = (component.parameters.count("sensor") == 0) ?
-        wb_robot_get_device(joint.name.c_str()) :
+      device = (component.parameters.count("sensor") == 0) ? 
+        wb_robot_get_device(joint.name.c_str()) : 
         wb_robot_get_device(component.parameters.at("sensor").c_str());
       type = wb_device_get_node_type(device);
       joint.sensor = (type == WB_NODE_POSITION_SENSOR) ? device : wb_motor_get_position_sensor(device);
@@ -158,7 +158,7 @@ namespace webots_ros2_control
   }
 #endif
 
-#if FOXY
+#if FOXY || GALACTIC
   hardware_interface::return_type Ros2ControlSystem::read()
 #else  // HUMBLE, ROLLING
   hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/)
@@ -185,7 +185,7 @@ namespace webots_ros2_control
     return hardware_interface::return_type::OK;
   }
 
-#if FOXY
+#if FOXY || GALACTIC
   hardware_interface::return_type Ros2ControlSystem::write()
 #else  // HUMBLE, ROLLING
   hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/)

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright 1996-2023 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Unit test."""
-import sys
-import unittest
+"""Test that python files respect pep257."""
 
-# Run the sources tests
-test_suite = unittest.defaultTestLoader.discover('sources', '*.py')
-test_runner = unittest.TextTestRunner(verbosity=2, resultclass=unittest.TextTestResult)
-result = test_runner.run(test_suite)
-sys.exit(not result.wasSuccessful())
+from ament_pep257.main import main
+import pytest
+
+
+@pytest.mark.linter
+@pytest.mark.pep257
+def test_pep257():
+    rc = main(argv=['.', '--exclude', 'webots_ros2_importer/urdf2webots/'])
+    assert rc == 0, 'Found code style errors / warnings'

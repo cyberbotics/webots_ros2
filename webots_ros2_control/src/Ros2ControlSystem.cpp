@@ -21,26 +21,28 @@
 #include <vector>
 
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "pluginlib/class_list_macros.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "pluginlib/class_list_macros.hpp"
 
-#include <webots/device.h>
 #include <webots/robot.h>
+#include <webots/device.h>
 
-namespace webots_ros2_control {
-  Ros2ControlSystem::Ros2ControlSystem() { mNode = NULL; }
-  void Ros2ControlSystem::init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) {
+namespace webots_ros2_control
+{
+  void Ros2ControlSystem::init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info)
+  {
     mNode = node;
-    for (hardware_interface::ComponentInfo component : info.joints) {
+    for (hardware_interface::ComponentInfo component : info.joints)
+    {
       Joint joint;
       joint.name = component.name;
 
       WbDeviceTag device = wb_robot_get_device(joint.name.c_str());
       WbNodeType type = wb_device_get_node_type(device);
-      joint.motor =
-        (type == WB_NODE_LINEAR_MOTOR || type == WB_NODE_ROTATIONAL_MOTOR) ? device : wb_position_sensor_get_motor(device);
-      device = (component.parameters.count("sensor") == 0) ? wb_robot_get_device(joint.name.c_str()) :
-                                                             wb_robot_get_device(component.parameters.at("sensor").c_str());
+      joint.motor = (type == WB_NODE_LINEAR_MOTOR || type == WB_NODE_ROTATIONAL_MOTOR) ? device : wb_position_sensor_get_motor(device);
+      device = (component.parameters.count("sensor") == 0) ?
+        wb_robot_get_device(joint.name.c_str()) :
+        wb_robot_get_device(component.parameters.at("sensor").c_str());
       type = wb_device_get_node_type(device);
       joint.sensor = (type == WB_NODE_POSITION_SENSOR) ? device : wb_motor_get_position_sensor(device);
 
@@ -61,7 +63,8 @@ namespace webots_ros2_control {
       joint.acceleration = NAN;
 
       // Configure the command interface
-      for (hardware_interface::InterfaceInfo commandInterface : component.command_interfaces) {
+      for (hardware_interface::InterfaceInfo commandInterface : component.command_interfaces)
+      {
         if (commandInterface.name == "position")
           joint.controlPosition = true;
         else if (commandInterface.name == "velocity")
@@ -71,7 +74,8 @@ namespace webots_ros2_control {
         else
           throw std::runtime_error("Invalid hardware info name `" + commandInterface.name + "`");
       }
-      if (joint.motor && joint.controlVelocity && !joint.controlPosition) {
+      if (joint.motor && joint.controlVelocity && !joint.controlPosition)
+      {
         wb_motor_set_position(joint.motor, INFINITY);
         wb_motor_set_velocity(joint.motor, 0.0);
       }
@@ -81,74 +85,75 @@ namespace webots_ros2_control {
   }
 
 #if FOXY
-  hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info) {
-    if (configure_default(info) != hardware_interface::return_type::OK) {
+  hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info)
+  {
+    if (configure_default(info) != hardware_interface::return_type::OK)
+    {
       return hardware_interface::return_type::ERROR;
     }
     status_ = hardware_interface::status::CONFIGURED;
     return hardware_interface::return_type::OK;
   }
 #else
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_init(
-    const hardware_interface::HardwareInfo &info) {
-    if (hardware_interface::SystemInterface::on_init(info) !=
-        rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS) {
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_init(const hardware_interface::HardwareInfo &info)
+  {
+    if (hardware_interface::SystemInterface::on_init(info) != rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS)
+    {
       return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::ERROR;
     }
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
 #endif
 
-  std::vector<hardware_interface::StateInterface> Ros2ControlSystem::export_state_interfaces() {
+  std::vector<hardware_interface::StateInterface> Ros2ControlSystem::export_state_interfaces()
+  {
     std::vector<hardware_interface::StateInterface> interfaces;
     for (Joint &joint : mJoints)
       if (joint.sensor) {
-        interfaces.emplace_back(
-          hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_POSITION, &(joint.position)));
-        interfaces.emplace_back(
-          hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_VELOCITY, &(joint.velocity)));
-        interfaces.emplace_back(
-          hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_ACCELERATION, &(joint.acceleration)));
+        interfaces.emplace_back(hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_POSITION, &(joint.position)));
+        interfaces.emplace_back(hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_VELOCITY, &(joint.velocity)));
+        interfaces.emplace_back(hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_ACCELERATION, &(joint.acceleration)));
       }
 
     return interfaces;
   }
 
-  std::vector<hardware_interface::CommandInterface> Ros2ControlSystem::export_command_interfaces() {
+  std::vector<hardware_interface::CommandInterface> Ros2ControlSystem::export_command_interfaces()
+  {
     std::vector<hardware_interface::CommandInterface> interfaces;
     for (Joint &joint : mJoints)
-      if (joint.motor) {
+      if (joint.motor)
+      {
         if (joint.controlPosition)
-          interfaces.emplace_back(
-            hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_POSITION, &(joint.positionCommand)));
+          interfaces.emplace_back(hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_POSITION, &(joint.positionCommand)));
         if (joint.controlEffort)
-          interfaces.emplace_back(
-            hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_EFFORT, &(joint.effortCommand)));
+          interfaces.emplace_back(hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_EFFORT, &(joint.effortCommand)));
         if (joint.controlVelocity)
-          interfaces.emplace_back(
-            hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_VELOCITY, &(joint.velocityCommand)));
+          interfaces.emplace_back(hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_VELOCITY, &(joint.velocityCommand)));
       }
     return interfaces;
   }
 
 #if FOXY
-  hardware_interface::return_type Ros2ControlSystem::start() {
+  hardware_interface::return_type Ros2ControlSystem::start()
+  {
     status_ = hardware_interface::status::STARTED;
     return hardware_interface::return_type::OK;
   }
 
-  hardware_interface::return_type Ros2ControlSystem::stop() {
+  hardware_interface::return_type Ros2ControlSystem::stop()
+  {
     status_ = hardware_interface::status::STOPPED;
     return hardware_interface::return_type::OK;
   }
 #else
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_activate(
-    const rclcpp_lifecycle::State & /*previous_state*/) {
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_activate(const rclcpp_lifecycle::State & /*previous_state*/)
+  {
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
 
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_deactivate(
-    const rclcpp_lifecycle::State & /*previous_state*/) {
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_deactivate(const rclcpp_lifecycle::State & /*previous_state*/)
+  {
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
 #endif
@@ -156,7 +161,7 @@ namespace webots_ros2_control {
 #if FOXY
   hardware_interface::return_type Ros2ControlSystem::read()
 #else  // HUMBLE, ROLLING
-  hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+  hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/)
 #endif
   {
     static double lastReadTime = 0;
@@ -164,7 +169,8 @@ namespace webots_ros2_control {
     const double deltaTime = wb_robot_get_time() - lastReadTime;
     lastReadTime = wb_robot_get_time();
 
-    for (Joint &joint : mJoints) {
+    for (Joint &joint : mJoints)
+    {
       if (joint.sensor) {
         const double position = wb_position_sensor_get_value(joint.sensor);
         const double velocity = std::isnan(joint.position) ? NAN : (position - joint.position) / deltaTime;
@@ -182,14 +188,17 @@ namespace webots_ros2_control {
 #if FOXY
   hardware_interface::return_type Ros2ControlSystem::write()
 #else  // HUMBLE, ROLLING
-  hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+  hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time &/*time*/, const rclcpp::Duration &/*period*/)
 #endif
   {
-    for (Joint &joint : mJoints) {
-      if (joint.motor) {
+    for (Joint &joint : mJoints)
+    {
+      if (joint.motor)
+      {
         if (joint.controlPosition && !std::isnan(joint.positionCommand))
           wb_motor_set_position(joint.motor, joint.positionCommand);
-        if (joint.controlVelocity && !std::isnan(joint.velocityCommand)) {
+        if (joint.controlVelocity && !std::isnan(joint.velocityCommand))
+        {
           // In the position control mode the velocity cannot be negative.
           const double velocityCommand = joint.controlPosition ? abs(joint.velocityCommand) : joint.velocityCommand;
           wb_motor_set_velocity(joint.motor, velocityCommand);
@@ -200,6 +209,6 @@ namespace webots_ros2_control {
     }
     return hardware_interface::return_type::OK;
   }
-}  // namespace webots_ros2_control
+}
 
 PLUGINLIB_EXPORT_CLASS(webots_ros2_control::Ros2ControlSystem, webots_ros2_control::Ros2ControlSystemInterface)

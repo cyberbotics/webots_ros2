@@ -17,9 +17,10 @@
 
 #include <string>
 
-namespace webots_ros2_driver {
-  int getDeviceTimestepMsFromPublishTimestep(double publishTimestep, int basicTimestepMs);
-  std::string getFixedNameString(const std::string &name);
-}  // namespace webots_ros2_driver
+namespace webots_ros2_driver
+{
+    int getDeviceTimestepMsFromPublishTimestep(double publishTimestep, int basicTimestepMs);
+    std::string getFixedNameString(const std::string &name);
+}
 
 #endif

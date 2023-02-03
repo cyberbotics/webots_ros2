@@ -15,15 +15,18 @@
 #ifndef ROS2_DISTANCE_SENSOR_HPP
 #define ROS2_DISTANCE_SENSOR_HPP
 
-#include <webots/distance_sensor.h>
-#include <sensor_msgs/msg/range.hpp>
 #include <unordered_map>
-#include <webots_ros2_driver/WebotsNode.hpp>
+#include <sensor_msgs/msg/range.hpp>
+#include <webots/distance_sensor.h>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
+#include <webots_ros2_driver/WebotsNode.hpp>
 
-namespace webots_ros2_driver {
 
-  class Ros2DistanceSensor : public Ros2SensorPlugin {
+namespace webots_ros2_driver
+{
+
+  class Ros2DistanceSensor : public Ros2SensorPlugin
+  {
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
@@ -40,6 +43,6 @@ namespace webots_ros2_driver {
     bool mIsEnabled;
   };
 
-}  // namespace webots_ros2_driver
+}
 
 #endif

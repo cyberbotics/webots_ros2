@@ -15,15 +15,16 @@
 #ifndef MATH_HPP
 #define MATH_HPP
 
-#include <cmath>
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/vector3.hpp>
+#include <cmath>
 
-namespace webots_ros2_driver {
+namespace webots_ros2_driver
+{
   void matrixToQuaternion(const double *matrix, geometry_msgs::msg::Quaternion &q);
   void axisAngleToQuaternion(const double *axisAngle, geometry_msgs::msg::Quaternion &q);
   void quaternionToAxisAngle(const geometry_msgs::msg::Quaternion &q, double *axisAngle);
 
   double interpolateLookupTable(double value, std::vector<double> &table);
-}  // namespace webots_ros2_driver
+}
 #endif

@@ -15,25 +15,27 @@
 #ifndef WEBOTS_NODE_HPP
 #define WEBOTS_NODE_HPP
 
-#include <chrono>
 #include <memory>
+#include <chrono>
 #include <unordered_map>
 
 #include <tinyxml2.h>
 
 #include <webots/supervisor.h>
 
-#include <pluginlib/class_loader.hpp>
-#include <rclcpp/qos.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp/qos.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <pluginlib/class_loader.hpp>
 
 #include "webots_ros2_driver/PluginInterface.hpp"
 
-namespace webots_ros2_driver {
+namespace webots_ros2_driver
+{
   class PluginInterface;
 
-  class WebotsNode : public rclcpp::Node {
+  class WebotsNode : public rclcpp::Node
+  {
   public:
     WebotsNode(std::string name);
     void init();
@@ -63,6 +65,6 @@ namespace webots_ros2_driver {
     std::shared_ptr<PluginInterface> loadPlugin(const std::string &type);
   };
 
-}  // end namespace webots_ros2_driver
+} // end namespace webots_ros2_driver
 
 #endif

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <webots/robot.h>
-#include <webots/vehicle/driver.h>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
+#include <webots/vehicle/driver.h>
+#include <webots/robot.h>
 #include <webots_ros2_driver/WebotsNode.hpp>
 
 int main(int argc, char **argv) {
@@ -40,7 +40,8 @@ int main(int argc, char **argv) {
   for (char notAllowedChar : " -.)(")
     std::replace(robotName.begin(), robotName.end(), notAllowedChar, '_');
 
-  std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName);
+  std::shared_ptr<webots_ros2_driver::WebotsNode> node =
+      std::make_shared<webots_ros2_driver::WebotsNode>(robotName);
   node->init();
   while (true) {
     if (node->step() == -1)

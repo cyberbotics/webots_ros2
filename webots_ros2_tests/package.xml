@@ -28,6 +28,8 @@
   <test_depend>std_srvs</test_depend>
   <test_depend>geometry_msgs</test_depend>
   <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
   <test_depend>launch</test_depend>
   <test_depend>launch_testing</test_depend>

@@ -1,5 +1,5 @@
 planning_plugin: ompl_interface/OMPLPlanner
-request_adapters:
+request_adapters: 
   default_planner_request_adapters/AddTimeParameterization
   default_planner_request_adapters/ResolveConstraintFrames
   default_planner_request_adapters/FixWorkspaceBounds

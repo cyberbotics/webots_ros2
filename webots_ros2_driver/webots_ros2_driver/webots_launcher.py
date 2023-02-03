@@ -23,7 +23,6 @@ import subprocess
 import sys
 import tempfile
 
-import launch
 from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
 from launch.launch_context import LaunchContext

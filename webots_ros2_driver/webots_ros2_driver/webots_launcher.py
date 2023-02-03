@@ -161,10 +161,6 @@ class WebotsLauncher(ExecuteProcess):
                 continue
 
             new_url_path = os.path.split(world_path)[0] + '/' + url_path
-            if self.__has_shared_folder:
-                # Copy asset to shared folder
-                shutil.copy(new_url_path, os.path.join(container_shared_folder(), os.path.basename(new_url_path)))
-                new_url_path = './' + os.path.basename(new_url_path)
             if self.__is_wsl:
                 command = ['wslpath', '-w', new_url_path]
                 new_url_path = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')

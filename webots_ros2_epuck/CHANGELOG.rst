@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_epuck
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.3 (2023-XX-XX)
+------------------
+* Updated supervisor launch.
+
 2023.0.1 (2023-01-05)
 ------------------
 * Fixed broken controller connection in Rats life example.

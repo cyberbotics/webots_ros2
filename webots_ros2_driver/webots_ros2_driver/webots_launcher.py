@@ -52,7 +52,7 @@ class _ConditionalSubstitution(Substitution):
 
 
 class WebotsLauncher(ExecuteProcess):
-    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
+    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, ros2_supervisor=False, **kwargs):
         if sys.platform == 'win32':
             print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a '
                   'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
@@ -60,6 +60,9 @@ class WebotsLauncher(ExecuteProcess):
                   'information.', file=sys.stderr)
         self.__is_wsl = is_wsl()
         self.__has_shared_folder = has_shared_folder()
+        self.__is_supervisor = ros2_supervisor
+        if self.__is_supervisor:
+            self._supervisor = Ros2SupervisorLauncher()
 
         # Find Webots executable
         if not self.__has_shared_folder:
@@ -176,14 +179,15 @@ class WebotsLauncher(ExecuteProcess):
             file.write(content)
 
         # Add the Ros2Supervisor
-        indent = '  '
-        world_file = open(self.__world_copy.name, 'a')
-        world_file.write('Robot {\n')
-        world_file.write(indent + 'name "Ros2Supervisor"\n')
-        world_file.write(indent + 'controller "<extern>"\n')
-        world_file.write(indent + 'supervisor TRUE\n')
-        world_file.write('}\n')
-        world_file.close()
+        if self.__is_supervisor:
+            indent = '  '
+            world_file = open(self.__world_copy.name, 'a')
+            world_file.write('Robot {\n')
+            world_file.write(indent + 'name "Ros2Supervisor"\n')
+            world_file.write(indent + 'controller "<extern>"\n')
+            world_file.write(indent + 'supervisor TRUE\n')
+            world_file.write('}\n')
+            world_file.close()
 
         # Copy world file to shared folder
         if self.__has_shared_folder:

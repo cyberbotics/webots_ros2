@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_turtlebot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.3 (2023-XX-XX)
+------------------
+* Updated supervisor launch.
+
 2022.1.3 (2022-11-02)
 ------------------
 * Added macOS support.

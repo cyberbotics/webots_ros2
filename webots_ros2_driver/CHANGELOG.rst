@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.3 (2023-XX-XX)
+------------------
+* Added Ros2Supervisor creation.
+
 2023.0.2 (2023-XX-XX)
 ------------------
 * Fixed relative assets in macOS.

@@ -2,14 +2,12 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.3 (2023-XX-XX)
-------------------
-* Ros2Supervisor is now optional.
-
 2023.0.2 (2023-XX-XX)
 ------------------
 * Drop support for Galactic.
+* Fixed the spawn of URDF robots in WSL and macOS when using full path.
 * Fixed relative assets in macOS.
+* Ros2Supervisor is now optional.
 
 2023.0.1 (2023-01-05)
 ------------------

@@ -2,8 +2,9 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.3 (2023-XX-XX)
+2023.0.2 (2023-XX-XX)
 ------------------
+* Fixed URDF relative URLs to assets.
 * Updated supervisor launch.
 
 2022.1.3 (2022-11-02)

@@ -19,13 +19,14 @@
 from launch.actions import ExecuteProcess
 
 
+
 def get_webots_driver_node(event, driver_node):
     """Return the driver node in case the service response is successful."""
     if 'success=True' in event.text.decode().strip():
         return driver_node
     print('WARNING: the Ros2Supervisor was not able to spawn this URDF robot.')
     return
-
+    
 
 class URDFSpawner(ExecuteProcess):
     def __init__(self, output='log', name=None, urdf_path=None, robot_description=None, relative_path_prefix=None,

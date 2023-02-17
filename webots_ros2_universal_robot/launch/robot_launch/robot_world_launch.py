@@ -22,7 +22,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
-from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -34,11 +34,9 @@ def generate_launch_description():
 
     # Starts Webots
     webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world])
+        world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        ros2_supervisor=True
     )
-
-    # Starts the Ros2Supervisor node, with by default respawn=True
-    ros2_supervisor = Ros2SupervisorLauncher()
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -47,7 +45,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_universal_robot/worlds` directory'
         ),
         webots,
-        ros2_supervisor,
+        webots._supervisor,
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(

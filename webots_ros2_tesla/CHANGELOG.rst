@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_tesla
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.2 (2023-02-07)
+------------------
+* Updated supervisor launch.
+
 2022.1.3 (2022-11-02)
 ------------------
 * Added macOS support.

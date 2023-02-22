@@ -25,7 +25,7 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
-from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.utils import controller_url_prefix
 
 
@@ -59,16 +59,15 @@ def generate_launch_description():
     world = LaunchConfiguration('world')
 
     webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world])
+        world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        ros2_supervisor=True
     )
-
-    ros2_supervisor = Ros2SupervisorLauncher()
 
     # The following line is important!
     # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
     reset_handler = launch.actions.RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessExit(
-            target_action=ros2_supervisor,
+            target_action=webots._supervisor,
             on_exit=get_ros2_nodes,
         )
     )
@@ -80,7 +79,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_tesla/worlds` directory'
         ),
         webots,
-        ros2_supervisor,
+        webots._supervisor,
 
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(

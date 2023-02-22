@@ -2,9 +2,15 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.2 (2023-02-07)
+------------------
+* Fixed the spawn of URDF robots in WSL and macOS when using full path.
+* Fixed relative assets in macOS.
+* Added Ros2Supervisor creation.
+
 2023.0.1 (2023-01-05)
 ------------------
-* Fix relative assets in WSL.
+* Fixed relative assets in WSL.
 
 2023.0.0 (2022-11-30)
 ------------------

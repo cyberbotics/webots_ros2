@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2_tests</name>
-  <version>2023.0.1</version>
+  <version>2023.0.2</version>
   <description>System tests for `webots_ros2` packages.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -28,8 +28,6 @@
   <test_depend>std_srvs</test_depend>
   <test_depend>geometry_msgs</test_depend>
   <test_depend>ament_copyright</test_depend>
-  <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
   <test_depend>launch</test_depend>
   <test_depend>launch_testing</test_depend>

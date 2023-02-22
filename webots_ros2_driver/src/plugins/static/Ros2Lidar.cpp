@@ -14,15 +14,13 @@
 
 #include <webots_ros2_driver/plugins/static/Ros2Lidar.hpp>
 
-#include <sensor_msgs/msg/point_field.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
+#include <sensor_msgs/msg/point_field.hpp>
 
 #include <webots/robot.h>
 
-namespace webots_ros2_driver
-{
-  void Ros2Lidar::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {
+namespace webots_ros2_driver {
+  void Ros2Lidar::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
     Ros2SensorPlugin::init(node, parameters);
     mIsSensorEnabled = false;
     mIsPointCloudEnabled = false;
@@ -31,8 +29,7 @@ namespace webots_ros2_driver
     assert(mLidar != 0);
 
     // Laser publisher
-    if (wb_lidar_get_number_of_layers(mLidar) == 1)
-    {
+    if (wb_lidar_get_number_of_layers(mLidar) == 1) {
       mLaserPublisher = mNode->create_publisher<sensor_msgs::msg::LaserScan>(mTopicName, rclcpp::SensorDataQoS().reliable());
       const int resolution = wb_lidar_get_horizontal_resolution(mLidar);
       mLaserMessage.header.frame_id = mFrameName;
@@ -47,7 +44,8 @@ namespace webots_ros2_driver
     }
 
     // Point cloud publisher
-    mPointCloudPublisher = mNode->create_publisher<sensor_msgs::msg::PointCloud2>(mTopicName + "/point_cloud", rclcpp::SensorDataQoS().reliable());
+    mPointCloudPublisher =
+      mNode->create_publisher<sensor_msgs::msg::PointCloud2>(mTopicName + "/point_cloud", rclcpp::SensorDataQoS().reliable());
     mPointCloudMessage.header.frame_id = mFrameName;
     mPointCloudMessage.height = 1;
     mPointCloudMessage.point_step = 20;
@@ -75,8 +73,7 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2Lidar::step()
-  {
+  void Ros2Lidar::step() {
     if (!preStep())
       return;
 
@@ -90,12 +87,11 @@ namespace webots_ros2_driver
       return;
 
     const bool shouldPointCloudBeEnabled = mPointCloudPublisher->get_subscription_count() > 0;
-    const bool shouldSensorBeEnabled = shouldPointCloudBeEnabled ||
-                                 (mLaserPublisher != nullptr && mLaserPublisher->get_subscription_count() > 0);
+    const bool shouldSensorBeEnabled =
+      shouldPointCloudBeEnabled || (mLaserPublisher != nullptr && mLaserPublisher->get_subscription_count() > 0);
 
     // Enable/Disable sensor
-    if (shouldSensorBeEnabled != mIsSensorEnabled)
-    {
+    if (shouldSensorBeEnabled != mIsSensorEnabled) {
       if (shouldSensorBeEnabled)
         wb_lidar_enable(mLidar, mPublishTimestepSyncedMs);
       else
@@ -104,8 +100,7 @@ namespace webots_ros2_driver
     }
 
     // Enable/Disable point cloud
-    if (shouldPointCloudBeEnabled != mIsPointCloudEnabled)
-    {
+    if (shouldPointCloudBeEnabled != mIsPointCloudEnabled) {
       if (shouldPointCloudBeEnabled)
         wb_lidar_enable_point_cloud(mLidar);
       else
@@ -114,11 +109,9 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2Lidar::publishPointCloud()
-  {
+  void Ros2Lidar::publishPointCloud() {
     auto data = wb_lidar_get_point_cloud(mLidar);
-    if (data)
-    {
+    if (data) {
       mPointCloudMessage.header.stamp = mNode->get_clock()->now();
 
       mPointCloudMessage.width = wb_lidar_get_number_of_points(mLidar);
@@ -131,15 +124,13 @@ namespace webots_ros2_driver
     }
   }
 
-  void Ros2Lidar::publishLaserScan()
-  {
+  void Ros2Lidar::publishLaserScan() {
     auto rangeImage = wb_lidar_get_layer_range_image(mLidar, 0);
-    if (rangeImage)
-    {
+    if (rangeImage) {
       memcpy(mLaserMessage.ranges.data(), rangeImage, mLaserMessage.ranges.size() * sizeof(float));
       mLaserMessage.header.stamp = mNode->get_clock()->now();
       mLaserPublisher->publish(mLaserMessage);
     }
   }
 
-} // end namespace webots_ros2_driver
+}  // end namespace webots_ros2_driver

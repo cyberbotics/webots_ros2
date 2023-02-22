@@ -52,6 +52,7 @@ mkdir -p resources/projects/libraries/generic_robot_window
 cp -r ${WEBOTS_HOME}/resources/projects/libraries/generic_robot_window/* resources/projects/libraries/generic_robot_window
 cp ${WEBOTS_HOME}/resources/Makefile.include resources
 cp ${WEBOTS_HOME}/resources/Makefile.os.include resources
+cp ${WEBOTS_HOME}/resources/version.txt resources
 
 rm -rf src
 mkdir -p src/controller

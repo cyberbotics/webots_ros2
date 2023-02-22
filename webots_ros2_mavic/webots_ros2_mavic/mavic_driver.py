@@ -79,7 +79,7 @@ class MavicDriver:
         # Read sensors
         roll, pitch, _ = self.__imu.getRollPitchYaw()
         _, _, vertical = self.__gps.getValues()
-        roll_acceleration, pitch_acceleration, twist_yaw = self.__gyro.getValues()
+        roll_velocity, pitch_velocity, twist_yaw = self.__gyro.getValues()
         velocity = self.__gps.getSpeed()
         if math.isnan(velocity):
             return
@@ -107,8 +107,8 @@ class MavicDriver:
         # Low level controller (roll, pitch, yaw)
         yaw_ref = self.__target_twist.angular.z
 
-        roll_input = K_ROLL_P * clamp(roll, -1, 1) + roll_acceleration + roll_ref
-        pitch_input = K_PITCH_P * clamp(pitch, -1, 1) + pitch_acceleration + pitch_ref
+        roll_input = K_ROLL_P * clamp(roll, -1, 1) + roll_velocity + roll_ref
+        pitch_input = K_PITCH_P * clamp(pitch, -1, 1) + pitch_velocity + pitch_ref
         yaw_input = K_YAW_P * (yaw_ref - twist_yaw)
 
         m1 = K_VERTICAL_THRUST + vertical_input + yaw_input + pitch_input + roll_input

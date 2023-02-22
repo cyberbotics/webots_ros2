@@ -52,12 +52,17 @@ class _ConditionalSubstitution(Substitution):
 
 
 class WebotsLauncher(ExecuteProcess):
-    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
+    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, ros2_supervisor=False, **kwargs):
         if sys.platform == 'win32':
-            print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
-            print('WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.', file=sys.stderr)
+            print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a '
+                  'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
+            print('WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more '
+                  'information.', file=sys.stderr)
         self.__is_wsl = is_wsl()
         self.__has_shared_folder = has_shared_folder()
+        self.__is_supervisor = ros2_supervisor
+        if self.__is_supervisor:
+            self._supervisor = Ros2SupervisorLauncher()
 
         # Find Webots executable
         if not self.__has_shared_folder:
@@ -87,7 +92,11 @@ class WebotsLauncher(ExecuteProcess):
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
         stderr = _ConditionalSubstitution(condition=gui, false_value='--stderr')
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
-        stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
+        if isinstance(stream, bool):
+            stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
+        else:
+            stream_argument = "--stream=" + stream
+
         xvfb_run_prefix = []
 
         if 'WEBOTS_OFFSCREEN' in os.environ:
@@ -97,7 +106,8 @@ class WebotsLauncher(ExecuteProcess):
 
         # Initialize command to start Webots remotely through TCP
         if self.__has_shared_folder:
-            webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots_tcp_client.py'))
+            webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts',
+                                 'webots_tcp_client.py'))
             super().__init__(
                 output=output,
                 cmd=[
@@ -153,12 +163,18 @@ class WebotsLauncher(ExecuteProcess):
             url_path = match.group(1)
 
             # Absolute path or Webots relative path or Web paths
-            if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') or url_path.startswith('https://'):
+            if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') \
+                    or url_path.startswith('https://'):
                 continue
 
             new_url_path = os.path.split(world_path)[0] + '/' + url_path
+            if self.__has_shared_folder:
+                # Copy asset to shared folder
+                shutil.copy(new_url_path, os.path.join(container_shared_folder(), os.path.basename(new_url_path)))
+                new_url_path = './' + os.path.basename(new_url_path)
             if self.__is_wsl:
-                new_url_path = subprocess.check_output(['wslpath', '-w', new_url_path]).strip().decode('utf-8').replace('\\', '/')
+                command = ['wslpath', '-w', new_url_path]
+                new_url_path = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
             new_url_path = '"' + new_url_path + '"'
             url_path = '"' + url_path + '"'
             content = content.replace(url_path, new_url_path)
@@ -167,18 +183,20 @@ class WebotsLauncher(ExecuteProcess):
             file.write(content)
 
         # Add the Ros2Supervisor
-        indent = '  '
-        world_file = open(self.__world_copy.name, 'a')
-        world_file.write('Robot {\n')
-        world_file.write(indent + 'name "Ros2Supervisor"\n')
-        world_file.write(indent + 'controller "<extern>"\n')
-        world_file.write(indent + 'supervisor TRUE\n')
-        world_file.write('}\n')
-        world_file.close()
+        if self.__is_supervisor:
+            indent = '  '
+            world_file = open(self.__world_copy.name, 'a')
+            world_file.write('Robot {\n')
+            world_file.write(indent + 'name "Ros2Supervisor"\n')
+            world_file.write(indent + 'controller "<extern>"\n')
+            world_file.write(indent + 'supervisor TRUE\n')
+            world_file.write('}\n')
+            world_file.close()
 
         # Copy world file to shared folder
         if self.__has_shared_folder:
-            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
+            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(),
+                                                             os.path.basename(self.__world_copy.name)))
 
         # Execute process
         return super().execute(context)

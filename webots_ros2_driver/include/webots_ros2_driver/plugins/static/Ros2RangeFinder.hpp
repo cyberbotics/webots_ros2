@@ -15,20 +15,17 @@
 #ifndef ROS2_RANGE_FINDER_HPP
 #define ROS2_RANGE_FINDER_HPP
 
-#include <unordered_map>
+#include <webots/range_finder.h>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <webots/range_finder.h>
-#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
+#include <unordered_map>
 #include <webots_ros2_driver/WebotsNode.hpp>
+#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 
+namespace webots_ros2_driver {
 
-namespace webots_ros2_driver
-{
-
-  class Ros2RangeFinder : public Ros2SensorPlugin
-  {
+  class Ros2RangeFinder : public Ros2SensorPlugin {
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
@@ -49,6 +46,6 @@ namespace webots_ros2_driver
     bool mIsEnabled;
   };
 
-}
+}  // namespace webots_ros2_driver
 
 #endif

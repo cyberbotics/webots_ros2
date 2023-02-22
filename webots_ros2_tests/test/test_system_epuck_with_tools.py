@@ -35,8 +35,8 @@ def generate_test_description():
     initialize_webots_test()
 
     # If testing in GitHub CI, skip the test as RViz might crash
-    if 'CI' in os.environ and os.environ['CI'] == '1':
-        pytest.skip('RViz might crash in CI, skipping this test')
+    # if 'CI' in os.environ and os.environ['CI'] == '1':
+    #    pytest.skip('RViz might crash in CI, skipping this test')
 
     epuck_with_tools_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

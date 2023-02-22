@@ -39,8 +39,8 @@ turtlebot3_map = 'turtlebot3_burger_example_map.yaml'
 def generate_test_description():
     initialize_webots_test()
     # If testing in GitHub CI, skip the test as RViz might crash
-    # if 'CI' in os.environ and os.environ['CI'] == '1':
-    #    pytest.skip('RViz might crash in CI, skipping this test')
+    if 'CI' in os.environ and os.environ['CI'] == '1':
+        pytest.skip('RViz might crash in CI, skipping this test')
 
     # If ROS_DISTRO is rolling, skip the test as some required packages are missing (cf. ci_after_init.bash)
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling':

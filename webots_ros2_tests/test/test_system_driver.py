@@ -49,15 +49,8 @@ def generate_test_description():
     webots = WebotsLauncher(
         world=os.path.join(package_dir, 'worlds', 'driver_test.wbt'),
         gui=False,
-        mode='fast'
-    )
-
-    ros2_supervisor = Node(
-        package='webots_ros2_driver',
-        executable='ros2_supervisor.py',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor'},
-        respawn=True,
+        mode='fast',
+        ros2_supervisor=True
     )
 
     webots_driver = Node(
@@ -70,7 +63,7 @@ def generate_test_description():
 
     return LaunchDescription([
         webots,
-        ros2_supervisor,
+        webots._supervisor,
         webots_driver,
         launch_testing.actions.ReadyToTest(),
         launch.actions.RegisterEventHandler(

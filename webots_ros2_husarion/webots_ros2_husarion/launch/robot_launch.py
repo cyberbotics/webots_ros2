@@ -5,7 +5,7 @@ from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
 from launch.event_handlers import OnProcessExit
 from launch.actions import RegisterEventHandler, DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, Command
 from launch.conditions import LaunchConfigurationEquals
 
 def generate_launch_description():
@@ -21,7 +21,7 @@ def generate_launch_description():
 
 
     rosbot_description_urdf = Command(['xacro ', rosbot_description, ' use_sim:=true simulation_engine:=webots'])
-    rosbot_xl_description_urdf = Command(['xacro ', rosbot_xl_description, ' use_sim:=true simulation_engine:=webots'])
+    rosbot_xl_description_urdf = Command(['xacro ', rosbot_xl_description, ' use_sim:=true mecanum:=true simulation_engine:=webots'])
 
 
     rosbot_ros2_control_params = os.path.join(

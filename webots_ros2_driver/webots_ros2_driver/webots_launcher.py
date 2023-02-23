@@ -64,7 +64,7 @@ class WebotsLauncher(ExecuteProcess):
         self.__has_shared_folder = has_shared_folder()
         self.__is_supervisor = ros2_supervisor
         if self.__is_supervisor:
-            self._supervisor = Ros2SupervisorLauncher()
+            self._supervisor = Ros2SupervisorLauncher(port=port)
 
         # Find Webots executable
         if not self.__has_shared_folder:

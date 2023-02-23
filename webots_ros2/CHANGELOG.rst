@@ -8,6 +8,8 @@ Changelog for package webots_ros2
 * Fixed the spawn of URDF robots in WSL and macOS when using full path.
 * Fixed relative assets in macOS.
 * Ros2Supervisor is now optional.
+* Adding port, stream type parameters to webots_laucher
+* Copying .wbproj when launching a webots world via webots_launcher
 
 2023.0.1 (2023-01-05)
 ------------------

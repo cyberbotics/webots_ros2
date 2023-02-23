@@ -161,14 +161,11 @@ class WebotsLauncher(ExecuteProcess):
         shutil.copy2(world_path, self.__world_copy.name)
 
         # look for a wbproj file and copy if available
-        wbproj_path = Path(world_path)
-        wbproj_path = wbproj_path.with_suffix('.wbproj')
-        wbproj_path = wbproj_path.with_name("."+wbproj_path.name)
+        wbproj_path = Path(world_path).with_name('.' + Path(world_path).stem + '.wbproj')
 
         if wbproj_path.exists():
-            wbproj_copy_path = Path(self.__world_copy.name)
-            wbproj_copy_path = wbproj_copy_path.with_suffix('.wbproj')
-            wbproj_copy_path = wbproj_copy_path.with_name("."+wbproj_copy_path.name)
+            wbproj_copy_path = Path(self.__world_copy.name).with_name('.' + Path(self.__world_copy.name).stem +
+                                                                      '.wbproj')
             shutil.copy2(wbproj_path, wbproj_copy_path)
 
         # Update relative paths in the world
@@ -211,8 +208,11 @@ class WebotsLauncher(ExecuteProcess):
 
         # Copy world file to shared folder
         if self.__has_shared_folder:
-            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(),
-                                                             os.path.basename(self.__world_copy.name)))
+            shared_world_file = os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name))
+            shutil.copy(self.__world_copy.name, shared_world_file)
+            if wbproj_path.exists():
+                shared_wbproj_copy_path = Path(shared_world_file).with_name('.' + Path(shared_world_file).stem + '.wbproj')
+                shutil.copy(wbproj_path, shared_wbproj_copy_path)
 
         # Execute process
         return super().execute(context)
@@ -245,7 +245,7 @@ class WebotsLauncher(ExecuteProcess):
 
 
 class Ros2SupervisorLauncher(Node):
-    def __init__(self, output='screen', respawn=True, **kwargs):
+    def __init__(self, output='screen', respawn=True, port="1234", **kwargs):
         # Launch the Ros2Supervisor node
         super().__init__(
             package='webots_ros2_driver',
@@ -253,7 +253,7 @@ class Ros2SupervisorLauncher(Node):
             output=output,
             # Set WEBOTS_HOME to the webots_ros2_driver installation folder
             # to load the correct libController libraries from the Python API
-            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor',
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix(port) + 'Ros2Supervisor',
                             'WEBOTS_HOME': get_package_prefix('webots_ros2_driver')},
             respawn=respawn,
             **kwargs

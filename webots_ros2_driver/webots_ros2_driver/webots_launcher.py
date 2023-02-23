@@ -22,6 +22,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from pathlib import Path
 
 from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
@@ -52,7 +53,7 @@ class _ConditionalSubstitution(Substitution):
 
 
 class WebotsLauncher(ExecuteProcess):
-    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, ros2_supervisor=False, **kwargs):
+    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, ros2_supervisor=False, port="1234", **kwargs):
         if sys.platform == 'win32':
             print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a '
                   'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
@@ -96,6 +97,7 @@ class WebotsLauncher(ExecuteProcess):
             stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
         else:
             stream_argument = "--stream=" + stream
+        port_argument = '--port=' + port
 
         xvfb_run_prefix = []
 
@@ -114,6 +116,7 @@ class WebotsLauncher(ExecuteProcess):
                     'python3',
                     webots_tcp_client,
                     stream_argument,
+                    port_argument,
                     no_rendering,
                     stdout,
                     stderr,
@@ -133,6 +136,7 @@ class WebotsLauncher(ExecuteProcess):
                 cmd=xvfb_run_prefix + [
                     webots_path,
                     stream_argument,
+                    port_argument,
                     no_rendering,
                     stdout,
                     stderr,
@@ -154,6 +158,17 @@ class WebotsLauncher(ExecuteProcess):
             world_path = self.__world
 
         shutil.copy2(world_path, self.__world_copy.name)
+
+        # look for a wbproj file and copy if available
+        wbproj_path = Path(world_path)
+        wbproj_path = wbproj_path.with_suffix('.wbproj')
+        wbproj_path = wbproj_path.with_name("."+wbproj_path.name)
+        
+        if wbproj_path.exists():
+            wbproj_copy_path = Path(self.__world_copy.name)
+            wbproj_copy_path = wbproj_copy_path.with_suffix('.wbproj')
+            wbproj_copy_path = wbproj_copy_path.with_name("."+wbproj_copy_path.name)
+            shutil.copy2(wbproj_path, wbproj_copy_path)    
 
         # Update relative paths in the world
         with open(self.__world_copy.name, 'r') as file:

@@ -245,7 +245,7 @@ class WebotsLauncher(ExecuteProcess):
 
 
 class Ros2SupervisorLauncher(Node):
-    def __init__(self, output='screen', respawn=True, port="1234", **kwargs):
+    def __init__(self, output='screen', respawn=True, port='1234', **kwargs):
         # Launch the Ros2Supervisor node
         super().__init__(
             package='webots_ros2_driver',

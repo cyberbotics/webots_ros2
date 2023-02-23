@@ -135,7 +135,7 @@ def get_host_ip():
         sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
 
 
-def controller_url_prefix(port="1234"):
+def controller_url_prefix(port='1234'):
     if has_shared_folder() or is_wsl():
         return 'tcp://' + (get_host_ip() if has_shared_folder() else get_wsl_ip_address()) + ':' + port + '/'
     else:

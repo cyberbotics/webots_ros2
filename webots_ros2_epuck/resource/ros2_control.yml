@@ -17,3 +17,4 @@ diffdrive_controller:
     wheel_radius: 0.02
 
     use_stamped_vel: false
+    base_frame_id: "base_link"

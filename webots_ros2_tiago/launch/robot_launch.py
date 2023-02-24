@@ -123,7 +123,7 @@ def get_ros2_nodes(*args):
         )
     )
 
-    # Publish initial pose for RViz
+    # Publish initial pose for navigation
     publish_initial_pose = ExecuteProcess(
         cmd=[[
             'ros2 topic pub --once ',

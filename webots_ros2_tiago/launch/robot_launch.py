@@ -19,7 +19,7 @@
 import os
 import pathlib
 import launch
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
@@ -134,7 +134,13 @@ def get_ros2_nodes(*args):
             'pose: {pose: {orientation: {w: 1.0}}}}"'
         ]],
         shell=True,
-        condition=launch.conditions.IfCondition(pub_init_pose and use_nav)
+        condition=launch.conditions.IfCondition(
+            PythonExpression([
+                pub_init_pose,
+                ' and ',
+                use_nav
+            ])
+        )
     )
 
     slam_toolbox = Node(

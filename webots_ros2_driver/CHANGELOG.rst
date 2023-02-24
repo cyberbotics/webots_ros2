@@ -1,7 +1,8 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for package webots_ros2_driver
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.3
+2023.0.3 (2023-XX-XX)
 ------------------
 * Adding port, stream type parameters to webots_laucher
 * Copying .wbproj when launching a webots world via webots_launcher

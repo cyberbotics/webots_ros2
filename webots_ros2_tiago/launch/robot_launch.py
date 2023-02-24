@@ -41,6 +41,7 @@ def get_ros2_nodes(*args):
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+    pub_init_pose = LaunchConfiguration('pub_init_pose', default=True)
 
     controller_manager_timeout = ['--controller-manager-timeout', '500']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -133,7 +134,7 @@ def get_ros2_nodes(*args):
             'pose: {pose: {orientation: {w: 1.0}}}}"'
         ]],
         shell=True,
-        condition=launch.conditions.IfCondition(use_nav)
+        condition=launch.conditions.IfCondition(pub_init_pose and use_nav)
     )
 
     slam_toolbox = Node(

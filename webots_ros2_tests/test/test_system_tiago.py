@@ -45,7 +45,8 @@ def generate_test_description():
         ),
         launch_arguments={
             'mode': 'fast',
-            'nav': 'true'
+            'nav': 'true',
+            'pub_init_pose': 'false'
         }.items()
     )
 

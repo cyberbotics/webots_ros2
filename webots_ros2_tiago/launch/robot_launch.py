@@ -20,7 +20,7 @@ import os
 import pathlib
 import launch
 from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -126,6 +126,17 @@ def get_ros2_nodes(*args):
         condition=launch.conditions.IfCondition(use_slam)
     )
 
+    publish_initial_pose = ExecuteProcess(
+        cmd=[[
+            'ros2 topic pub ',
+            '/initialpose ',
+            'geometry_msgs/PoseWithCovarianceStamped ',
+            '"{header: {stamp: {sec: 0, nanosec: 0}, frame_id: \'map\'}, ',
+            'pose: {pose: {orientation: {w: 1.0}}}}"'
+        ]],
+        shell=True
+    )
+
     return [
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
@@ -134,6 +145,7 @@ def get_ros2_nodes(*args):
         tiago_driver,
         footprint_publisher,
         slam_toolbox,
+        #publish_initial_pose,
     ] + optional_nodes
 
 

@@ -54,7 +54,7 @@ class _ConditionalSubstitution(Substitution):
 
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, ros2_supervisor=False,
-                 port="1234", **kwargs):
+                 port='1234', **kwargs):
         if sys.platform == 'win32':
             print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a '
                   'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)

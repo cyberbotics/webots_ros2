@@ -106,7 +106,6 @@ def get_ros2_nodes(*args):
         parameters=[{'use_sim_time': use_sim_time}],
         condition=launch.conditions.IfCondition(use_rviz)
     )
-
     if 'nav2_bringup' in get_packages_with_prefixes():
         optional_nodes.append(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(
@@ -116,6 +115,26 @@ def get_ros2_nodes(*args):
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_nav)))
+    # Wait for the simulation to be ready to start RViz and the navigation
+    nav_handler = launch.actions.RegisterEventHandler(
+        event_handler=launch.event_handlers.OnProcessExit(
+            target_action=diffdrive_controller_spawner,
+            on_exit=[rviz] + optional_nodes
+        )
+    )
+
+    # Publish initial pose for RViz
+    publish_initial_pose = ExecuteProcess(
+        cmd=[[
+            'ros2 topic pub --once ',
+            '/initialpose ',
+            'geometry_msgs/PoseWithCovarianceStamped ',
+            '"{header: {frame_id: \'map\'}, ',
+            'pose: {pose: {orientation: {w: 1.0}}}}"'
+        ]],
+        shell=True,
+        condition=launch.conditions.IfCondition(use_nav)
+    )
 
     slam_toolbox = Node(
         parameters=[{'use_sim_time': use_sim_time}],
@@ -126,27 +145,16 @@ def get_ros2_nodes(*args):
         condition=launch.conditions.IfCondition(use_slam)
     )
 
-    publish_initial_pose = ExecuteProcess(
-        cmd=[[
-            'ros2 topic pub ',
-            '/initialpose ',
-            'geometry_msgs/PoseWithCovarianceStamped ',
-            '"{header: {stamp: {sec: 0, nanosec: 0}, frame_id: \'map\'}, ',
-            'pose: {pose: {orientation: {w: 1.0}}}}"'
-        ]],
-        shell=True
-    )
-
     return [
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
-        rviz,
+        nav_handler,
+        publish_initial_pose,
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,
         slam_toolbox,
-        #publish_initial_pose,
-    ] + optional_nodes
+    ]
 
 
 def generate_launch_description():

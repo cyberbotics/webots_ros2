@@ -34,10 +34,6 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 def generate_test_description():
     initialize_webots_test()
 
-    # If testing in GitHub CI, skip the test as RViz might crash
-    if 'CI' in os.environ and os.environ['CI'] == '1':
-        pytest.skip('RViz might crash in CI, skipping this test')
-
     epuck_with_tools_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('webots_ros2_epuck'), 'launch', 'robot_with_tools_launch.py')

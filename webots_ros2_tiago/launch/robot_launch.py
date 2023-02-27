@@ -41,7 +41,6 @@ def get_ros2_nodes(*args):
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
-    pub_init_pose = LaunchConfiguration('pub_init_pose', default=True)
 
     controller_manager_timeout = ['--controller-manager-timeout', '500']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -116,6 +115,7 @@ def get_ros2_nodes(*args):
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_nav)))
+
     # Wait for the simulation to be ready to start RViz and the navigation
     nav_handler = launch.actions.RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessExit(
@@ -124,24 +124,21 @@ def get_ros2_nodes(*args):
         )
     )
 
+    optional_publisher = []
     # Publish initial pose for navigation
-    publish_initial_pose = ExecuteProcess(
-        cmd=[[
-            'ros2 topic pub --once ',
-            '/initialpose ',
-            'geometry_msgs/PoseWithCovarianceStamped ',
-            '"{header: {frame_id: \'map\'}, ',
-            'pose: {pose: {orientation: {w: 1.0}}}}"'
-        ]],
-        shell=True,
-        condition=launch.conditions.IfCondition(
-            PythonExpression([
-                pub_init_pose,
-                ' and ',
-                use_nav
-            ])
+    if 'CI' not in os.environ or os.environ['CI'] != '1':
+        publish_initial_pose = ExecuteProcess(
+            cmd=[[
+                'ros2 topic pub --once ',
+                '/initialpose ',
+                'geometry_msgs/PoseWithCovarianceStamped ',
+                '"{header: {frame_id: \'map\'}, ',
+                'pose: {pose: {orientation: {w: 1.0}}}}"'
+            ]],
+            shell=True,
+            condition=launch.conditions.IfCondition(use_nav)
         )
-    )
+        optional_publisher.append(publish_initial_pose)
 
     slam_toolbox = Node(
         parameters=[{'use_sim_time': use_sim_time}],
@@ -156,12 +153,11 @@ def get_ros2_nodes(*args):
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
         nav_handler,
-        publish_initial_pose,
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,
         slam_toolbox,
-    ]
+    ] + optional_publisher
 
 
 def generate_launch_description():

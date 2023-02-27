@@ -2,6 +2,11 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.3 (2023-XX-XX)
+------------------
+* Adding port, stream type parameters to webots_laucher
+* Copying .wbproj when launching a Webots world via webots_launcher
+
 2023.0.2 (2023-02-07)
 ------------------
 * Drop support for Galactic.

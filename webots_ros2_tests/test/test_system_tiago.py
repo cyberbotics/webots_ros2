@@ -72,6 +72,8 @@ class TestTiago(TestWebots):
         from nav2_msgs.action import NavigateToPose
 
         initial_pose_publisher = self.__node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
+        while (not initial_pose_publisher.get_subscription_count()):
+          pass
         pose_message = PoseWithCovarianceStamped()
         pose_message.header.stamp = self.__node.get_clock().now().to_msg()
         pose_message.header.frame_id = 'map'

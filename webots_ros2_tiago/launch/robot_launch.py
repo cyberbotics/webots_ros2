@@ -19,7 +19,7 @@
 import os
 import pathlib
 import launch
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
@@ -125,15 +125,14 @@ def get_ros2_nodes(*args):
     )
 
     optional_publisher = []
-    # Publish initial pose for navigation
+    # Publish initial pose for navigation (unavailable in the CI)
     if 'CI' not in os.environ or os.environ['CI'] != '1':
         publish_initial_pose = ExecuteProcess(
             cmd=[[
                 'ros2 topic pub --once ',
                 '/initialpose ',
                 'geometry_msgs/PoseWithCovarianceStamped ',
-                '"{header: {frame_id: \'map\'}, ',
-                'pose: {pose: {orientation: {w: 1.0}}}}"'
+                '"{header: {frame_id: \'map\'}}"'
             ]],
             shell=True,
             condition=launch.conditions.IfCondition(use_nav)

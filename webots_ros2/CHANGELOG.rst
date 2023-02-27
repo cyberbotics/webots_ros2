@@ -4,7 +4,7 @@ Changelog for package webots_ros2
 
 2023.0.3 (2023-XX-XX)
 ------------------
-* Improved the launch file of the Tiago example.
+* Improved the navigation of the Tiago example.
 
 2023.0.2 (2023-02-07)
 ------------------

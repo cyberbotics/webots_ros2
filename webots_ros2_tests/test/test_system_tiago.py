@@ -37,7 +37,7 @@ def generate_test_description():
     # If ROS_DISTRO is rolling, skip the test as some required packages are missing (cf. ci_after_init.bash)
     # If ROS_DISTRO is foxy, skip the test as the navigation package is outdated and fails randomly
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] != 'humble':
-        pytest.skip('ROS_DISTRO is rolling, skipping this test')
+        pytest.skip('ROS_DISTRO is rolling or foxy, skipping this test')
 
     tiago_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

@@ -2,82 +2,26 @@ import os
 import launch
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
-from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
+from webots_ros2_driver.utils import controller_url_prefix
+from webots_ros2_driver.webots_launcher import WebotsLauncher
 from launch.event_handlers import OnProcessExit
 from launch.actions import RegisterEventHandler, DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, Command
 from launch.conditions import LaunchConfigurationEquals
+from launch.actions import OpaqueFunction
 
-def generate_launch_description():
-    use_sim_time = LaunchConfiguration('use_sim_time', default=True)
-
+def evaluate_robot_name(context, *args, **kwargs):
+    robot_name = LaunchConfiguration('robot_name').perform(context=context)
     package_dir = get_package_share_directory('webots_ros2_husarion')
 
-    rosbot_description_package =  get_package_share_directory('rosbot_description')
-    rosbot_xl_description_package =  get_package_share_directory('rosbot_xl_description')
+    rosbot_description_package =  get_package_share_directory(robot_name + '_description')
+    rosbot_description = os.path.join(rosbot_description_package, 'urdf', robot_name + '.urdf.xacro')
 
-    rosbot_description = os.path.join(rosbot_description_package, 'urdf', 'rosbot.urdf.xacro')
-    rosbot_xl_description = os.path.join(rosbot_xl_description_package, 'urdf', 'rosbot_xl.urdf.xacro')
+    xacro_args = ' use_sim:=true simulation_engine:=webots'
+    if robot_name == 'rosbot_xl':
+        xacro_args += ' mecanum:=true lidar_model:=slamtec_rplidar_a2'
 
-
-    rosbot_description_urdf = Command(['xacro ', rosbot_description, ' use_sim:=true simulation_engine:=webots'])
-    rosbot_xl_description_urdf = Command(['xacro ', rosbot_xl_description, ' use_sim:=true mecanum:=true simulation_engine:=webots'])
-
-
-    rosbot_ros2_control_params = os.path.join(
-        package_dir, 'resource', 'rosbot_controllers.yaml')
-    rosbot_xl_ros2_control_params = os.path.join(
-        package_dir, 'resource', 'rosbot_xl_controllers.yaml')
-    rosbot_xl_scan_filter_params = os.path.join(
-        package_dir, 'resource', 'laser_filter.yaml')
-
-    rosbot_world = WebotsLauncher(
-        world=os.path.join(package_dir, 'worlds', 'rosbot.wbt'),
-        condition=LaunchConfigurationEquals('robot_name', 'rosbot')
-    )
-    rosbot_xl_world = WebotsLauncher(
-        world=os.path.join(package_dir, 'worlds', 'rosbot_xl.wbt'),
-        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
-    )
-
-    ekf_config = os.path.join(
-        package_dir, 'resource', 'ekf.yaml')
-
-    ros2_supervisor = Ros2SupervisorLauncher()
-
-    rosbot_webots_robot_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'rosbot'},
-        parameters=[
-            {'robot_description': rosbot_description_urdf},
-            {'set_robot_state_publisher': True},
-            {'use_sim_time': use_sim_time},
-            rosbot_ros2_control_params,
-        ],
-        remappings=[
-            ("rosbot_base_controller/cmd_vel_unstamped", "cmd_vel"),
-            ("odom", "rosbot_base_controller/odom"),
-        ],
-        condition=LaunchConfigurationEquals('robot_name', 'rosbot')
-    )
-
-    rosbot_xl_webots_robot_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        additional_env={'WEBOTS_CONTROLLER_URL': 'rosbot_xl'},
-        parameters=[
-            {'robot_description': rosbot_xl_description_urdf},
-            {'set_robot_state_publisher': True},
-            {'use_sim_time': use_sim_time},
-            rosbot_xl_ros2_control_params,
-        ],
-        remappings=[
-            ("rosbot_base_controller/cmd_vel_unstamped", "cmd_vel"),
-            ("odom", "rosbot_base_controller/odom"),
-        ],
-        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
-    )
+    rosbot_description_urdf = Command(['xacro ', rosbot_description, xacro_args])
 
     rosbot_state_publisher = Node(
         package='robot_state_publisher',
@@ -85,27 +29,38 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'robot_description': rosbot_description_urdf},
-            {'use_sim_time': use_sim_time},
+            {'use_sim_time': True},
         ],
-        condition=LaunchConfigurationEquals('robot_name', 'rosbot')
     )
 
-    rosbot_xl_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
+    world = WebotsLauncher(
+        world=os.path.join(package_dir, 'worlds', robot_name + '.wbt'),
+        ros2_supervisor=True
+    )
+
+    rosbot_ros2_control_params = os.path.join(
+        package_dir, 'resource', robot_name+ '_controllers.yaml')
+
+    rosbot_webots_robot_driver = Node(
+        package='webots_ros2_driver',
+        executable='driver',
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + robot_name},
         output='screen',
         parameters=[
-            {'robot_description': rosbot_xl_description_urdf},
-            {'use_sim_time': use_sim_time},
+            {'robot_description': rosbot_description_urdf},
+            {'set_robot_state_publisher': True},
+            {'use_sim_time': True},
+            rosbot_ros2_control_params,
         ],
-        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
-    )
-
-    laser_filter_node = Node(
-        package="laser_filters",
-        executable="scan_to_scan_filter_chain",
-        parameters=[ rosbot_xl_scan_filter_params],
-        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
+        remappings=[
+            (robot_name + "_base_controller/cmd_vel_unstamped", "cmd_vel"),
+            ("odom", robot_name + "_base_controller/odom"),
+            (robot_name + "/laser", '/scan'),
+            (robot_name + "/rl_range", '/range/rl'),
+            (robot_name + "/rr_range", '/range/rr'),
+            (robot_name + "/fl_range", '/range/fl'),
+            (robot_name + "/fr_range", '/range/fr'),
+        ]
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -124,7 +79,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=[
-            "rosbot_base_controller",
+            robot_name + "_base_controller",
             "--controller-manager",
             "/controller_manager",
             "--controller-manager-timeout",
@@ -141,6 +96,34 @@ def generate_launch_description():
             )
         )
     )
+    return [
+        world,
+        world._supervisor,
+        rosbot_webots_robot_driver,
+        RegisterEventHandler(
+                        event_handler=launch.event_handlers.OnProcessExit(
+                            target_action=world._supervisor,
+                            on_exit=[launch.actions.EmitEvent(
+                                event=launch.events.Shutdown())],
+                        )
+        ),
+        joint_state_broadcaster_spawner,
+        delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
+        rosbot_state_publisher
+    ]
+
+def generate_launch_description():
+    package_dir = get_package_share_directory('webots_ros2_husarion')
+
+    laser_filter_node = Node(
+        package="laser_filters",
+        executable="scan_to_scan_filter_chain",
+        parameters=[ os.path.join(package_dir, 'resource', 'laser_filter.yaml')],
+        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
+    )
+
+    ekf_config = os.path.join(
+        package_dir, 'resource', 'ekf.yaml')
 
     robot_localization_node = Node(
         package='robot_localization',
@@ -149,7 +132,7 @@ def generate_launch_description():
         output='screen',
         parameters=[
             ekf_config,
-            {'use_sim_time': use_sim_time}
+            {'use_sim_time': True}
         ]
     )
 
@@ -159,42 +142,9 @@ def generate_launch_description():
                                             description='Flag to enable use_sim_time'),
         DeclareLaunchArgument(name='robot_name', default_value='rosbot',
                                             description='Spawned robot name'),
-        # Start the Webots node
-        rosbot_world,
-        rosbot_xl_world,
-
-        # Start the Ros2Supervisor node
-        ros2_supervisor,
-
-        # Start the Webots robot driver
-        rosbot_webots_robot_driver,
-        rosbot_xl_webots_robot_driver,
-
-
-        # Start the robot_state_publisher
-        rosbot_state_publisher,
-        rosbot_xl_state_publisher,
         laser_filter_node,
-
-
-        # Start the ros2_controllers
-        joint_state_broadcaster_spawner,
-        delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
         robot_localization_node,
 
-        # This action will kill all nodes once the Webots simulation has exited
-        RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=rosbot_world,
-                on_exit=[launch.actions.EmitEvent(
-                    event=launch.events.Shutdown())],
-            )
-        ),
-        RegisterEventHandler(
-            event_handler=launch.event_handlers.OnProcessExit(
-                target_action=rosbot_xl_world,
-                on_exit=[launch.actions.EmitEvent(
-                    event=launch.events.Shutdown())],
-            )
-        )
+        # Used to get robot name as string
+        OpaqueFunction(function=evaluate_robot_name),
     ])

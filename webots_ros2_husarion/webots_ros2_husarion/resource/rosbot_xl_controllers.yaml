@@ -5,10 +5,10 @@ controller_manager:
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
-    rosbot_base_controller:
+    rosbot_xl_base_controller:
       type: diff_drive_controller/DiffDriveController
 
-rosbot_base_controller:
+rosbot_xl_base_controller:
   ros__parameters:
     left_wheel_names: ["fl_wheel_joint", "rl_wheel_joint"]
     right_wheel_names: ["fr_wheel_joint", "rr_wheel_joint"]

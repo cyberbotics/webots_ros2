@@ -8,6 +8,7 @@ data_files.append(('share/' + package_name + '/launch', ['launch/robot_launch.py
 data_files.append(('share/' + package_name + '/resource', [
     'resource/tiago_webots.urdf',
     'resource/ros2_control.yml',
+    'resource/nav2_params.yaml',
     'resource/default.rviz',
     'resource/map.pgm',
     'resource/map.yaml',

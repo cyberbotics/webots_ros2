@@ -39,6 +39,7 @@ def get_ros2_nodes(*args):
     use_slam = LaunchConfiguration('slam', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
+    nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
@@ -112,23 +113,24 @@ def get_ros2_nodes(*args):
                 get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
             launch_arguments=[
                 ('map', nav2_map),
+                ('params_file', nav2_params),
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_nav)))
 
     # Publish initial pose for navigation
-    publish_initial_pose = ExecuteProcess(
-        cmd=[[
-            'ros2 topic pub ',
-            '--rate 2 --times 20 '
-            '/initialpose ',
-            'geometry_msgs/PoseWithCovarianceStamped ',
-            '"{header: {frame_id: \'map\'}}"'
-        ]],
-        shell=True,
-        condition=launch.conditions.IfCondition(use_nav)
-    )
-    optional_nodes.append(publish_initial_pose)
+    # publish_initial_pose = ExecuteProcess(
+    #    cmd=[[
+    #        'ros2 topic pub ',
+    #        '--rate 2 --times 20 '
+    #        '/initialpose ',
+    #        'geometry_msgs/PoseWithCovarianceStamped ',
+    #        '"{header: {frame_id: \'map\'}}"'
+    #    ]],
+    #    shell=True,
+    #    condition=launch.conditions.IfCondition(use_nav)
+    # )
+    # optional_nodes.append(publish_initial_pose)
 
     # Wait for the simulation to be ready to start RViz and the navigation
     nav_handler = launch.actions.RegisterEventHandler(

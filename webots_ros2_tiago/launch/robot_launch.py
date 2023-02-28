@@ -118,20 +118,6 @@ def get_ros2_nodes(*args):
             ],
             condition=launch.conditions.IfCondition(use_nav)))
 
-    # Publish initial pose for navigation
-    # publish_initial_pose = ExecuteProcess(
-    #    cmd=[[
-    #        'ros2 topic pub ',
-    #        '--rate 2 --times 20 '
-    #        '/initialpose ',
-    #        'geometry_msgs/PoseWithCovarianceStamped ',
-    #        '"{header: {frame_id: \'map\'}}"'
-    #    ]],
-    #    shell=True,
-    #    condition=launch.conditions.IfCondition(use_nav)
-    # )
-    # optional_nodes.append(publish_initial_pose)
-
     # Wait for the simulation to be ready to start RViz and the navigation
     nav_handler = launch.actions.RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessExit(

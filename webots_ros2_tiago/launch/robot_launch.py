@@ -40,6 +40,8 @@ def get_ros2_nodes(*args):
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
+    cartographer_config_dir = os.path.join(package_dir, 'resource')
+    cartographer_config_basename = 'cartographer.lua'
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     controller_manager_timeout = ['--controller-manager-timeout', '500']
@@ -131,11 +133,6 @@ def get_ros2_nodes(*args):
     optional_nodes.append(publish_initial_pose)
 
     # SLAM
-    tiago_prefix = get_package_share_directory('webots_ros2_tiago')
-    cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=os.path.join(
-                                                  tiago_prefix, 'resource'))
-    configuration_basename = LaunchConfiguration('configuration_basename',
-                                                 default='cartographer.lua')
     cartographer = Node(
         package='cartographer_ros',
         executable='cartographer_node',
@@ -143,7 +140,7 @@ def get_ros2_nodes(*args):
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-configuration_directory', cartographer_config_dir,
-                   '-configuration_basename', configuration_basename],
+                   '-configuration_basename', cartographer_config_basename],
         condition=launch.conditions.IfCondition(use_slam))
     optional_nodes.append(cartographer)
 
@@ -153,6 +150,7 @@ def get_ros2_nodes(*args):
         name='cartographer_occupancy_grid_node',
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-resolution', '0.05'],
         condition=launch.conditions.IfCondition(use_slam))
     optional_nodes.append(cartographer_grid)
 

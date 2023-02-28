@@ -116,12 +116,12 @@ def get_ros2_nodes(*args):
             ],
             condition=launch.conditions.IfCondition(use_nav)))
 
-    #tiago_prefix = get_package_share_directory('webots_ros2_tiago')
-    #cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=os.path.join(
+    # tiago_prefix = get_package_share_directory('webots_ros2_tiago')
+    # cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=os.path.join(
     #                                              tiago_prefix, 'resource'))
-    #configuration_basename = LaunchConfiguration('configuration_basename',
+    # configuration_basename = LaunchConfiguration('configuration_basename',
     #                                             default='cartographer.lua')
-    #cartographer = Node(
+    # cartographer = Node(
     #    package='cartographer_ros',
     #    executable='cartographer_node',
     #    name='cartographer_node',
@@ -130,7 +130,7 @@ def get_ros2_nodes(*args):
     #    arguments=['-configuration_directory', cartographer_config_dir,
     #               '-configuration_basename', configuration_basename],
     #    condition=launch.conditions.IfCondition(use_slam))
-    #optional_nodes.append(cartographer)
+    # optional_nodes.append(cartographer)
 
     # Wait for the simulation to be ready to start RViz and the navigation
     nav_handler = launch.actions.RegisterEventHandler(

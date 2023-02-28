@@ -71,18 +71,18 @@ class TestTiago(TestWebots):
     def testMovement(self):
         from nav2_msgs.action import NavigateToPose
 
-        #initial_pose_publisher = self.__node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
+        # initial_pose_publisher = self.__node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
         # Wait for navigation to be ready to publish the initial pose
-        #while (not initial_pose_publisher.get_subscription_count()):
+        # while (not initial_pose_publisher.get_subscription_count()):
         #    pass
-        #pose_message = PoseWithCovarianceStamped()
-        #pose_message.header.stamp = self.__node.get_clock().now().to_msg()
-        #pose_message.header.frame_id = 'map'
-        #pose_message.pose.pose.orientation.w = 1.0
-        #initial_pose_publisher.publish(pose_message)
+        # pose_message = PoseWithCovarianceStamped()
+        # pose_message.header.stamp = self.__node.get_clock().now().to_msg()
+        # pose_message.header.frame_id = 'map'
+        # pose_message.pose.pose.orientation.w = 1.0
+        # initial_pose_publisher.publish(pose_message)
         # Additional publishing after delay to be robust against race conditions between publisher and navigation packages
-        #self.wait_for_clock(self.__node, messages_to_receive=100)
-        #initial_pose_publisher.publish(pose_message)
+        # self.wait_for_clock(self.__node, messages_to_receive=100)
+        # initial_pose_publisher.publish(pose_message)
         # Delay before publishing goal position (navigation initialization can be long in the CI)
         self.wait_for_clock(self.__node, messages_to_receive=1500)
 

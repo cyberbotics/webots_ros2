@@ -91,7 +91,7 @@ class TestTiago(TestWebots):
         goal_action.send_goal_async(goal_message)
 
         def on_message_received(message):
-            return message.pose.pose.position.x < -2.0
+            return message.pose.pose.position.x > -1.4
 
         self.wait_for_messages(self.__node, Odometry, '/odom', condition=on_message_received, timeout=60*5)
 

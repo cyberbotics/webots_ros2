@@ -145,6 +145,7 @@ def get_ros2_nodes(*args):
     publish_initial_pose = ExecuteProcess(
         cmd=[[
             'ros2 topic pub ',
+            '--rate 1 --times 10 '
             '/initialpose ',
             'geometry_msgs/PoseWithCovarianceStamped ',
             '"{header: {frame_id: \'map\'}}"'

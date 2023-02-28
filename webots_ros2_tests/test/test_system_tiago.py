@@ -84,7 +84,7 @@ class TestTiago(TestWebots):
         # self.wait_for_clock(self.__node, messages_to_receive=100)
         # initial_pose_publisher.publish(pose_message)
         # Delay before publishing goal position (navigation initialization can be long in the CI)
-        self.wait_for_clock(self.__node, messages_to_receive=1500)
+        self.wait_for_clock(self.__node, messages_to_receive=2000)
         goal_action = ActionClient(self.__node, NavigateToPose, 'navigate_to_pose')
         goal_message = NavigateToPose.Goal()
         goal_message.pose.header.stamp = self.__node.get_clock().now().to_msg()

@@ -120,7 +120,7 @@ def get_ros2_nodes(*args):
     publish_initial_pose = ExecuteProcess(
         cmd=[[
             'ros2 topic pub ',
-            '--rate 1 --times 10 '
+            '--rate 2 --times 20 '
             '/initialpose ',
             'geometry_msgs/PoseWithCovarianceStamped ',
             '"{header: {frame_id: \'map\'}}"'
@@ -129,21 +129,23 @@ def get_ros2_nodes(*args):
         condition=launch.conditions.IfCondition(use_nav)
     )
     optional_nodes.append(publish_initial_pose)
-    # tiago_prefix = get_package_share_directory('webots_ros2_tiago')
-    # cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=os.path.join(
-    #                                              tiago_prefix, 'resource'))
-    # configuration_basename = LaunchConfiguration('configuration_basename',
-    #                                             default='cartographer.lua')
-    # cartographer = Node(
-    #    package='cartographer_ros',
-    #    executable='cartographer_node',
-    #    name='cartographer_node',
-    #    output='screen',
-    #    parameters=[{'use_sim_time': use_sim_time}],
-    #    arguments=['-configuration_directory', cartographer_config_dir,
-    #               '-configuration_basename', configuration_basename],
-    #    condition=launch.conditions.IfCondition(use_slam))
-    # optional_nodes.append(cartographer)
+
+    # SLAM
+    """     tiago_prefix = get_package_share_directory('webots_ros2_tiago')
+    cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=os.path.join(
+                                                  tiago_prefix, 'resource'))
+    configuration_basename = LaunchConfiguration('configuration_basename',
+                                                 default='cartographer.lua')
+    cartographer = Node(
+        package='cartographer_ros',
+        executable='cartographer_node',
+        name='cartographer_node',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-configuration_directory', cartographer_config_dir,
+                   '-configuration_basename', configuration_basename],
+        condition=launch.conditions.IfCondition(use_slam))
+    optional_nodes.append(cartographer) """
 
     # Wait for the simulation to be ready to start RViz and the navigation
     nav_handler = launch.actions.RegisterEventHandler(

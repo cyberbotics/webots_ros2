@@ -144,7 +144,7 @@ def get_ros2_nodes(*args):
     # Publish initial pose for navigation (unavailable in the CI)
     publish_initial_pose = ExecuteProcess(
         cmd=[[
-            'ros2 topic pub --once ',
+            'ros2 topic pub ',
             '/initialpose ',
             'geometry_msgs/PoseWithCovarianceStamped ',
             '"{header: {frame_id: \'map\'}}"'

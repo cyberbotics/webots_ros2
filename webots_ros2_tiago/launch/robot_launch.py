@@ -116,7 +116,7 @@ def get_ros2_nodes(*args):
             ],
             condition=launch.conditions.IfCondition(use_nav)))
 
-    # Publish initial pose for navigation (unavailable in the CI)
+    # Publish initial pose for navigation
     publish_initial_pose = ExecuteProcess(
         cmd=[[
             'ros2 topic pub ',

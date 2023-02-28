@@ -36,7 +36,7 @@ def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_tiago')
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_nav = LaunchConfiguration('nav', default=False)
-    use_slam = LaunchConfiguration('slam', default=False)
+    # use_slam = LaunchConfiguration('slam', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')

@@ -11,6 +11,7 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/default.rviz',
     'resource/map.pgm',
     'resource/map.yaml',
+    'resource/cartographer.lua',
 ]))
 data_files.append(('share/' + package_name, ['package.xml']))
 data_files.append(('share/' + package_name + '/worlds', ['worlds/default.wbt', 'worlds/.default.wbproj']))

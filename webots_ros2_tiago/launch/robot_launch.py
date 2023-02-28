@@ -36,7 +36,7 @@ def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_tiago')
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_nav = LaunchConfiguration('nav', default=False)
-    # use_slam = LaunchConfiguration('slam', default=False)
+    use_slam = LaunchConfiguration('slam', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
@@ -130,29 +130,21 @@ def get_ros2_nodes(*args):
     )
     optional_nodes.append(publish_initial_pose)
 
-    # SLAM
-    """     tiago_prefix = get_package_share_directory('webots_ros2_tiago')
-    cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=os.path.join(
-                                                  tiago_prefix, 'resource'))
-    configuration_basename = LaunchConfiguration('configuration_basename',
-                                                 default='cartographer.lua')
-    cartographer = Node(
-        package='cartographer_ros',
-        executable='cartographer_node',
-        name='cartographer_node',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=['-configuration_directory', cartographer_config_dir,
-                   '-configuration_basename', configuration_basename],
-        condition=launch.conditions.IfCondition(use_slam))
-    optional_nodes.append(cartographer) """
-
     # Wait for the simulation to be ready to start RViz and the navigation
     nav_handler = launch.actions.RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessExit(
             target_action=diffdrive_controller_spawner,
             on_exit=[rviz] + optional_nodes
         )
+    )
+
+    slam_toolbox = Node(
+        parameters=[{'use_sim_time': use_sim_time}],
+        package='slam_toolbox',
+        executable='async_slam_toolbox_node',
+        name='slam_toolbox',
+        output='screen',
+        condition=launch.conditions.IfCondition(use_slam)
     )
 
     return [
@@ -162,6 +154,7 @@ def get_ros2_nodes(*args):
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,
+        slam_toolbox,
     ]
 
 

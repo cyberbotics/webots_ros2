@@ -5,6 +5,7 @@ Changelog for package webots_ros2
 2023.0.3 (2023-XX-XX)
 ------------------
 * Improved the navigation of the Tiago example.
+* Replaced Slam-Toolbox by Cartographer in the Tiago example.
 * Adding port, stream type parameters to webots_laucher
 * Copying .wbproj when launching a Webots world via webots_launcher
 

@@ -116,6 +116,19 @@ def get_ros2_nodes(*args):
             ],
             condition=launch.conditions.IfCondition(use_nav)))
 
+    # Publish initial pose for navigation (unavailable in the CI)
+    publish_initial_pose = ExecuteProcess(
+        cmd=[[
+            'ros2 topic pub ',
+            '--rate 1 --times 10 '
+            '/initialpose ',
+            'geometry_msgs/PoseWithCovarianceStamped ',
+            '"{header: {frame_id: \'map\'}}"'
+        ]],
+        shell=True,
+        condition=launch.conditions.IfCondition(use_nav)
+    )
+    optional_nodes.append(publish_initial_pose)
     # tiago_prefix = get_package_share_directory('webots_ros2_tiago')
     # cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=os.path.join(
     #                                              tiago_prefix, 'resource'))
@@ -140,21 +153,6 @@ def get_ros2_nodes(*args):
         )
     )
 
-    optional_publisher = []
-    # Publish initial pose for navigation (unavailable in the CI)
-    publish_initial_pose = ExecuteProcess(
-        cmd=[[
-            'ros2 topic pub ',
-            '--rate 1 --times 10 '
-            '/initialpose ',
-            'geometry_msgs/PoseWithCovarianceStamped ',
-            '"{header: {frame_id: \'map\'}}"'
-        ]],
-        shell=True,
-        condition=launch.conditions.IfCondition(use_nav)
-    )
-    optional_publisher.append(publish_initial_pose)
-
     return [
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
@@ -162,7 +160,7 @@ def get_ros2_nodes(*args):
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,
-    ] + optional_publisher
+    ]
 
 
 def generate_launch_description():

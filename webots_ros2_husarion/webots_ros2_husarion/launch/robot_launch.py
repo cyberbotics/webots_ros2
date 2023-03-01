@@ -87,6 +87,28 @@ def evaluate_robot_name(context, *args, **kwargs):
         ],
     )
 
+    ekf_config = os.path.join(package_dir, 'resource', 'ekf.yaml')
+    laser_filter_config = os.path.join(package_dir, 'resource', 'laser_filter.yaml')
+
+    robot_localization_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[
+            ekf_config,
+            {'use_sim_time': True},
+            {'odom0' : "/" +  robot_name + "_base_controller/odom"}
+        ]
+    )
+
+    laser_filter_node = Node(
+        package="laser_filters",
+        executable="scan_to_scan_filter_chain",
+        parameters=[laser_filter_config],
+        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
+    )
+
     # Delay start of robot_controller after joint_state_broadcaster
     delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = (
         RegisterEventHandler(
@@ -96,6 +118,7 @@ def evaluate_robot_name(context, *args, **kwargs):
             )
         )
     )
+
     return [
         world,
         world._supervisor,
@@ -109,42 +132,18 @@ def evaluate_robot_name(context, *args, **kwargs):
         ),
         joint_state_broadcaster_spawner,
         delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
-        rosbot_state_publisher
+        rosbot_state_publisher,
+        laser_filter_node,
+        robot_localization_node
     ]
 
 def generate_launch_description():
-    package_dir = get_package_share_directory('webots_ros2_husarion')
-
-    laser_filter_node = Node(
-        package="laser_filters",
-        executable="scan_to_scan_filter_chain",
-        parameters=[ os.path.join(package_dir, 'resource', 'laser_filter.yaml')],
-        condition=LaunchConfigurationEquals('robot_name', 'rosbot_xl')
-    )
-
-    ekf_config = os.path.join(
-        package_dir, 'resource', 'ekf.yaml')
-
-    robot_localization_node = Node(
-        package='robot_localization',
-        executable='ekf_node',
-        name='ekf_filter_node',
-        output='screen',
-        parameters=[
-            ekf_config,
-            {'use_sim_time': True}
-        ]
-    )
-
     # Standard ROS 2 launch description
     return launch.LaunchDescription([
         DeclareLaunchArgument(name='use_sim_time', default_value='True',
                                             description='Flag to enable use_sim_time'),
         DeclareLaunchArgument(name='robot_name', default_value='rosbot',
                                             description='Spawned robot name'),
-        laser_filter_node,
-        robot_localization_node,
-
         # Used to get robot name as string
         OpaqueFunction(function=evaluate_robot_name),
     ])

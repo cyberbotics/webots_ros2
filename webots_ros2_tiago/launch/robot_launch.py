@@ -20,7 +20,7 @@ import os
 import pathlib
 import launch
 from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -39,6 +39,7 @@ def get_ros2_nodes(*args):
     use_slam = LaunchConfiguration('slam', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
+    nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     cartographer_config_dir = os.path.join(package_dir, 'resource')
     cartographer_config_basename = 'cartographer.lua'
@@ -114,6 +115,7 @@ def get_ros2_nodes(*args):
                 get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
             launch_arguments=[
                 ('map', nav2_map),
+                ('params_file', nav2_params),
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_nav)))

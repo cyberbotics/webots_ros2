@@ -132,9 +132,13 @@ def get_ros2_nodes(*args):
         condition=launch.conditions.IfCondition(use_slam))
     optional_nodes.append(cartographer)
 
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy':
+        grid_executable = 'occupancy_grid_node'
+    else:
+        grid_executable = 'cartographer_occupancy_grid_node'
     cartographer_grid = Node(
         package='cartographer_ros',
-        executable='cartographer_occupancy_grid_node',
+        executable=grid_executable,
         name='cartographer_occupancy_grid_node',
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],

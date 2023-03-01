@@ -3,8 +3,6 @@ name: Libcontroller Updater
 on:
   schedule:
     - cron:  '0 04 * * *'
-  pull_request:
-    types: [opened, synchronize, reopened, labeled, unlabeled]	
 
 jobs:
   automatic-libcontroller-sync:

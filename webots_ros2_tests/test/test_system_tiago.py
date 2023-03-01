@@ -66,13 +66,11 @@ class TestTiago(TestWebots):
 
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
-        self.wait_for_clock(self.__node, messages_to_receive=100)
 
     def testMovement(self):
         from nav2_msgs.action import NavigateToPose
 
         # Delay before publishing goal position (navigation initialization can be long in the CI)
-        self.wait_for_clock(self.__node, messages_to_receive=2000)
         goal_action = ActionClient(self.__node, NavigateToPose, 'navigate_to_pose')
         goal_message = NavigateToPose.Goal()
         goal_message.pose.header.stamp = self.__node.get_clock().now().to_msg()
@@ -82,7 +80,10 @@ class TestTiago(TestWebots):
         goal_message.pose.pose.orientation.z = 0.373
         goal_message.pose.pose.orientation.w = 0.928
         goal_action.wait_for_server()
+        self.__node.get_logger().info('Server is ready, waiting 10 seconds to send goal position.')
+        self.wait_for_clock(self.__node, messages_to_receive=1000)
         goal_action.send_goal_async(goal_message)
+        self.__node.get_logger().info('Goal position sent.')
 
         def on_message_received(message):
             return message.pose.pose.position.x < -2.0

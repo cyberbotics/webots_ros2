@@ -50,14 +50,14 @@ class Car(Supervisor):
         self.api.wbu_car_get_right_steering_angle.restype = ctypes.c_double
         self.api.wbu_car_get_track_front.restype = ctypes.c_double
         self.api.wbu_car_get_track_rear.restype = ctypes.c_double
-        self.api.wbu_car_get_wheelbase.restype = ctypes.c_double
+        self.api.wbu_car_get_wheel_base.restype = ctypes.c_double
         self.api.wbu_car_get_wheel_encoder.restype = ctypes.c_double
         self.api.wbu_car_get_wheel_speed.restype = ctypes.c_double
 
         self.api.wbu_car_init()
 
     def __del__(self):
-        self.api.wbu_car_cleanup()
+        self.api.wbu_can_cleanup()
         super().__del__()
 
     def enableIndicatorAutoDisabling(self, enable: bool):
@@ -100,7 +100,7 @@ class Car(Supervisor):
         return self.type
 
     def getWheelbase(self):
-        return self.wheelbase
+        return self.wheel_base
 
     def getWheelEncoder(self, wheel_index):
         return self.api.wbu_car_get_wheel_encoder(wheel_index)
@@ -174,5 +174,5 @@ class Car(Supervisor):
         return self.api.wbu_car_get_type()
 
     @property
-    def wheelbase(self) -> float:
-        return self.api.wbu_car_get_wheelbase()
+    def wheel_base(self) -> float:
+        return self.api.wbu_car_get_wheel_base()

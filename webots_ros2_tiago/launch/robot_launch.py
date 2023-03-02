@@ -41,6 +41,8 @@ def get_ros2_nodes(*args):
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
+    cartographer_config_dir = os.path.join(package_dir, 'resource')
+    cartographer_config_basename = 'cartographer.lua'
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     controller_manager_timeout = ['--controller-manager-timeout', '500']
@@ -118,21 +120,38 @@ def get_ros2_nodes(*args):
             ],
             condition=launch.conditions.IfCondition(use_nav)))
 
+    # SLAM
+    cartographer = Node(
+        package='cartographer_ros',
+        executable='cartographer_node',
+        name='cartographer_node',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-configuration_directory', cartographer_config_dir,
+                   '-configuration_basename', cartographer_config_basename],
+        condition=launch.conditions.IfCondition(use_slam))
+    optional_nodes.append(cartographer)
+
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy':
+        grid_executable = 'occupancy_grid_node'
+    else:
+        grid_executable = 'cartographer_occupancy_grid_node'
+    cartographer_grid = Node(
+        package='cartographer_ros',
+        executable=grid_executable,
+        name='cartographer_occupancy_grid_node',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-resolution', '0.05'],
+        condition=launch.conditions.IfCondition(use_slam))
+    optional_nodes.append(cartographer_grid)
+
     # Wait for the simulation to be ready to start RViz and the navigation
     nav_handler = launch.actions.RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessExit(
             target_action=diffdrive_controller_spawner,
             on_exit=[rviz] + optional_nodes
         )
-    )
-
-    slam_toolbox = Node(
-        parameters=[{'use_sim_time': use_sim_time}],
-        package='slam_toolbox',
-        executable='async_slam_toolbox_node',
-        name='slam_toolbox',
-        output='screen',
-        condition=launch.conditions.IfCondition(use_slam)
     )
 
     return [
@@ -142,7 +161,6 @@ def get_ros2_nodes(*args):
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,
-        slam_toolbox,
     ]
 
 

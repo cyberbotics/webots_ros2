@@ -2,6 +2,11 @@
 Changelog for package webots_ros2_tiago
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.3 (2023-XX-XX)
+------------------
+* Improved the launch of the nodes when using navigation.
+* Replaced Slam-Toolbox by Cartographer for SLAM.
+
 2023.0.2 (2023-02-07)
 ------------------
 * Updated supervisor launch.

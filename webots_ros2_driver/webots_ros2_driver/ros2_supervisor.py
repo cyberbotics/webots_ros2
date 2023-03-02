@@ -137,7 +137,6 @@ class Ros2Supervisor(Node):
                 robot_string = convertUrdfFile(input=robot.urdf_path, robotName=robot_name, normal=normal,
                                                boxCollision=box_collision, initTranslation=robot_translation,
                                                initRotation=robot_rotation, initPos=init_pos)
-
         elif robot.robot_description:
             relative_path_prefix = robot.relative_path_prefix if robot.relative_path_prefix else None
             # In WSL, the prefix must be converted to WSL path to work in Webots running on native Windows

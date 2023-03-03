@@ -31,6 +31,5 @@ if [[ "${ROS_DISTRO}" != "rolling" ]]; then
     apt install -y ros-${ROS_DISTRO}-turtlebot3-cartographer ros-${ROS_DISTRO}-turtlebot3-navigation2 ros-${ROS_DISTRO}-nav2-bringup
 fi
 
-
 # Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).
 #export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins

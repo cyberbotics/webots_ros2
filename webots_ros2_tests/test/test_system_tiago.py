@@ -27,7 +27,6 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing.actions
 from launch.actions import IncludeLaunchDescription
 from rclpy.action import ActionClient
-from geometry_msgs.msg import PoseWithCovarianceStamped
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
@@ -36,8 +35,9 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 def generate_test_description():
     initialize_webots_test()
     # If ROS_DISTRO is rolling, skip the test as some required packages are missing (cf. ci_after_init.bash)
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling':
-        pytest.skip('ROS_DISTRO is rolling or humble, skipping this test')
+    # If ROS_DISTRO is foxy, skip the test as some navigation packages are outdated
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] != 'humble':
+        pytest.skip('ROS_DISTRO is rolling or foxy, skipping this test')
 
     tiago_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -66,19 +66,11 @@ class TestTiago(TestWebots):
 
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
-        self.wait_for_clock(self.__node, messages_to_receive=100)
 
     def testMovement(self):
         from nav2_msgs.action import NavigateToPose
 
-        initial_pose_publisher = self.__node.create_publisher(PoseWithCovarianceStamped, '/initialpose', 1)
-        pose_message = PoseWithCovarianceStamped()
-        pose_message.header.stamp = self.__node.get_clock().now().to_msg()
-        pose_message.header.frame_id = 'map'
-        pose_message.pose.pose.orientation.w = 1.0
-        initial_pose_publisher.publish(pose_message)
-        self.wait_for_clock(self.__node, messages_to_receive=1000)
-
+        # Delay before publishing goal position (navigation initialization can be long in the CI)
         goal_action = ActionClient(self.__node, NavigateToPose, 'navigate_to_pose')
         goal_message = NavigateToPose.Goal()
         goal_message.pose.header.stamp = self.__node.get_clock().now().to_msg()
@@ -88,10 +80,13 @@ class TestTiago(TestWebots):
         goal_message.pose.pose.orientation.z = 0.373
         goal_message.pose.pose.orientation.w = 0.928
         goal_action.wait_for_server()
+        self.__node.get_logger().info('Server is ready, waiting 10 seconds to send goal position.')
+        self.wait_for_clock(self.__node, messages_to_receive=1000)
         goal_action.send_goal_async(goal_message)
+        self.__node.get_logger().info('Goal position sent.')
 
         def on_message_received(message):
-            return message.pose.pose.position.x > -1.4
+            return message.pose.pose.position.x < -2.0
 
         self.wait_for_messages(self.__node, Odometry, '/odom', condition=on_message_received, timeout=60*5)
 

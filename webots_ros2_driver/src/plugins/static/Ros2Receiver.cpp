@@ -14,7 +14,7 @@ namespace webots_ros2_driver
   void Ros2Receiver::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
   {  
     // This parameter is read when loading the URDF file
-    mDeviceName = parameters.count("name") ? parameters["name"].c_str() : "emitter";
+    mDeviceName = parameters.count("name") ? parameters["name"] : "emitter";
     mDeviceChannel = parameters.count("channel") ? atoi(parameters["channel"].c_str()) : -1;
 
     mReceiver = wb_robot_get_device(mDeviceName.c_str());

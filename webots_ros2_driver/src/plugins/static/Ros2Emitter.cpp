@@ -14,14 +14,12 @@ using std::placeholders::_2;
 // get_range
 // get_buffer_size
 
-namespace webots_ros2_driver
-{
-  void Ros2Emitter::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {  
+namespace webots_ros2_driver {
+  void Ros2Emitter::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {  
+    Ros2SensorPlugin::init(node, parameters);
     // This parameter is read when loading the URDF file
     mDeviceName = parameters.count("name") ? parameters["name"] : "emitter";
     mDeviceChannel = parameters.count("channel") ? atoi(parameters["channel"].c_str()) : -1;
-    mNode = node;
 
     mEmitter = wb_robot_get_device(mDeviceName.c_str());
     
@@ -30,14 +28,13 @@ namespace webots_ros2_driver
     wb_emitter_set_channel(mEmitter, mDeviceChannel);
     
     // Initialize services, publishers and subcriptions
-    data_service_ = node->create_service<webots_ros2_msgs::srv::SetString>(mTopicName + "/send",
-                                                                        std::bind(&Ros2Emitter::send_callback, this, _1, _2));
+    data_service_ = mNode->create_service<webots_ros2_msgs::srv::SetString>(mTopicName + "/send",
+                                                                           std::bind(&Ros2Emitter::send_callback, this, _1, _2));
     RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "Emitter initialized!");
 
   }
   void Ros2Emitter::send_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetString::Request> request,
-                                  std::shared_ptr<webots_ros2_msgs::srv::SetString::Response> response)
-  {
+                                  std::shared_ptr<webots_ros2_msgs::srv::SetString::Response> response) {
     std::string message = request->value;
     int ok = wb_emitter_send(mEmitter, message.c_str(), message.length());
     response->success = ok;
@@ -48,10 +45,10 @@ namespace webots_ros2_driver
     
 //     free(ok);
   }
-  void Ros2Emitter::step()
-  {
+  void Ros2Emitter::step() {
     if (!preStep())
       return;
-  }
+//     RCLCPP_INFO(rclcpp::get_logger(mDeviceName), std::to_string(data_service_.service_is_ready()).c_str());
 
-} // namespace webots_ros2_driver
+  }
+}  // end namespace webots_ros2_driver

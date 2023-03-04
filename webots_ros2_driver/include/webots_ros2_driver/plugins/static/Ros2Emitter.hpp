@@ -6,10 +6,8 @@
 
 #include <webots_ros2_msgs/srv/set_string.hpp>
 
-namespace webots_ros2_driver
-{
-  class Ros2Emitter : public Ros2SensorPlugin
-  {
+namespace webots_ros2_driver {
+  class Ros2Emitter : public Ros2SensorPlugin {
   public:
     // Your plugin has to override step() and init() methods
     void step() override;

@@ -6,8 +6,7 @@
 
 #include <webots_ros2_msgs/msg/string_stamped.hpp>
 
-namespace webots_ros2_driver
-{
+namespace webots_ros2_driver {
   class Ros2Receiver : public Ros2SensorPlugin {
   public:
     // Your plugin has to override step() and init() methods
@@ -26,7 +25,6 @@ namespace webots_ros2_driver
     std::string mDeviceName;
     int mDeviceChannel;
     bool mIsEnabled;
-
   };
 }
 #endif

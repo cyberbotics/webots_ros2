@@ -9,10 +9,9 @@
 
 //   TODO: implement all other node functions!
 
-namespace webots_ros2_driver
-{
-  void Ros2Receiver::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {  
+namespace webots_ros2_driver {
+  void Ros2Receiver::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {  
+    Ros2SensorPlugin::init(node, parameters);
     // This parameter is read when loading the URDF file
     mDeviceName = parameters.count("name") ? parameters["name"] : "emitter";
     mDeviceChannel = parameters.count("channel") ? atoi(parameters["channel"].c_str()) : -1;
@@ -27,7 +26,7 @@ namespace webots_ros2_driver
     // Data publisher
     mDataPublisher = node->create_publisher<webots_ros2_msgs::msg::StringStamped>(mTopicName + "/data",
                                                                                   rclcpp::SensorDataQoS().reliable());
-    RCLCPP_INFO(rclcpp::get_logger(mDeviceName), (mTopicName + " initialized!").c_str());
+    RCLCPP_INFO(rclcpp::get_logger(mDeviceName), (mDeviceName + " initialized!").c_str());
     
     // Calculate timestep
     if (mAlwaysOn) {
@@ -35,10 +34,8 @@ namespace webots_ros2_driver
       RCLCPP_INFO(rclcpp::get_logger(mDeviceName), (mDeviceName + " activated!").c_str());
       mIsEnabled = true;
     }
-
   }
-  void Ros2Receiver::step()
-  {
+  void Ros2Receiver::step() {
     if (!preStep())
       return;
 
@@ -49,7 +46,6 @@ namespace webots_ros2_driver
       
     mustPublish();
   }
-
   bool Ros2Receiver::mustPublish() {
     // Enable/Disable sensor
     const bool shouldBeEnabled = mDataPublisher->get_subscription_count() > 0;
@@ -63,7 +59,6 @@ namespace webots_ros2_driver
     }
     return mIsEnabled;
   }
-
   void Ros2Receiver::publishData() {
     // If there is any packet publish the data
     if (wb_receiver_get_queue_length(mReceiver) > 0) {
@@ -107,4 +102,4 @@ namespace webots_ros2_driver
 //       RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "Data pblished");
     }
   }
-} // namespace webots_ros2_driver
+}  // end namespace webots_ros2_driver

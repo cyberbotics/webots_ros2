@@ -24,7 +24,7 @@ namespace webots_ros2_driver {
     wb_receiver_set_channel(mReceiver, mDeviceChannel);
     
     // Data publisher
-    mDataPublisher = node->create_publisher<webots_ros2_msgs::msg::StringStamped>(mTopicName + "/data",
+    mDataPublisher = mNode->create_publisher<webots_ros2_msgs::msg::StringStamped>(mTopicName + "/data",
                                                                                   rclcpp::SensorDataQoS().reliable());
     RCLCPP_INFO(rclcpp::get_logger(mDeviceName), (mDeviceName + " initialized!").c_str());
     
@@ -41,6 +41,7 @@ namespace webots_ros2_driver {
 
     if (mIsEnabled)
       publishData();
+
     if (mAlwaysOn)
       return;
       
@@ -65,41 +66,14 @@ namespace webots_ros2_driver {
       RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "data captured");
       const int length_buffer = wb_receiver_get_data_size(mReceiver);
       const void *received_data = wb_receiver_get_data(mReceiver);
-//       cast for manipulation      
-//       void *received_data_void = const_cast<void *>(received_data);  // remove const
-//       char *publishing_data = static_cast<char *>(received_data_void); // cast type
-      char *publishing_data = (char *)malloc((size_t)length_buffer);
-//       char* publishing_data;
-//       const std::string *publishing_data = static_cast<const std::string*>(received_data);
-//       char publishing_data[length_buffer];
-//       void *received_data_void = const_cast<void *>(received_data);
-//       publishing_data = static_cast<char *>(received_data_void);
-//       const char *publishing_data = static_cast<const char *>(received_data);
-      memcpy(publishing_data, received_data, length_buffer);
-
-      RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "cast2");
-      RCLCPP_INFO(rclcpp::get_logger(mDeviceName), std::to_string(strlen(publishing_data)).c_str());
-//       RCLCPP_INFO(rclcpp::get_logger(mDeviceName), publishing_data);
-//       RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "cast");
-      RCLCPP_INFO(rclcpp::get_logger(mDeviceName), std::to_string(length_buffer).c_str());
-      RCLCPP_INFO(rclcpp::get_logger(mDeviceName), std::string(publishing_data).c_str());
-//       mDataMessage.data = publishing_data;
-//       std::string message = std::to_string(*publishing_data);
-//       mDataMessage.data = message;
-//       std::string message = std::to_string(*publishing_data);
+      // cast to char*
+      char *publishing_data_char = (char *)realloc(const_cast<void *>(received_data), length_buffer);
+      // publish
+      mDataMessage.data = std::string(publishing_data_char);
       mDataMessage.header.stamp = mNode->get_clock()->now();
-//       mDataMessage.data = std::string(publishing_data);
-      mDataMessage.data = publishing_data;
-//       RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "cast3");
-//       RCLCPP_INFO(rclcpp::get_logger(mDeviceName), message.c_str());
-      
       mDataPublisher->publish(mDataMessage);
+      // release pointer
       wb_receiver_next_packet(mReceiver);
-//       delete received_data;
-      RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "Data pblished1");
-      RCLCPP_INFO(rclcpp::get_logger(mDeviceName), mDataMessage.data.c_str());
-//       delete publishing_data;
-//       RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "Data pblished");
     }
   }
-}  // end namespace webots_ros2_driver
+}  // namespace webots_ros2_driver

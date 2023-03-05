@@ -36,19 +36,13 @@ namespace webots_ros2_driver {
   void Ros2Emitter::send_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetString::Request> request,
                                   std::shared_ptr<webots_ros2_msgs::srv::SetString::Response> response) {
     std::string message = request->value;
-    int ok = wb_emitter_send(mEmitter, message.c_str(), message.length());
+    auto umessage = reinterpret_cast<unsigned char*>(const_cast<char *>(message.c_str()));
+    int ok = wb_emitter_send(mEmitter, umessage, message.length() + 1);
     response->success = ok;
-
-    RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "Emitter send!");
-    RCLCPP_INFO(rclcpp::get_logger(mDeviceName), std::to_string(ok).c_str());
-    RCLCPP_INFO(rclcpp::get_logger(mDeviceName), message.c_str());
-    
-//     free(ok);
   }
   void Ros2Emitter::step() {
     if (!preStep())
       return;
-//     RCLCPP_INFO(rclcpp::get_logger(mDeviceName), std::to_string(data_service_.service_is_ready()).c_str());
 
   }
-}  // end namespace webots_ros2_driver
+}  // namespace webots_ros2_driver

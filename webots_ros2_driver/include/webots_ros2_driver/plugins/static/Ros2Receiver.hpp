@@ -26,5 +26,6 @@ namespace webots_ros2_driver {
     int mDeviceChannel;
     bool mIsEnabled;
   };
-}
+} // namespace webots_ros2_driver
+
 #endif

@@ -31,7 +31,6 @@ namespace webots_ros2_driver {
     data_service_ = mNode->create_service<webots_ros2_msgs::srv::SetString>(mTopicName + "/send",
                                                                            std::bind(&Ros2Emitter::send_callback, this, _1, _2));
     RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "Emitter initialized!");
-
   }
   void Ros2Emitter::send_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetString::Request> request,
                                   std::shared_ptr<webots_ros2_msgs::srv::SetString::Response> response) {
@@ -43,6 +42,5 @@ namespace webots_ros2_driver {
   void Ros2Emitter::step() {
     if (!preStep())
       return;
-
   }
 }  // namespace webots_ros2_driver

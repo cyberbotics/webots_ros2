@@ -24,6 +24,7 @@ namespace webots_ros2_driver {
     std::string mDeviceName;
     int mDeviceChannel;
   };
+
 } // namespace webots_ros2_driver
 
 #endif

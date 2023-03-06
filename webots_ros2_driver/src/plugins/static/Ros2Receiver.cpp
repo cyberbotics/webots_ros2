@@ -10,7 +10,7 @@
 //   TODO: implement all other node functions!
 
 namespace webots_ros2_driver {
-  void Ros2Receiver::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {  
+  void Ros2Receiver::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
     Ros2SensorPlugin::init(node, parameters);
     // This parameter is read when loading the URDF file
     mDeviceName = parameters.count("name") ? parameters["name"] : "emitter";
@@ -18,16 +18,16 @@ namespace webots_ros2_driver {
 
     mReceiver = wb_robot_get_device(mDeviceName.c_str());
     mIsEnabled = false;
-    
+
     assert(mReceiver != 0);
-    
+
     wb_receiver_set_channel(mReceiver, mDeviceChannel);
-    
+
     // Data publisher
-    mDataPublisher = mNode->create_publisher<webots_ros2_msgs::msg::StringStamped>(mTopicName + "/data",
-                                                                                  rclcpp::SensorDataQoS().reliable());
+    mDataPublisher =
+      mNode->create_publisher<webots_ros2_msgs::msg::StringStamped>(mTopicName + "/data", rclcpp::SensorDataQoS().reliable());
     RCLCPP_INFO(rclcpp::get_logger(mDeviceName), (mDeviceName + " initialized!").c_str());
-    
+
     // Calculate timestep
     if (mAlwaysOn) {
       wb_receiver_enable(mReceiver, mPublishTimestepSyncedMs);
@@ -44,14 +44,13 @@ namespace webots_ros2_driver {
 
     if (mAlwaysOn)
       return;
-      
+
     mustPublish();
   }
   bool Ros2Receiver::mustPublish() {
     // Enable/Disable sensor
     const bool shouldBeEnabled = mDataPublisher->get_subscription_count() > 0;
-    if (shouldBeEnabled != mIsEnabled)
-    {
+    if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         wb_receiver_enable(mReceiver, mPublishTimestepSyncedMs);
       else

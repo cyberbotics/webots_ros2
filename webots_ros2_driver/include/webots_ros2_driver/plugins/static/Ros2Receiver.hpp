@@ -27,6 +27,6 @@ namespace webots_ros2_driver {
     bool mIsEnabled;
   };
 
-} // namespace webots_ros2_driver
+}  // namespace webots_ros2_driver
 
 #endif

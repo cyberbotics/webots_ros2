@@ -23,12 +23,12 @@
 
 #include <webots_ros2_driver/plugins/static/Ros2Camera.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2DistanceSensor.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2Emitter.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2GPS.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2LED.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Lidar.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2LightSensor.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2RangeFinder.hpp>
-#include <webots_ros2_driver/plugins/static/Ros2Emitter.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Receiver.hpp>
 #include "webots_ros2_driver/PluginInterface.hpp"
 

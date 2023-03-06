@@ -29,6 +29,10 @@ set(msg_files
   "msg/UrdfRobot.msg"
 )
 set(srv_files
+  "srv/GetFloat.srv"
+  "srv/GetInt.srv"
+  "srv/ReceiverGetEmitterDirection.srv"
+  "srv/SetFloat.srv"
   "srv/SetInt.srv"
   "srv/SetString.srv"
   "srv/SpawnUrdfRobot.srv"

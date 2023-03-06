@@ -6,13 +6,6 @@
 using std::placeholders::_1;
 using std::placeholders::_2;
 
-// TODO: implement
-// set_channel
-// get_channel
-// set_range
-// get_range
-// get_buffer_size
-
 namespace webots_ros2_driver {
   void Ros2Emitter::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
     Ros2SensorPlugin::init(node, parameters);
@@ -27,9 +20,43 @@ namespace webots_ros2_driver {
     wb_emitter_set_channel(mEmitter, mDeviceChannel);
 
     // Initialize services, publishers and subcriptions
-    data_service_ = mNode->create_service<webots_ros2_msgs::srv::SetString>(
+    get_buffer_size_service_ = mNode->create_service<webots_ros2_msgs::srv::GetInt>(
+      mTopicName + "/get_buffer_size", std::bind(&Ros2Emitter::get_buffer_size_callback, this, _1, _2));
+    get_channel_service_ = mNode->create_service<webots_ros2_msgs::srv::GetInt>(
+      mTopicName + "/get_channel", std::bind(&Ros2Emitter::get_channel_callback, this, _1, _2));
+    get_range_service_ = mNode->create_service<webots_ros2_msgs::srv::GetFloat>(
+      mTopicName + "/get_range", std::bind(&Ros2Emitter::get_range_callback, this, _1, _2));
+    send_service_ = mNode->create_service<webots_ros2_msgs::srv::SetString>(
       mTopicName + "/send", std::bind(&Ros2Emitter::send_callback, this, _1, _2));
-    RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "Emitter initialized!");
+    set_channel_service_ = mNode->create_service<webots_ros2_msgs::srv::SetInt>(
+      mTopicName + "/set_channel", std::bind(&Ros2Emitter::set_channel_callback, this, _1, _2));
+    set_range_service_ = mNode->create_service<webots_ros2_msgs::srv::SetFloat>(
+      mTopicName + "/set_range", std::bind(&Ros2Emitter::set_range_callback, this, _1, _2));
+    RCLCPP_DEBUG(rclcpp::get_logger(mDeviceName), "Emitter initialized!");
+  }
+  void Ros2Emitter::get_buffer_size_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
+                                             std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response) {
+    int value = -1;
+    if (request->ask)
+      value = wb_emitter_get_buffer_size(mEmitter);
+
+    response->value = value;
+  }
+  void Ros2Emitter::get_channel_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
+                                         std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response) {
+    int value = -1;
+    if (request->ask)
+      value = wb_emitter_get_channel(mEmitter);
+
+    response->value = value;
+  }
+  void Ros2Emitter::get_range_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Request> request,
+                                       std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Response> response) {
+    int value = -1;
+    if (request->ask)
+      value = wb_emitter_get_range(mEmitter);
+
+    response->value = value;
   }
   void Ros2Emitter::send_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetString::Request> request,
                                   std::shared_ptr<webots_ros2_msgs::srv::SetString::Response> response) {
@@ -37,6 +64,18 @@ namespace webots_ros2_driver {
     auto umessage = reinterpret_cast<unsigned char *>(const_cast<char *>(message.c_str()));
     int ok = wb_emitter_send(mEmitter, umessage, message.length() + 1);
     response->success = ok;
+  }
+  void Ros2Emitter::set_channel_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetInt::Request> request,
+                                         std::shared_ptr<webots_ros2_msgs::srv::SetInt::Response> response) {
+    int channel = request->value;
+    wb_emitter_set_channel(mEmitter, channel);
+    response->success = true;
+  }
+  void Ros2Emitter::set_range_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetFloat::Request> request,
+                                       std::shared_ptr<webots_ros2_msgs::srv::SetFloat::Response> response) {
+    double range = request->value;
+    wb_emitter_set_range(mEmitter, range);
+    response->success = true;
   }
   void Ros2Emitter::step() {
     if (!preStep())

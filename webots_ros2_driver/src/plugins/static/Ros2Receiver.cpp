@@ -4,10 +4,8 @@
 #include <webots/receiver.h>
 #include <webots/robot.h>
 
-// #include <cstdio>
-// #include <string>
-
-//   TODO: implement all other node functions!
+using std::placeholders::_1;
+using std::placeholders::_2;
 
 namespace webots_ros2_driver {
   void Ros2Receiver::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
@@ -26,12 +24,21 @@ namespace webots_ros2_driver {
     // Data publisher
     mDataPublisher =
       mNode->create_publisher<webots_ros2_msgs::msg::StringStamped>(mTopicName + "/data", rclcpp::SensorDataQoS().reliable());
-    RCLCPP_INFO(rclcpp::get_logger(mDeviceName), (mDeviceName + " initialized!").c_str());
+    // Services
+    enable_service_ = mNode->create_service<webots_ros2_msgs::srv::SetInt>(
+      mTopicName + "/enable", std::bind(&Ros2Receiver::enable_callback, this, _1, _2));
+    get_emitter_direction_service_ = mNode->create_service<webots_ros2_msgs::srv::ReceiverGetEmitterDirection>(
+      mTopicName + "/get_emitter_direction", std::bind(&Ros2Receiver::get_emitter_direction_callback, this, _1, _2));
+    get_sampling_period_service_ = mNode->create_service<webots_ros2_msgs::srv::GetInt>(
+      mTopicName + "/get_sampling_period", std::bind(&Ros2Receiver::get_sampling_period_callback, this, _1, _2));
+    get_signal_strength_service_ = mNode->create_service<webots_ros2_msgs::srv::GetFloat>(
+      mTopicName + "/get_signal_strength", std::bind(&Ros2Receiver::get_signal_strength_callback, this, _1, _2));
+    RCLCPP_DEBUG(rclcpp::get_logger(mDeviceName), (mDeviceName + " initialized!").c_str());
 
     // Calculate timestep
     if (mAlwaysOn) {
       wb_receiver_enable(mReceiver, mPublishTimestepSyncedMs);
-      RCLCPP_INFO(rclcpp::get_logger(mDeviceName), (mDeviceName + " activated!").c_str());
+      RCLCPP_DEBUG(rclcpp::get_logger(mDeviceName), (mDeviceName + " activated!").c_str());
       mIsEnabled = true;
     }
   }
@@ -62,7 +69,6 @@ namespace webots_ros2_driver {
   void Ros2Receiver::publishData() {
     // If there is any packet publish the data
     if (wb_receiver_get_queue_length(mReceiver) > 0) {
-      RCLCPP_INFO(rclcpp::get_logger(mDeviceName), "data captured");
       const int length_buffer = wb_receiver_get_data_size(mReceiver);
       const void *received_data = wb_receiver_get_data(mReceiver);
       // cast to char*
@@ -74,5 +80,49 @@ namespace webots_ros2_driver {
       // release pointer
       wb_receiver_next_packet(mReceiver);
     }
+  }
+  void Ros2Receiver::enable_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetInt::Request> request,
+                                     std::shared_ptr<webots_ros2_msgs::srv::SetInt::Response> response) {
+    bool must_activate = request->value;
+    if (must_activate) {
+      wb_receiver_enable(mReceiver, mPublishTimestepSyncedMs);
+      mAlwaysOn = true;
+      mIsEnabled = true;
+    }
+    else {
+      wb_receiver_disable(mReceiver);
+      mAlwaysOn = false;
+      mIsEnabled = false;
+    }
+    response->success = true;
+  }
+  void Ros2Receiver::get_emitter_direction_callback(const std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Request> request,
+                                                    std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Response> response) {
+    std::vector<double> value {0, 0, 0};
+
+    if (request->ask) {
+      const double * emitter_dir = wb_receiver_get_emitter_direction(mReceiver);
+      value.at(0) = emitter_dir[0];
+      value.at(1) = emitter_dir[1];
+      value.at(2) = emitter_dir[2];
+    }
+
+    response->direction = value;
+  }
+  void Ros2Receiver::get_sampling_period_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
+                                                  std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response) {
+    int value = 0;
+    if (request->ask)
+      value = wb_receiver_get_sampling_period(mReceiver);
+
+    response->value = value;
+  }
+  void Ros2Receiver::get_signal_strength_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Request> request,
+                                                  std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Response> response) {
+    double value = 0;
+    if (request->ask)
+      value = wb_receiver_get_signal_strength(mReceiver);
+
+    response->value = value;
   }
 }  // namespace webots_ros2_driver

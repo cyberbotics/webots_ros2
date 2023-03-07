@@ -69,10 +69,9 @@ namespace webots_ros2_driver {
   void Ros2Receiver::publishData() {
     // If there is any packet publish the data
     if (wb_receiver_get_queue_length(mReceiver) > 0) {
-      const int length_buffer = wb_receiver_get_data_size(mReceiver);
       const void *received_data = wb_receiver_get_data(mReceiver);
       // cast to char*
-      char *publishing_data_char = (char *)realloc(const_cast<void *>(received_data), length_buffer);
+      char *publishing_data_char = static_cast<void *>(const_cast<void *>(received_data));
       // publish
       mDataMessage.data = std::string(publishing_data_char);
       mDataMessage.header.stamp = mNode->get_clock()->now();

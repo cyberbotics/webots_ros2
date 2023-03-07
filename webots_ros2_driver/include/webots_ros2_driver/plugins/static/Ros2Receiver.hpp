@@ -23,8 +23,9 @@ namespace webots_ros2_driver {
 
     void enable_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetInt::Request> request,
                          std::shared_ptr<webots_ros2_msgs::srv::SetInt::Response> response);
-    void get_emitter_direction_callback(const std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Request> request,
-                                        std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Response> response);
+    void get_emitter_direction_callback(
+      const std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Request> request,
+      std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Response> response);
     void get_sampling_period_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
                                       std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response);
     void get_signal_strength_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Request> request,

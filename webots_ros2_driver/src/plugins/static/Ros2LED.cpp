@@ -33,7 +33,5 @@ namespace webots_ros2_driver {
 
   void Ros2LED::step() {}
 
-  void Ros2LED::onMessageReceived(const std_msgs::msg::Int32::SharedPtr message) {
-    wb_led_set(mLED, message->data);
-  }
+  void Ros2LED::onMessageReceived(const std_msgs::msg::Int32::SharedPtr message) { wb_led_set(mLED, message->data); }
 }  // namespace webots_ros2_driver

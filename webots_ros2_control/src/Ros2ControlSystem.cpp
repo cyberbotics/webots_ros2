@@ -28,9 +28,7 @@
 #include <webots/robot.h>
 
 namespace webots_ros2_control {
-  Ros2ControlSystem::Ros2ControlSystem() {
-    mNode = NULL;
-  }
+  Ros2ControlSystem::Ros2ControlSystem() { mNode = NULL; }
   void Ros2ControlSystem::init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) {
     mNode = node;
     for (hardware_interface::ComponentInfo component : info.joints) {

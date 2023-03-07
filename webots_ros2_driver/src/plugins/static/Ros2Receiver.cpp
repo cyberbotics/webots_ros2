@@ -92,12 +92,13 @@ namespace webots_ros2_driver {
     }
     response->success = true;
   }
-  void Ros2Receiver::get_emitter_direction_callback(const std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Request> request,
-                                                    std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Response> response) {
-    std::vector<double> value {0, 0, 0};
+  void Ros2Receiver::get_emitter_direction_callback(
+    const std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Request> request,
+    std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Response> response) {
+    std::vector<double> value{0, 0, 0};
 
     if (request->ask) {
-      const double * emitter_dir = wb_receiver_get_emitter_direction(mReceiver);
+      const double *emitter_dir = wb_receiver_get_emitter_direction(mReceiver);
       value.at(0) = emitter_dir[0];
       value.at(1) = emitter_dir[1];
       value.at(2) = emitter_dir[2];

@@ -40,7 +40,7 @@ namespace webots_ros2_driver {
   }
   void Ros2Emitter::get_channel_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
                                          std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response) {
-    response->value = request->ask ? wb_emitter_get_channel(mEmitter) : -1; 
+    response->value = request->ask ? wb_emitter_get_channel(mEmitter) : -1;
   }
   void Ros2Emitter::get_range_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Request> request,
                                        std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Response> response) {

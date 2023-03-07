@@ -36,45 +36,30 @@ namespace webots_ros2_driver {
   }
   void Ros2Emitter::get_buffer_size_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
                                              std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response) {
-    int value = -1;
-    if (request->ask)
-      value = wb_emitter_get_buffer_size(mEmitter);
-
-    response->value = value;
+    response->value = request->ask ? wb_emitter_get_buffer_size(mEmitter) : -1;
   }
   void Ros2Emitter::get_channel_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
                                          std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response) {
-    int value = -1;
-    if (request->ask)
-      value = wb_emitter_get_channel(mEmitter);
-
-    response->value = value;
+    response->value = request->ask ? wb_emitter_get_channel(mEmitter) : -1; 
   }
   void Ros2Emitter::get_range_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Request> request,
                                        std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Response> response) {
-    int value = -1;
-    if (request->ask)
-      value = wb_emitter_get_range(mEmitter);
-
-    response->value = value;
+    response->value = request->ask ? wb_emitter_get_range(mEmitter) : -1;
   }
   void Ros2Emitter::send_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetString::Request> request,
                                   std::shared_ptr<webots_ros2_msgs::srv::SetString::Response> response) {
     std::string message = request->value;
     auto umessage = reinterpret_cast<unsigned char *>(const_cast<char *>(message.c_str()));
-    int ok = wb_emitter_send(mEmitter, umessage, message.length() + 1);
-    response->success = ok;
+    response->success = wb_emitter_send(mEmitter, umessage, message.length() + 1);
   }
   void Ros2Emitter::set_channel_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetInt::Request> request,
                                          std::shared_ptr<webots_ros2_msgs::srv::SetInt::Response> response) {
-    int channel = request->value;
-    wb_emitter_set_channel(mEmitter, channel);
+    wb_emitter_set_channel(mEmitter, request->value);
     response->success = true;
   }
   void Ros2Emitter::set_range_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetFloat::Request> request,
                                        std::shared_ptr<webots_ros2_msgs::srv::SetFloat::Response> response) {
-    double range = request->value;
-    wb_emitter_set_range(mEmitter, range);
+    wb_emitter_set_range(mEmitter, request->value);
     response->success = true;
   }
   void Ros2Emitter::step() {

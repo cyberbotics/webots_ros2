@@ -13,7 +13,6 @@
 namespace webots_ros2_driver {
   class Ros2Receiver : public Ros2SensorPlugin {
   public:
-    // Your plugin has to override step() and init() methods
     void step() override;
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
 

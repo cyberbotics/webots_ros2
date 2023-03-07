@@ -77,19 +77,16 @@ namespace webots_ros2_driver {
       mDataMessage.data = std::string(publishing_data_char);
       mDataMessage.header.stamp = mNode->get_clock()->now();
       mDataPublisher->publish(mDataMessage);
-      // release pointer
       wb_receiver_next_packet(mReceiver);
     }
   }
   void Ros2Receiver::enable_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetInt::Request> request,
                                      std::shared_ptr<webots_ros2_msgs::srv::SetInt::Response> response) {
-    bool must_activate = request->value;
-    if (must_activate) {
+    if (request->value) {
       wb_receiver_enable(mReceiver, mPublishTimestepSyncedMs);
       mAlwaysOn = true;
       mIsEnabled = true;
-    }
-    else {
+    } else {
       wb_receiver_disable(mReceiver);
       mAlwaysOn = false;
       mIsEnabled = false;
@@ -111,18 +108,10 @@ namespace webots_ros2_driver {
   }
   void Ros2Receiver::get_sampling_period_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
                                                   std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response) {
-    int value = 0;
-    if (request->ask)
-      value = wb_receiver_get_sampling_period(mReceiver);
-
-    response->value = value;
+    response->value = request->ask ? wb_receiver_get_sampling_period(mReceiver) : 0;
   }
   void Ros2Receiver::get_signal_strength_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Request> request,
                                                   std::shared_ptr<webots_ros2_msgs::srv::GetFloat::Response> response) {
-    double value = 0;
-    if (request->ask)
-      value = wb_receiver_get_signal_strength(mReceiver);
-
-    response->value = value;
+    response->value = request->ask ? wb_receiver_get_signal_strength(mReceiver) : 0;
   }
 }  // namespace webots_ros2_driver

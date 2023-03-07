@@ -71,7 +71,7 @@ namespace webots_ros2_driver {
     if (wb_receiver_get_queue_length(mReceiver) > 0) {
       const void *received_data = wb_receiver_get_data(mReceiver);
       // cast to char*
-      char *publishing_data_char = static_cast<void *>(const_cast<void *>(received_data));
+      char *publishing_data_char = static_cast<char *>(const_cast<void *>(received_data));
       // publish
       mDataMessage.data = std::string(publishing_data_char);
       mDataMessage.header.stamp = mNode->get_clock()->now();

@@ -168,6 +168,12 @@ class WebotsLauncher(ExecuteProcess):
                                                                       '.wbproj')
             shutil.copy2(wbproj_path, wbproj_copy_path)
 
+        # copy sumo network file if it exists
+        sumonet_path = Path(world_path).with_name(Path(world_path).stem + '_net')
+        if sumonet_path.exists():
+            sumonet_copy_path = Path(self.__world_copy.name).with_name(Path(self.__world_copy.name).stem + '_net')
+            shutil.copytree(sumonet_path, sumonet_copy_path)
+
         # Update relative paths in the world
         with open(self.__world_copy.name, 'r') as file:
             content = file.read()

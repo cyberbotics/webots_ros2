@@ -54,7 +54,7 @@ class _ConditionalSubstitution(Substitution):
 
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, ros2_supervisor=False,
-                 port='1234', sumo=False, **kwargs):
+                 port='1234', **kwargs):
         if sys.platform == 'win32':
             print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a '
                   'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
@@ -89,9 +89,6 @@ class WebotsLauncher(ExecuteProcess):
         if self.__is_wsl:
             wsl_tmp_path = subprocess.check_output(['wslpath', '-w', self.__world_copy.name]).strip().decode('utf-8')
             world = TextSubstitution(text=wsl_tmp_path)
-
-        # store if it is required to copy a sumo network
-        self.__copy_sumo = sumo
 
         no_rendering = _ConditionalSubstitution(condition=gui, false_value='--no-rendering')
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
@@ -172,8 +169,8 @@ class WebotsLauncher(ExecuteProcess):
             shutil.copy2(wbproj_path, wbproj_copy_path)
 
         # copy sumo network if requested
-        if self.__copy_sumo:
-            sumonet_path = Path(world_path).with_name(Path(world_path).stem + '_net')
+        sumonet_path = Path(world_path).with_name(Path(world_path).stem + '_net')
+        if sumonet_path.exists():
             sumonet_copy_path = Path(self.__world_copy.name).with_name(Path(self.__world_copy.name).stem + '_net')
             shutil.copytree(sumonet_path, sumonet_copy_path)
 

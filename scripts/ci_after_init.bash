@@ -33,7 +33,6 @@ fi
 
 if [[ "${ROS_DISTRO}" == "humble" ]]; then
     apt install -y ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
-    export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 fi
 
 # Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).

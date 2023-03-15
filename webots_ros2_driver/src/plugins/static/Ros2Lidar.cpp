@@ -25,9 +25,8 @@ namespace webots_ros2_driver
   {
     mLidar = wb_robot_get_device(parameters["name"].c_str());
     assert(mLidar != 0);
-    if(parameters.count("updateRate") == 0.0){
+    if (parameters.count("updateRate") == 0)
       parameters.insert({"updateRate", std::to_string(wb_lidar_get_frequency(mLidar))});
-    }
 
     Ros2SensorPlugin::init(node, parameters);
     mIsSensorEnabled = false;

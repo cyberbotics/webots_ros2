@@ -22,6 +22,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from pathlib import Path
 
 from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
@@ -52,12 +53,18 @@ class _ConditionalSubstitution(Substitution):
 
 
 class WebotsLauncher(ExecuteProcess):
-    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, **kwargs):
+    def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, ros2_supervisor=False,
+                 port='1234', **kwargs):
         if sys.platform == 'win32':
-            print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
-            print('WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more information.', file=sys.stderr)
+            print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a '
+                  'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
+            print('WARNING: Check https://github.com/cyberbotics/webots_ros2/wiki/Complete-Installation-Guide for more '
+                  'information.', file=sys.stderr)
         self.__is_wsl = is_wsl()
         self.__has_shared_folder = has_shared_folder()
+        self.__is_supervisor = ros2_supervisor
+        if self.__is_supervisor:
+            self._supervisor = Ros2SupervisorLauncher(port=port)
 
         # Find Webots executable
         if not self.__has_shared_folder:
@@ -72,7 +79,6 @@ class WebotsLauncher(ExecuteProcess):
         else:
             webots_path = ''
 
-        mode_string = mode
         mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
 
         self.__world_copy = tempfile.NamedTemporaryFile(mode='w+', suffix='_world_with_URDF_robot.wbt', delete=False)
@@ -88,7 +94,12 @@ class WebotsLauncher(ExecuteProcess):
         stdout = _ConditionalSubstitution(condition=gui, false_value='--stdout')
         stderr = _ConditionalSubstitution(condition=gui, false_value='--stderr')
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
-        stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
+        if isinstance(stream, bool):
+            stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
+        else:
+            stream_argument = "--stream=" + stream
+        port_argument = '--port=' + port
+
         xvfb_run_prefix = []
 
         if 'WEBOTS_OFFSCREEN' in os.environ:
@@ -96,21 +107,23 @@ class WebotsLauncher(ExecuteProcess):
             xvfb_run_prefix.append('--auto-servernum')
             no_rendering = '--no-rendering'
 
-        # Create arguments file and initialize command to start Webots remotely through TCP
+        # Initialize command to start Webots remotely through TCP
         if self.__has_shared_folder:
-            launch_arguments = ['--batch', ' --mode=' + mode_string]
-            if not gui:
-                launch_arguments.extend([' --no-rendering', ' --stdout', ' --stderr', ' --minimize']) 
-            if stream:
-                launch_arguments.append(' --stream')
-
-            webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots_tcp_client.py'))
+            webots_tcp_client = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts',
+                                 'webots_tcp_client.py'))
             super().__init__(
                 output=output,
                 cmd=[
                     'python3',
                     webots_tcp_client,
-                    launch_arguments,
+                    stream_argument,
+                    port_argument,
+                    no_rendering,
+                    stdout,
+                    stderr,
+                    minimize,
+                    '--batch',
+                    ['--mode=', mode],
                     os.path.basename(self.__world_copy.name),
                 ],
                 name='webots_tcp_client',
@@ -124,6 +137,7 @@ class WebotsLauncher(ExecuteProcess):
                 cmd=xvfb_run_prefix + [
                     webots_path,
                     stream_argument,
+                    port_argument,
                     no_rendering,
                     stdout,
                     stderr,
@@ -146,6 +160,20 @@ class WebotsLauncher(ExecuteProcess):
 
         shutil.copy2(world_path, self.__world_copy.name)
 
+        # look for a wbproj file and copy if available
+        wbproj_path = Path(world_path).with_name('.' + Path(world_path).stem + '.wbproj')
+
+        if wbproj_path.exists():
+            wbproj_copy_path = Path(self.__world_copy.name).with_name('.' + Path(self.__world_copy.name).stem +
+                                                                      '.wbproj')
+            shutil.copy2(wbproj_path, wbproj_copy_path)
+
+        # copy sumo network file if it exists
+        sumonet_path = Path(world_path).with_name(Path(world_path).stem + '_net')
+        if sumonet_path.exists():
+            sumonet_copy_path = Path(self.__world_copy.name).with_name(Path(self.__world_copy.name).stem + '_net')
+            shutil.copytree(sumonet_path, sumonet_copy_path)
+
         # Update relative paths in the world
         with open(self.__world_copy.name, 'r') as file:
             content = file.read()
@@ -154,10 +182,19 @@ class WebotsLauncher(ExecuteProcess):
             url_path = match.group(1)
 
             # Absolute path or Webots relative path or Web paths
-            if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') or url_path.startswith('https://'):
+            if os.path.isabs(url_path) or url_path.startswith('webots://') or url_path.startswith('http://') \
+                    or url_path.startswith('https://'):
                 continue
 
-            new_url_path = '"' + os.path.split(world_path)[0] + '/' + url_path + '"'
+            new_url_path = os.path.split(world_path)[0] + '/' + url_path
+            if self.__has_shared_folder:
+                # Copy asset to shared folder
+                shutil.copy(new_url_path, os.path.join(container_shared_folder(), os.path.basename(new_url_path)))
+                new_url_path = './' + os.path.basename(new_url_path)
+            if self.__is_wsl:
+                command = ['wslpath', '-w', new_url_path]
+                new_url_path = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
+            new_url_path = '"' + new_url_path + '"'
             url_path = '"' + url_path + '"'
             content = content.replace(url_path, new_url_path)
 
@@ -165,18 +202,23 @@ class WebotsLauncher(ExecuteProcess):
             file.write(content)
 
         # Add the Ros2Supervisor
-        indent = '  '
-        world_file = open(self.__world_copy.name, 'a')
-        world_file.write('Robot {\n')
-        world_file.write(indent + 'name "Ros2Supervisor"\n')
-        world_file.write(indent + 'controller "<extern>"\n')
-        world_file.write(indent + 'supervisor TRUE\n')
-        world_file.write('}\n')
-        world_file.close()
+        if self.__is_supervisor:
+            indent = '  '
+            world_file = open(self.__world_copy.name, 'a')
+            world_file.write('Robot {\n')
+            world_file.write(indent + 'name "Ros2Supervisor"\n')
+            world_file.write(indent + 'controller "<extern>"\n')
+            world_file.write(indent + 'supervisor TRUE\n')
+            world_file.write('}\n')
+            world_file.close()
 
         # Copy world file to shared folder
         if self.__has_shared_folder:
-            shutil.copy(self.__world_copy.name, os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name)))
+            shared_world_file = os.path.join(container_shared_folder(), os.path.basename(self.__world_copy.name))
+            shutil.copy(self.__world_copy.name, shared_world_file)
+            if wbproj_path.exists():
+                shared_wbproj_copy_path = Path(shared_world_file).with_name('.' + Path(shared_world_file).stem + '.wbproj')
+                shutil.copy(wbproj_path, shared_wbproj_copy_path)
 
         # Execute process
         return super().execute(context)
@@ -209,7 +251,7 @@ class WebotsLauncher(ExecuteProcess):
 
 
 class Ros2SupervisorLauncher(Node):
-    def __init__(self, output='screen', respawn=True, **kwargs):
+    def __init__(self, output='screen', respawn=True, port='1234', **kwargs):
         # Launch the Ros2Supervisor node
         super().__init__(
             package='webots_ros2_driver',
@@ -217,7 +259,7 @@ class Ros2SupervisorLauncher(Node):
             output=output,
             # Set WEBOTS_HOME to the webots_ros2_driver installation folder
             # to load the correct libController libraries from the Python API
-            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Ros2Supervisor',
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix(port) + 'Ros2Supervisor',
                             'WEBOTS_HOME': get_package_prefix('webots_ros2_driver')},
             respawn=respawn,
             **kwargs

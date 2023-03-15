@@ -13,10 +13,11 @@ diffdrive_controller:
     left_wheel_names: ["left wheel motor"]
     right_wheel_names: ["right wheel motor"]
 
-    wheel_separation: 0.160
+    wheel_separation: 0.178
     wheel_radius: 0.033
 
     use_stamped_vel: false
+    base_frame_id: "base_link"
 
 joint_state_broadcaster:
   ros__parameters:

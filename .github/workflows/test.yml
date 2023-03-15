@@ -16,11 +16,11 @@ jobs:
       fail-fast: false
       matrix:
         ROS_REPO: [main, testing]
-        ROS_DISTRO: [foxy, galactic, humble, rolling]
+        ROS_DISTRO: [foxy, humble, rolling]
     runs-on: ubuntu-latest
     env:
       AFTER_INIT: ./scripts/ci_after_init.bash ${ROS_DISTRO} ${ROS_REPO}
-      BEFORE_INIT_EMBED: source scripts/ci_before_init_embed.bash
+      BEFORE_INIT_EMBED: source scripts/ci_before_init_embed.bash ${ROS_DISTRO}
       DOCKER_RUN_OPTS: -v /artifacts:/tmp/artifacts
     steps:
       - uses: actions/checkout@v3

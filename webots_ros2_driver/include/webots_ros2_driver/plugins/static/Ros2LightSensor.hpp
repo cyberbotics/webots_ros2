@@ -15,18 +15,15 @@
 #ifndef ROS2_LIGHT_SENSOR_HPP
 #define ROS2_LIGHT_SENSOR_HPP
 
-#include <unordered_map>
-#include <sensor_msgs/msg/illuminance.hpp>
 #include <webots/light_sensor.h>
-#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
+#include <sensor_msgs/msg/illuminance.hpp>
+#include <unordered_map>
 #include <webots_ros2_driver/WebotsNode.hpp>
+#include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 
+namespace webots_ros2_driver {
 
-namespace webots_ros2_driver
-{
-
-  class Ros2LightSensor : public Ros2SensorPlugin
-  {
+  class Ros2LightSensor : public Ros2SensorPlugin {
   public:
     void init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) override;
     void step() override;
@@ -44,6 +41,6 @@ namespace webots_ros2_driver
     bool mIsEnabled;
   };
 
-}
+}  // namespace webots_ros2_driver
 
 #endif

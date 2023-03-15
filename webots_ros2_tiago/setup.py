@@ -8,16 +8,18 @@ data_files.append(('share/' + package_name + '/launch', ['launch/robot_launch.py
 data_files.append(('share/' + package_name + '/resource', [
     'resource/tiago_webots.urdf',
     'resource/ros2_control.yml',
+    'resource/nav2_params.yaml',
     'resource/default.rviz',
     'resource/map.pgm',
     'resource/map.yaml',
+    'resource/cartographer.lua',
 ]))
 data_files.append(('share/' + package_name, ['package.xml']))
 data_files.append(('share/' + package_name + '/worlds', ['worlds/default.wbt', 'worlds/.default.wbproj']))
 
 setup(
     name=package_name,
-    version='2023.0.0',
+    version='2023.0.2',
     packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

@@ -44,6 +44,7 @@ mkdir -p projects/default/libraries/vehicle/java
 cp -r ${WEBOTS_HOME}/projects/default/libraries/vehicle/c/* projects/default/libraries/vehicle/c
 cp -r ${WEBOTS_HOME}/projects/default/libraries/vehicle/cpp/* projects/default/libraries/vehicle/cpp
 cp -r ${WEBOTS_HOME}/projects/default/libraries/vehicle/java/* projects/default/libraries/vehicle/java
+cp ${WEBOTS_HOME}/projects/default/libraries/vehicle/java/.gitignore projects/default/libraries/vehicle/java
 cp ${WEBOTS_HOME}/projects/default/libraries/vehicle/Makefile projects/default/libraries/vehicle
 
 rm -rf resources
@@ -51,6 +52,7 @@ mkdir -p resources/projects/libraries/generic_robot_window
 cp -r ${WEBOTS_HOME}/resources/projects/libraries/generic_robot_window/* resources/projects/libraries/generic_robot_window
 cp ${WEBOTS_HOME}/resources/Makefile.include resources
 cp ${WEBOTS_HOME}/resources/Makefile.os.include resources
+cp ${WEBOTS_HOME}/resources/version.txt resources
 
 rm -rf src
 mkdir -p src/controller

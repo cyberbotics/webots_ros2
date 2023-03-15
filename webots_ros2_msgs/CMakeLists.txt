@@ -23,13 +23,20 @@ find_package(std_msgs REQUIRED)
 find_package(vision_msgs REQUIRED)
 
 set(msg_files
+  "msg/StringStamped.msg"
   "msg/CameraRecognitionObject.msg"
   "msg/CameraRecognitionObjects.msg"
   "msg/UrdfRobot.msg"
 )
 set(srv_files
+  "srv/GetFloat.srv"
+  "srv/GetInt.srv"
+  "srv/ReceiverGetEmitterDirection.srv"
+  "srv/SetFloat.srv"
   "srv/SetInt.srv"
+  "srv/SetString.srv"
   "srv/SpawnUrdfRobot.srv"
+  "srv/SpawnNodeFromString.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}

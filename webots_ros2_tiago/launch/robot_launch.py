@@ -27,7 +27,7 @@ from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
-from webots_ros2_driver.webots_launcher import WebotsLauncher, Ros2SupervisorLauncher
+from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.utils import controller_url_prefix
 
 
@@ -39,10 +39,13 @@ def get_ros2_nodes(*args):
     use_slam = LaunchConfiguration('slam', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
+    nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
+    cartographer_config_dir = os.path.join(package_dir, 'resource')
+    cartographer_config_basename = 'cartographer.lua'
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    controller_manager_timeout = ['--controller-manager-timeout', '50']
+    controller_manager_timeout = ['--controller-manager-timeout', '500']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
 
     use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
@@ -106,35 +109,59 @@ def get_ros2_nodes(*args):
         parameters=[{'use_sim_time': use_sim_time}],
         condition=launch.conditions.IfCondition(use_rviz)
     )
-
     if 'nav2_bringup' in get_packages_with_prefixes():
         optional_nodes.append(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(
                 get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
             launch_arguments=[
                 ('map', nav2_map),
+                ('params_file', nav2_params),
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_nav)))
 
-    slam_toolbox = Node(
-        parameters=[{'use_sim_time': use_sim_time}],
-        package='slam_toolbox',
-        executable='async_slam_toolbox_node',
-        name='slam_toolbox',
+    # SLAM
+    cartographer = Node(
+        package='cartographer_ros',
+        executable='cartographer_node',
+        name='cartographer_node',
         output='screen',
-        condition=launch.conditions.IfCondition(use_slam)
+        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-configuration_directory', cartographer_config_dir,
+                   '-configuration_basename', cartographer_config_basename],
+        condition=launch.conditions.IfCondition(use_slam))
+    optional_nodes.append(cartographer)
+
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy':
+        grid_executable = 'occupancy_grid_node'
+    else:
+        grid_executable = 'cartographer_occupancy_grid_node'
+    cartographer_grid = Node(
+        package='cartographer_ros',
+        executable=grid_executable,
+        name='cartographer_occupancy_grid_node',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time}],
+        arguments=['-resolution', '0.05'],
+        condition=launch.conditions.IfCondition(use_slam))
+    optional_nodes.append(cartographer_grid)
+
+    # Wait for the simulation to be ready to start RViz and the navigation
+    nav_handler = launch.actions.RegisterEventHandler(
+        event_handler=launch.event_handlers.OnProcessExit(
+            target_action=diffdrive_controller_spawner,
+            on_exit=[rviz] + optional_nodes
+        )
     )
 
     return [
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
-        rviz,
+        nav_handler,
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,
-        slam_toolbox,
-    ] + optional_nodes
+    ]
 
 
 def generate_launch_description():
@@ -144,16 +171,15 @@ def generate_launch_description():
 
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world]),
-        mode=mode
+        mode=mode,
+        ros2_supervisor=True
     )
-
-    ros2_supervisor = Ros2SupervisorLauncher()
 
     # The following line is important!
     # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
     reset_handler = launch.actions.RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessExit(
-            target_action=ros2_supervisor,
+            target_action=webots._supervisor,
             on_exit=get_ros2_nodes,
         )
     )
@@ -170,7 +196,7 @@ def generate_launch_description():
             description='Webots startup mode'
         ),
         webots,
-        ros2_supervisor,
+        webots._supervisor,
 
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(

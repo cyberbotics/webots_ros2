@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2_importer</name>
-  <version>2023.0.0</version>
+  <version>2023.0.2</version>
   <description>This package allows to convert URDF and XACRO files into Webots PROTO files.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>
@@ -19,8 +19,6 @@
   <!-- These test dependencies are optional
   Their purpose is to make sure that the code passes the linters -->
   <test_depend>ament_copyright</test_depend>
-  <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pycodestyle</test_depend>
   <test_depend>python3-pil</test_depend>
   <test_depend>python3-numpy</test_depend>

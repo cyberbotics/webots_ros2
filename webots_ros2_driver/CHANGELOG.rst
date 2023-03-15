@@ -2,6 +2,22 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.3 (2023-XX-XX)
+------------------
+* Adding port, stream type parameters to webots_laucher
+* Copying .wbproj when launching a webots world via webots_launcher
+* Added Emitter and Receiver support
+
+2023.0.2 (2023-02-07)
+------------------
+* Fixed the spawn of URDF robots in WSL and macOS when using full path.
+* Fixed relative assets in macOS.
+* Added Ros2Supervisor creation.
+
+2023.0.1 (2023-01-05)
+------------------
+* Fixed relative assets in WSL.
+
 2023.0.0 (2022-11-30)
 ------------------
 * Add support for the new Python API of Webots R2023a

@@ -26,10 +26,15 @@ if [[ $(lsb_release -rs) == "22.04" && ${WEBOTS_RELEASE_VERSION} == "2022a" ]]; 
   mv /tmp/openssl-1.1/* /usr/local/webots/lib/webots/
 fi
 
-# The following packages are only available in the ROS 2 Foxy/Galactic distributions. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
+# The following packages are not available in the ROS 2 Rolling distribution. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
+if [[ "${ROS_DISTRO}" != "rolling" ]]; then
+    apt install -y ros-${ROS_DISTRO}-turtlebot3-cartographer ros-${ROS_DISTRO}-turtlebot3-navigation2 ros-${ROS_DISTRO}-nav2-bringup
+fi
 
-if [[ "${ROS_DISTRO}" == "foxy" || "${ROS_DISTRO}" == "galactic" ]]; then
-    apt install -y ros-${ROS_DISTRO}-turtlebot3-cartographer ros-${ROS_DISTRO}-turtlebot3-navigation2
+# TODO: Revert once the https://github.com/ros-planning/navigation2/issues/3033 issue is fixed.
+# Fast-DDS is not working properly with the Nav2 package on Humble. Using Cyclone DDS instead.
+if [[ "${ROS_DISTRO}" == "humble" ]]; then
+    apt install -y ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
 fi
 
 # Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).

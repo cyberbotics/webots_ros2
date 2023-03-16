@@ -19,10 +19,8 @@
 
 #include <webots/robot.h>
 
-namespace webots_ros2_driver
-{
-  void Ros2Lidar::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters)
-  {
+namespace webots_ros2_driver {
+  void Ros2Lidar::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
     mLidar = wb_robot_get_device(parameters["name"].c_str());
     assert(mLidar != 0);
     if (parameters.count("updateRate") == 0)

@@ -123,7 +123,7 @@ def get_ros2_nodes(*args):
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_nav)))
-    
+
     # SLAM
     cartographer = Node(
         package='cartographer_ros',

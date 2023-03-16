@@ -13,6 +13,7 @@ diffdrive_controller:
     left_wheel_names: ["wheel_left_joint"]
     right_wheel_names: ["wheel_right_joint"]
 
+    # Values don't correspond exactly to the ones in the robot URDF but result in more accurate odometry
     wheel_separation: 0.44
     wheel_radius: 0.098
 

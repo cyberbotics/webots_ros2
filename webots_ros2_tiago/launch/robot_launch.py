@@ -41,7 +41,7 @@ def get_ros2_nodes(*args):
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
-    toolbox_params = os.path.join(package_dir, 'resource', 'toolbox.yaml')
+    toolbox_params = os.path.join(package_dir, 'resource', 'slam_toolbox_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     cartographer_config_dir = os.path.join(package_dir, 'resource')
     cartographer_config_basename = 'cartographer.lua'

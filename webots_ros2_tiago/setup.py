@@ -13,6 +13,7 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/map.pgm',
     'resource/map.yaml',
     'resource/cartographer.lua',
+    'resource/slam_toolbox_params.yaml',
 ]))
 data_files.append(('share/' + package_name, ['package.xml']))
 data_files.append(('share/' + package_name + '/worlds', ['worlds/default.wbt', 'worlds/.default.wbproj']))

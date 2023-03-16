@@ -9,6 +9,7 @@ Changelog for package webots_ros2
 * Adding port, stream type parameters to webots_laucher
 * Copying .wbproj when launching a Webots world via webots_launcher
 * Added Emitter and Receiver support in webots_ros2_driver
+* Changed undefined Lidar frequency to the default from the .proto file
 
 2023.0.2 (2023-02-07)
 ------------------

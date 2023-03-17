@@ -21,11 +21,11 @@ namespace webots_ros2_driver {
     mDataPublisher =
       mNode->create_publisher<sensor_msgs::msg::MagneticField>(mTopicName + "/values", rclcpp::SensorDataQoS().reliable());
     // Services
-    enable_service_ = mNode->create_service<webots_ros2_msgs::srv::SetInt>(
+    mEnableService = mNode->create_service<webots_ros2_msgs::srv::SetInt>(
       mTopicName + "/enable", std::bind(&Ros2Compass::enable_callback, this, _1, _2));
-    get_sampling_period_service_ = mNode->create_service<webots_ros2_msgs::srv::GetInt>(
+    mGetSamplingPeriodService = mNode->create_service<webots_ros2_msgs::srv::GetInt>(
       mTopicName + "/get_sampling_period", std::bind(&Ros2Compass::get_sampling_period_callback, this, _1, _2));
-    get_lookup_table_service_ = mNode->create_service<webots_ros2_msgs::srv::GetFloatArray>(
+    mGetLookupTableService = mNode->create_service<webots_ros2_msgs::srv::GetFloatArray>(
       mTopicName + "/get_lookup_table", std::bind(&Ros2Compass::get_lookup_table_callback, this, _1, _2));
     RCLCPP_DEBUG(rclcpp::get_logger(mDeviceName), (mDeviceName + " initialized!").c_str());
 

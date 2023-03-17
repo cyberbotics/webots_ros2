@@ -29,9 +29,9 @@ namespace webots_ros2_driver {
     rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr mDataPublisher;
     sensor_msgs::msg::MagneticField mDataMessage;
 
-    rclcpp::Service<webots_ros2_msgs::srv::SetInt>::SharedPtr enable_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::GetInt>::SharedPtr get_sampling_period_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::GetFloatArray>::SharedPtr get_lookup_table_service_;
+    rclcpp::Service<webots_ros2_msgs::srv::SetInt>::SharedPtr mEnableService;
+    rclcpp::Service<webots_ros2_msgs::srv::GetInt>::SharedPtr mGetSamplingPeriodService;
+    rclcpp::Service<webots_ros2_msgs::srv::GetFloatArray>::SharedPtr mGetLookupTableService;
     // Device
     WbDeviceTag mCompass;
     // Runtime vars

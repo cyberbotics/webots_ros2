@@ -36,8 +36,35 @@ Floor {
     colorOverride 0.6 0.6 0.6
   }
 }
-HusarionWorld {
-  translation -26.6 16.8 0
+Solid {
+  scale 10 10 10
+  translation -26.6 16.8 0.0
+  children [
+    DEF BORDER Shape {
+      geometry Mesh {
+        url "meshes/husarion_world.dae"
+        materialIndex 0
+      }
+      appearance PBRAppearance {
+        baseColor 0.6307572 0.005605392 0.02415763
+      }
+    }
+    DEF LOGO Shape {
+      geometry Mesh {
+        url "meshes/husarion_world.dae"
+        materialIndex 1
+      }
+      appearance PBRAppearance {
+        baseColor 1 1 1
+      }
+    }
+  ]
+  boundingObject Group{
+    children[
+      USE LOGO
+      USE BORDER
+    ]
+  }
 }
 Rosbot {
   translation 3 -2 0

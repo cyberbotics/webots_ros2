@@ -59,7 +59,7 @@ def evaluate_robot_name(context, *args, **kwargs):
             (robot_name + "/rl_range", '/range/rl'),
             (robot_name + "/rr_range", '/range/rr'),
             (robot_name + "/fl_range", '/range/fl'),
-            (robot_name + "/fr_range", '/range/fr'),
+            (robot_name + "/fr_range", '/range/fr')
         ]
     )
 

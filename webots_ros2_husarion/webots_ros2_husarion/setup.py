@@ -11,6 +11,7 @@ data_files.append(('share/' + package_name + '/resource', ['resource/ekf.yaml'])
 data_files.append(('share/' + package_name + '/resource', ['resource/laser_filter.yaml']))
 data_files.append(('share/' + package_name + '/worlds', ['worlds/rosbot.wbt']))
 data_files.append(('share/' + package_name + '/worlds', ['worlds/rosbot_xl.wbt']))
+data_files.append(('share/' + package_name + '/worlds/meshes', ['worlds/meshes/husarion_world.dae']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(

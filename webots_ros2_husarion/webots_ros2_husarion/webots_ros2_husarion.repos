@@ -1,0 +1,17 @@
+repositories:
+  rosbot_hardware_interfaces:
+    type: git
+    url: https://github.com/husarion/rosbot_hardware_interfaces.git
+    version: main
+  ros_components_description:
+    type: git
+    url: https://github.com/husarion/ros_components_description.git
+    version: ros2
+  rosbot_ros:
+    type: git
+    url: https://github.com/husarion/rosbot_ros.git
+    version: humble
+  rosbot_xl_ros:
+    type: git
+    url: https://github.com/husarion/rosbot_xl_ros.git
+    version: master

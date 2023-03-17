@@ -4,10 +4,13 @@ Changelog for package webots_ros2
 
 2023.0.3 (2023-XX-XX)
 ------------------
+* Fixed the calibration of the TIAGo.
 * Improved the navigation of the TIAGo example.
-* Replaced Slam-Toolbox by Cartographer in the TIAGo example.
+* Added Cartographer for SLAM in the TIAGo example.
 * Adding port, stream type parameters to webots_laucher
 * Copying .wbproj when launching a Webots world via webots_launcher
+* Added Emitter and Receiver support in webots_ros2_driver
+* Changed undefined Lidar frequency to the default from the .proto file
 
 2023.0.2 (2023-02-07)
 ------------------

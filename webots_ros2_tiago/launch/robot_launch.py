@@ -36,10 +36,12 @@ def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_tiago')
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_nav = LaunchConfiguration('nav', default=False)
-    use_slam = LaunchConfiguration('slam', default=False)
+    use_slam_toolbox = LaunchConfiguration('slam_toolbox', default=False)
+    use_slam_cartographer = LaunchConfiguration('slam_cartographer', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
+    toolbox_params = os.path.join(package_dir, 'resource', 'slam_toolbox_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     cartographer_config_dir = os.path.join(package_dir, 'resource')
     cartographer_config_basename = 'cartographer.lua'
@@ -109,6 +111,8 @@ def get_ros2_nodes(*args):
         parameters=[{'use_sim_time': use_sim_time}],
         condition=launch.conditions.IfCondition(use_rviz)
     )
+
+    # Navigation
     if 'nav2_bringup' in get_packages_with_prefixes():
         optional_nodes.append(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(
@@ -129,7 +133,7 @@ def get_ros2_nodes(*args):
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-configuration_directory', cartographer_config_dir,
                    '-configuration_basename', cartographer_config_basename],
-        condition=launch.conditions.IfCondition(use_slam))
+        condition=launch.conditions.IfCondition(use_slam_cartographer))
     optional_nodes.append(cartographer)
 
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy':
@@ -143,8 +147,19 @@ def get_ros2_nodes(*args):
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-resolution', '0.05'],
-        condition=launch.conditions.IfCondition(use_slam))
+        condition=launch.conditions.IfCondition(use_slam_cartographer))
     optional_nodes.append(cartographer_grid)
+
+    slam_toolbox = Node(
+        parameters=[toolbox_params,
+                    {'use_sim_time': use_sim_time}],
+        package='slam_toolbox',
+        executable='async_slam_toolbox_node',
+        name='slam_toolbox',
+        output='screen',
+        condition=launch.conditions.IfCondition(use_slam_toolbox)
+    )
+    optional_nodes.append(slam_toolbox)
 
     # Wait for the simulation to be ready to start RViz and the navigation
     nav_handler = launch.actions.RegisterEventHandler(

@@ -5,7 +5,6 @@ EXTERNPROTO "webots://projects/objects/backgrounds/protos/TexturedBackground.pro
 EXTERNPROTO "webots://projects/objects/floors/protos/Floor.proto"
 EXTERNPROTO "webots://projects/appearances/protos/CarpetFibers.proto"
 EXTERNPROTO "webots://projects/robots/husarion/rosbot/protos/Rosbot.proto"
-EXTERNPROTO "webots://projects/objects/husarion_world/protos/HusarionWorld.proto"
 
 WorldInfo {
   info [

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -2042,15 +2042,16 @@ const double *wb_supervisor_node_get_pose(WbNodeRef node, WbNodeRef from_node) {
   }
 
   WbPoseStruct *tmp_pose = pose_collection;
-  while (tmp_pose)
+  while (tmp_pose) {
     if (tmp_pose->from_node == from_node && tmp_pose->to_node == node) {
       if (tmp_pose->last_update == wb_robot_get_time())
         return tmp_pose->pose;
       else
         break;
-
-      tmp_pose = tmp_pose->next;
     }
+
+    tmp_pose = tmp_pose->next;
+  }
 
   robot_mutex_lock();
   pose_requested = true;
@@ -2875,20 +2876,18 @@ void wb_supervisor_node_enable_contact_points_tracking(WbNodeRef node, int sampl
   node->contact_points[descendants].last_update = -DBL_MAX;
   node->contact_points[descendants].sampling_period = sampling_period;
   wb_robot_flush_unlocked(__FUNCTION__);
-  pose_change_tracking_requested = false;
+  contact_point_change_tracking_requested = false;
   robot_mutex_unlock();
 }
 
-// to be officially deprecated in R2023b
+// deprecated in R2023b
 void wb_supervisor_node_enable_contact_point_tracking(WbNodeRef node, int sampling_period, bool include_descendants) {
-  /*
   static bool deprecation_warning = true;
   if (deprecation_warning) {
     fprintf(stderr, "Warning: %s() is deprecated, use wb_supervisor_node_enable_contact_points_tracking() instead.\n",
             __FUNCTION__);
     deprecation_warning = false;
   }
-  */
   wb_supervisor_node_enable_contact_points_tracking(node, sampling_period, include_descendants);
 }
 
@@ -2907,20 +2906,18 @@ void wb_supervisor_node_disable_contact_points_tracking(WbNodeRef node) {
   contact_point_change_tracking.enable = false;
   contact_point_change_tracking.include_descendants = false;
   wb_robot_flush_unlocked(__FUNCTION__);
-  pose_change_tracking_requested = false;
+  contact_point_change_tracking_requested = false;
   robot_mutex_unlock();
 }
 
-// to be officially deprecated in R2023b
+// deprecated in R2023b
 void wb_supervisor_node_disable_contact_point_tracking(WbNodeRef node, bool include_descendants) {
-  /*
   static bool deprecation_warning = true;
   if (deprecation_warning) {
     fprintf(stderr, "Warning: %s() is deprecated, use wb_supervisor_node_disable_contact_points_tracking() instead.\n",
             __FUNCTION__);
     deprecation_warning = false;
   }
-  */
   wb_supervisor_node_disable_contact_points_tracking(node);
 }
 

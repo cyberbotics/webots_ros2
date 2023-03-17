@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -123,11 +123,7 @@ const char *wbu_system_tmpdir() {
   if (tmpdir == NULL)
     tmpdir = "/tmp";
 #elif defined(__APPLE__)
-  tmpdir = getenv("TMPDIR");
-  if (tmpdir == NULL || tmpdir[0] == '\0') {
-    fprintf(stderr, "TMPDIR is not defined or empty.");
-    exit(EXIT_FAILURE);
-  }
+  tmpdir = "/tmp";
 #endif
   return tmpdir;
 }

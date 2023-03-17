@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -63,8 +63,9 @@ int scheduler_init_remote(const char *host, int port, const char *robot_name, ch
   memcpy(init_message, "CTR", 3);
   if (robot_name) {  // send robot name
     memcpy(init_message + 3, "\nRobot-Name: ", 13);
-    memcpy(init_message + 16, &robot_name[1], strlen(robot_name));
+    memcpy(init_message + 16, robot_name, strlen(robot_name));
   }
+  init_message[length - 1] = '\0';
   tcp_client_send(scheduler_client, init_message, strlen(init_message));
   free(init_message);
 

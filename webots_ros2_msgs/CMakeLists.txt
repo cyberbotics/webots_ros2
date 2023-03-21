@@ -29,6 +29,7 @@ set(msg_files
   "msg/UrdfRobot.msg"
 )
 set(srv_files
+  "srv/GetBool.srv"
   "srv/GetFloat.srv"
   "srv/GetFloatArray.srv"
   "srv/GetInt.srv"

@@ -23,7 +23,7 @@ namespace webots_ros2_driver {
     // Services
     mEnableService = mNode->create_service<webots_ros2_msgs::srv::SetInt>(
       mTopicName + "/enable", std::bind(&Ros2Compass::enable_callback, this, _1, _2));
-    mDisableService = mNode->create_service<webots_ros2_msgs::srv::SetInt>(
+    mDisableService = mNode->create_service<webots_ros2_msgs::srv::GetBool>(
       mTopicName + "/disable", std::bind(&Ros2Compass::disable_callback, this, _1, _2));
     mGetSamplingPeriodService = mNode->create_service<webots_ros2_msgs::srv::GetInt>(
       mTopicName + "/get_sampling_period", std::bind(&Ros2Compass::get_sampling_period_callback, this, _1, _2));
@@ -72,38 +72,32 @@ namespace webots_ros2_driver {
   }
   void Ros2Compass::enable_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetInt::Request> request,
                                     std::shared_ptr<webots_ros2_msgs::srv::SetInt::Response> response) {
-    if (request->value) {
-      wb_compass_enable(mCompass, mPublishTimestepSyncedMs);
-      mAlwaysOn = true;
-      mIsEnabled = true;
-    }
+    wb_compass_enable(mCompass, request->value);
+    mAlwaysOn = true;
+    mIsEnabled = true;
     response->success = true;
   }
-  void Ros2Compass::disable_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetInt::Request> request,
-                                     std::shared_ptr<webots_ros2_msgs::srv::SetInt::Response> response) {
-    if (request->value) {
-      wb_compass_disable(mCompass);
-      mAlwaysOn = false;
-      mIsEnabled = false;
-    }
+  void Ros2Compass::disable_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetBool::Request> request,
+                                     std::shared_ptr<webots_ros2_msgs::srv::GetBool::Response> response) {
+    wb_compass_disable(mCompass);
+    mAlwaysOn = false;
+    mIsEnabled = false;
     response->success = true;
   }
   void Ros2Compass::get_sampling_period_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
                                                  std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response) {
-    response->value = request->ask ? wb_compass_get_sampling_period(mCompass) : 0;
+    response->value = wb_compass_get_sampling_period(mCompass);
   }
   void Ros2Compass::get_lookup_table_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetFloatArray::Request> request,
                                               std::shared_ptr<webots_ros2_msgs::srv::GetFloatArray::Response> response) {
     int table_size = wb_compass_get_lookup_table_size(mCompass);
     std::vector<double> values(table_size * 3);
-    if (request->ask) {
-      const double *lookup_table = wb_compass_get_lookup_table(mCompass);
-      for (int i = 0; i < table_size; i++) {
-        int offset = i * 3;
-        values.at(offset) = lookup_table[offset];
-        values.at(offset + 1) = lookup_table[offset + 1];
-        values.at(offset + 2) = lookup_table[offset + 2];
-      }
+    const double *lookup_table = wb_compass_get_lookup_table(mCompass);
+    for (int i = 0; i < table_size; i++) {
+      int offset = i * 3;
+      values.at(offset) = lookup_table[offset];
+      values.at(offset + 1) = lookup_table[offset + 1];
+      values.at(offset + 2) = lookup_table[offset + 2];
     }
     response->values = values;
   }

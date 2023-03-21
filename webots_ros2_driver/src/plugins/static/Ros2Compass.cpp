@@ -82,7 +82,7 @@ namespace webots_ros2_driver {
     wb_compass_disable(mCompass);
     mAlwaysOn = false;
     mIsEnabled = false;
-    response->success = true;
+    response->value = true;
   }
   void Ros2Compass::get_sampling_period_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetInt::Request> request,
                                                  std::shared_ptr<webots_ros2_msgs::srv::GetInt::Response> response) {

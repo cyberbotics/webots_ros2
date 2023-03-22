@@ -30,12 +30,12 @@ namespace webots_ros2_driver {
     void set_range_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetFloat::Request> request,
                             std::shared_ptr<webots_ros2_msgs::srv::SetFloat::Response> response);
     // ROS2 service
-    rclcpp::Service<webots_ros2_msgs::srv::GetInt>::SharedPtr get_buffer_size_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::GetInt>::SharedPtr get_channel_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::GetFloat>::SharedPtr get_range_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::SetString>::SharedPtr send_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::SetInt>::SharedPtr set_channel_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::SetFloat>::SharedPtr set_range_service_;
+    rclcpp::Service<webots_ros2_msgs::srv::GetInt>::SharedPtr mGetBufferSizeService;
+    rclcpp::Service<webots_ros2_msgs::srv::GetInt>::SharedPtr mGetChannelService;
+    rclcpp::Service<webots_ros2_msgs::srv::GetFloat>::SharedPtr mGetRangeService;
+    rclcpp::Service<webots_ros2_msgs::srv::SetString>::SharedPtr mSendService;
+    rclcpp::Service<webots_ros2_msgs::srv::SetInt>::SharedPtr mSetChannelService;
+    rclcpp::Service<webots_ros2_msgs::srv::SetFloat>::SharedPtr mSetRangeService;
     // Device
     WbDeviceTag mEmitter;
     // Runtime vars

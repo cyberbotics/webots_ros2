@@ -5,6 +5,7 @@
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 
 #include <webots_ros2_msgs/msg/string_stamped.hpp>
+#include <webots_ros2_msgs/srv/get_bool.hpp>
 #include <webots_ros2_msgs/srv/get_float.hpp>
 #include <webots_ros2_msgs/srv/get_int.hpp>
 #include <webots_ros2_msgs/srv/receiver_get_emitter_direction.hpp>
@@ -22,6 +23,8 @@ namespace webots_ros2_driver {
 
     void enable_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetInt::Request> request,
                          std::shared_ptr<webots_ros2_msgs::srv::SetInt::Response> response);
+    void disable_callback(const std::shared_ptr<webots_ros2_msgs::srv::GetBool::Request> request,
+                          std::shared_ptr<webots_ros2_msgs::srv::GetBool::Response> response);
     void get_emitter_direction_callback(
       const std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Request> request,
       std::shared_ptr<webots_ros2_msgs::srv::ReceiverGetEmitterDirection::Response> response);
@@ -33,10 +36,11 @@ namespace webots_ros2_driver {
     rclcpp::Publisher<webots_ros2_msgs::msg::StringStamped>::SharedPtr mDataPublisher;
     webots_ros2_msgs::msg::StringStamped mDataMessage;
 
-    rclcpp::Service<webots_ros2_msgs::srv::SetInt>::SharedPtr enable_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::ReceiverGetEmitterDirection>::SharedPtr get_emitter_direction_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::GetInt>::SharedPtr get_sampling_period_service_;
-    rclcpp::Service<webots_ros2_msgs::srv::GetFloat>::SharedPtr get_signal_strength_service_;
+    rclcpp::Service<webots_ros2_msgs::srv::SetInt>::SharedPtr mEnableService;
+    rclcpp::Service<webots_ros2_msgs::srv::GetBool>::SharedPtr mDisableService;
+    rclcpp::Service<webots_ros2_msgs::srv::ReceiverGetEmitterDirection>::SharedPtr mGetEmitterDirectionService;
+    rclcpp::Service<webots_ros2_msgs::srv::GetInt>::SharedPtr mGetSamplingPeriodService;
+    rclcpp::Service<webots_ros2_msgs::srv::GetFloat>::SharedPtr mGetSignalStrengthService;
     // Device
     WbDeviceTag mReceiver;
     // Runtime vars

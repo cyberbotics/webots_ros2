@@ -25,14 +25,19 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 import launch
 from ament_index_python.packages import get_package_share_directory
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.utils import controller_url_prefix
 
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
+    # use_rviz = LaunchConfiguration('rviz', default=False)
+    use_nav = LaunchConfiguration('nav', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
+    nav2_map = os.path.join(package_dir, 'resource', 'turtlebot3_burger_example_map.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
@@ -91,12 +96,35 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
+    # Navigation
+    optional_nodes = []
+    os.environ['TURTLEBOT3_MODEL'] = 'burger'
+
+    turtlebot_navigation = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(
+                get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')),
+        launch_arguments=[
+                ('map', nav2_map),
+                ('use_sim_time', use_sim_time),
+            ],
+        condition=launch.conditions.IfCondition(use_nav))
+    optional_nodes.append(turtlebot_navigation)
+
+    # Wait for the simulation to be ready to start RViz and the navigation
+    nav_handler = launch.actions.RegisterEventHandler(
+        event_handler=launch.event_handlers.OnProcessExit(
+            target_action=diffdrive_controller_spawner,
+            on_exit=optional_nodes
+        )
+    )
+
     return [
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
         robot_state_publisher,
         turtlebot_driver,
         footprint_publisher,
+        nav_handler,
     ]
 
 

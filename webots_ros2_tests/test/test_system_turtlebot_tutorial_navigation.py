@@ -21,7 +21,7 @@
 import os
 import pytest
 import rclpy
-from nav_msgs.msg import Odometry
+from nav_msgs.msg import Odometry, OccupancyGrid
 from launch import LaunchDescription
 import launch_testing.actions
 from rclpy.action import ActionClient
@@ -70,7 +70,7 @@ class TestTurtlebotNavigationTutorial(TestWebots):
         self.__node = rclpy.create_node('driver_tester')
         self.wait_for_clock(self.__node, messages_to_receive=20)
 
-    def testNavigation(self):
+    def testMoveToGoal(self):
         from nav2_msgs.action import NavigateToPose
 
         # Delay before publishing goal position (navigation initialization can be long in the CI)
@@ -92,6 +92,17 @@ class TestTurtlebotNavigationTutorial(TestWebots):
             return message.pose.pose.position.y < -2.0
 
         self.wait_for_messages(self.__node, Odometry, '/odom', condition=on_message_received, timeout=60*5)
+
+    def testNavigation(self):
+        # Check if the cost map is updated -> local map for navigation is working
+        def on_cost_map_message_received(message):
+            # There should be a value in the range ]0, 100]
+            for value in message.data:
+                if value > 0 and value <= 100:
+                    return True
+            return False
+
+        self.wait_for_messages(self.__node, OccupancyGrid, '/global_costmap/costmap', condition=on_cost_map_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

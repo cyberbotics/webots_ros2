@@ -18,7 +18,7 @@ namespace webots_ros2_driver {
     void publishData();
 
     // ROS2 topics
-    rclcpp::Publisher<sensor_msgs::msg::Vector3Stamped>::SharedPtr mVectorPublisher;
+    rclcpp::Publisher<geometry_msgs::msg::Vector3Stamped>::SharedPtr mVectorPublisher;
     geometry_msgs::msg::Vector3Stamped mVectorMessage;
     rclcpp::Publisher<webots_ros2_msgs::msg::Float64Stamped>::SharedPtr mFloatPublisher;
     webots_ros2_msgs::msg::FloatStamped mFloatMessage;

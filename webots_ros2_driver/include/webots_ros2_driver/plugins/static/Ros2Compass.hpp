@@ -20,7 +20,7 @@ namespace webots_ros2_driver {
     // ROS2 topics
     rclcpp::Publisher<geometry_msgs::msg::Vector3Stamped>::SharedPtr mVectorPublisher;
     geometry_msgs::msg::Vector3Stamped mVectorMessage;
-    rclcpp::Publisher<webots_ros2_msgs::msg::Float64Stamped>::SharedPtr mFloatPublisher;
+    rclcpp::Publisher<webots_ros2_msgs::msg::FloatStamped>::SharedPtr mFloatPublisher;
     webots_ros2_msgs::msg::FloatStamped mFloatMessage;
 
     // Device

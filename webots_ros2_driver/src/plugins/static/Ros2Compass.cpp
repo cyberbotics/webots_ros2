@@ -20,8 +20,8 @@ namespace webots_ros2_driver {
     // Data publisher
     mVectorPublisher =
       mNode->create_publisher<geometry_msgs::msg::Vector3Stamped>(mTopicName + "/values", rclcpp::SensorDataQoS().reliable());
-    mVectorPublisher =
-      mNode->create_publisher<webots_ro2_msgs::msg::FloatStamped>(mTopicName + "/bearing", rclcpp::SensorDataQoS().reliable());
+    mFloatPublisher =
+      mNode->create_publisher<webots_ros2_msgs::msg::FloatStamped>(mTopicName + "/bearing", rclcpp::SensorDataQoS().reliable());
 
     RCLCPP_DEBUG(rclcpp::get_logger(mDeviceName), (mDeviceName + " initialized!").c_str());
     // Calculate timestep
@@ -45,7 +45,7 @@ namespace webots_ros2_driver {
   }
   bool Ros2Compass::mustPublish() {
     // Enable/Disable sensor
-    const bool shouldBeEnabled = mDataPublisher->get_subscription_count() > 0;
+    const bool shouldBeEnabled = (mVectorPublisher->get_subscription_count() > 0 || mFloatPublisher->get_subscription_count() > 0);
     if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         wb_compass_enable(mCompass, mPublishTimestepSyncedMs);
@@ -62,15 +62,15 @@ namespace webots_ros2_driver {
     mVectorMessage.vector.y = north_vector[1];
     mVectorMessage.vector.z = north_vector[2];
     mVectorPublisher->publish(mVectorMessage);
-    
+
     // north degree
     double rad = atan2(north_vector[1], north_vector[0]);
     double bearing = (rad - 1.5708) / M_PI * 180.0;
     if (bearing < 0.0)
         bearing = bearing + 360.0;
 
-    mFloatMessage.header.stamp = mVectorMessage.header.stamp
+    mFloatMessage.header.stamp = mVectorMessage.header.stamp;
     mFloatMessage.data = bearing;
-    mVectorPublisher->publish(mFloatMessage);
+    mFloatPublisher->publish(mFloatMessage);
   }
 }  // namespace webots_ros2_driver

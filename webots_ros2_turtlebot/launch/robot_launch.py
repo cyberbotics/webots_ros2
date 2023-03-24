@@ -97,7 +97,7 @@ def get_ros2_nodes(*args):
     )
 
     # Navigation
-    optional_nodes = []
+    nav_nodes = []
     os.environ['TURTLEBOT3_MODEL'] = 'burger'
     if 'turtlebot3_navigation2' in get_packages_with_prefixes():
         turtlebot_navigation = IncludeLaunchDescription(
@@ -109,15 +109,19 @@ def get_ros2_nodes(*args):
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_nav))
-        optional_nodes.append(turtlebot_navigation)
+        nav_nodes.append(turtlebot_navigation)
 
-    # Wait for the simulation to be ready to start RViz and the navigation
-    nav_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=diffdrive_controller_spawner,
-            on_exit=optional_nodes
+    # Wait for the simulation to be ready to start navigation nodes
+    nav_handler = []
+    if nav_nodes:
+        nav_handler.append(
+            launch.actions.RegisterEventHandler(
+                event_handler=launch.event_handlers.OnProcessExit(
+                    target_action=diffdrive_controller_spawner,
+                    on_exit=nav_nodes
+                )
+            )
         )
-    )
 
     return [
         joint_state_broadcaster_spawner,
@@ -125,8 +129,7 @@ def get_ros2_nodes(*args):
         robot_state_publisher,
         turtlebot_driver,
         footprint_publisher,
-        nav_handler,
-    ]
+    ] + nav_handler
 
 
 def generate_launch_description():

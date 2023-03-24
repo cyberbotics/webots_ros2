@@ -29,11 +29,12 @@ from launch.substitutions import LaunchConfiguration, Command
 from launch.conditions import LaunchConfigurationEquals
 from launch.actions import OpaqueFunction
 
+
 def evaluate_robot_name(context, *args, **kwargs):
     robot_name = LaunchConfiguration('robot_name').perform(context=context)
     package_dir = get_package_share_directory('webots_ros2_husarion')
 
-    rosbot_description_package =  get_package_share_directory(robot_name + '_description')
+    rosbot_description_package = get_package_share_directory(robot_name + '_description')
     rosbot_description = os.path.join(rosbot_description_package, 'urdf', robot_name + '.urdf.xacro')
 
     xacro_args = ' use_sim:=true simulation_engine:=webots'
@@ -58,7 +59,7 @@ def evaluate_robot_name(context, *args, **kwargs):
     )
 
     rosbot_ros2_control_params = os.path.join(
-        package_dir, 'resource', robot_name+ '_controllers.yaml')
+        package_dir, 'resource', robot_name + '_controllers.yaml')
 
     rosbot_webots_robot_driver = Node(
         package='webots_ros2_driver',
@@ -116,7 +117,7 @@ def evaluate_robot_name(context, *args, **kwargs):
         output='screen',
         parameters=[
             ekf_config,
-            {'use_sim_time': True},
+            {'use_sim_time' : True},
             {'odom0' : "/" +  robot_name + "_base_controller/odom"}
         ]
     )
@@ -157,12 +158,9 @@ def evaluate_robot_name(context, *args, **kwargs):
     ]
 
 def generate_launch_description():
-    # Standard ROS 2 launch description
     return launch.LaunchDescription([
-        DeclareLaunchArgument(name='use_sim_time', default_value='True',
-                                            description='Flag to enable use_sim_time'),
-        DeclareLaunchArgument(name='robot_name', default_value='rosbot',
-                                            description='Spawned robot name'),
-        # Used to get robot name as string
+        DeclareLaunchArgument(name='use_sim_time', default_value='True', description='Flag to enable use_sim_time'),
+        DeclareLaunchArgument(name='robot_name', default_value='rosbot', description='Spawned robot name'),
+        # Used to get robot name parameter as string
         OpaqueFunction(function=evaluate_robot_name),
     ])

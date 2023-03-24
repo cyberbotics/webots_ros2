@@ -33,10 +33,10 @@ from webots_ros2_driver.utils import controller_url_prefix
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
-    # use_rviz = LaunchConfiguration('rviz', default=False)
     use_nav = LaunchConfiguration('nav', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
+    nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'turtlebot3_burger_example_map.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
@@ -99,14 +99,14 @@ def get_ros2_nodes(*args):
     # Navigation
     optional_nodes = []
     os.environ['TURTLEBOT3_MODEL'] = 'burger'
-
     turtlebot_navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(
-                get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')),
+            get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')),
         launch_arguments=[
-                ('map', nav2_map),
-                ('use_sim_time', use_sim_time),
-            ],
+            ('map', nav2_map),
+            ('params_file', nav2_params),
+            ('use_sim_time', use_sim_time),
+        ],
         condition=launch.conditions.IfCondition(use_nav))
     optional_nodes.append(turtlebot_navigation)
 
@@ -131,9 +131,11 @@ def get_ros2_nodes(*args):
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
     world = LaunchConfiguration('world')
+    mode = LaunchConfiguration('mode')
 
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        mode=mode,
         ros2_supervisor=True
     )
 
@@ -151,6 +153,11 @@ def generate_launch_description():
             'world',
             default_value='turtlebot3_burger_example.wbt',
             description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
+        ),
+        DeclareLaunchArgument(
+            'mode',
+            default_value='realtime',
+            description='Webots startup mode'
         ),
         webots,
         webots._supervisor,

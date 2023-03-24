@@ -21,7 +21,7 @@ namespace webots_ros2_driver {
     rclcpp::Publisher<sensor_msgs::msg::Vector3Stamped>::SharedPtr mVectorPublisher;
     geometry_msgs::msg::Vector3Stamped mVectorMessage;
     rclcpp::Publisher<webots_ros2_msgs::msg::Float64Stamped>::SharedPtr mFloatPublisher;
-    webots_ros2_msgs::msg::Float64Stamped mFloatMessage;
+    webots_ros2_msgs::msg::FloatStamped mFloatMessage;
 
     // Device
     WbDeviceTag mCompass;

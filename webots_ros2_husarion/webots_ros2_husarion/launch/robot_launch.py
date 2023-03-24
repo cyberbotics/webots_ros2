@@ -117,8 +117,8 @@ def evaluate_robot_name(context, *args, **kwargs):
         output='screen',
         parameters=[
             ekf_config,
-            {'use_sim_time' : True},
-            {'odom0' : "/" +  robot_name + "_base_controller/odom"}
+            {'use_sim_time': True},
+            {'odom0': "/" + robot_name + "_base_controller/odom"}
         ]
     )
 
@@ -156,6 +156,7 @@ def evaluate_robot_name(context, *args, **kwargs):
         laser_filter_node,
         robot_localization_node
     ]
+
 
 def generate_launch_description():
     return launch.LaunchDescription([

@@ -99,16 +99,17 @@ def get_ros2_nodes(*args):
     # Navigation
     optional_nodes = []
     os.environ['TURTLEBOT3_MODEL'] = 'burger'
-    turtlebot_navigation = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(
-            get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')),
-        launch_arguments=[
-            ('map', nav2_map),
-            ('params_file', nav2_params),
-            ('use_sim_time', use_sim_time),
-        ],
-        condition=launch.conditions.IfCondition(use_nav))
-    optional_nodes.append(turtlebot_navigation)
+    if 'turtlebot3_navigation2' in get_packages_with_prefixes():
+        turtlebot_navigation = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(
+                get_package_share_directory('turtlebot3_navigation2'), 'launch', 'navigation2.launch.py')),
+            launch_arguments=[
+                ('map', nav2_map),
+                ('params_file', nav2_params),
+                ('use_sim_time', use_sim_time),
+            ],
+            condition=launch.conditions.IfCondition(use_nav))
+        optional_nodes.append(turtlebot_navigation)
 
     # Wait for the simulation to be ready to start RViz and the navigation
     nav_handler = launch.actions.RegisterEventHandler(

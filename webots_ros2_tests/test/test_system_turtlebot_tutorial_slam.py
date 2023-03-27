@@ -32,32 +32,25 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()
-    # If testing in GitHub CI, skip the test as RViz might crash
-    if 'CI' in os.environ and os.environ['CI'] == '1':
-        pytest.skip('RViz might crash in CI, skipping this test')
 
-    # If ROS_DISTRO is rolling or humble, skip the test as some required packages are missing (cf. ci_after_init.bash)
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] != 'foxy':
+    # If ROS_DISTRO is rolling, skip the test as some required packages are missing (cf. ci_after_init.bash)
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling':
         pytest.skip('ROS_DISTRO is rolling or humble, skipping this test')
 
     # Webots
     turtlebot_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('webots_ros2_turtlebot'), 'launch', 'robot_launch.py')
-        )
-    )
-
-    # Rviz SLAM
-    turtlebot_slam = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('turtlebot3_cartographer'), 'launch', 'cartographer.launch.py')
         ),
-        launch_arguments={'use_sim_time': 'true'}.items(),
+        launch_arguments={
+            'mode': 'fast',
+            'slam': 'true',
+            'use_sim_time': 'false'
+        }.items()
     )
 
     return LaunchDescription([
         turtlebot_webots,
-        turtlebot_slam,
         launch_testing.actions.ReadyToTest(),
     ])
 

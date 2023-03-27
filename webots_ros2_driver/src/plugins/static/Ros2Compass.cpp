@@ -45,7 +45,8 @@ namespace webots_ros2_driver {
   }
   bool Ros2Compass::mustPublish() {
     // Enable/Disable sensor
-    const bool shouldBeEnabled = (mVectorPublisher->get_subscription_count() > 0 || mFloatPublisher->get_subscription_count() > 0);
+    const bool shouldBeEnabled =
+      (mVectorPublisher->get_subscription_count() > 0 || mFloatPublisher->get_subscription_count() > 0);
     if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         wb_compass_enable(mCompass, mPublishTimestepSyncedMs);
@@ -67,7 +68,7 @@ namespace webots_ros2_driver {
     double rad = atan2(north_vector[1], north_vector[0]);
     double bearing = (rad - 1.5708) / M_PI * 180.0;
     if (bearing < 0.0)
-        bearing = bearing + 360.0;
+      bearing = bearing + 360.0;
 
     mFloatMessage.header.stamp = mVectorMessage.header.stamp;
     mFloatMessage.data = bearing;

@@ -4,7 +4,7 @@ Changelog for package webots_ros2_turtlebot
 
 2023.0.3 (2023-XX-XX)
 ------------------
-* Added nav option to start RViz and Navigation2 packages.
+* Added options to start RViz, Navigation2 and Cartographer packages.
 
 2023.0.2 (2023-02-07)
 ------------------

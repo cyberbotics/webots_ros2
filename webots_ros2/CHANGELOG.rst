@@ -11,7 +11,7 @@ Changelog for package webots_ros2
 * Copying .wbproj when launching a Webots world via webots_launcher
 * Added Emitter and Receiver support in webots_ros2_driver
 * Changed undefined Lidar frequency to the default from the .proto file
-* Added startup of the Turlebot navigation from the launch file.
+* Added startup of the Turlebot navigation and mapping tools from the launch file.
 
 2023.0.2 (2023-02-07)
 ------------------

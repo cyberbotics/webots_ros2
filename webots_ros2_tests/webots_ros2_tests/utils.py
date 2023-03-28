@@ -16,9 +16,6 @@
 
 import time
 import os
-import tempfile
-import random
-import string
 import unittest
 import rclpy
 from rosgraph_msgs.msg import Clock

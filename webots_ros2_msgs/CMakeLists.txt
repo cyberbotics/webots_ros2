@@ -31,7 +31,6 @@ set(msg_files
 )
 set(srv_files
   "srv/GetFloat.srv"
-  "srv/GetFloatArray.srv"
   "srv/GetInt.srv"
   "srv/ReceiverGetEmitterDirection.srv"
   "srv/SetFloat.srv"

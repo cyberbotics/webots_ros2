@@ -65,10 +65,10 @@ namespace webots_ros2_driver {
     mVectorPublisher->publish(mVectorMessage);
 
     // north degree
-    double rad = atan2(north_vector[1], north_vector[0]);
+    const double rad = atan2(north_vector[1], north_vector[0]);
     double bearing = (rad - 1.5708) / M_PI * 180.0;
     if (bearing < 0.0)
-      bearing = bearing + 360.0;
+      bearing += 360.0;
 
     mFloatMessage.header.stamp = mVectorMessage.header.stamp;
     mFloatMessage.data = bearing;

@@ -5,6 +5,7 @@ Changelog for package webots_ros2_tests
 2023.0.3 (2023-XX-XX)
 ------------------
 * Improved the TIAGo test by publishing the initial position when navigation is ready.
+* Fixed and improved Turtlebot navigation test with new moveToGoal task.
 
 2022.1.4 (2022-11-18)
 ------------------

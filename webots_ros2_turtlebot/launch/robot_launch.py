@@ -34,6 +34,7 @@ from webots_ros2_driver.utils import controller_url_prefix
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
     use_nav = LaunchConfiguration('nav', default=False)
+    use_slam = LaunchConfiguration('slam', default=False)
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
     nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
@@ -96,8 +97,8 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
-    # Navigation
     nav_nodes = []
+    # Navigation
     os.environ['TURTLEBOT3_MODEL'] = 'burger'
     if 'turtlebot3_navigation2' in get_packages_with_prefixes():
         turtlebot_navigation = IncludeLaunchDescription(
@@ -110,6 +111,17 @@ def get_ros2_nodes(*args):
             ],
             condition=launch.conditions.IfCondition(use_nav))
         nav_nodes.append(turtlebot_navigation)
+
+    # SLAM
+    if 'turtlebot3_cartographer' in get_packages_with_prefixes():
+        turtlebot_slam = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(
+                get_package_share_directory('turtlebot3_cartographer'), 'launch', 'cartographer.launch.py')),
+            launch_arguments=[
+                ('use_sim_time', use_sim_time),
+            ],
+            condition=launch.conditions.IfCondition(use_slam))
+        nav_nodes.append(turtlebot_slam)
 
     # Wait for the simulation to be ready to start navigation nodes
     nav_handler = []

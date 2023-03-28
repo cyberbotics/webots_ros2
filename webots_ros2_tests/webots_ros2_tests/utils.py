@@ -65,11 +65,6 @@ class TestWebots(unittest.TestCase):
 
 
 def initialize_webots_test():
-    """Ensure a Webots and controller pair are isolated from the other instances."""
+    """Ensure there is only one instance of Webots running."""
     if 'WEBOTS_OFFSCREEN' in os.environ:
         os.system('killall -9 webots-bin')
-
-    random_string = ''.join(random.choice(string.ascii_lowercase) for i in range(10))
-    directory = os.path.join(tempfile.gettempdir(), f'webots_{random_string}')
-    os.mkdir(directory)
-    os.environ['WEBOTS_TMPDIR'] = directory

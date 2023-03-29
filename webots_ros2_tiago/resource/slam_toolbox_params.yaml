@@ -1,0 +1,76 @@
+# This is the second param file for the slam_toolbox. The difference between this and the slam_toolbox_params.yaml is the use_scan_matching param which
+# is set to false. Webots has a bugged lidar parser to the LidarScan message type that's why the map is building incorrectly. It looks like every frame
+# of map is rotating about the center of the robot. Summing up there is no robot position correction during mapping.
+
+# Follow the issue:
+# https://github.com/cyberbotics/webots/issues/5540
+
+slam_toolbox:
+  ros__parameters:
+    # Plugin params
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None #HuberLoss
+
+    # ROS Parameters
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_link
+    scan_topic: /scan
+    mode: mapping #localization
+
+    debug_logging: false
+    throttle_scans: 1
+    transform_publish_period: 0.01
+    map_update_interval: 2.0
+    resolution: 0.05
+    max_laser_range: 12.0 #for rastering images
+    minimum_time_interval: 0.05
+    transform_timeout: 0.1
+    tf_buffer_duration: 20.0
+    stack_size_to_use: 40000000 #// program needs a larger stack size to serialize large maps
+    enable_interactive_mode: false
+
+    # General Parameters
+    # The localization correction based on the lidar measurements is turned off because of bug with lidar in webots simulator.
+    # https://github.com/cyberbotics/webots/issues/5540
+    use_scan_matching: false
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.2
+    minimum_travel_heading: 0.1
+    scan_buffer_size: 10
+    scan_buffer_maximum_scan_distance: 0.5
+    link_match_minimum_response_fine: 0.1
+    link_scan_maximum_distance: 0.75
+    loop_search_maximum_distance: 3.0
+    do_loop_closing: true
+    loop_match_minimum_chain_size: 10
+    loop_match_maximum_variance_coarse: 3.0
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+
+    # Correlation Parameters - Correlation Parameters
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+
+    # Correlation Parameters - Loop Closure Parameters
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+
+    # Scan Matcher Parameters
+    distance_variance_penalty: 0.5
+    angle_variance_penalty: 1.0
+
+    fine_search_angle_offset: 0.00349
+    coarse_search_angle_offset: 0.349
+    coarse_angle_resolution: 0.0349
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    use_response_expansion: true
+
+    use_sim_time: False

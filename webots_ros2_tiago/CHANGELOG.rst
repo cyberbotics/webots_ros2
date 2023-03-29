@@ -2,6 +2,12 @@
 Changelog for package webots_ros2_tiago
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.3 (2023-XX-XX)
+------------------
+* Fixed the calibration of the TIAGo.
+* Improved the launch of the nodes when using navigation.
+* Added Cartographer for SLAM.
+
 2023.0.2 (2023-02-07)
 ------------------
 * Updated supervisor launch.

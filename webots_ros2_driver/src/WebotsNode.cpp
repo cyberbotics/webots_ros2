@@ -22,6 +22,7 @@
 #include <webots/robot.h>
 
 #include <webots_ros2_driver/plugins/static/Ros2Camera.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2Compass.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2DistanceSensor.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Emitter.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2GPS.hpp>
@@ -158,6 +159,9 @@ namespace webots_ros2_driver {
           break;
         case WB_NODE_RECEIVER:
           plugin = std::make_shared<webots_ros2_driver::Ros2Receiver>();
+          break;
+        case WB_NODE_COMPASS:
+          plugin = std::make_shared<webots_ros2_driver::Ros2Compass>();
           break;
       }
       if (plugin) {

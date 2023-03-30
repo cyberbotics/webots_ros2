@@ -8,6 +8,7 @@ Changelog for package webots_ros2_driver
 * Copying .wbproj when launching a webots world via webots_launcher
 * Added Emitter and Receiver support
 * Changed undefined Lidar frequency to the default from the .proto file
+* Added Compass support
 
 2023.0.2 (2023-02-07)
 ------------------

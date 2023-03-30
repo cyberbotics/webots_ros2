@@ -23,6 +23,7 @@ find_package(std_msgs REQUIRED)
 find_package(vision_msgs REQUIRED)
 
 set(msg_files
+  "msg/FloatStamped.msg"
   "msg/StringStamped.msg"
   "msg/CameraRecognitionObject.msg"
   "msg/CameraRecognitionObjects.msg"

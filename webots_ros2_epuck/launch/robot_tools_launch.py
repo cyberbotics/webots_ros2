@@ -36,7 +36,7 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('rviz', default=True)
     use_mapper = LaunchConfiguration('mapper', default=False)
     fill_map = LaunchConfiguration('fill_map', default=True)
-    map_filename = LaunchConfiguration('fill_map', default=os.path.join(package_dir, 'resource', 'epuck_world_map.yaml'))
+    map_filename = LaunchConfiguration('map', default=os.path.join(package_dir, 'resource', 'epuck_world_map.yaml'))
 
     # Rviz node
     rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')

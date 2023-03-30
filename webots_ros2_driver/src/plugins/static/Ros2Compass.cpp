@@ -18,8 +18,8 @@ namespace webots_ros2_driver {
     assert(mCompass != 0);
 
     // Data publisher
-    mVectorPublisher =
-      mNode->create_publisher<geometry_msgs::msg::Vector3Stamped>(mTopicName + "/north_vector", rclcpp::SensorDataQoS().reliable());
+    mVectorPublisher = mNode->create_publisher<geometry_msgs::msg::Vector3Stamped>(mTopicName + "/north_vector",
+                                                                                   rclcpp::SensorDataQoS().reliable());
     mFloatPublisher =
       mNode->create_publisher<webots_ros2_msgs::msg::FloatStamped>(mTopicName + "/bearing", rclcpp::SensorDataQoS().reliable());
 

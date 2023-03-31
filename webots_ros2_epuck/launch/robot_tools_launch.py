@@ -66,23 +66,6 @@ def generate_launch_description():
                 condition=launch.conditions.IfCondition(use_nav)
             )
         )
-        launch_description_nodes.append(ExecuteProcess(
-            cmd=[
-                'ros2',
-                'topic',
-                'pub',
-                '--once',
-                '/initialpose',
-                'geometry_msgs/msg/PoseWithCovarianceStamped',
-                '{\
-                "header": { "frame_id": "map" },\
-                "pose": { "pose": {\
-                    "position": { "x": 0.005, "y": 0.0, "z": 0.0 },\
-                    "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }}\
-                }\
-            }'
-            ]
-        ))
     else:
         launch_description_nodes.append(LogInfo(msg='Navigation2 is not installed, navigation functionality is disabled'))
 

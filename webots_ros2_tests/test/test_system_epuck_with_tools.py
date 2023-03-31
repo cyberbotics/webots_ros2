@@ -21,12 +21,13 @@
 import os
 import pytest
 import rclpy
-from nav_msgs.msg import OccupancyGrid
+from nav_msgs.msg import OccupancyGrid, Odometry
 from launch import LaunchDescription
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
+from rclpy.action import ActionClient
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 
@@ -36,12 +37,9 @@ def generate_test_description():
 
     epuck_with_tools_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('webots_ros2_epuck'), 'launch', 'robot_with_tools_launch.py')
+            os.path.join(get_package_share_directory('webots_ros2_epuck'), 'launch', 'robot_launch.py')
         ),
-        launch_arguments={'nav': 'true',
-                          'rviz': 'true',
-                          'mapper': 'true',
-                          'synchronization': 'true'}.items(),
+        launch_arguments={'nav': 'true'}.items(),
     )
 
     return LaunchDescription([
@@ -72,6 +70,29 @@ class TestEpuck(TestWebots):
             return False
 
         self.wait_for_messages(self.__node, OccupancyGrid, '/map', condition=on_map_message_received)
+
+    def testMovement(self):
+        from nav2_msgs.action import NavigateToPose
+
+        # Delay before publishing goal position (navigation initialization can be long in the CI)
+        goal_action = ActionClient(self.__node, NavigateToPose, 'navigate_to_pose')
+        goal_message = NavigateToPose.Goal()
+        goal_message.pose.header.stamp = self.__node.get_clock().now().to_msg()
+        goal_message.pose.header.frame_id = 'map'
+        goal_message.pose.pose.position.x = 0.37
+        goal_message.pose.pose.position.y = 0.2
+        goal_message.pose.pose.orientation.z = 0.544
+        goal_message.pose.pose.orientation.w = 0.838
+        goal_action.wait_for_server()
+        self.__node.get_logger().info('Server is ready, waiting 10 seconds to send goal position.')
+        self.wait_for_clock(self.__node, messages_to_receive=1000)
+        goal_action.send_goal_async(goal_message)
+        self.__node.get_logger().info('Goal position sent.')
+
+        def on_message_received(message):
+            return message.pose.pose.position.x > 0.25
+
+        self.wait_for_messages(self.__node, Odometry, '/odom', condition=on_message_received, timeout=60*5)
 
     def tearDown(self):
         self.__node.destroy_node()

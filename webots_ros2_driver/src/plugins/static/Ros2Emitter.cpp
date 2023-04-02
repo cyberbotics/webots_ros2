@@ -20,15 +20,15 @@ namespace webots_ros2_driver {
     wb_emitter_set_channel(mEmitter, mDeviceChannel);
 
     // Initialize services, publishers and subcriptions
-    mSendService = mNode->create_service<webots_ros2_msgs::srv::SetString>(
-      mTopicName + "/send", std::bind(&Ros2Emitter::send_callback, this, _1, _2));
+    mSendService = mNode->create_service<webots_ros2_msgs::srv::EmitterSendString>(
+      mTopicName + "/send_string", std::bind(&Ros2Emitter::send_callback, this, _1, _2));
     RCLCPP_DEBUG(rclcpp::get_logger(mDeviceName), "Emitter initialized!");
   }
-  void Ros2Emitter::send_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetString::Request> request,
-                                  std::shared_ptr<webots_ros2_msgs::srv::SetString::Response> response) {
+  void Ros2Emitter::send_callback(const std::shared_ptr<webots_ros2_msgs::srv::EmitterSendString::Request> request,
+                                  std::shared_ptr<webots_ros2_msgs::srv::EmitterSendString::Response> response) {
     std::string message = request->value;
     auto umessage = reinterpret_cast<unsigned char *>(const_cast<char *>(message.c_str()));
-    response->success = wb_emitter_send(mEmitter, umessage, message.length() + 1);
+    response->result = wb_emitter_send(mEmitter, umessage, message.length() + 1);
   }
   void Ros2Emitter::step() {
     if (!preStep())

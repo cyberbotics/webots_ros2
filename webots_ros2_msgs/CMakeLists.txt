@@ -30,8 +30,7 @@ set(msg_files
   "msg/UrdfRobot.msg"
 )
 set(srv_files
-  "srv/SetInt.srv"
-  "srv/SetString.srv"
+  "srv/EmitterSendString.srv"
   "srv/SpawnUrdfRobot.srv"
   "srv/SpawnNodeFromString.srv"
 )

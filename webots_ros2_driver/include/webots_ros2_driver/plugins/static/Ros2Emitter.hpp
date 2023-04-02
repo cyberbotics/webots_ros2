@@ -4,7 +4,7 @@
 #include <webots_ros2_driver/WebotsNode.hpp>
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 
-#include <webots_ros2_msgs/srv/set_string.hpp>
+#include <webots_ros2_msgs/srv/emitter_send_string.hpp>
 
 namespace webots_ros2_driver {
   class Ros2Emitter : public Ros2SensorPlugin {
@@ -14,9 +14,9 @@ namespace webots_ros2_driver {
 
   private:
     // ROS2 service
-    rclcpp::Service<webots_ros2_msgs::srv::SetString>::SharedPtr mSendService;
-    void send_callback(const std::shared_ptr<webots_ros2_msgs::srv::SetString::Request> request,
-                       std::shared_ptr<webots_ros2_msgs::srv::SetString::Response> response);
+    rclcpp::Service<webots_ros2_msgs::srv::EmitterSendString>::SharedPtr mSendService;
+    void send_callback(const std::shared_ptr<webots_ros2_msgs::srv::EmitterSendString::Request> request,
+                       std::shared_ptr<webots_ros2_msgs::srv::EmitterSendString::Response> response);
     // Device
     WbDeviceTag mEmitter;
     // Runtime vars

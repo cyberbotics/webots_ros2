@@ -24,6 +24,10 @@ namespace webots_ros2_driver {
     // Data publisher
     mDataPublisher =
       mNode->create_publisher<webots_ros2_msgs::msg::StringStamped>(mTopicName + "/data", rclcpp::SensorDataQoS().reliable());
+    mSignalPublisher = mNode->create_publisher<webots_ros2_msgs::msg::FloatStamped>(mTopicName + "/emitter_direction",
+                                                                                    rclcpp::SensorDataQoS().reliable());
+    mDirectionPublisher = mNode->create_publisher<geometry_msgs::msg::Vector3Stamped>(mTopicName + "/signal_strength",
+                                                                                      rclcpp::SensorDataQoS().reliable());
 
     RCLCPP_DEBUG(rclcpp::get_logger(mDeviceName), (mDeviceName + " initialized!").c_str());
 
@@ -59,6 +63,17 @@ namespace webots_ros2_driver {
     return mIsEnabled;
   }
   void Ros2Receiver::publishData() {
+    // publish signal strength
+    mSignalMessage.header.stamp = mNode->get_clock()->now();
+    mSignalMessage.data = wb_receiver_get_signal_strength(mReceiver);
+    mSignalPublisher->publish(mSignalMessage);
+    // publish emitter direction
+    const double *emitter_direction = wb_receiver_get_emitter_direction(mReceiver);
+    mDirectionMessage.header.stamp = mSignalMessage.header.stamp;
+    mDirectionMessage.vector.x = emitter_direction[0];
+    mDirectionMessage.vector.y = emitter_direction[1];
+    mDirectionMessage.vector.z = emitter_direction[2];
+    mDirectionPublisher->publish(mDirectionMessage);
     // If there is any packet publish the data
     if (wb_receiver_get_queue_length(mReceiver) > 0) {
       const void *received_data = wb_receiver_get_data(mReceiver);
@@ -66,7 +81,7 @@ namespace webots_ros2_driver {
       char *publishing_data_char = static_cast<char *>(const_cast<void *>(received_data));
       // publish
       mDataMessage.data = std::string(publishing_data_char);
-      mDataMessage.header.stamp = mNode->get_clock()->now();
+      mDataMessage.header.stamp = mSignalMessage.header.stamp;
       mDataPublisher->publish(mDataMessage);
       wb_receiver_next_packet(mReceiver);
     }

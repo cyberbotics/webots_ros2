@@ -52,7 +52,9 @@ namespace webots_ros2_driver {
   }
   bool Ros2Receiver::mustPublish() {
     // Enable/Disable sensor
-    const bool shouldBeEnabled = mDataPublisher->get_subscription_count() > 0;
+    const bool shouldBeEnabled =
+      (mSignalPublisher->get_subscription_count() > 0 || mDirectionPublisher->get_subscription_count() > 0 ||
+       mDataPublisher->get_subscription_count() > 0);
     if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         wb_receiver_enable(mReceiver, mPublishTimestepSyncedMs);
@@ -63,23 +65,22 @@ namespace webots_ros2_driver {
     return mIsEnabled;
   }
   void Ros2Receiver::publishData() {
-    // publish signal strength
-    mSignalMessage.header.stamp = mNode->get_clock()->now();
-    mSignalMessage.data = wb_receiver_get_signal_strength(mReceiver);
-    mSignalPublisher->publish(mSignalMessage);
-    // publish emitter direction
-    const double *emitter_direction = wb_receiver_get_emitter_direction(mReceiver);
-    mDirectionMessage.header.stamp = mSignalMessage.header.stamp;
-    mDirectionMessage.vector.x = emitter_direction[0];
-    mDirectionMessage.vector.y = emitter_direction[1];
-    mDirectionMessage.vector.z = emitter_direction[2];
-    mDirectionPublisher->publish(mDirectionMessage);
-    // If there is any packet publish the data
+    // If there is any packet
     if (wb_receiver_get_queue_length(mReceiver) > 0) {
+      // publish signal strength
+      mSignalMessage.header.stamp = mNode->get_clock()->now();
+      mSignalMessage.data = wb_receiver_get_signal_strength(mReceiver);
+      mSignalPublisher->publish(mSignalMessage);
+      // publish emitter direction
+      const double *emitter_direction = wb_receiver_get_emitter_direction(mReceiver);
+      mDirectionMessage.header.stamp = mSignalMessage.header.stamp;
+      mDirectionMessage.vector.x = emitter_direction[0];
+      mDirectionMessage.vector.y = emitter_direction[1];
+      mDirectionMessage.vector.z = emitter_direction[2];
+      mDirectionPublisher->publish(mDirectionMessage);
+      // publish the received data
       const void *received_data = wb_receiver_get_data(mReceiver);
-      // cast to char*
       char *publishing_data_char = static_cast<char *>(const_cast<void *>(received_data));
-      // publish
       mDataMessage.data = std::string(publishing_data_char);
       mDataMessage.header.stamp = mSignalMessage.header.stamp;
       mDataPublisher->publish(mDataMessage);

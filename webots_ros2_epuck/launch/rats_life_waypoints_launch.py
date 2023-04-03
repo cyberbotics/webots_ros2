@@ -101,7 +101,6 @@ def get_waypoints():
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_epuck')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
-    synchronization = LaunchConfiguration('synchronization', default=True)
     world = LaunchConfiguration('world', default='rats_life_benchmark.wbt')
 
     # Webots
@@ -110,7 +109,6 @@ def generate_launch_description():
             os.path.join(package_dir, 'launch', 'robot_launch.py')
         ),
         launch_arguments={
-            'synchronization': synchronization,
             'use_sim_time': 'true',
             'world': world
         }.items()
@@ -153,7 +151,7 @@ def generate_launch_description():
         cmd=[
             'sleep 5;'
             'while [ -z '
-            f'`ros2 action send_goal /FollowWaypoints nav2_msgs/action/FollowWaypoints \'{get_waypoints()}\' | grep accepted`'
+            f'`ros2 action send_goal /follow_waypoints nav2_msgs/action/FollowWaypoints \'{get_waypoints()}\' | grep accepted`'
             ']; do'
             '  sleep 3;'
             'done'

@@ -30,7 +30,6 @@ def generate_launch_description():
     launch_description_nodes = []
     package_dir = get_package_share_directory('webots_ros2_epuck')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
-    synchronization = LaunchConfiguration('synchronization', default=True)
     world = LaunchConfiguration('world', default='rats_life_benchmark.wbt')
 
     # Webots node
@@ -40,7 +39,6 @@ def generate_launch_description():
                 os.path.join(package_dir, 'launch', 'robot_launch.py')
             ),
             launch_arguments={
-                'synchronization': synchronization,
                 'use_sim_time': 'true',
                 'world': world
             }.items()
@@ -76,25 +74,6 @@ def generate_launch_description():
                 ],
             )
         )
-        # Set initial position of the robot within the provided map.
-        # The initial position can be also be set in RViz2 menu `2D Pose Estimate`.
-        launch_description_nodes.append(ExecuteProcess(
-            cmd=[
-                'ros2',
-                'topic',
-                'pub',
-                '--once',
-                '/initialpose',
-                'geometry_msgs/msg/PoseWithCovarianceStamped',
-                '{\
-                "header": { "frame_id": "map" },\
-                "pose": { "pose": {\
-                    "position": { "x": 0.005, "y": 0.0, "z": 0.0 },\
-                    "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }}\
-                }\
-            }'
-            ]
-        ))
     else:
         launch_description_nodes.append(LogInfo(msg='Navigation2 is not installed, navigation functionality is disabled'))
 

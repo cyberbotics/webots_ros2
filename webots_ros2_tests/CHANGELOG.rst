@@ -2,15 +2,11 @@
 Changelog for package webots_ros2_tests
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.4 (2023-XX-XX)
-------------------
-* Improved the e-puck test by publishing the initial position when navigation is ready.
-* Fixed and improved e-puck navigation test.
-
 2023.0.3 (2023-XX-XX)
 ------------------
 * Improved the TIAGo test by publishing the initial position when navigation is ready.
 * Fixed and improved Turtlebot navigation and mapping tests.
+* Fixed and improved e-puck navigation test.
 
 2022.1.4 (2022-11-18)
 ------------------

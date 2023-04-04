@@ -2,6 +2,11 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.4 (2023-XX-XX)
+------------------
+* Fixed the calibration of the e-puck.
+* Fixed and improved the navigation of the e-puck example.
+
 2023.0.3 (2023-XX-XX)
 ------------------
 * Fixed the calibration of the TIAGo.

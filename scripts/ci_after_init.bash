@@ -30,8 +30,8 @@ fi
 if [[ "${ROS_DISTRO}" != "rolling" ]]; then
     apt install -y ros-${ROS_DISTRO}-nav2-bringup git
 
-    mkdir -p /root/target_ws2/src
-    git clone -b ${ROS_DISTRO}-devel https://github.com/ROBOTIS-GIT/turtlebot3.git /root/target_ws2/src
+    mkdir -p /root/upstream_ws/src
+    git clone -b ros2 https://github.com/ROBOTIS-GIT/turtlebot3.git /root/upstream_ws/src
 fi
 
 # TODO: Revert once the https://github.com/ros-planning/navigation2/issues/3033 issue is fixed.

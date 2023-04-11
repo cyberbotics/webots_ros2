@@ -98,6 +98,10 @@ def get_ros2_nodes(*args):
     )
 
     nav_nodes = []
+    if 'CI' in os.environ and os.environ['CI'] == '1':
+        use_rviz = [('use_rviz', False)]
+    else:
+        use_rviz = []
     # Navigation
     os.environ['TURTLEBOT3_MODEL'] = 'burger'
     if 'turtlebot3_navigation2' in get_packages_with_prefixes():
@@ -108,7 +112,7 @@ def get_ros2_nodes(*args):
                 ('map', nav2_map),
                 ('params_file', nav2_params),
                 ('use_sim_time', use_sim_time),
-            ],
+            ] + use_rviz,
             condition=launch.conditions.IfCondition(use_nav))
         nav_nodes.append(turtlebot_navigation)
 
@@ -119,7 +123,7 @@ def get_ros2_nodes(*args):
                 get_package_share_directory('turtlebot3_cartographer'), 'launch', 'cartographer.launch.py')),
             launch_arguments=[
                 ('use_sim_time', use_sim_time),
-            ],
+            ] + use_rviz,
             condition=launch.conditions.IfCondition(use_slam))
         nav_nodes.append(turtlebot_slam)
 

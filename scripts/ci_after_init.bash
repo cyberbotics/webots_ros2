@@ -29,7 +29,13 @@ fi
 # The following packages are not available in the ROS 2 Rolling distribution. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
 if [[ "${ROS_DISTRO}" != "rolling" ]]; then
     apt install -y ros-${ROS_DISTRO}-nav2-bringup git
-    git clone -b ${ROS_DISTRO}-devel https://github.com/ROBOTIS-GIT/turtlebot3.git /root/target_ws/src
+fi
+
+if [[ "${ROS_DISTRO}" != "rolling" ]]; then
+    mkdir -p /root/target_ws2/src
+    git clone -b ${ROS_DISTRO}-devel https://github.com/ROBOTIS-GIT/turtlebot3.git /root/target_ws2/src
+    rosdep install -y -r -q --from-paths /root/target_ws2/src --ignore-src --rosdistro ${ROS_DISTRO}
+    colcon build
 fi
 
 # TODO: Revert once the https://github.com/ros-planning/navigation2/issues/3033 issue is fixed.

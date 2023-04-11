@@ -7,7 +7,7 @@ export WEBOTS_OFFSCREEN=1
 export CI=1
 export DEBIAN_FRONTEND=noninteractive
 if [[ "${ROS_DISTRO}" != "rolling" ]]; then
-    export UPSTREAM_WORKSPACE=/root/upstream_ws/
+    export UPSTREAM_WORKSPACE=/root/turtlebot_ws/
 fi
 
 

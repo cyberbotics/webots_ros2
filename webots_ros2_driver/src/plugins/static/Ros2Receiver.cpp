@@ -24,9 +24,9 @@ namespace webots_ros2_driver {
     // Data publisher
     mDataPublisher =
       mNode->create_publisher<webots_ros2_msgs::msg::StringStamped>(mTopicName + "/data", rclcpp::SensorDataQoS().reliable());
-    mSignalPublisher = mNode->create_publisher<webots_ros2_msgs::msg::FloatStamped>(mTopicName + "/emitter_direction",
+    mSignalPublisher = mNode->create_publisher<webots_ros2_msgs::msg::FloatStamped>(mTopicName + "/signal_strength",
                                                                                     rclcpp::SensorDataQoS().reliable());
-    mDirectionPublisher = mNode->create_publisher<geometry_msgs::msg::Vector3Stamped>(mTopicName + "/signal_strength",
+    mDirectionPublisher = mNode->create_publisher<geometry_msgs::msg::Vector3Stamped>(mTopicName + "/emitter_direction",
                                                                                       rclcpp::SensorDataQoS().reliable());
 
     RCLCPP_DEBUG(rclcpp::get_logger(mDeviceName), (mDeviceName + " initialized!").c_str());

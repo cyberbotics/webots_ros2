@@ -32,9 +32,6 @@ if [[ "${ROS_DISTRO}" != "rolling" ]]; then
 
     mkdir -p /root/target_ws2/src
     git clone -b ${ROS_DISTRO}-devel https://github.com/ROBOTIS-GIT/turtlebot3.git /root/target_ws2/src
-    source /opt/ros/${ROS_DISTRO}/setup.bash
-    rosdep install -y -r -q --from-paths /root/target_ws2/src --ignore-src --rosdistro ${ROS_DISTRO}
-    colcon build
 fi
 
 # TODO: Revert once the https://github.com/ros-planning/navigation2/issues/3033 issue is fixed.

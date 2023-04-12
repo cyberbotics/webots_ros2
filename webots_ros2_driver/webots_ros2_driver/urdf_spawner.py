@@ -23,7 +23,8 @@ def get_webots_driver_node(event, driver_node):
     """Return the driver node in case the service response is successful."""
     if 'success=True' in event.text.decode().strip():
         return driver_node
-    print('WARNING: the Ros2Supervisor was not able to spawn this URDF robot.')
+    if 'success=False' in event.text.decode().strip():
+        print('WARNING: the Ros2Supervisor was not able to spawn this URDF robot.')
     return
 
 

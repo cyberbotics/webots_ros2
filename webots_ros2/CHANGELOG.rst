@@ -13,6 +13,8 @@ Changelog for package webots_ros2
 * Changed undefined Lidar frequency to the default from the .proto file
 * Added Compass support in webots_ros2_driver
 * Added startup of the Turlebot navigation and mapping tools from the launch file.
+* Fixed the calibration of the e-puck.
+* Fixed and improved the navigation of the e-puck example.
 
 2023.0.2 (2023-02-07)
 ------------------

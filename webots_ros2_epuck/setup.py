@@ -11,7 +11,6 @@ data_files.append(('share/ament_index/resource_index/packages', [
 data_files.append(('share/' + package_name + '/launch', [
     'launch/robot_launch.py',
     'launch/robot_tools_launch.py',
-    'launch/robot_with_tools_launch.py',
     'launch/rats_life_launch.py',
     'launch/rats_life_waypoints_launch.py'
 ]))

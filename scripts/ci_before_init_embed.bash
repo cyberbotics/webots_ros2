@@ -6,6 +6,7 @@ export WEBOTS_RELEASE_VERSION=2023a-rev1
 export WEBOTS_OFFSCREEN=1
 export CI=1
 export DEBIAN_FRONTEND=noninteractive
+# The upstream workspace allows to install packages from sources for the tests (Turtlebot3 here)
 if [[ "${ROS_DISTRO}" != "rolling" ]]; then
     export UPSTREAM_WORKSPACE=/root/turtlebot_ws/
 fi

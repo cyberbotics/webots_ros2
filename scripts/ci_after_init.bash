@@ -14,7 +14,7 @@ NIGHTLY_DATE=`date --date="${LAST_NIGHTLY_DAY_OLD} day ago" +"%-d_%-m_%Y"`
 WEBOTS_NIGHTLY_VERSION="nightly_${NIGHTLY_DATE}"
 
 apt update
-apt install -y wget dialog apt-utils psmisc lsb-release
+apt install -y wget dialog apt-utils psmisc lsb-release git
 wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_NIGHTLY_VERSION}/webots_${WEBOTS_RELEASE_VERSION}_amd64.deb -O /tmp/webots.deb
 apt install -y /tmp/webots.deb xvfb
 
@@ -28,8 +28,9 @@ fi
 
 # The following packages are not available in the ROS 2 Rolling distribution. Therefore, we cannot include them in the package.xml, but we have to install them manually here.
 if [[ "${ROS_DISTRO}" != "rolling" ]]; then
-    apt install -y ros-${ROS_DISTRO}-nav2-bringup git
+    apt install -y ros-${ROS_DISTRO}-nav2-bringup
 
+    # Turtlebot3 must be installed from sources to make RViz optional
     mkdir -p /root/turtlebot_ws/src
     git clone -b ${ROS_DISTRO}-devel https://github.com/cyberbotics/turtlebot3.git /root/turtlebot_ws/src
 fi

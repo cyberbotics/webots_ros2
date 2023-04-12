@@ -24,7 +24,6 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import ExecuteProcess
 
 
 def generate_launch_description():
@@ -36,7 +35,7 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration('rviz', default=True)
     use_mapper = LaunchConfiguration('mapper', default=False)
     fill_map = LaunchConfiguration('fill_map', default=True)
-    map_filename = LaunchConfiguration('fill_map', default=os.path.join(package_dir, 'resource', 'epuck_world_map.yaml'))
+    map_filename = LaunchConfiguration('map', default=os.path.join(package_dir, 'resource', 'epuck_world_map.yaml'))
 
     # Rviz node
     rviz_config = os.path.join(package_dir, 'resource', 'all.rviz')
@@ -66,23 +65,6 @@ def generate_launch_description():
                 condition=launch.conditions.IfCondition(use_nav)
             )
         )
-        launch_description_nodes.append(ExecuteProcess(
-            cmd=[
-                'ros2',
-                'topic',
-                'pub',
-                '--once',
-                '/initialpose',
-                'geometry_msgs/msg/PoseWithCovarianceStamped',
-                '{\
-                "header": { "frame_id": "map" },\
-                "pose": { "pose": {\
-                    "position": { "x": 0.005, "y": 0.0, "z": 0.0 },\
-                    "orientation": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }}\
-                }\
-            }'
-            ]
-        ))
     else:
         launch_description_nodes.append(LogInfo(msg='Navigation2 is not installed, navigation functionality is disabled'))
 

@@ -2,6 +2,11 @@
 Changelog for package webots_ros2_epuck
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.3 (2023-XX-XX)
+------------------
+* Refactored launch files.
+* Updated and fixed navigation for Humble compatibility.
+
 2023.0.2 (2023-02-07)
 ------------------
 * Updated supervisor launch.

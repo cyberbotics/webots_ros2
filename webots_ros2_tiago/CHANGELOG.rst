@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_tiago
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.3 (2023-XX-XX)
+2023.0.3 (2023-04-12)
 ------------------
 * Fixed the calibration of the TIAGo.
 * Improved the launch of the nodes when using navigation.

@@ -17,10 +17,10 @@
 #include <webots_ros2_driver/utils/Math.hpp>
 #include "pluginlib/class_list_macros.hpp"
 
-#include <webots/device.h>
-#include <webots/robot.h>
 #include <webots/camera.h>
+#include <webots/device.h>
 #include <webots/range_finder.h>
+#include <webots/robot.h>
 
 namespace webots_ros2_driver {
   void Ros2RGBD::init(webots_ros2_driver::WebotsNode *node, std::unordered_map<std::string, std::string> &parameters) {
@@ -29,13 +29,12 @@ namespace webots_ros2_driver {
     mRangeFinder = 0;
 
     if (!parameters.count("camera") && !parameters.count("rangeFinder"))
-      throw std::runtime_error(
-        "The RGBD plugin has to contain <camera> and <rangeFinder>");
+      throw std::runtime_error("The RGBD plugin has to contain <camera> and <rangeFinder>");
 
     mCamera = wb_robot_get_device(parameters["camera"].c_str());
     if (mCamera == 0 || wb_device_get_node_type(mCamera) != WB_NODE_CAMERA)
       throw std::runtime_error("Cannot find Webots camera `" + parameters["camera"] + "` for the RGBD plugin.");
-    
+
     mRangeFinder = wb_robot_get_device(parameters["rangeFinder"].c_str());
     if (mRangeFinder == 0 || wb_device_get_node_type(mRangeFinder) != WB_NODE_RANGE_FINDER)
       throw std::runtime_error("Cannot find Webots range finder `" + parameters["rangeFinder"] + "` for the RGBD plugin.");
@@ -102,8 +101,8 @@ namespace webots_ros2_driver {
   }
 
   void Ros2RGBD::publishData() {
-    const float* depth_image = wb_range_finder_get_range_image(mRangeFinder);
-    const unsigned char * rgb_image = wb_camera_get_image(mCamera);
+    const float *depth_image = wb_range_finder_get_range_image(mRangeFinder);
+    const unsigned char *rgb_image = wb_camera_get_image(mCamera);
     if (depth_image && rgb_image) {
       mMessage.header.stamp = mNode->get_clock()->now();
 
@@ -118,7 +117,7 @@ namespace webots_ros2_driver {
           x = depth_image[idx];
           y = -(i - mCenterX) * x / mFocalLengthX;
           z = -(j - mCenterY) * x / mFocalLengthY;
-          
+
           memcpy(data + idx * 5, &x, sizeof(float));
           memcpy(data + idx * 5 + 1, &y, sizeof(float));
           memcpy(data + idx * 5 + 2, &z, sizeof(float));

@@ -28,7 +28,7 @@ namespace webots_ros2_driver {
     mCamera = 0;
     mRangeFinder = 0;
 
-    if (!parameters.count("camera") && !parameters.count("rangeFinder"))
+    if (!parameters.count("camera") || !parameters.count("rangeFinder"))
       throw std::runtime_error("The RGBD plugin has to contain <camera> and <rangeFinder>");
 
     mCamera = wb_robot_get_device(parameters["camera"].c_str());

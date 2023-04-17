@@ -56,8 +56,8 @@ namespace webots_ros2_driver {
     // Camera params
     mWidth = width;
     mHeight = height;
-    mFocalLengthX = 0.5 * width * (1 / tan(0.5 * wb_range_finder_get_fov(mRangeFinder)));
-    mFocalLengthY = 0.5 * height * (1 / tan(0.5 * wb_range_finder_get_fov(mRangeFinder)));
+    mFocalLengthX = 0.5 * width * (1 / tan(0.5 * range_finder_field_of_view));
+    mFocalLengthY = 0.5 * height * (1 / tan(0.5 * range_finder_field_of_view));
     mCenterX = 0.5 * width;
     mCenterY = 0.5 * height;
 

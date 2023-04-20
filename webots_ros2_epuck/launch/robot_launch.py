@@ -110,36 +110,20 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
-    tool_nodes = []
-    # Navigation
-    nav_tools = IncludeLaunchDescription(
+    # Tools
+    tool_nodes = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(package_dir, 'launch', 'robot_tools_launch.py')
         ),
         launch_arguments={
+            'fill_map': fill_map,
+            'mapper': use_mapper,
+            'map': map_filename,
             'nav': use_nav,
             'rviz': use_rviz,
             'use_sim_time': use_sim_time,
-            'map': map_filename,
         }.items(),
-        condition=launch.conditions.IfCondition(use_nav)
     )
-    tool_nodes.append(nav_tools)
-
-    # Mapping
-    mapper_tools = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(package_dir, 'launch', 'robot_tools_launch.py')
-        ),
-        launch_arguments={
-            'rviz': use_rviz,
-            'mapper': use_mapper,
-            'use_sim_time': use_sim_time,
-            'fill_map': fill_map,
-        }.items(),
-        condition=launch.conditions.IfCondition(use_mapper)
-    )
-    tool_nodes.append(mapper_tools)
 
     # Wait for the simulation to be ready to start the tools
     tools_handler = launch.actions.RegisterEventHandler(

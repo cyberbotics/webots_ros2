@@ -1,0 +1,9 @@
+<library path="webots_ros2_driver_rgbd">
+  <class
+    type="webots_ros2_driver::Ros2RGBD"
+    base_class_type="webots_ros2_driver::PluginInterface">
+    <description>
+      ROS 2 RGBD plugin that fuses data from Webots Camera and Range Finder to create a point cloud.
+    </description>
+  </class>
+</library>

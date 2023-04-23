@@ -4,6 +4,7 @@ Changelog for package webots_ros2
 
 2023.0.4 (2023-XX-XX)
 ------------------
+* Added support for painted point clouds
 * Fixed ability to launch RViz without other tools in e-puck example.
 
 2023.0.3 (2023-04-12)

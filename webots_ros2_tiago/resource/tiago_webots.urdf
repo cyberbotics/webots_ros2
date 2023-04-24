@@ -10,6 +10,25 @@
                 <frameName>hokuyo</frameName>
             </ros>
         </device>
+        <device reference="Astra rgb" type="Camera">
+            <ros>
+                <enabled>true</enabled>
+                <topicName>/head_front_camera/rgb</topicName>
+                <imageSuffix>/image_raw</imageSuffix>
+                <alwaysOn>true</alwaysOn>
+                <frameName>head_front_camera_rgb_optical_frame</frameName>
+            </ros>
+        </device>
+        <device reference="Astra depth" type="RangeFinder">
+            <ros>
+                <enabled>true</enabled>
+                <topicName>/head_front_camera/depth_registered</topicName>
+                <imageSuffix>/image_raw</imageSuffix>
+                <pointCloudSuffix>/points</pointCloudSuffix>
+                <alwaysOn>true</alwaysOn>
+                <frameName>head_front_camera_depth_optical_frame</frameName>
+            </ros>
+        </device>
 
         <plugin type="webots_ros2_control::Ros2Control" />
     </webots>

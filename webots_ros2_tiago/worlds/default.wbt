@@ -21,7 +21,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projec
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/objects/computers/protos/Monitor.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/objects/computers/protos/Keyboard.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/objects/chairs/protos/OfficeChair.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/robots/pal_robotics/tiago/protos/Tiago.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/robots/pal_robotics/tiago_lite/protos/TiagoLite.proto"
 
 WorldInfo {
   info [
@@ -675,13 +675,12 @@ OfficeChair {
   rotation 7.19235e-09 -2.97918e-09 1 2.35619
   name "office chair(5)"
 }
-Tiago {
+TiagoLite {
   translation 0.962153 -4.80117 0.235361
   rotation -0.006363227570975 -0.002646197037686 -0.999976253206104 0.78447116344273
-  name "Tiago"
+  name "Tiago_Lite"
   controller "<extern>"
   supervisor TRUE
-  endEffectorSlot NULL
   lidarSlot [
     Lidar {
       name "hokuyo"

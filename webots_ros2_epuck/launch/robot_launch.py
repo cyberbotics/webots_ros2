@@ -20,10 +20,11 @@ import os
 import pathlib
 import launch
 from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch import LaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.utils import controller_url_prefix
@@ -31,6 +32,11 @@ from webots_ros2_driver.utils import controller_url_prefix
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_epuck')
+    use_nav = LaunchConfiguration('nav', default=False)
+    use_rviz = LaunchConfiguration('rviz', default=False)
+    use_mapper = LaunchConfiguration('mapper', default=False)
+    fill_map = LaunchConfiguration('fill_map', default=True)
+    map_filename = LaunchConfiguration('map', default=os.path.join(package_dir, 'resource', 'epuck_world_map.yaml'))
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'epuck_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
@@ -104,6 +110,29 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
+    # Tools
+    tool_nodes = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(package_dir, 'launch', 'robot_tools_launch.py')
+        ),
+        launch_arguments={
+            'fill_map': fill_map,
+            'mapper': use_mapper,
+            'map': map_filename,
+            'nav': use_nav,
+            'rviz': use_rviz,
+            'use_sim_time': use_sim_time,
+        }.items(),
+    )
+
+    # Wait for the simulation to be ready to start the tools
+    tools_handler = launch.actions.RegisterEventHandler(
+        event_handler=launch.event_handlers.OnProcessExit(
+            target_action=diffdrive_controller_spawner,
+            on_exit=tool_nodes
+        )
+    )
+
     return [
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
@@ -111,6 +140,7 @@ def get_ros2_nodes(*args):
         epuck_driver,
         footprint_publisher,
         epuck_process,
+        tools_handler,
     ]
 
 

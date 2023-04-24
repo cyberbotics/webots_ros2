@@ -21,6 +21,13 @@
             <accelerometerName>accelerometer</accelerometerName>
         </plugin>
 
+        <plugin type="webots_ros2_driver::Ros2RGBD">
+            <topicName>/rgbd/pc</topicName>
+            <frameName>rgbd</frameName>
+            <camera>kinect color</camera>
+            <rangeFinder>kinect range</rangeFinder>
+        </plugin>
+
         <plugin type="webots_ros2_tests.plugin_test.PluginTest">
             <parameterExample>someValue</parameterExample>
         </plugin>

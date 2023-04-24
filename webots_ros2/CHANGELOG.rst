@@ -2,7 +2,12 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.3 (2023-XX-XX)
+2023.0.4 (2023-XX-XX)
+------------------
+* Added support for painted point clouds
+* Fixed ability to launch RViz without other tools in e-puck example.
+
+2023.0.3 (2023-04-12)
 ------------------
 * Fixed the calibration of the TIAGo.
 * Improved the navigation of the TIAGo example.
@@ -11,7 +16,10 @@ Changelog for package webots_ros2
 * Copying .wbproj when launching a Webots world via webots_launcher
 * Added Emitter and Receiver support in webots_ros2_driver
 * Changed undefined Lidar frequency to the default from the .proto file
+* Added Compass support in webots_ros2_driver
 * Added startup of the Turlebot navigation and mapping tools from the launch file.
+* Fixed the calibration of the e-puck.
+* Fixed and improved the navigation of the e-puck example.
 
 2023.0.2 (2023-02-07)
 ------------------

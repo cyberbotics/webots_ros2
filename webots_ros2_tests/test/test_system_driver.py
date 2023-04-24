@@ -23,7 +23,7 @@ import time
 import pathlib
 import pytest
 import rclpy
-from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import LaserScan, PointCloud2
 from std_srvs.srv import Trigger
 from sensor_msgs.msg import Range, Image, Imu, Illuminance
 from std_msgs.msg import Int32, Float32
@@ -117,6 +117,12 @@ class TestDriver(TestWebots):
             return True
 
         self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/kinect_color', condition=on_image_received)
+
+    def testRGBD(self):
+        def on_pc_received(message):
+            return True
+
+        self.wait_for_messages(self.__node, PointCloud2, '/rgbd/pc', condition=on_pc_received)
 
     def testRecognition(self):
         def on_objects_received(message):

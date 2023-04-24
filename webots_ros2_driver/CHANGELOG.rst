@@ -2,12 +2,17 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.3 (2023-XX-XX)
+2023.0.4 (2023-XX-XX)
+------------------
+* Added support for painted point clouds
+
+2023.0.3 (2023-04-12)
 ------------------
 * Adding port, stream type parameters to webots_laucher
 * Copying .wbproj when launching a webots world via webots_launcher
 * Added Emitter and Receiver support
 * Changed undefined Lidar frequency to the default from the .proto file
+* Added Compass support
 
 2023.0.2 (2023-02-07)
 ------------------

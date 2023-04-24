@@ -96,6 +96,7 @@ add_executable(driver
   src/plugins/static/Ros2LightSensor.cpp
   src/plugins/static/Ros2Emitter.cpp
   src/plugins/static/Ros2Receiver.cpp
+  src/plugins/static/Ros2Compass.cpp
   src/utils/Math.cpp
   src/utils/Utils.cpp
 )
@@ -155,6 +156,33 @@ install(TARGETS ${PROJECT_NAME}_imu
   LIBRARY DESTINATION lib
 )
 
+# Dynamic RGBD
+set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
+add_library(
+  ${PROJECT_NAME}_rgbd
+  SHARED
+  src/plugins/dynamic/Ros2RGBD.cpp
+  src/plugins/Ros2SensorPlugin.cpp
+  src/utils/Utils.cpp
+)
+ament_target_dependencies(${PROJECT_NAME}_rgbd
+  rclcpp
+  sensor_msgs
+  pluginlib
+  tf2_ros
+)
+add_dependencies(${PROJECT_NAME}_rgbd
+  compile-lib-vehicle
+)
+target_link_libraries(${PROJECT_NAME}_rgbd
+  ${WEBOTS_LIB}
+)
+install(TARGETS ${PROJECT_NAME}_rgbd
+  RUNTIME DESTINATION bin
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+)
+
 # libController
 install(
   DIRECTORY webots/include/controller/c
@@ -180,7 +208,9 @@ install(
 # Prevent pluginlib from using boost
 target_compile_definitions(driver PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 target_compile_definitions(${PROJECT_NAME}_imu PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+target_compile_definitions(${PROJECT_NAME}_rgbd PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
+pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_rgbd.xml)
 
 # Install ROS 2 nodes
 install(PROGRAMS ${PROJECT_NAME}/ros2_supervisor.py
@@ -222,6 +252,7 @@ ament_export_dependencies(
 )
 ament_export_libraries(
   ${PROJECT_NAME}_imu
+  ${PROJECT_NAME}_rgbd
   ${WEBOTS_LIB_PATH}
 )
 ament_package()

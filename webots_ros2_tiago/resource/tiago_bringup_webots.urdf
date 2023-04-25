@@ -5,7 +5,7 @@
             <ros>
                 <enabled>true</enabled>
                 <updateRate>10</updateRate>
-                <topicName>/scan</topicName>
+                <topicName>/scan_raw</topicName>
                 <alwaysOn>true</alwaysOn>
                 <frameName>hokuyo</frameName>
             </ros>

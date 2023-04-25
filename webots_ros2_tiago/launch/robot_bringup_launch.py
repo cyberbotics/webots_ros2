@@ -24,7 +24,7 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory, get_packages_with_prefixes
+from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
@@ -41,21 +41,9 @@ def launch_spawners(event, nodes):
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_tiago')
     use_rviz = LaunchConfiguration('rviz', default=False)
-    use_nav = LaunchConfiguration('nav', default=False)
-    use_slam_toolbox = LaunchConfiguration('slam_toolbox', default=False)
-    use_slam_cartographer = LaunchConfiguration('slam_cartographer', default=False)
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
-    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
-    nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
-    toolbox_params = os.path.join(package_dir, 'resource', 'slam_toolbox_params.yaml')
-    nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
-    cartographer_config_dir = os.path.join(package_dir, 'resource')
-    cartographer_config_basename = 'cartographer.lua'
+    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_bringup_webots.urdf')).read_text()
+    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_bringup.yml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
-
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
-        mappings.append(('/diffdrive_controller/odom', '/odom'))
 
     tiago_driver = Node(
         package='webots_ros2_driver',
@@ -67,35 +55,17 @@ def get_ros2_nodes(*args):
              'use_sim_time': use_sim_time,
              'set_robot_state_publisher': True},
             ros2_control_params
-        ],
-        remappings=mappings
+        ]
     )
 
-    # ROS2_control
-    controller_manager_timeout = ['--controller-manager-timeout', '500']
-    controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
-
-    use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
-
-    diffdrive_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
-        output='screen',
-        prefix=controller_manager_prefix,
-        arguments=['diffdrive_controller'] + controller_manager_timeout,
-    )
-
-    joint_state_broadcaster_spawner = Node(
-        package='controller_manager',
-        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
-        output='screen',
-        prefix=controller_manager_prefix,
-        arguments=['joint_state_broadcaster'] + controller_manager_timeout,
+    # Launch TIAGo related nodes
+    tiago_bringup = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(
+            get_package_share_directory('tiago_bringup'), 'launch', 'tiago_bringup.launch.py')),
     )
 
     spawners = []
-    spawners.append(diffdrive_controller_spawner)
-    spawners.append(joint_state_broadcaster_spawner)
+    spawners.append(tiago_bringup)
     spawners_handler = launch.actions.RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessIO(
             target_action=tiago_driver,
@@ -131,67 +101,9 @@ def get_ros2_nodes(*args):
         condition=launch.conditions.IfCondition(use_rviz)
     )
 
-    # Navigation
-    optional_nodes = []
-    if 'nav2_bringup' in get_packages_with_prefixes():
-        optional_nodes.append(IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(
-                get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
-            launch_arguments=[
-                ('map', nav2_map),
-                ('params_file', nav2_params),
-                ('use_sim_time', use_sim_time),
-            ],
-            condition=launch.conditions.IfCondition(use_nav)))
-
-    # SLAM
-    cartographer = Node(
-        package='cartographer_ros',
-        executable='cartographer_node',
-        name='cartographer_node',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=['-configuration_directory', cartographer_config_dir,
-                   '-configuration_basename', cartographer_config_basename],
-        condition=launch.conditions.IfCondition(use_slam_cartographer))
-    optional_nodes.append(cartographer)
-
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy':
-        grid_executable = 'occupancy_grid_node'
-    else:
-        grid_executable = 'cartographer_occupancy_grid_node'
-    cartographer_grid = Node(
-        package='cartographer_ros',
-        executable=grid_executable,
-        name='cartographer_occupancy_grid_node',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=['-resolution', '0.05'],
-        condition=launch.conditions.IfCondition(use_slam_cartographer))
-    optional_nodes.append(cartographer_grid)
-
-    slam_toolbox = Node(
-        parameters=[toolbox_params,
-                    {'use_sim_time': use_sim_time}],
-        package='slam_toolbox',
-        executable='async_slam_toolbox_node',
-        name='slam_toolbox',
-        output='screen',
-        condition=launch.conditions.IfCondition(use_slam_toolbox)
-    )
-    optional_nodes.append(slam_toolbox)
-
-    # Wait for the simulation to be ready to start RViz and the navigation
-    nav_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=diffdrive_controller_spawner,
-            on_exit=[rviz] + optional_nodes
-        )
-    )
-
     return [
         spawners_handler,
-        nav_handler,
+        rviz,
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,

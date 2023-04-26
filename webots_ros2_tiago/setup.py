@@ -21,7 +21,12 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/slam_toolbox_params.yaml',
 ]))
 data_files.append(('share/' + package_name, ['package.xml']))
-data_files.append(('share/' + package_name + '/worlds', ['worlds/default.wbt', 'worlds/.default.wbproj']))
+data_files.append(('share/' + package_name + '/worlds', [
+    'worlds/default.wbt',
+    'worlds/.default.wbproj',
+    'worlds/default_bringup.wbt',
+    'worlds/.default_bringup.wbproj'
+]))
 
 setup(
     name=package_name,

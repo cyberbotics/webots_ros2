@@ -49,7 +49,7 @@ def get_ros2_nodes(*args):
         package='webots_ros2_driver',
         executable='driver',
         output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Tiago_Lite'},
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Tiago'},
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,
@@ -133,7 +133,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
-            default_value='default.wbt',
+            default_value='default_bringup.wbt',
             description='Choose one of the world files from `/webots_ros2_tiago/world` directory'
         ),
         DeclareLaunchArgument(

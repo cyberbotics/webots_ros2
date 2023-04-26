@@ -45,5 +45,53 @@
             <state_interface name="position"/>
             <command_interface name="velocity"/>
         </joint>
+        <joint name="head_1_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="head_2_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="torso_lift_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_1_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_2_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_3_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_4_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_5_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_6_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_7_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="gripper_finger_joint::left">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="gripper_finger_joint::right">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
     </ros2_control>
 </robot>

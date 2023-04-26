@@ -58,14 +58,72 @@ def get_ros2_nodes(*args):
         ]
     )
 
-    # Launch TIAGo related nodes
-    tiago_bringup = IncludeLaunchDescription(
+    # Tiago bringup specific nodes
+    play_motion2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(
-            get_package_share_directory('tiago_bringup'), 'launch', 'tiago_bringup.launch.py')),
+            get_package_share_directory('tiago_bringup'), 'launch', 'tiago_play_motion2.launch.py')),
+    )
+
+    twist_mux = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(
+            get_package_share_directory('tiago_bringup'), 'launch', 'twist_mux.launch.py')),
+    )
+
+    joystick_teleop = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(
+            get_package_share_directory('tiago_bringup'), 'launch', 'joystick_teleop.launch.py')),
+    )
+
+    # ROS2_control (bringup controllers with custom parametersf for Webots)
+    controller_manager_timeout = ['--controller-manager-timeout', '500']
+    controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
+
+    use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
+
+    pal_gripper_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
+        output='screen',
+        prefix=controller_manager_prefix,
+        arguments=['gripper_controller'] + controller_manager_timeout,
+    )
+
+    mobile_base_controller_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(
+            get_package_share_directory('tiago_controller_configuration'), 'launch', 'mobile_base_controller.launch.py')),
+    )
+
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
+        output='screen',
+        prefix=controller_manager_prefix,
+        arguments=['joint_state_broadcaster'] + controller_manager_timeout,
+    )
+
+    torso_controller_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(
+            get_package_share_directory('tiago_controller_configuration'), 'launch', 'torso_controller.launch.py')),
+    )
+
+    head_controller_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(
+            get_package_share_directory('tiago_controller_configuration'), 'launch', 'head_controller.launch.py')),
+    )
+
+    arm_controller_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(
+            get_package_share_directory('tiago_controller_configuration'), 'launch', 'arm_controller.launch.py')),
     )
 
     spawners = []
-    spawners.append(tiago_bringup)
+    spawners.append(pal_gripper_controller_spawner)
+    spawners.append(mobile_base_controller_launch)
+    spawners.append(joint_state_broadcaster_spawner)
+    spawners.append(torso_controller_launch)
+    spawners.append(head_controller_launch)
+    spawners.append(arm_controller_launch)
+
     spawners_handler = launch.actions.RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessIO(
             target_action=tiago_driver,
@@ -102,11 +160,14 @@ def get_ros2_nodes(*args):
     )
 
     return [
-        spawners_handler,
-        rviz,
+        footprint_publisher,
         robot_state_publisher,
         tiago_driver,
-        footprint_publisher,
+        play_motion2,
+        twist_mux,
+        joystick_teleop,
+        spawners_handler,
+        rviz,
     ]
 
 

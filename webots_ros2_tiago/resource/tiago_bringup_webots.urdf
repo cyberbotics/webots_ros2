@@ -85,11 +85,11 @@
             <state_interface name="position"/>
             <command_interface name="position"/>
         </joint>
-        <joint name="gripper_finger_joint::left">
+        <joint name="gripper_left_finger_joint">
             <state_interface name="position"/>
             <command_interface name="position"/>
         </joint>
-        <joint name="gripper_finger_joint::right">
+        <joint name="gripper_right_finger_joint">
             <state_interface name="position"/>
             <command_interface name="position"/>
         </joint>

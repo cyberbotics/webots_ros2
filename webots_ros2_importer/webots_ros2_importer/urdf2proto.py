@@ -24,7 +24,7 @@ from urdf2webots.importer import convertUrdfFile   # noqa: E402
 
 
 def main(args=None, urdfInput=None):
-    parser = argparse.ArgumentParser(usage='usage: %prog --input=my_robot.urdf [options]')
+    parser = argparse.ArgumentParser(usage='usage: %(prog)s --input=my_robot.urdf [options]')
     parser.add_argument('--input', dest='input', default='', help='Specifies the URDF file.')
     parser.add_argument('--output', dest='output', default='', help='Specifies the path and, if ending in ".proto", name '
                         'of the resulting PROTO file. The filename minus the .proto extension will be the robot name '
@@ -53,13 +53,13 @@ def main(args=None, urdfInput=None):
     # use 'parse_known_args' because ROS2 adds a lot of internal arguments
     arguments, _ = parser.parse_known_args()
     file = os.path.abspath(urdfInput) if urdfInput is not None else os.path.abspath(arguments.input)
-    if not arguments.input:
+    if not file:
         sys.exit('Input file not specified (should be specified with the "--input" argument).')
     if not os.path.isfile(file):
-        sys.exit('"%s" file does not exist.' % arguments.input)
+        sys.exit('"%s" file does not exist.' % file)
     elif not file.endswith('.urdf'):
         sys.exit('"%s" is not an urdf file.' % file)
-    convertUrdfFile(input=arguments.input,
+    convertUrdfFile(input=file,
                     output=arguments.output,
                     normal=arguments.normal,
                     boxCollision=arguments.boxCollision,

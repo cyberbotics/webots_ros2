@@ -100,7 +100,7 @@ def generate_launch_description():
         ros2_supervisor=True
     )
 
-    # The following line is important!
+    # The following lines are important!
     # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
     reset_handler = launch.actions.RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessExit(

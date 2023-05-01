@@ -24,7 +24,7 @@ from webots_ros2_importer import urdf2proto
 
 
 def main(args=None):
-    parser = argparse.ArgumentParser(usage='usage: %prog --input=my_robot.urdf.xacro [options]')
+    parser = argparse.ArgumentParser(usage='usage: %(prog)s --input=my_robot.urdf.xacro [options]')
     parser.add_argument('--input', dest='inFile', default=None,
                         help='Specifies the xacro file to convert.')
     parser.add_argument('--xacro-opts', dest='xacro_opts', default=None,
@@ -82,7 +82,7 @@ def main(args=None):
     # restore stdout and arguments and then run urdf to proto conversion
     sys.stdout = orig_stdout
     sys.argv = saved_argv
-    urdf2proto.main(input=path)
+    urdf2proto.main(urdfInput=path)
     os.remove(path)
 
 

@@ -6,6 +6,7 @@ Changelog for package webots_ros2
 ------------------
 * Added support for painted point clouds
 * Fixed ability to launch RViz without other tools in e-puck example.
+* Fixed command line arguments in importer tools.
 
 2023.0.3 (2023-04-12)
 ------------------

@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_importer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.4 (2023-XX-XX)
+------------------
+* Fixed argument parsing
+
 2022.1.4 (2022-11-18)
 ------------------
 * Upgraded to urdf2webots 2.0.3

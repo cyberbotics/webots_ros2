@@ -30,7 +30,7 @@ class FollowJointTrajectoryClient(Node):
         super().__init__(name)
         self.__client = ActionClient(self, FollowJointTrajectory, prefix + '/follow_joint_trajectory')
         self.__state_subscriber = self.create_subscription(
-            JointTrajectoryControllerState, prefix + '/state', self.__on_state_received, 1
+            JointTrajectoryControllerState, prefix + '/controller_state', self.__on_state_received, 1
         )
         self.__received_states_counter = 0
         self.__remaining_iteration = 0

@@ -31,8 +31,14 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.utils import controller_url_prefix
 
 
+def launch_spawners(event, nodes):
+    # Start ros2_control spawners once the controller_manager is ready
+    if 'Successful \'activate\' of hardware' in event.text.decode().strip():
+        return nodes
+    return
+
+
 def get_ros2_nodes(*args):
-    optional_nodes = []
     package_dir = get_package_share_directory('webots_ros2_tiago')
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_nav = LaunchConfiguration('nav', default=False)
@@ -47,6 +53,25 @@ def get_ros2_nodes(*args):
     cartographer_config_basename = 'cartographer.lua'
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
+    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
+        mappings.append(('/diffdrive_controller/odom', '/odom'))
+
+    tiago_driver = Node(
+        package='webots_ros2_driver',
+        executable='driver',
+        output='screen',
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Tiago_Lite'},
+        parameters=[
+            {'robot_description': robot_description,
+             'use_sim_time': use_sim_time,
+             'set_robot_state_publisher': True},
+            ros2_control_params
+        ],
+        remappings=mappings
+    )
+
+    # ROS2_control
     controller_manager_timeout = ['--controller-manager-timeout', '500']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
 
@@ -68,24 +93,17 @@ def get_ros2_nodes(*args):
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
 
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
-        mappings.append(('/diffdrive_controller/odom', '/odom'))
-
-    tiago_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Tiago_Lite'},
-        parameters=[
-            {'robot_description': robot_description,
-             'use_sim_time': use_sim_time,
-             'set_robot_state_publisher': True},
-            ros2_control_params
-        ],
-        remappings=mappings
+    spawners = []
+    spawners.append(diffdrive_controller_spawner)
+    spawners.append(joint_state_broadcaster_spawner)
+    spawners_handler = launch.actions.RegisterEventHandler(
+        event_handler=launch.event_handlers.OnProcessIO(
+            target_action=tiago_driver,
+            on_stderr=lambda event: launch_spawners(event, spawners)
+        )
     )
 
+    # State publishers
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -102,6 +120,7 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
+    # RViz
     rviz_config = os.path.join(get_package_share_directory('webots_ros2_tiago'), 'resource', 'default.rviz')
     rviz = Node(
         package='rviz2',
@@ -113,6 +132,7 @@ def get_ros2_nodes(*args):
     )
 
     # Navigation
+    optional_nodes = []
     if 'nav2_bringup' in get_packages_with_prefixes():
         optional_nodes.append(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(
@@ -170,8 +190,7 @@ def get_ros2_nodes(*args):
     )
 
     return [
-        joint_state_broadcaster_spawner,
-        diffdrive_controller_spawner,
+        spawners_handler,
         nav_handler,
         robot_state_publisher,
         tiago_driver,

@@ -24,13 +24,24 @@ import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
+import os
+import xml.etree.ElementTree as ET
+from ament_index_python import get_package_share_directory
+
 
 class FollowJointTrajectoryClient(Node):
     def __init__(self, name, prefix):
         super().__init__(name)
         self.__client = ActionClient(self, FollowJointTrajectory, prefix + '/follow_joint_trajectory')
+
+        # hotfix for the new topic name in the last version of joint_trajectory_controller
+        # (https://github.com/cyberbotics/webots_ros2/pull/726)
+        package_xml_path = os.path.join(get_package_share_directory('joint_trajectory_controller'), "package.xml")
+        version = ET.parse(package_xml_path).findall("version")[0].text
+        state_topic = '/state' if version < '3.7.0' else '/controller_state'
+
         self.__state_subscriber = self.create_subscription(
-            JointTrajectoryControllerState, prefix + '/state', self.__on_state_received, 1
+            JointTrajectoryControllerState, prefix + state_topic, self.__on_state_received, 1
         )
         self.__received_states_counter = 0
         self.__remaining_iteration = 0

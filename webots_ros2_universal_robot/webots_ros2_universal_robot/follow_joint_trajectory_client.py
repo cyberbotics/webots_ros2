@@ -34,7 +34,8 @@ class FollowJointTrajectoryClient(Node):
         super().__init__(name)
         self.__client = ActionClient(self, FollowJointTrajectory, prefix + '/follow_joint_trajectory')
 
-        # hotfix for the new topic name in the last version of joint_trajectory_controller (https://github.com/cyberbotics/webots_ros2/pull/726)
+        # hotfix for the new topic name in the last version of joint_trajectory_controller
+        # (https://github.com/cyberbotics/webots_ros2/pull/726)
         package_xml_path = os.path.join(get_package_share_directory('joint_trajectory_controller'), "package.xml")
         version = ET.parse(package_xml_path).findall("version")[0].text
         state_topic = '/state' if version < '3.7.0' else '/controller_state'

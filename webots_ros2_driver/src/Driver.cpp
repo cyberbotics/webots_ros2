@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
 
   std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName);
   node->init();
+  RCLCPP_INFO(node->get_logger(), "Controller successfully connected to robot in Webots simulation.");
   while (true) {
     if (node->step() == -1)
       break;

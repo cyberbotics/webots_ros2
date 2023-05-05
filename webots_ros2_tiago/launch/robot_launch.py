@@ -28,6 +28,7 @@ from ament_index_python.packages import get_package_share_directory, get_package
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
 from webots_ros2_driver.utils import controller_url_prefix
 
 
@@ -162,17 +163,15 @@ def get_ros2_nodes(*args):
     optional_nodes.append(slam_toolbox)
 
     # Wait for the simulation to be ready to start RViz and the navigation
-    nav_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=diffdrive_controller_spawner,
-            on_exit=[rviz] + optional_nodes
-        )
+    nav_tools = WaitForControllerConnection(
+        target_driver=tiago_driver,
+        nodes_to_start=[rviz] + optional_nodes
     )
 
     return [
         joint_state_broadcaster_spawner,
         diffdrive_controller_spawner,
-        nav_handler,
+        nav_tools,
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,

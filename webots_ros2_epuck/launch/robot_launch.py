@@ -27,6 +27,7 @@ from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
 from webots_ros2_driver.utils import controller_url_prefix
 
 
@@ -126,11 +127,9 @@ def get_ros2_nodes(*args):
     )
 
     # Wait for the simulation to be ready to start the tools
-    tools_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=diffdrive_controller_spawner,
-            on_exit=tool_nodes
-        )
+    tools = WaitForControllerConnection(
+        target_driver=epuck_driver,
+        nodes_to_start=tool_nodes
     )
 
     return [
@@ -140,7 +139,7 @@ def get_ros2_nodes(*args):
         epuck_driver,
         footprint_publisher,
         epuck_process,
-        tools_handler,
+        tools,
     ]
 
 

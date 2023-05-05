@@ -28,6 +28,7 @@ from ament_index_python.packages import get_package_share_directory, get_package
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
 from webots_ros2_driver.utils import controller_url_prefix
 
 
@@ -124,16 +125,11 @@ def get_ros2_nodes(*args):
         nav_nodes.append(turtlebot_slam)
 
     # Wait for the simulation to be ready to start navigation nodes
-    nav_handler = []
-    if nav_nodes:
-        nav_handler.append(
-            launch.actions.RegisterEventHandler(
-                event_handler=launch.event_handlers.OnProcessExit(
-                    target_action=diffdrive_controller_spawner,
-                    on_exit=nav_nodes
-                )
-            )
-        )
+    navigation_tools = [
+        WaitForControllerConnection(
+            target_driver=turtlebot_driver,
+            nodes_to_start=nav_nodes
+        )] if nav_nodes else []
 
     return [
         joint_state_broadcaster_spawner,
@@ -141,7 +137,7 @@ def get_ros2_nodes(*args):
         robot_state_publisher,
         turtlebot_driver,
         footprint_publisher,
-    ] + nav_handler
+    ] + navigation_tools
 
 
 def generate_launch_description():

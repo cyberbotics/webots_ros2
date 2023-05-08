@@ -80,8 +80,14 @@ ament_python_install_package(vehicle
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})
 
-# Driver
-set(CMAKE_INSTALL_RPATH "$ORIGIN/../controller")
+if(UNIX AND NOT APPLE)
+  set(DYN_LOADER_PREFIX "$ORIGIN")
+elseif(APPLE)
+  set(DYN_LOADER_PREFIX "@executable_path")
+endif()
+
+set(CMAKE_INSTALL_RPATH "${DYN_LOADER_PREFIX}/../controller")
+
 add_executable(driver
   src/Driver.cpp
   src/WebotsNode.cpp
@@ -129,7 +135,7 @@ install(TARGETS driver
 )
 
 # Dynamic IMU
-set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
+set(CMAKE_INSTALL_RPATH "${DYN_LOADER_PREFIX}/controller")
 add_library(
   ${PROJECT_NAME}_imu
   SHARED
@@ -157,7 +163,7 @@ install(TARGETS ${PROJECT_NAME}_imu
 )
 
 # Dynamic RGBD
-set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
+set(CMAKE_INSTALL_RPATH "${DYN_LOADER_PREFIX}/controller")
 add_library(
   ${PROJECT_NAME}_rgbd
   SHARED

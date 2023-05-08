@@ -33,7 +33,6 @@ from webots_ros2_driver.utils import controller_url_prefix
 
 
 def get_ros2_nodes(*args):
-    optional_nodes = []
     package_dir = get_package_share_directory('webots_ros2_tiago')
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_nav = LaunchConfiguration('nav', default=False)
@@ -51,9 +50,7 @@ def get_ros2_nodes(*args):
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '500']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
-
     use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
-
     diffdrive_controller_spawner = Node(
         package='controller_manager',
         executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
@@ -68,7 +65,7 @@ def get_ros2_nodes(*args):
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
-    spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
+    ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
     mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
@@ -115,8 +112,9 @@ def get_ros2_nodes(*args):
     )
 
     # Navigation
+    navigation_nodes = []
     if 'nav2_bringup' in get_packages_with_prefixes():
-        optional_nodes.append(IncludeLaunchDescription(
+        navigation_nodes.append(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(
                 get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
             launch_arguments=[
@@ -136,7 +134,7 @@ def get_ros2_nodes(*args):
         arguments=['-configuration_directory', cartographer_config_dir,
                    '-configuration_basename', cartographer_config_basename],
         condition=launch.conditions.IfCondition(use_slam_cartographer))
-    optional_nodes.append(cartographer)
+    navigation_nodes.append(cartographer)
 
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy':
         grid_executable = 'occupancy_grid_node'
@@ -150,7 +148,7 @@ def get_ros2_nodes(*args):
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-resolution', '0.05'],
         condition=launch.conditions.IfCondition(use_slam_cartographer))
-    optional_nodes.append(cartographer_grid)
+    navigation_nodes.append(cartographer_grid)
 
     slam_toolbox = Node(
         parameters=[toolbox_params,
@@ -161,19 +159,19 @@ def get_ros2_nodes(*args):
         output='screen',
         condition=launch.conditions.IfCondition(use_slam_toolbox)
     )
-    optional_nodes.append(slam_toolbox)
+    navigation_nodes.append(slam_toolbox)
 
-    # Wait for the simulation to be ready to start RViz and the navigation
-    nav_tools = WaitForControllerConnection(
+    # Wait for the simulation to be ready to start RViz, the navigation and spawners
+    waiting_nodes = WaitForControllerConnection(
         target_driver=tiago_driver,
-        nodes_to_start=[rviz] + optional_nodes + spawners
+        nodes_to_start=[rviz] + navigation_nodes + ros_control_spawners
     )
 
     return [
-        nav_tools,
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,
+        waiting_nodes,
     ]
 
 

@@ -46,9 +46,7 @@ def get_ros2_nodes(*args):
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
-
     use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
-
     diffdrive_controller_spawner = Node(
         package='controller_manager',
         executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
@@ -63,7 +61,7 @@ def get_ros2_nodes(*args):
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
-    spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
+    ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
     mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
@@ -99,8 +97,8 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
-    nav_nodes = []
     # Navigation
+    navigation_nodes = []
     os.environ['TURTLEBOT3_MODEL'] = 'burger'
     if 'turtlebot3_navigation2' in get_packages_with_prefixes():
         turtlebot_navigation = IncludeLaunchDescription(
@@ -112,7 +110,7 @@ def get_ros2_nodes(*args):
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_nav))
-        nav_nodes.append(turtlebot_navigation)
+        navigation_nodes.append(turtlebot_navigation)
 
     # SLAM
     if 'turtlebot3_cartographer' in get_packages_with_prefixes():
@@ -123,19 +121,19 @@ def get_ros2_nodes(*args):
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_slam))
-        nav_nodes.append(turtlebot_slam)
+        navigation_nodes.append(turtlebot_slam)
 
     # Wait for the simulation to be ready to start navigation nodes
-    navigation_tools = WaitForControllerConnection(
+    waiting_nodes = WaitForControllerConnection(
         target_driver=turtlebot_driver,
-        nodes_to_start=nav_nodes + spawners
+        nodes_to_start=navigation_nodes + ros_control_spawners
     )
 
     return [
-        navigation_tools,
         robot_state_publisher,
         turtlebot_driver,
         footprint_publisher,
+        waiting_nodes,
     ]
 
 

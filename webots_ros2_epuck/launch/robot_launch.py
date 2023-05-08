@@ -45,9 +45,7 @@ def get_ros2_nodes(*args):
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
-
     use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
-
     diffdrive_controller_spawner = Node(
         package='controller_manager',
         executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
@@ -68,7 +66,7 @@ def get_ros2_nodes(*args):
             {'use_sim_time': use_sim_time},
         ],
     )
-    spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
+    ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
     mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
@@ -128,10 +126,10 @@ def get_ros2_nodes(*args):
         }.items(),
     )
 
-    # Wait for the simulation to be ready to start the tools
-    tools = WaitForControllerConnection(
+    # Wait for the simulation to be ready to start the tools and spawners
+    waiting_nodes = WaitForControllerConnection(
         target_driver=epuck_driver,
-        nodes_to_start=[tool_nodes] + spawners
+        nodes_to_start=[tool_nodes] + ros_control_spawners
     )
 
     return [
@@ -139,7 +137,7 @@ def get_ros2_nodes(*args):
         epuck_driver,
         footprint_publisher,
         epuck_process,
-        tools,
+        waiting_nodes,
     ]
 
 

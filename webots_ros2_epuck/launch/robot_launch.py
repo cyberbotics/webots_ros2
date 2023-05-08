@@ -41,6 +41,8 @@ def get_ros2_nodes(*args):
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'epuck_webots.urdf')).read_text()
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+
+    # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
 
@@ -56,7 +58,6 @@ def get_ros2_nodes(*args):
             {'use_sim_time': use_sim_time},
         ],
     )
-
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
@@ -67,6 +68,7 @@ def get_ros2_nodes(*args):
             {'use_sim_time': use_sim_time},
         ],
     )
+    spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
     mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
@@ -129,12 +131,10 @@ def get_ros2_nodes(*args):
     # Wait for the simulation to be ready to start the tools
     tools = WaitForControllerConnection(
         target_driver=epuck_driver,
-        nodes_to_start=tool_nodes
+        nodes_to_start=[tool_nodes] + spawners
     )
 
     return [
-        joint_state_broadcaster_spawner,
-        diffdrive_controller_spawner,
         robot_state_publisher,
         epuck_driver,
         footprint_publisher,

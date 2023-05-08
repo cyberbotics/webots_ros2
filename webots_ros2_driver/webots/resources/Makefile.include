@@ -441,6 +441,8 @@ ifdef USE_ODE
  endif
  ifeq ($(OSTYPE),darwin)
   DYNAMIC_LINK_FLAGS += -flat_namespace -undefined suppress
+ endif
+ ifdef BUILD_MACOS_BUNDLE
   DYNAMIC_LIBRARIES += "$(WEBOTS_HOME)/Contents/Resources/projects/plugins/physics/physics.a"
   INCLUDE += -I"$(WEBOTS_HOME)/Contents/include/ode" -I"$(WEBOTS_HOME)/Contents/include"
  else

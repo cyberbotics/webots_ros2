@@ -40,13 +40,17 @@ else()
   find_package(PythonLibs 3.10 EXACT REQUIRED)
 endif()
 
+if(APPLE)
+  set(MAKE_VARS "NO_FAT_BINARY=1")
+endif()
+
 add_custom_target(compile-lib-controller ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make -j1 release -f Makefile ${MAKE_VARS}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
 )
 
 add_custom_target(compile-lib-vehicle ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make -j1 release -f Makefile ${MAKE_VARS}
   DEPENDS compile-lib-controller
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
 )

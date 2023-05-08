@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(webots_ros2_driver)
 
 # Check which ROS distribution is used, ros2control depends of that

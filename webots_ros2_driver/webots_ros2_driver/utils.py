@@ -151,7 +151,7 @@ def get_webots_home(show_warning=False):
         return found >= minimum
 
     # Search in the environment variables
-    environment_variables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
+    environment_variables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME', 'WEBOTS_HOME_PATH']
     for variable in environment_variables:
         if variable in os.environ and os.path.isdir(os.environ[variable]) and WebotsVersion.from_path(os.environ[variable]):
             os.environ['WEBOTS_HOME'] = os.environ[variable]

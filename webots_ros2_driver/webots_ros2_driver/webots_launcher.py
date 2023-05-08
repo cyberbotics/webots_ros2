@@ -74,6 +74,8 @@ class WebotsLauncher(ExecuteProcess):
                 webots_path = get_webots_home()
             if self.__is_wsl:
                 webots_path = os.path.join(webots_path, 'msys64', 'mingw64', 'bin', 'webots.exe')
+            elif sys.platform == 'darwin':
+                webots_path = os.path.join(webots_path, 'MacOS', 'webots')
             else:
                 webots_path = os.path.join(webots_path, 'webots')
         else:

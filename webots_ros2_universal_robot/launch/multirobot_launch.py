@@ -87,7 +87,7 @@ def get_ros2_nodes(*args):
         ]
     )
 
-    # Other ROS 2 nodes
+    # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '75']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
     use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
@@ -105,6 +105,7 @@ def get_ros2_nodes(*args):
         prefix=controller_manager_prefix,
         arguments=['ur_joint_state_broadcaster', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
     )
+    ur5e_spawners = [ur5e_trajectory_controller_spawner, ur5e_joint_state_broadcaster_spawner]
     abb_trajectory_controller_spawner = Node(
         package='controller_manager',
         executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
@@ -119,6 +120,7 @@ def get_ros2_nodes(*args):
         prefix=controller_manager_prefix,
         arguments=['abb_joint_state_broadcaster', '-c', 'abb/controller_manager'] + controller_manager_timeout,
     )
+    abb_spawners = [abb_trajectory_controller_spawner, abb_joint_state_broadcaster_spawner]
 
     # Control nodes
     ur5e_controller = Node(
@@ -141,18 +143,14 @@ def get_ros2_nodes(*args):
         # Standard Webots robot
         abb_driver,
 
-        # Other ROS 2 nodes
-        ur5e_trajectory_controller_spawner,
-        ur5e_joint_state_broadcaster_spawner,
-        abb_trajectory_controller_spawner,
-        abb_joint_state_broadcaster_spawner,
-
         # Launch the driver node once the URDF robot is spawned.
         # You might include other nodes to start them with the driver node.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessIO(
                 target_action=spawn_URDF_ur5e,
-                on_stdout=lambda event: get_webots_driver_node(event, [ur5e_driver, ur5e_controller, abb_controller]),
+                on_stdout=lambda event: get_webots_driver_node(
+                    event, [ur5e_driver, ur5e_controller, abb_controller] + ur5e_spawners + abb_spawners
+                ),
             )
         ),
     ]

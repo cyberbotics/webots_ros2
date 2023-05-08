@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_tiago
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.4 (2023-XX-XX)
+------------------
+* Start ros control and navigation nodes when Webots is ready.
+
 2023.0.3 (2023-04-12)
 ------------------
 * Fixed the calibration of the TIAGo.

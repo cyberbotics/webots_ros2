@@ -148,7 +148,9 @@ def get_ros2_nodes(*args):
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessIO(
                 target_action=spawn_URDF_ur5e,
-                on_stdout=lambda event: get_webots_driver_node(event, [ur5e_driver, ur5e_controller, abb_controller] + ur5e_spawners + abb_spawners),
+                on_stdout=lambda event: get_webots_driver_node(
+                    event, [ur5e_driver, ur5e_controller, abb_controller] + ur5e_spawners + abb_spawners
+                ),
             )
         ),
     ]

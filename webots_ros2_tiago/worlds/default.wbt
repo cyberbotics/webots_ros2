@@ -681,18 +681,6 @@ TiagoIron {
   name "Tiago_Iron"
   controller "<extern>"
   supervisor TRUE
-  cameraSlot [
-    DEF camera Camera {
-      translation 0 0.5 0
-      rotation 0 -1 0 1.5724987151386935
-      fieldOfView 0.6
-      width 800
-      height 600
-      zoom Zoom {
-        minFieldOfView 0.1
-      }
-    }
-  ]
   lidarSlot [
     Lidar {
       name "hokuyo"
@@ -700,10 +688,6 @@ TiagoIron {
       fieldOfView 3.14
       numberOfLayers 1
       maxRange 6
-    }
-    Display {
-      width 800
-      height 600
     }
   ]
 }

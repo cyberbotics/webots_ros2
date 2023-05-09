@@ -689,9 +689,5 @@ TiagoLite {
       numberOfLayers 1
       maxRange 6
     }
-    Display {
-      width 800
-      height 600
-    }
   ]
 }

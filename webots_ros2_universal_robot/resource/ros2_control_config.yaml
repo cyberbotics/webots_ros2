@@ -2,7 +2,7 @@
 /**:
   ros__parameters:
     # controller_manager
-    update_rate: 20
+    update_rate: 50
     ur_joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
     ur_joint_state_broadcaster:

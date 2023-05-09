@@ -8,5 +8,3 @@ orthographicViewHeight: 1
 textFiles: -1
 globalOptionalRendering: LidarPointClouds::LidarRaysPaths
 consoles: Console:All:All
-renderingDevicePerspectives: TIAGo Iron:camera;0;1.56;0;0
-renderingDevicePerspectives: TIAGo Iron:display;0;1.56;0;0

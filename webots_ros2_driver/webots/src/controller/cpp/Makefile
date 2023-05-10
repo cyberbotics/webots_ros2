@@ -128,7 +128,7 @@ ifdef FAT_BINARY
 $(TARGET): $(BUILD_GOAL_DIR)/x86_64/libCppController.dylib $(BUILD_GOAL_DIR)/arm64/libCppController.dylib
 	@echo "# creating fat" $(notdir $@)
 	@lipo -create -output $@ $(BUILD_GOAL_DIR)/x86_64/libCppController.dylib $(BUILD_GOAL_DIR)/arm64/libCppController.dylib
-	# @codesign -s - $@
+	@codesign -s - $@
 
 $(BUILD_GOAL_DIR)/x86_64/libCppController.dylib: $(X86_64_OBJECTS)
 	@echo "# linking" $@ "(x86_64)"

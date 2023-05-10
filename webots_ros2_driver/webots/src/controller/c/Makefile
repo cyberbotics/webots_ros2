@@ -152,7 +152,7 @@ $(TARGET): $(OBJDIR)/x86_64/libController.dylib $(OBJDIR)/arm64/libController.dy
 	@echo "# creating fat binary: $$"\(WEBOTS_HOME\)/lib/controller/libController.dylib
 	@lipo -create -output $(TARGET) $(OBJDIR)/x86_64/libController.dylib $(OBJDIR)/arm64/libController.dylib
 	@chmod a-x $@
-	# @codesign -s - $@
+	@codesign -s - $@
 
 $(OBJDIR)/x86_64/libController.dylib: $(X86_64_OBJECTS)
 	@echo "# linking "$@" (x86_64)"

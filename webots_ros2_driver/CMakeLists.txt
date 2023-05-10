@@ -41,16 +41,17 @@ else()
 endif()
 
 if(APPLE)
-  set(MAKE_VARS "NO_FAT_BINARY=1")
+  # Don't build a fat binary and use simple UNIX pipes for jobserver
+  set(MAKE_BUILD_VARS "NO_FAT_BINARY=1" "MAKEFLAGS=--jobserver-style=pipe")
 endif()
 
 add_custom_target(compile-lib-controller ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make -j1 release -f Makefile ${MAKE_VARS}
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" ${MAKE_BUILD_VARS} make release -f Makefile
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
 )
 
 add_custom_target(compile-lib-vehicle ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make -j1 release -f Makefile ${MAKE_VARS}
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" ${MAKE_BUILD_VARS} make release -f Makefile
   DEPENDS compile-lib-controller
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
 )

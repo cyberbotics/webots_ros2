@@ -81,7 +81,6 @@ class WebotsVersion:
     def short(self):
         return self.version.replace('revision ', 'rev').replace(' ', '-')
 
-
 def is_wsl():
     return 'microsoft-standard' in uname().release
 
@@ -151,7 +150,7 @@ def get_webots_home(show_warning=False):
         return found >= minimum
 
     # Search in the environment variables
-    environment_variables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME', 'WEBOTS_HOME_PATH']
+    environment_variables = ['ROS2_WEBOTS_HOME', 'WEBOTS_HOME']
     for variable in environment_variables:
         if variable in os.environ and os.path.isdir(os.environ[variable]) and WebotsVersion.from_path(os.environ[variable]):
             os.environ['WEBOTS_HOME'] = os.environ[variable]
@@ -182,8 +181,14 @@ def get_webots_home(show_warning=False):
         paths = [
             'C:\\Program Files\\Webots'                             # Windows default install
         ]
+
     # Add automatic installation path to pathes list
-    paths.append(os.path.join(str(Path.home()), '.ros', 'webots' + minimum_version.short(), 'webots'))
+    auto_webots_path = os.path.join(str(Path.home()), '.ros', 'webots' + minimum_version.short())
+
+    if sys.platform == 'darwin':
+        paths.append(os.path.join(auto_webots_path, 'Webots.app', 'Contents'))
+    else:
+        paths.append(os.path.join(auto_webots_path, 'Webots'))
 
     # Check if default pathes contain target version of Webots
     for path in paths:
@@ -211,6 +216,9 @@ def __install_webots(installation_directory):
     if is_wsl():
         archive_name = f'webots-{minimum_version.short()}_setup.exe'
         archive_path = os.path.join('/mnt/c/Temp', archive_name)
+    elif sys.platform == 'darwin':
+        archive_name = f'webots-{minimum_version.short()}.dmg'
+        archive_path = os.path.join(installation_directory, archive_name)
     else:
         installation_path = os.path.abspath(os.path.join(installation_directory, 'webots'))
         archive_name = f'webots-{minimum_version.short()}-x86-64.tar.bz2'
@@ -234,6 +242,22 @@ def __install_webots(installation_directory):
         subprocess.check_output(f'{archive_path} /SILENT /ALLUSERS', shell=True)
         os.remove(archive_path)
         os.environ['WEBOTS_HOME'] = '/mnt/c/Program Files/Webots'
+    elif sys.platform == 'darwin':
+        print('Installing Application Bundle...')
+
+        bundle_path = Path(os.path.join(installation_directory, 'webots_mnt', 'Webots.app'))
+        target_dir = Path(os.path.join(installation_directory, f'webots{minimum_version.short()}'))
+
+        if not bundle_path.exists():
+            print(subprocess.check_output(f'hdiutil attach {archive_path} -mountpoint {installation_directory}/webots_mnt', shell=True))
+            target_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(bundle_path, os.path.join(target_dir, 'Webots.app'))
+
+        if Path(os.path.join(installation_directory, 'webots_mnt')).exists():
+            subprocess.check_output(f'hdiutil detach {installation_directory}/webots_mnt', shell=True)
+
+        os.environ['WEBOTS_HOME'] = os.path.join(target_dir, 'Webots.app', "Contents")
+        os.environ['WEBOTS_HOME_PATH'] = os.path.join(target_dir, 'Webots.app', 'Contents')
     else:
         installation_subdirectory = os.path.join(installation_directory, 'webots' + minimum_version.short())
         print('Extracting...')

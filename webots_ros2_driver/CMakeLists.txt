@@ -51,6 +51,12 @@ add_custom_target(compile-lib-vehicle ALL
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
 )
 
+add_custom_target(compile-generic-window ALL
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+  DEPENDS compile-lib-controller
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/resources/projects/libraries/generic_robot_window
+)
+
 set(WEBOTS_LIB_BASE webots/lib/controller)
 
 include_directories(
@@ -203,6 +209,7 @@ install(
   PATTERN "*CppCar*"
   PATTERN "*driver*"
   PATTERN "*CppDriver*"
+  PATTERN "*generic_robot_window*"
 )
 
 # Prevent pluginlib from using boost
@@ -231,6 +238,7 @@ set(WEBOTS_LIB_PATH
   controller/${CMAKE_SHARED_LIBRARY_PREFIX}CppDriver${CMAKE_SHARED_LIBRARY_SUFFIX}
   controller/${CMAKE_SHARED_LIBRARY_PREFIX}car${CMAKE_SHARED_LIBRARY_SUFFIX}
   controller/${CMAKE_SHARED_LIBRARY_PREFIX}CppCar${CMAKE_SHARED_LIBRARY_SUFFIX}
+  controller/${CMAKE_SHARED_LIBRARY_PREFIX}generic_robot_window${CMAKE_SHARED_LIBRARY_SUFFIX}
 )
 
 ament_export_include_directories(

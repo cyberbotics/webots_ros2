@@ -254,7 +254,7 @@ SolidBox {
   appearance BrushedAluminium {
   }
 }
-DEF WALL Transform {
+DEF WALL Pose {
   translation 0.79 3.59 1.5
   rotation 1 0 0 1.5707953071795862
   children [
@@ -270,7 +270,7 @@ DEF WALL Transform {
     }
   ]
 }
-DEF WALL Transform {
+DEF WALL Pose {
   translation 0.79 -2.21 1.5
   rotation 0 0.7071062811861719 0.7071072811865696 3.14159
   children [
@@ -286,7 +286,7 @@ DEF WALL Transform {
     }
   ]
 }
-DEF WALL Transform {
+DEF WALL Pose {
   translation 4.89 0.690011 1.5
   rotation -0.5773472691841857 0.5773522691865168 0.5773512691860505 -2.094395307179586
   children [
@@ -302,7 +302,7 @@ DEF WALL Transform {
     }
   ]
 }
-DEF WALL Transform {
+DEF WALL Pose {
   translation -3.31 0.69 1.5
   rotation 0.5773542691822531 0.5773502691803881 0.5773462691785233 2.0944
   children [
@@ -318,7 +318,7 @@ DEF WALL Transform {
     }
   ]
 }
-DEF ROOF Transform {
+DEF ROOF Pose {
   translation 0.79 0.69 3
   rotation 1 0 0 3.14159
   children [

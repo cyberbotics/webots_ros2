@@ -570,7 +570,7 @@ DEF STONES Solid {
   children [
     DEF STONES_GROUP Group {
       children [
-        Transform {
+        Pose {
           translation -2 -0.6 0
           children [
             Shape {
@@ -586,7 +586,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation 3.5 -0.3 -0.5
           children [
             Shape {
@@ -598,7 +598,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation -2 -0.15 -4
           children [
             Shape {
@@ -610,7 +610,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation 1 0 -6
           children [
             Shape {
@@ -622,7 +622,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation 0 0.15 -9
           children [
             Shape {
@@ -634,7 +634,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation 5 0.2 -5.5
           children [
             Shape {
@@ -646,7 +646,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation 0 0.05 0
           children [
             Shape {
@@ -658,7 +658,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation -5 0 -10
           children [
             Shape {
@@ -670,7 +670,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation -6 0.3 -1
           children [
             Shape {
@@ -682,7 +682,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation 4 0 -13
           children [
             Shape {
@@ -694,7 +694,7 @@ DEF STONES Solid {
             }
           ]
         }
-        Transform {
+        Pose {
           translation -1.5 0.4 -13.5
           children [
             Shape {
@@ -1444,7 +1444,7 @@ TeslaModel3 {
       width 360
       height 240
       recognition Recognition {
-        occlusion FALSE
+        occlusion 0
         frameThickness 0
         segmentation TRUE
       }

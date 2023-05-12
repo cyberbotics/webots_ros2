@@ -223,6 +223,12 @@ install(
   DESTINATION share/${PROJECT_NAME}/scripts
 )
 
+# Install webots-controller script
+install(
+  PROGRAMS webots/webots-controller
+  DESTINATION share/${PROJECT_NAME}/scripts
+)
+
 # Ament export
 set(WEBOTS_LIB_PATH
   controller/${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}

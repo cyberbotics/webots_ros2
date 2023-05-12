@@ -1444,7 +1444,7 @@ TeslaModel3 {
       width 360
       height 240
       recognition Recognition {
-        occlusion FALSE
+        occlusion 0
         frameThickness 0
         segmentation TRUE
       }

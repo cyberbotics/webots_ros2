@@ -18,7 +18,6 @@
 
 import os
 
-import launch
 from launch.actions import ExecuteProcess
 from launch.launch_context import LaunchContext
 from launch.substitution import Substitution

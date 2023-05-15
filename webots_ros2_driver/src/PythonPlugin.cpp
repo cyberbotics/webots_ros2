@@ -29,11 +29,6 @@ namespace webots_ros2_driver {
 import os
 import sys
 
-# Set WEBOTS_HOME to the webots_ros2_driver installation folder
-# to load the correct libController libraries from the Python API
-from ament_index_python.packages import get_package_prefix
-os.environ['WEBOTS_HOME'] = get_package_prefix('webots_ros2_driver')
-
 import controller
 from controller import Supervisor
 

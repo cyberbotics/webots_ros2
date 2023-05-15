@@ -27,7 +27,7 @@ from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
-from webots_ros2_driver.utils import controller_url_prefix
+from webots_ros2_driver.webots_controller import WebotsController
 
 
 def get_ros2_nodes(*args):
@@ -71,11 +71,8 @@ def get_ros2_nodes(*args):
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
         mappings.append(('/diffdrive_controller/odom', '/odom'))
 
-    epuck_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'e-puck'},
+    epuck_driver = WebotsController(
+        robot_name='e-puck',
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time,

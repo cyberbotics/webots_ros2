@@ -28,7 +28,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
-from webots_ros2_driver.utils import controller_url_prefix
+from webots_ros2_driver.webots_controller import WebotsController
 
 
 def launch_spawners(event, nodes):
@@ -45,11 +45,8 @@ def get_ros2_nodes(*args):
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_bringup.yml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    tiago_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Tiago'},
+    tiago_driver = WebotsController(
+        robot_name='Tiago',
         parameters=[
             {'robot_description': robot_description,
              'use_sim_time': use_sim_time},

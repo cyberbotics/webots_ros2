@@ -28,7 +28,7 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.actions import Node
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
 from webots_ros2_driver.webots_launcher import WebotsLauncher
-from webots_ros2_driver.utils import controller_url_prefix
+from webots_ros2_driver.webots_controller import WebotsController
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -56,16 +56,9 @@ def get_ros2_nodes(*args):
     )
 
     # Driver nodes
-    # When having multiple robot it is enough to specify the `additional_env` argument.
-    # The `WEBOTS_CONTROLLER_URL` has to match the robot name in the world file.
-    # You can check for more information at:
-    # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#single-simulation-and-multiple-extern-robot-controllers
-    ur5e_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'UR5e'},
-        namespace='ur5e',
+    # When having multiple robot it is mandatory to specify the robot name.
+    ur5e_driver = WebotsController(
+        robot_name='UR5e',
         parameters=[
             {'robot_description': ur5e_description},
             {'use_sim_time': True},
@@ -74,12 +67,8 @@ def get_ros2_nodes(*args):
     )
 
     # Standard Webots robot using driver node
-    abb_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'abbirb4600'},
-        namespace='abb',
+    abb_driver = WebotsController(
+        robot_name='abbirb4600',
         parameters=[
             {'robot_description': abb_description},
             {'use_sim_time': True},

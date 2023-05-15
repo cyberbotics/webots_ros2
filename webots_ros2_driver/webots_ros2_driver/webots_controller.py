@@ -29,7 +29,7 @@ from webots_ros2_driver.utils import controller_protocol, controller_ip_address
 
 
 class WebotsController(ExecuteProcess):
-    def __init__(self, output='screen', parameters=None, robot_name='', port='1234', **kwargs):
+    def __init__(self, output='screen', parameters=[], remappings=[], robot_name='', port='1234', **kwargs):
         webots_controller = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots-controller'))
 
         protocol = controller_protocol()
@@ -38,28 +38,24 @@ class WebotsController(ExecuteProcess):
         robot_name_option = [] if not robot_name else ['--robot-name=' + robot_name]
         ip_address_option = [] if not ip_address else ['--ip-address=' + ip_address]
 
-        # Get parameters and check if file (yaml extensions) or if single param
-        # single_parameters = " ".join(
-        #     [f"-p {key}:={value}" for item in parameters if isinstance(item, dict) for key, value in item.items()]
-        # )
-
-        single_parameters = []
+        ros_arguments = []
+        for item in remappings:
+            key, value = item
+            remap = f'{key}:={value}'
+            ros_arguments.append('-r')
+            ros_arguments.append(remap)
         for item in parameters:
             if isinstance(item, dict):
                 for key, value in item.items():
-                    sublist = [f'{key}:=', value if isinstance(value, Substitution) else TextSubstitution(text=str(value))]
-                    single_parameters.append('-p')
-                    single_parameters.append(sublist)
-        print(single_parameters)
-
+                    parameter = [f'{key}:=', value if isinstance(value, Substitution) else TextSubstitution(text=str(value))]
+                    ros_arguments.append('-p')
+                    ros_arguments.append(parameter)
         file_parameters = [item for item in parameters if isinstance(item, str)]
 
-        ros_args = ['--ros-args'] if single_parameters else []
+        ros_args = ['--ros-args'] if ros_arguments else []
         params_file = ['--params-file'] if file_parameters else []
 
-        single_parameters_options = single_parameters if single_parameters else []
-        file_parameters_options = file_parameters if file_parameters else []
-
+        # Set WEBOTS_HOME to package directory to load correct controller library
         os.environ['WEBOTS_HOME'] = get_package_prefix('webots_ros2_driver')
         node_name = 'webots_controller' + (('_' + robot_name) if robot_name else '')
         super().__init__(
@@ -72,9 +68,9 @@ class WebotsController(ExecuteProcess):
                 ['--port=', port],
                 'ros2',
                 *ros_args,
-                *single_parameters_options,
+                *ros_arguments,
                 *params_file,
-                *file_parameters_options,
+                *file_parameters,
             ],
             name=node_name,
             **kwargs

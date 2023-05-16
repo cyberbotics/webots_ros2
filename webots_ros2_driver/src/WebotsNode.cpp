@@ -44,9 +44,7 @@ namespace webots_ros2_driver {
 
   bool gShutdownSignalReceived = false;
 
-  void handleSigint(int sig) {
-    gShutdownSignalReceived = true;
-  }
+  void handleSigint(int sig) { gShutdownSignalReceived = true; }
 
   WebotsNode::WebotsNode(std::string name) : Node(name), mPluginLoader(gPluginInterfaceName, gPluginInterface) {
     mRobotDescriptionParam = this->declare_parameter<std::string>("robot_description", "");
@@ -65,7 +63,6 @@ namespace webots_ros2_driver {
           command += " ";
           command += xacroMapping;
         }
-        RCLCPP_INFO(get_logger(), "\033[33m%s\033[0m", command.c_str());
 
         FILE *stream = popen(command.c_str(), "r");
         if (!stream)
@@ -101,7 +98,6 @@ namespace webots_ros2_driver {
     tinyxml2::XMLPrinter printer;
     mRobotDescriptionDocument->Accept(&printer);
     mRobotDescription = printer.CStr();
-    RCLCPP_INFO(get_logger(), "URDF content:\n%s", mRobotDescription.c_str());
 
     mRemoveUrdfRobotPublisher = create_publisher<std_msgs::msg::String>("/remove_urdf_robot", rclcpp::ServicesQoS());
     mRemoveUrdfRobotMessage.data = name;
@@ -280,7 +276,5 @@ namespace webots_ros2_driver {
     mClient->async_send_request(request);
   }
 
-  void WebotsNode::handleSignals() {
-    signal(SIGINT, handleSigint);
-  }
+  void WebotsNode::handleSignals() { signal(SIGINT, handleSigint); }
 }  // end namespace webots_ros2_driver

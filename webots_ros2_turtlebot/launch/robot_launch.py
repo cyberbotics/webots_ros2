@@ -17,7 +17,6 @@
 """Launch Webots TurtleBot3 Burger driver."""
 
 import os
-import pathlib
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
@@ -35,7 +34,7 @@ def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
     use_nav = LaunchConfiguration('nav', default=False)
     use_slam = LaunchConfiguration('slam', default=False)
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
     nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'turtlebot3_burger_example_map.yaml')
@@ -70,7 +69,7 @@ def get_ros2_nodes(*args):
     turtlebot_driver = WebotsController(
         robot_name='TurtleBot3Burger',
         parameters=[
-            {'robot_description': robot_description,
+            {'robot_description': robot_description_path,
              'use_sim_time': use_sim_time,
              'set_robot_state_publisher': True},
             ros2_control_params

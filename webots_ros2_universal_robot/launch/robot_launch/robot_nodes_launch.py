@@ -17,7 +17,6 @@
 """Launch Webots Universal Robot simulation nodes."""
 
 import os
-import pathlib
 import launch
 from launch_ros.actions import Node
 from launch import LaunchDescription
@@ -31,16 +30,15 @@ PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
-    ur5e_urdf_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf')
-    robot_description = pathlib.Path(ur5e_urdf_path).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
 
     # Define your URDF robots here
-    # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node
+    # The name of an URDF robot has to match the name of the robot of the driver node
     # You can specify the URDF file to use with "urdf_path"
     spawn_URDF_ur5e = URDFSpawner(
         name='UR5e',
-        urdf_path=ur5e_urdf_path,
+        urdf_path=robot_description_path,
         translation='0 0 0.6',
         rotation='0 0 1 -1.5708',
     )
@@ -50,8 +48,9 @@ def generate_launch_description():
     universal_robot_driver = WebotsController(
         robot_name='UR5e',
         parameters=[
-            {'robot_description': robot_description},
+            {'robot_description': robot_description_path},
             {'use_sim_time': True},
+            {'set_robot_state_publisher': True},
             ros2_control_params
         ]
     )
@@ -83,7 +82,7 @@ def generate_launch_description():
         executable='robot_state_publisher',
         output='screen',
         parameters=[{
-            'robot_description': robot_description
+            'robot_description': '<robot name=""><link name=""/></robot>'
         }],
     )
 

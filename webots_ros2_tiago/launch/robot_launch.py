@@ -17,7 +17,6 @@
 """Launch Webots and the controller."""
 
 import os
-import pathlib
 import launch
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
@@ -44,7 +43,7 @@ def get_ros2_nodes(*args):
     use_nav = LaunchConfiguration('nav', default=False)
     use_slam_toolbox = LaunchConfiguration('slam_toolbox', default=False)
     use_slam_cartographer = LaunchConfiguration('slam_cartographer', default=False)
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'tiago_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     toolbox_params = os.path.join(package_dir, 'resource', 'slam_toolbox_params.yaml')
@@ -60,7 +59,7 @@ def get_ros2_nodes(*args):
     tiago_driver = WebotsController(
         robot_name='Tiago_Lite',
         parameters=[
-            {'robot_description': robot_description,
+            {'robot_description': robot_description_path,
              'use_sim_time': use_sim_time,
              'set_robot_state_publisher': True},
             ros2_control_params

@@ -17,7 +17,6 @@
 """Launch Webots Mavic 2 Pro driver."""
 
 import os
-import pathlib
 import launch
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
@@ -30,12 +29,12 @@ from webots_ros2_driver.webots_controller import WebotsController
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_mavic')
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'mavic_webots.urdf')).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'mavic_webots.urdf')
 
     mavic_driver = WebotsController(
         robot_name='Mavic_2_PRO',
         parameters=[
-            {'robot_description': robot_description},
+            {'robot_description': robot_description_path},
         ]
     )
 

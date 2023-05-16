@@ -17,7 +17,6 @@
 """Launch Webots e-puck driver."""
 
 import os
-import pathlib
 import launch
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
@@ -37,7 +36,7 @@ def get_ros2_nodes(*args):
     use_mapper = LaunchConfiguration('mapper', default=False)
     fill_map = LaunchConfiguration('fill_map', default=True)
     map_filename = LaunchConfiguration('map', default=os.path.join(package_dir, 'resource', 'epuck_world_map.yaml'))
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'epuck_webots.urdf')).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'epuck_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
     controller_manager_timeout = ['--controller-manager-timeout', '50']
@@ -74,7 +73,7 @@ def get_ros2_nodes(*args):
     epuck_driver = WebotsController(
         robot_name='e-puck',
         parameters=[
-            {'robot_description': robot_description,
+            {'robot_description': robot_description_path,
              'use_sim_time': use_sim_time,
              'set_robot_state_publisher': True},
             ros2_control_params

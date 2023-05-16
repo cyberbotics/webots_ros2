@@ -20,7 +20,6 @@
 
 import os
 import time
-import pathlib
 import pytest
 import rclpy
 from sensor_msgs.msg import LaserScan, PointCloud2
@@ -35,8 +34,8 @@ import launch
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_controller import WebotsController
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
-from webots_ros2_driver.utils import controller_url_prefix
 
 
 @pytest.mark.rostest
@@ -44,7 +43,7 @@ def generate_test_description():
     initialize_webots_test()
 
     package_dir = get_package_share_directory('webots_ros2_tests')
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'driver_test.urdf')).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'driver_test.urdf')
 
     webots = WebotsLauncher(
         world=os.path.join(package_dir, 'worlds', 'driver_test.wbt'),
@@ -53,12 +52,9 @@ def generate_test_description():
         ros2_supervisor=True
     )
 
-    webots_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Pioneer_3_AT'},
-        parameters=[{'robot_description': robot_description, 'use_sim_time': True}]
+    webots_driver = WebotsController(
+        robot_name='Pioneer_3_AT',
+        parameters=[{'robot_description': robot_description_path, 'use_sim_time': True}]
     )
 
     return LaunchDescription([

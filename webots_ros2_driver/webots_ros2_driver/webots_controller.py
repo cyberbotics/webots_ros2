@@ -28,7 +28,7 @@ from webots_ros2_driver.utils import controller_protocol, controller_ip_address
 
 
 class WebotsController(ExecuteProcess):
-    def __init__(self, output='screen', parameters=[], remappings=[], robot_name='', port='1234', **kwargs):
+    def __init__(self, output='screen', remappings=[], namespace='', parameters=[], robot_name='', port='1234', **kwargs):
         webots_controller = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots-controller'))
 
         protocol = controller_protocol()
@@ -41,6 +41,10 @@ class WebotsController(ExecuteProcess):
         for item in remappings:
             key, value = item
             remap = f'{key}:={value}'
+            ros_arguments.append('-r')
+            ros_arguments.append(remap)
+        if (namespace):
+            remap = f'__ns:=/{namespace}'
             ros_arguments.append('-r')
             ros_arguments.append(remap)
         for item in parameters:

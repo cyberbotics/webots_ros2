@@ -28,7 +28,6 @@ from launch_ros.actions import Node
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
-from webots_ros2_driver.utils import controller_url_prefix
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'

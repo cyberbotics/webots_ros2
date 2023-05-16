@@ -29,7 +29,6 @@ from std_msgs.msg import Int32, Float32
 from geometry_msgs.msg import PointStamped, Vector3
 from webots_ros2_msgs.msg import CameraRecognitionObjects
 from launch import LaunchDescription
-from launch_ros.actions import Node
 import launch
 import launch_testing.actions
 from ament_index_python.packages import get_package_share_directory

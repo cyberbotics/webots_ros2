@@ -58,8 +58,6 @@ class WebotsController(ExecuteProcess):
         ros_args = ['--ros-args'] if ros_arguments else []
         params_file = ['--params-file'] if file_parameters else []
 
-        # Set WEBOTS_HOME to package directory to load correct controller library
-        os.environ['WEBOTS_HOME'] = get_package_prefix('webots_ros2_driver')
         node_name = 'webots_controller' + (('_' + robot_name) if robot_name else '')
         super().__init__(
             output=output,
@@ -76,6 +74,8 @@ class WebotsController(ExecuteProcess):
                 *file_parameters,
             ],
             name=node_name,
+            # Set WEBOTS_HOME to package directory to load correct controller library
+            additional_env={'WEBOTS_HOME': get_package_prefix('webots_ros2_driver')},
             **kwargs
         )
 

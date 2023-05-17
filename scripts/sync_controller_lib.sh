@@ -60,5 +60,5 @@ mkdir -p src/stb
 cp -r ${WEBOTS_HOME}/src/controller/* src/controller
 cp -r ${WEBOTS_HOME}/src/stb/* src/stb
 
-rm -rf .gitignore
+rm -f .gitignore
 cp ${WEBOTS_HOME}/.gitignore .gitignore

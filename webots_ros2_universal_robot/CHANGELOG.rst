@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.0.4 (2023-XX-XX)
+------------------
+* Start ros control nodes when Webots is ready.
+
 2023.0.2 (2023-02-07)
 ------------------
 * Fixed URDF relative URLs to assets.

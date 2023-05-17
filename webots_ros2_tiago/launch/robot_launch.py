@@ -28,13 +28,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
-
-
-def launch_spawners(event, nodes):
-    # Start ros2_control spawners once the controller_manager is ready
-    if 'Successful \'activate\' of hardware' in event.text.decode().strip():
-        return nodes
-    return
+from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
 
 
 def get_ros2_nodes(*args):
@@ -67,12 +61,10 @@ def get_ros2_nodes(*args):
         remappings=mappings
     )
 
-    # ROS2_control
+    # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '500']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
-
     use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
-
     diffdrive_controller_spawner = Node(
         package='controller_manager',
         executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
@@ -80,7 +72,6 @@ def get_ros2_nodes(*args):
         prefix=controller_manager_prefix,
         arguments=['diffdrive_controller'] + controller_manager_timeout,
     )
-
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
@@ -88,16 +79,7 @@ def get_ros2_nodes(*args):
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
-
-    spawners = []
-    spawners.append(diffdrive_controller_spawner)
-    spawners.append(joint_state_broadcaster_spawner)
-    spawners_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessIO(
-            target_action=tiago_driver,
-            on_stderr=lambda event: launch_spawners(event, spawners)
-        )
-    )
+    ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
     # State publishers
     robot_state_publisher = Node(
@@ -128,9 +110,9 @@ def get_ros2_nodes(*args):
     )
 
     # Navigation
-    optional_nodes = []
+    navigation_nodes = []
     if 'nav2_bringup' in get_packages_with_prefixes():
-        optional_nodes.append(IncludeLaunchDescription(
+        navigation_nodes.append(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(
                 get_package_share_directory('nav2_bringup'), 'launch', 'bringup_launch.py')),
             launch_arguments=[
@@ -150,7 +132,7 @@ def get_ros2_nodes(*args):
         arguments=['-configuration_directory', cartographer_config_dir,
                    '-configuration_basename', cartographer_config_basename],
         condition=launch.conditions.IfCondition(use_slam_cartographer))
-    optional_nodes.append(cartographer)
+    navigation_nodes.append(cartographer)
 
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy':
         grid_executable = 'occupancy_grid_node'
@@ -164,7 +146,7 @@ def get_ros2_nodes(*args):
         parameters=[{'use_sim_time': use_sim_time}],
         arguments=['-resolution', '0.05'],
         condition=launch.conditions.IfCondition(use_slam_cartographer))
-    optional_nodes.append(cartographer_grid)
+    navigation_nodes.append(cartographer_grid)
 
     slam_toolbox = Node(
         parameters=[toolbox_params,
@@ -175,22 +157,19 @@ def get_ros2_nodes(*args):
         output='screen',
         condition=launch.conditions.IfCondition(use_slam_toolbox)
     )
-    optional_nodes.append(slam_toolbox)
+    navigation_nodes.append(slam_toolbox)
 
-    # Wait for the simulation to be ready to start RViz and the navigation
-    nav_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=diffdrive_controller_spawner,
-            on_exit=[rviz] + optional_nodes
-        )
+    # Wait for the simulation to be ready to start RViz, the navigation and spawners
+    waiting_nodes = WaitForControllerConnection(
+        target_driver=tiago_driver,
+        nodes_to_start=[rviz] + navigation_nodes + ros_control_spawners
     )
 
     return [
-        spawners_handler,
-        nav_handler,
         robot_state_publisher,
         tiago_driver,
         footprint_publisher,
+        waiting_nodes,
     ]
 
 

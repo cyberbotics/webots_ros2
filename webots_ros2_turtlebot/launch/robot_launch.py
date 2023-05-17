@@ -28,6 +28,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
+from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
 
 
 def get_ros2_nodes(*args):
@@ -40,12 +41,10 @@ def get_ros2_nodes(*args):
     nav2_map = os.path.join(package_dir, 'resource', 'turtlebot3_burger_example_map.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
+    # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
-
     use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
-
     diffdrive_controller_spawner = Node(
         package='controller_manager',
         executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
@@ -53,7 +52,6 @@ def get_ros2_nodes(*args):
         prefix=controller_manager_prefix,
         arguments=['diffdrive_controller'] + controller_manager_timeout,
     )
-
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
@@ -61,6 +59,7 @@ def get_ros2_nodes(*args):
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
+    ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
     mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
@@ -93,8 +92,8 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
-    nav_nodes = []
     # Navigation
+    navigation_nodes = []
     os.environ['TURTLEBOT3_MODEL'] = 'burger'
     if 'turtlebot3_navigation2' in get_packages_with_prefixes():
         turtlebot_navigation = IncludeLaunchDescription(
@@ -106,7 +105,7 @@ def get_ros2_nodes(*args):
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_nav))
-        nav_nodes.append(turtlebot_navigation)
+        navigation_nodes.append(turtlebot_navigation)
 
     # SLAM
     if 'turtlebot3_cartographer' in get_packages_with_prefixes():
@@ -117,27 +116,20 @@ def get_ros2_nodes(*args):
                 ('use_sim_time', use_sim_time),
             ],
             condition=launch.conditions.IfCondition(use_slam))
-        nav_nodes.append(turtlebot_slam)
+        navigation_nodes.append(turtlebot_slam)
 
     # Wait for the simulation to be ready to start navigation nodes
-    nav_handler = []
-    if nav_nodes:
-        nav_handler.append(
-            launch.actions.RegisterEventHandler(
-                event_handler=launch.event_handlers.OnProcessExit(
-                    target_action=diffdrive_controller_spawner,
-                    on_exit=nav_nodes
-                )
-            )
-        )
+    waiting_nodes = WaitForControllerConnection(
+        target_driver=turtlebot_driver,
+        nodes_to_start=navigation_nodes + ros_control_spawners
+    )
 
     return [
-        joint_state_broadcaster_spawner,
-        diffdrive_controller_spawner,
         robot_state_publisher,
         turtlebot_driver,
         footprint_publisher,
-    ] + nav_handler
+        waiting_nodes,
+    ]
 
 
 def generate_launch_description():

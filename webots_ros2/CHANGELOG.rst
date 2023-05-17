@@ -9,7 +9,7 @@ Changelog for package webots_ros2
 2023.0.4 (2023-XX-XX)
 ------------------
 * Fixed vertical field of view in static RangeFinder plugin.
-* Added support for painted point clouds
+* Added support for painted point clouds.
 * Fixed ability to launch RViz without other tools in e-puck example.
 * Fixed command line arguments in importer tools.
 * Added custom handler in driver interface to start nodes when Webots is ready.

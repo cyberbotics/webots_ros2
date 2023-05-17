@@ -28,14 +28,8 @@ from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
 from webots_ros2_driver.utils import controller_url_prefix
-
-
-def launch_spawners(event, nodes):
-    # Start ros2_control spawners once the controller_manager is ready
-    if 'Successful \'activate\' of hardware' in event.text.decode().strip():
-        return nodes
-    return
 
 
 def get_ros2_nodes(*args):
@@ -62,13 +56,9 @@ def get_ros2_nodes(*args):
             get_package_share_directory('tiago_bringup'), 'launch', 'tiago_bringup.launch.py')),
     )
 
-    spawners = []
-    spawners.append(tiago_bringup_launch)
-    spawners_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessIO(
-            target_action=tiago_driver,
-            on_stderr=lambda event: launch_spawners(event, spawners)
-        )
+    waiting_nodes = WaitForControllerConnection(
+        target_driver=tiago_driver,
+        nodes_to_start=[tiago_bringup_launch]
     )
 
     # RViz
@@ -84,7 +74,7 @@ def get_ros2_nodes(*args):
 
     return [
         tiago_driver,
-        spawners_handler,
+        waiting_nodes,
         rviz,
     ]
 

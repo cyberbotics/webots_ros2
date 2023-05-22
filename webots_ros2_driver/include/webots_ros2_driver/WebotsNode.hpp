@@ -47,6 +47,7 @@ namespace webots_ros2_driver {
     void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);
     rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
 
+    std::string mRobotDescriptionParam;
     std::string mRobotDescription;
     bool mSetRobotStatePublisher;
 

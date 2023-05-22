@@ -47,13 +47,45 @@ namespace webots_ros2_driver {
   void handleSigint(int sig) { gShutdownSignalReceived = true; }
 
   WebotsNode::WebotsNode(std::string name) : Node(name), mPluginLoader(gPluginInterfaceName, gPluginInterface) {
-    mRobotDescription = this->declare_parameter<std::string>("robot_description", "");
+    mRobotDescriptionParam = this->declare_parameter<std::string>("robot_description", "");
     mSetRobotStatePublisher = this->declare_parameter<bool>("set_robot_state_publisher", false);
-    if (mRobotDescription != "") {
+    if (mRobotDescriptionParam != "") {
       mRobotDescriptionDocument = std::make_shared<tinyxml2::XMLDocument>();
-      mRobotDescriptionDocument->Parse(mRobotDescription.c_str());
+      // Path to URDF file
+      if (mRobotDescriptionParam.rfind(".urdf") == mRobotDescriptionParam.size() - 5)
+        mRobotDescriptionDocument->LoadFile(mRobotDescriptionParam.c_str());
+      // Path to Xacro file
+      else if (mRobotDescriptionParam.rfind(".xacro") == mRobotDescriptionParam.size() - 6) {
+        std::vector<std::string> xacroMappings =
+          this->declare_parameter<std::vector<std::string>>("xacro_mappings", std::vector<std::string>());
+        std::string command = "ros2 run xacro xacro " + mRobotDescriptionParam;
+        for (const std::string &xacroMapping : xacroMappings) {
+          command += " ";
+          command += xacroMapping;
+        }
+
+        FILE *stream = popen(command.c_str(), "r");
+        if (!stream)
+          throw std::runtime_error("Failed to execute xacro command");
+
+        char buffer[4096];
+        std::string xacroOutput;
+        while (fgets(buffer, sizeof(buffer), stream) != NULL)
+          xacroOutput += buffer;
+        pclose(stream);
+
+        mRobotDescriptionDocument->Parse(xacroOutput.c_str());
+      }
+      // Full string (deprecated)
+      else {
+        mRobotDescriptionDocument->Parse(mRobotDescriptionParam.c_str());
+        RCLCPP_WARN(
+          get_logger(),
+          "\033[33mPassing robot description as a string is deprecated. Provide the URDF or Xacro file path instead.\033[0m");
+      }
       if (!mRobotDescriptionDocument)
-        throw std::runtime_error("Invalid URDF, it cannot be parsed");
+        throw std::runtime_error("Invalid robot description, it cannot be parsed");
+      // Access the robot and webots elements as needed
       tinyxml2::XMLElement *robotXMLElement = mRobotDescriptionDocument->FirstChildElement("robot");
       if (!robotXMLElement)
         throw std::runtime_error("Invalid URDF, it doesn't contain a <robot> tag");
@@ -62,6 +94,10 @@ namespace webots_ros2_driver {
       mWebotsXMLElement = NULL;
       RCLCPP_INFO(get_logger(), "Robot description is not passed, using default parameters.");
     }
+    // Store robot description string in mRobotDescription
+    tinyxml2::XMLPrinter printer;
+    mRobotDescriptionDocument->Accept(&printer);
+    mRobotDescription = printer.CStr();
 
     mRemoveUrdfRobotPublisher = create_publisher<std_msgs::msg::String>("/remove_urdf_robot", rclcpp::ServicesQoS());
     mRemoveUrdfRobotMessage.data = name;

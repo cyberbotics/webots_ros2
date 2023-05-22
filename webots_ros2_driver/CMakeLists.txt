@@ -87,7 +87,6 @@ ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})
 
 # Driver
-set(CMAKE_INSTALL_RPATH "$ORIGIN/../controller")
 add_executable(driver
   src/Driver.cpp
   src/WebotsNode.cpp
@@ -135,7 +134,6 @@ install(TARGETS driver
 )
 
 # Dynamic IMU
-set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
 add_library(
   ${PROJECT_NAME}_imu
   SHARED
@@ -163,7 +161,6 @@ install(TARGETS ${PROJECT_NAME}_imu
 )
 
 # Dynamic RGBD
-set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
 add_library(
   ${PROJECT_NAME}_rgbd
   SHARED
@@ -227,6 +224,12 @@ install(PROGRAMS ${PROJECT_NAME}/ros2_supervisor.py
 # Install scripts
 install(
   DIRECTORY scripts/
+  DESTINATION share/${PROJECT_NAME}/scripts
+)
+
+# Install webots-controller script
+install(
+  PROGRAMS webots/webots-controller
   DESTINATION share/${PROJECT_NAME}/scripts
 )
 

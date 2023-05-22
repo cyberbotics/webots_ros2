@@ -5,6 +5,7 @@ Changelog for package webots_ros2
 2023.1.0 (2023-XX-XX)
 ------------------
 * Added new TIAGo project to webots_ros2_tiago to run real robot configuration.
+* Added new WebotsController node in the driver interface to launch robot controller plugins.
 
 2023.0.4 (2023-XX-XX)
 ------------------

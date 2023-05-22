@@ -135,6 +135,16 @@ def get_host_ip():
         sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
 
 
+def controller_protocol():
+    protocol = 'tcp' if (has_shared_folder() or is_wsl()) else 'ipc'
+    return protocol
+
+
+def controller_ip_address():
+    ip_address = get_host_ip() if has_shared_folder() else get_wsl_ip_address()
+    return ip_address
+
+
 def controller_url_prefix(port='1234'):
     if has_shared_folder() or is_wsl():
         return 'tcp://' + (get_host_ip() if has_shared_folder() else get_wsl_ip_address()) + ':' + port + '/'

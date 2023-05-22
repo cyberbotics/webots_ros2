@@ -42,7 +42,6 @@ def get_ros2_nodes(*args):
     nav2_map = os.path.join(package_dir, 'resource', 'turtlebot3_burger_example_map.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''

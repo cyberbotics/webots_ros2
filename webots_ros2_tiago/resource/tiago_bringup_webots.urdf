@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<robot name="Tiago Webots">
+    <webots>
+        <device reference="hokuyo" type="Lidar">
+            <ros>
+                <enabled>true</enabled>
+                <updateRate>10</updateRate>
+                <topicName>/scan_raw</topicName>
+                <alwaysOn>true</alwaysOn>
+                <frameName>hokuyo</frameName>
+            </ros>
+        </device>
+        <device reference="Astra rgb" type="Camera">
+            <ros>
+                <enabled>true</enabled>
+                <topicName>/head_front_camera/rgb</topicName>
+                <imageSuffix>/image_raw</imageSuffix>
+                <alwaysOn>true</alwaysOn>
+                <frameName>head_front_camera_rgb_optical_frame</frameName>
+            </ros>
+        </device>
+        <device reference="Astra depth" type="RangeFinder">
+            <ros>
+                <enabled>true</enabled>
+                <topicName>/head_front_camera/depth_registered</topicName>
+                <imageSuffix>/image_raw</imageSuffix>
+                <pointCloudSuffix>/points</pointCloudSuffix>
+                <alwaysOn>true</alwaysOn>
+                <frameName>head_front_camera_depth_optical_frame</frameName>
+            </ros>
+        </device>
+
+        <plugin type="webots_ros2_control::Ros2Control" />
+    </webots>
+
+    <ros2_control name="WebotsControl" type="system">
+        <hardware>
+            <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
+        </hardware>
+        <joint name="wheel_right_joint">
+            <state_interface name="position"/>
+            <command_interface name="velocity"/>
+        </joint>
+        <joint name="wheel_left_joint">
+            <state_interface name="position"/>
+            <command_interface name="velocity"/>
+        </joint>
+        <joint name="head_1_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="head_2_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="torso_lift_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_1_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_2_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_3_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_4_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_5_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_6_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="arm_7_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="gripper_left_finger_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+        <joint name="gripper_right_finger_joint">
+            <state_interface name="position"/>
+            <command_interface name="position"/>
+        </joint>
+    </ros2_control>
+</robot>

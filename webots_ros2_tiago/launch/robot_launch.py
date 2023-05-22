@@ -47,6 +47,24 @@ def get_ros2_nodes(*args):
     cartographer_config_basename = 'cartographer.lua'
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
+    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
+        mappings.append(('/diffdrive_controller/odom', '/odom'))
+
+    tiago_driver = Node(
+        package='webots_ros2_driver',
+        executable='driver',
+        output='screen',
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Tiago_Lite'},
+        parameters=[
+            {'robot_description': robot_description,
+             'use_sim_time': use_sim_time,
+             'set_robot_state_publisher': True},
+            ros2_control_params
+        ],
+        remappings=mappings
+    )
+
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '500']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -67,24 +85,7 @@ def get_ros2_nodes(*args):
     )
     ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
-        mappings.append(('/diffdrive_controller/odom', '/odom'))
-
-    tiago_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Tiago_Iron'},
-        parameters=[
-            {'robot_description': robot_description,
-             'use_sim_time': use_sim_time,
-             'set_robot_state_publisher': True},
-            ros2_control_params
-        ],
-        remappings=mappings
-    )
-
+    # State publishers
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -101,6 +102,7 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
+    # RViz
     rviz_config = os.path.join(get_package_share_directory('webots_ros2_tiago'), 'resource', 'default.rviz')
     rviz = Node(
         package='rviz2',

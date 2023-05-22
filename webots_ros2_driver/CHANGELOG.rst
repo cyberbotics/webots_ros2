@@ -2,10 +2,14 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.0 (2023-XX-XX)
+------------------
+* Added parameters to rename Camera and RangeFinder topics.
+
 2023.0.4 (2023-XX-XX)
 ------------------
 * Fixed vertical field of view in static RangeFinder plugin.
-* Added support for painted point clouds
+* Added support for painted point clouds.
 * Added custom handler to start nodes when Webots is ready.
 
 2023.0.3 (2023-04-12)

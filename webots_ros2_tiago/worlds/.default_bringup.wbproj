@@ -8,5 +8,3 @@ orthographicViewHeight: 1
 textFiles: -1
 globalOptionalRendering: LidarPointClouds::LidarRaysPaths
 consoles: Console:All:All
-renderingDevicePerspectives: Tiago_Lite:Astra depth;0;1;0;0
-renderingDevicePerspectives: Tiago_Lite:Astra rgb;0;0.856848;0.41929;0.334482

@@ -31,7 +31,10 @@ namespace webots_ros2_driver {
       topicName, rclcpp::SensorDataQoS().reliable(), std::bind(&Ros2LED::onMessageReceived, this, std::placeholders::_1));
   }
 
-  void Ros2LED::step() {}
+  void Ros2LED::step() {
+  }
 
-  void Ros2LED::onMessageReceived(const std_msgs::msg::Int32::SharedPtr message) { wb_led_set(mLED, message->data); }
+  void Ros2LED::onMessageReceived(const std_msgs::msg::Int32::SharedPtr message) {
+    wb_led_set(mLED, message->data);
+  }
 }  // namespace webots_ros2_driver

@@ -24,6 +24,6 @@ namespace webots_ros2_driver {
   void axisAngleToQuaternion(const double *axisAngle, geometry_msgs::msg::Quaternion &q);
   void quaternionToAxisAngle(const geometry_msgs::msg::Quaternion &q, double *axisAngle);
 
-  double interpolateLookupTable(double value, std::vector<double> &table);
+  double interpolateLookupTable(double value, const std::vector<double> &table);
 }  // namespace webots_ros2_driver
 #endif

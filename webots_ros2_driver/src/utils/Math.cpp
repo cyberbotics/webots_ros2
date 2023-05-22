@@ -115,7 +115,7 @@ namespace webots_ros2_driver {
     return slope * (value - startX) + startY;
   }
 
-  double interpolateLookupTable(double value, std::vector<double> &table) {
+  double interpolateLookupTable(double value, const std::vector<double> &table) {
     if (!table.size())
       return value;
     const int size = table.size();

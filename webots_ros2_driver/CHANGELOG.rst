@@ -6,6 +6,7 @@ Changelog for package webots_ros2_driver
 ------------------
 * Added parameters to rename Camera and RangeFinder topics.
 * Added new WebotsController node to launch robot controller plugins.
+* Added compilation of the generic robot window library.
 
 2023.0.4 (2023-XX-XX)
 ------------------

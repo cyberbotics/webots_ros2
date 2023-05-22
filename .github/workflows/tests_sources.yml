@@ -23,6 +23,9 @@ jobs:
       matrix:
         os: [ubuntu-22.04]
         python: ['3.10']
+        include:
+          - os: ubuntu-22.04
+            DEPENDENCIES_INSTALLATION: "sudo apt -y install cppcheck"
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
@@ -34,5 +37,6 @@ jobs:
         python-version: '3.10'
     - name: Test Sources
       run: |
+        ${{ matrix.DEPENDENCIES_INSTALLATION }}
         pip install -r tests/sources/requirements.txt
         python3 -m unittest discover -s tests/sources/

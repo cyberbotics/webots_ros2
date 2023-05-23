@@ -34,7 +34,9 @@ const double CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS = 1.0;
 
 namespace webots_ros2_control {
 
-  Ros2Control::Ros2Control() { mNode = NULL; }
+  Ros2Control::Ros2Control() {
+    mNode = NULL;
+  }
 
   void Ros2Control::step() {
     const int nowMs = wb_robot_get_time() * 1000.0;

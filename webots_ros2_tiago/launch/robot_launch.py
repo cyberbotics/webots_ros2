@@ -50,17 +50,16 @@ def get_ros2_nodes(*args):
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '500']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
-    use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
     diffdrive_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['diffdrive_controller'] + controller_manager_timeout,
     )
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,
@@ -136,10 +135,7 @@ def get_ros2_nodes(*args):
         condition=launch.conditions.IfCondition(use_slam_cartographer))
     navigation_nodes.append(cartographer)
 
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy':
-        grid_executable = 'occupancy_grid_node'
-    else:
-        grid_executable = 'cartographer_occupancy_grid_node'
+    grid_executable = 'cartographer_occupancy_grid_node'
     cartographer_grid = Node(
         package='cartographer_ros',
         executable=grid_executable,

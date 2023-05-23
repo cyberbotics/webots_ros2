@@ -20,11 +20,6 @@
 #include <thread>
 #include <vector>
 
-#if FOXY
-#include "hardware_interface/base_interface.hpp"
-#include "hardware_interface/types/hardware_interface_status_values.hpp"
-#endif
-
 #include "controller_manager/controller_manager.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"

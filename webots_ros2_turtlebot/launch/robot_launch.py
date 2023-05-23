@@ -17,7 +17,6 @@
 """Launch Webots TurtleBot3 Burger driver."""
 
 import os
-import pathlib
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
@@ -28,21 +27,20 @@ from ament_index_python.packages import get_package_share_directory, get_package
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_controller import WebotsController
 from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
-from webots_ros2_driver.utils import controller_url_prefix
 
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
     use_nav = LaunchConfiguration('nav', default=False)
     use_slam = LaunchConfiguration('slam', default=False)
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
     nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'turtlebot3_burger_example_map.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -67,13 +65,10 @@ def get_ros2_nodes(*args):
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
         mappings.append(('/diffdrive_controller/odom', '/odom'))
 
-    turtlebot_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'TurtleBot3Burger'},
+    turtlebot_driver = WebotsController(
+        robot_name='TurtleBot3Burger',
         parameters=[
-            {'robot_description': robot_description,
+            {'robot_description': robot_description_path,
              'use_sim_time': use_sim_time,
              'set_robot_state_publisher': True},
             ros2_control_params

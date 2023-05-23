@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_mavic
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.0 (2023-XX-XX)
+------------------
+* Update driver node to new WebotsController node.
+
 2023.0.2 (2023-02-07)
 ------------------
 * Updated supervisor launch.

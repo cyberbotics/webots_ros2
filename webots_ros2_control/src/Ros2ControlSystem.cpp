@@ -82,15 +82,6 @@ namespace webots_ros2_control {
     }
   }
 
-#if FOXY
-  hardware_interface::return_type Ros2ControlSystem::configure(const hardware_interface::HardwareInfo &info) {
-    if (configure_default(info) != hardware_interface::return_type::OK) {
-      return hardware_interface::return_type::ERROR;
-    }
-    status_ = hardware_interface::status::CONFIGURED;
-    return hardware_interface::return_type::OK;
-  }
-#else
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_init(
     const hardware_interface::HardwareInfo &info) {
     if (hardware_interface::SystemInterface::on_init(info) !=
@@ -99,7 +90,6 @@ namespace webots_ros2_control {
     }
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
-#endif
 
   std::vector<hardware_interface::StateInterface> Ros2ControlSystem::export_state_interfaces() {
     std::vector<hardware_interface::StateInterface> interfaces;
@@ -133,17 +123,6 @@ namespace webots_ros2_control {
     return interfaces;
   }
 
-#if FOXY
-  hardware_interface::return_type Ros2ControlSystem::start() {
-    status_ = hardware_interface::status::STARTED;
-    return hardware_interface::return_type::OK;
-  }
-
-  hardware_interface::return_type Ros2ControlSystem::stop() {
-    status_ = hardware_interface::status::STOPPED;
-    return hardware_interface::return_type::OK;
-  }
-#else
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_activate(
     const rclcpp_lifecycle::State & /*previous_state*/) {
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
@@ -153,14 +132,8 @@ namespace webots_ros2_control {
     const rclcpp_lifecycle::State & /*previous_state*/) {
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
-#endif
 
-#if FOXY
-  hardware_interface::return_type Ros2ControlSystem::read()
-#else  // HUMBLE, ROLLING
-  hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
-#endif
-  {
+  hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     static double lastReadTime = 0;
 
     const double deltaTime = wb_robot_get_time() - lastReadTime;
@@ -181,12 +154,7 @@ namespace webots_ros2_control {
     return hardware_interface::return_type::OK;
   }
 
-#if FOXY
-  hardware_interface::return_type Ros2ControlSystem::write()
-#else  // HUMBLE, ROLLING
-  hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
-#endif
-  {
+  hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     for (Joint &joint : mJoints) {
       if (joint.motor) {
         if (joint.controlPosition && !std::isnan(joint.positionCommand))

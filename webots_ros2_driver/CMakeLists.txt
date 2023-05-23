@@ -1,19 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 project(webots_ros2_driver)
 
-# Check which ROS distribution is used, ros2control depends of that
-if($ENV{ROS_DISTRO} MATCHES "foxy")
-  add_compile_definitions(FOXY)
-endif()
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
 
 # Check which ROS distribution is used, vision_msgs depends of that
-if($ENV{ROS_DISTRO} MATCHES "foxy")
-  add_compile_definitions(FOXY)
-elseif($ENV{ROS_DISTRO} MATCHES "humble")
+if($ENV{ROS_DISTRO} MATCHES "humble")
   add_compile_definitions(HUMBLE)
 elseif($ENV{ROS_DISTRO} MATCHES "iron")
   add_compile_definitions(IRON)
@@ -35,12 +28,7 @@ find_package(vision_msgs REQUIRED)
 find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
-
-if($ENV{ROS_DISTRO} MATCHES "foxy")
-  find_package(PythonLibs 3.8 EXACT REQUIRED)
-else()
-  find_package(PythonLibs 3.10 EXACT REQUIRED)
-endif()
+find_package(PythonLibs 3.10 EXACT REQUIRED)
 
 add_custom_target(compile-lib-controller ALL
   COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1

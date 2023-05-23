@@ -65,12 +65,9 @@ def generate_launch_description():
     # Other ROS 2 nodes
     controller_manager_timeout = ['--controller-manager-timeout', '100']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
-
-    use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
-
     trajectory_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['ur_joint_trajectory_controller'] + controller_manager_timeout,
@@ -78,7 +75,7 @@ def generate_launch_description():
 
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['ur_joint_state_broadcaster'] + controller_manager_timeout,

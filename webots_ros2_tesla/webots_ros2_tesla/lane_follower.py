@@ -14,7 +14,6 @@
 
 """ROS2 Tesla driver."""
 
-import os
 import cv2
 import numpy as np
 import rclpy
@@ -35,9 +34,7 @@ class LaneFollower(Node):
         self.__ackermann_publisher = self.create_publisher(AckermannDrive, 'cmd_ackermann', 1)
 
         qos_camera_data = qos_profile_sensor_data
-        # In case ROS_DISTRO is not foxy the QoSReliabilityPolicy is strict.
-        if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] != 'foxy':
-            qos_camera_data.reliability = QoSReliabilityPolicy.RELIABLE
+        qos_camera_data.reliability = QoSReliabilityPolicy.RELIABLE
         self.create_subscription(Image, 'vehicle/camera', self.__on_camera_image, qos_camera_data)
 
     def __on_camera_image(self, message):

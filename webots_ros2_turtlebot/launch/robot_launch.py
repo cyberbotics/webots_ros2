@@ -46,17 +46,16 @@ def get_ros2_nodes(*args):
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
-    use_deprecated_spawner_py = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'foxy'
     diffdrive_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['diffdrive_controller'] + controller_manager_timeout,
     )
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner' if not use_deprecated_spawner_py else 'spawner.py',
+        executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,

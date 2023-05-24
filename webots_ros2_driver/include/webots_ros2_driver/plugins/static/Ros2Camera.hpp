@@ -22,16 +22,11 @@
 #include <geometry_msgs/msg/point.hpp>
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
-#if defined(HUMBLE) || defined(ROLLING)
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-#else
-// Deprecated in Humble and Rolling
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#endif
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <std_msgs/msg/color_rgba.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <vision_msgs/msg/detection2_d.hpp>
 #include <vision_msgs/msg/detection2_d_array.hpp>
 #include <vision_msgs/msg/object_hypothesis_with_pose.hpp>

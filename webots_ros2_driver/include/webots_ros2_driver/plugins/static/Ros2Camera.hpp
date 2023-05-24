@@ -50,6 +50,9 @@ namespace webots_ros2_driver {
 
     WbDeviceTag mCamera;
 
+    std::string mCameraInfoSuffix;
+    std::string mImageSuffix;
+
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
     sensor_msgs::msg::Image mImageMessage;
 

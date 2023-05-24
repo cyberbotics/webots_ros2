@@ -17,7 +17,6 @@
 """Launch Webots Tesla driver."""
 
 import os
-import pathlib
 import launch
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
@@ -26,20 +25,17 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from webots_ros2_driver.webots_launcher import WebotsLauncher
-from webots_ros2_driver.utils import controller_url_prefix
+from webots_ros2_driver.webots_controller import WebotsController
 
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_tesla')
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tesla_webots.urdf')).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'tesla_webots.urdf')
 
-    tesla_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'vehicle'},
+    tesla_driver = WebotsController(
+        robot_name='vehicle',
         parameters=[
-            {'robot_description': robot_description},
+            {'robot_description': robot_description_path}
         ]
     )
 

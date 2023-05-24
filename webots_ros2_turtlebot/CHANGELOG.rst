@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_turtlebot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.0 (2023-XX-XX)
+------------------
+* Update driver node to new WebotsController node.
+
 2023.0.4 (2023-05-23)
 ------------------
 * Start ros control and navigation nodes when Webots is ready.

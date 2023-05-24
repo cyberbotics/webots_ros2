@@ -41,6 +41,12 @@ add_custom_target(compile-lib-vehicle ALL
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
 )
 
+add_custom_target(compile-generic-window ALL
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+  DEPENDS compile-lib-controller
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/resources/projects/libraries/generic_robot_window
+)
+
 set(WEBOTS_LIB_BASE webots/lib/controller)
 
 include_directories(
@@ -71,7 +77,6 @@ ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})
 
 # Driver
-set(CMAKE_INSTALL_RPATH "$ORIGIN/../controller")
 add_executable(driver
   src/Driver.cpp
   src/WebotsNode.cpp
@@ -119,7 +124,6 @@ install(TARGETS driver
 )
 
 # Dynamic IMU
-set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
 add_library(
   ${PROJECT_NAME}_imu
   SHARED
@@ -147,7 +151,6 @@ install(TARGETS ${PROJECT_NAME}_imu
 )
 
 # Dynamic RGBD
-set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
 add_library(
   ${PROJECT_NAME}_rgbd
   SHARED
@@ -193,6 +196,7 @@ install(
   PATTERN "*CppCar*"
   PATTERN "*driver*"
   PATTERN "*CppDriver*"
+  PATTERN "*generic_robot_window*"
 )
 
 # Prevent pluginlib from using boost
@@ -213,6 +217,12 @@ install(
   DESTINATION share/${PROJECT_NAME}/scripts
 )
 
+# Install webots-controller script
+install(
+  PROGRAMS webots/webots-controller
+  DESTINATION share/${PROJECT_NAME}/scripts
+)
+
 # Ament export
 set(WEBOTS_LIB_PATH
   controller/${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -221,6 +231,7 @@ set(WEBOTS_LIB_PATH
   controller/${CMAKE_SHARED_LIBRARY_PREFIX}CppDriver${CMAKE_SHARED_LIBRARY_SUFFIX}
   controller/${CMAKE_SHARED_LIBRARY_PREFIX}car${CMAKE_SHARED_LIBRARY_SUFFIX}
   controller/${CMAKE_SHARED_LIBRARY_PREFIX}CppCar${CMAKE_SHARED_LIBRARY_SUFFIX}
+  controller/${CMAKE_SHARED_LIBRARY_PREFIX}generic_robot_window${CMAKE_SHARED_LIBRARY_SUFFIX}
 )
 
 ament_export_include_directories(

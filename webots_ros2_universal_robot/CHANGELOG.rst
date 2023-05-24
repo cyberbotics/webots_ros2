@@ -6,7 +6,7 @@ Changelog for package webots_ros2_universal_robot
 ------------------
 * Update driver node to new WebotsController node.
 
-2023.0.4 (2023-XX-XX)
+2023.0.4 (2023-05-23)
 ------------------
 * Start ros control nodes when Webots is ready.
 

@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 project(webots_ros2_control)
 
 # Check which ROS distribution is used, ros2control depends of that
-if($ENV{ROS_DISTRO} MATCHES "foxy")
-  add_compile_definitions(FOXY)
-elseif($ENV{ROS_DISTRO} MATCHES "humble")
+if($ENV{ROS_DISTRO} MATCHES "humble")
   add_compile_definitions(HUMBLE)
+elseif($ENV{ROS_DISTRO} MATCHES "iron")
+  add_compile_definitions(IRON)
 elseif($ENV{ROS_DISTRO} MATCHES "rolling")
   add_compile_definitions(ROLLING)
 endif()
@@ -36,7 +36,7 @@ find_package(webots_ros2_driver REQUIRED)
 add_compile_definitions(HARDWARE_INTERFACE_VERSION_MAJOR=${hardware_interface_VERSION_MAJOR})
 add_compile_definitions(HARDWARE_INTERFACE_VERSION_MINOR=${hardware_interface_VERSION_MINOR})
 
-if (MSVC OR MSYS OR MINGW OR WIN32)
+if(MSVC OR MSYS OR MINGW OR WIN32)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 

@@ -31,7 +31,7 @@ data_files.append(('share/' + package_name + '/worlds', [
 
 setup(
     name=package_name,
-    version='2023.0.3',
+    version='2023.0.4',
     packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

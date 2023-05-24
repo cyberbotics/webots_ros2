@@ -8,7 +8,7 @@ Changelog for package webots_ros2_driver
 * Added new WebotsController node to launch robot controller plugins.
 * Added compilation of the generic robot window library.
 
-2023.0.4 (2023-XX-XX)
+2023.0.4 (2023-05-23)
 ------------------
 * Fixed vertical field of view in static RangeFinder plugin.
 * Added support for painted point clouds.

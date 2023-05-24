@@ -6,7 +6,7 @@ Changelog for package webots_ros2_epuck
 ------------------
 * Update driver node to new WebotsController node.
 
-2023.0.4 (2023-XX-XX)
+2023.0.4 (2023-05-23)
 ------------------
 * Fixed ability to launch RViz without other tools.
 * Start ros control and navigation nodes when Webots is ready.

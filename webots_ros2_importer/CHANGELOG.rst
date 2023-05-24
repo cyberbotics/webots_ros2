@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_importer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.0.4 (2023-XX-XX)
+2023.0.4 (2023-05-23)
 ------------------
 * Fixed argument parsing
 

@@ -41,7 +41,9 @@ namespace webots_ros2_control {
   void Ros2Control::step() {
     const int nowMs = wb_robot_get_time() * 1000.0;
     const int periodMs = nowMs - mLastControlUpdateMs;
+    // printf("%d - %d = %d\n", nowMs, mLastControlUpdateMs, periodMs);
     if (periodMs >= mControlPeriodMs) {
+      // printf("%d >= %d\n", periodMs, mControlPeriodMs);
       const rclcpp::Duration dt = rclcpp::Duration::from_seconds(mControlPeriodMs / 1000.0);
       mControllerManager->read(mNode->get_clock()->now(), dt);
 

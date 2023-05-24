@@ -31,34 +31,52 @@ GOAL = {
     'points': [
         {
             'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
+            'velocities': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             'time_from_start': {'sec': 0, 'nanosec': 0}
         },
         {
             'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
-            'time_from_start': {'sec': 3, 'nanosec': 0}
+            'velocities': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            'time_from_start': {'sec': 1, 'nanosec': 0}
         },
         {
             'positions': [0.0, 0.0, 0.0, 0.0, 0.85, 0.85, 0.6],
-            'time_from_start': {'sec': 4, 'nanosec': 0}
+            'velocities': [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+            'time_from_start': {'sec': 2, 'nanosec': 0}
+        },
+        {
+            'positions': [0.0, 0.0, 0.0, 0.0, 0.85, 0.85, 0.6],
+            'velocities': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            'time_from_start': {'sec': 3, 'nanosec': 0}
         },
         {
             'positions': [0.63, -2.26, -1.88, -2.14, 0.85, 0.85, 0.6],
-            'time_from_start': {'sec': 5, 'nanosec': 0}
+            'velocities': [1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0],
+            'time_from_start': {'sec': 4, 'nanosec': 0}
         },
         {
             'positions': [0.63, -2.26, -1.88, -2.14, 0.0495, 0.0495, 0.0495],
-            'time_from_start': {'sec': 6, 'nanosec': 0}
+            'velocities': [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+            'time_from_start': {'sec': 5, 'nanosec': 0}
         },
         {
             'positions': [0.63, -2.0, -1.88, -2.14, 0.0495, 0.0495, 0.0495],
+            'velocities': [0.0, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0],
+            'time_from_start': {'sec': 6, 'nanosec': 0}
+        },
+        {
+            'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
+            'velocities': [1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0],
             'time_from_start': {'sec': 7, 'nanosec': 0}
         },
         {
             'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
+            'velocities': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             'time_from_start': {'sec': 8, 'nanosec': 0}
         },
         {
             'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
+            'velocities': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             'time_from_start': {'sec': 9, 'nanosec': 0}
         }
     ]

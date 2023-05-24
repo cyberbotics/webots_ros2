@@ -29,40 +29,54 @@ GOAL = {
         'finger_middle_joint_1'
     ],
     'points': [
-        {
-            'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
+        { #2sec:sim
+            'positions': [0.0, 0.0, 0.0, 0.0, 0.85, 0.85, 0.6],
+            'velocities': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
             'time_from_start': {'sec': 0, 'nanosec': 0}
         },
-        {
+        { #reach above can : 3sec sim
             'positions': [-0.025, 0.0, 0.82, -0.86, 0.0495, 0.0495, 0.0495],
+            'velocities': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
             'time_from_start': {'sec': 1, 'nanosec': 0}
         },
-        {
+        { #reach position grab but open : 4sec sim
             'positions': [-0.025, 0.1, 0.82, -0.86, 0.0495, 0.0495, 0.0495],
+            'velocities': [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             'time_from_start': {'sec': 2, 'nanosec': 0}
         },
-        {
+        { #fermeture : 5sec sim
             'positions': [-0.025, 0.1, 0.82, -0.86, 0.85, 0.85, 0.6],
+            'velocities': [0.0, 0.0, 0.0, 0.0, 0.8, 0.8, 0.8],
             'time_from_start': {'sec': 3, 'nanosec': 0}
         },
-        {
+        { # relever bras de 50 cm: 5sec sim
             'positions': [-0.025, -0.44, 0.82, -0.86, 0.85, 0.85, 0.6],
+            'velocities': [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             'time_from_start': {'sec': 4, 'nanosec': 0}
         },
-        {
+        { # tourner jusqua tapis roulant: 6sec sim
             'positions': [1.57, -0.05, 0.90, -0.71, 0.85, 0.85, 0.6],
+            'velocities': [3.0, 0.4, 3.0, 3.0, 0.0, 0.0, 0.0],
             'time_from_start': {'sec': 5, 'nanosec': 0}
         },
-        {
+        { # lacher la can: 7sec sim
             'positions': [1.57, -0.05, 0.75, -0.81, 0.0495, 0.0495, 0.0495],
+            'velocities': [0.0, 0.0, 0.4, 0.4, 1.5, 1.5, 1.5],
             'time_from_start': {'sec': 6, 'nanosec': 0}
         },
-        {
-            'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
+        { # retour pos initiale: 8sec
+            'positions': [1.57, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
+            'velocities': [0.0, 2.0, 2.0, 2.0, 0.0, 0.0, 0.0],
             'time_from_start': {'sec': 7, 'nanosec': 0}
         },
         {
             'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
+            'velocities': [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            'time_from_start': {'sec': 8, 'nanosec': 0}
+        },
+        {
+            'positions': [0.0, 0.0, 0.0, 0.0, 0.0495, 0.0495, 0.0495],
+            'velocities': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
             'time_from_start': {'sec': 9, 'nanosec': 0}
         }
     ]

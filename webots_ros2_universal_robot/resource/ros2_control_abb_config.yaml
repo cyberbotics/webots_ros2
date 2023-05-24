@@ -22,6 +22,8 @@
       - finger_middle_joint_1
     command_interfaces:
       - position
+      - velocity
     state_interfaces:
       - position
+      - velocity
     allow_partial_joints_goal: True

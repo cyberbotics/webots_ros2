@@ -92,6 +92,7 @@ class FollowJointTrajectoryClient(Node):
         for point in trajectory['points']:
             trajectory_point = JointTrajectoryPoint(
                 positions=point['positions'],
+                velocities=point['velocities'],
                 time_from_start=Duration(
                     sec=point['time_from_start']['sec'],
                     nanosec=point['time_from_start']['nanosec']

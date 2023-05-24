@@ -157,10 +157,13 @@ namespace webots_ros2_control {
   hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     for (Joint &joint : mJoints) {
       if (joint.motor) {
-        if (joint.controlPosition && !std::isnan(joint.positionCommand))
+        if (joint.controlPosition && !std::isnan(joint.positionCommand)) {
           wb_motor_set_position(joint.motor, joint.positionCommand);
+          // printf("%s: position command = %f\n", wb_device_get_name(joint.motor), joint.positionCommand);
+        }
         if (joint.controlVelocity && !std::isnan(joint.velocityCommand)) {
-          // In the position control mode the velocity cannot be negative.
+          // printf("Velocity\n");
+          //  In the position control mode the velocity cannot be negative.
           const double velocityCommand = joint.controlPosition ? abs(joint.velocityCommand) : joint.velocityCommand;
           wb_motor_set_velocity(joint.motor, velocityCommand);
         }

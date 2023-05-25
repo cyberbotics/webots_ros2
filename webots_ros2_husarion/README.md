@@ -33,7 +33,7 @@ rosdep install --ignore-src --from-path src/webots_ros2/ -y --rosdistro $ROS_DIS
 
 ### Build packages
 ```
-colcon build
+colcon build --packages-up-to webots_ros2_husarion
 ```
 
 # Run

@@ -24,7 +24,7 @@ namespace webots_ros2_driver {
     mCamera = wb_robot_get_device(parameters["name"].c_str());
 
     mCameraInfoSuffix = parameters.count("cameraInfoSuffix") ? parameters["cameraInfoSuffix"] : "/camera_info";
-    mImageSuffix = parameters.count("imageSuffix") ? parameters["imageSuffix"] : "";
+    mImageSuffix = parameters.count("imageSuffix") ? parameters["imageSuffix"] : "/image_color";
 
     assert(mCamera != 0);
 
@@ -120,6 +120,7 @@ namespace webots_ros2_driver {
     auto image = wb_camera_get_image(mCamera);
     if (image) {
       mImageMessage.header.stamp = mNode->get_clock()->now();
+      mCameraInfoMessage.header.stamp = mImageMessage.header.stamp;
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
       mImagePublisher->publish(mImageMessage);
     }

@@ -91,29 +91,8 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /odom
-      Value: true
+      Value: true 
     - Class: rviz_default_plugins/Camera
-      Enabled: false
-      Image Rendering: background and overlay
-      Name: Camera
-      Overlay Alpha: 0.5
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /camera/image_raw
-      Value: false
-      Visibility:
-        Grid: true
-        LaserScan: true
-        Map: true
-        Odometry: true
-        Path: true
-        Range: true
-        TF: true
-        Value: true
-      Zoom Factor: 1
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:

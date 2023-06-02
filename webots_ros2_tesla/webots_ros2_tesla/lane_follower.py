@@ -35,7 +35,7 @@ class LaneFollower(Node):
 
         qos_camera_data = qos_profile_sensor_data
         qos_camera_data.reliability = QoSReliabilityPolicy.RELIABLE
-        self.create_subscription(Image, 'vehicle/camera', self.__on_camera_image, qos_camera_data)
+        self.create_subscription(Image, 'vehicle/camera/image_color', self.__on_camera_image, qos_camera_data)
 
     def __on_camera_image(self, message):
         img = message.data

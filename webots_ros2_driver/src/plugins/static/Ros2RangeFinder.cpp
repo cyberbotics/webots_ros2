@@ -26,7 +26,7 @@ namespace webots_ros2_driver {
     mRangeFinder = wb_robot_get_device(parameters["name"].c_str());
 
     mCameraInfoSuffix = parameters.count("cameraInfoSuffix") ? parameters["cameraInfoSuffix"] : "/camera_info";
-    mImageSuffix = parameters.count("imageSuffix") ? parameters["imageSuffix"] : "";
+    mImageSuffix = parameters.count("imageSuffix") ? parameters["imageSuffix"] : "/image";
     mPointCloudSuffix = parameters.count("pointCloudSuffix") ? parameters["pointCloudSuffix"] : "/point_cloud";
 
     assert(mRangeFinder != 0);
@@ -123,6 +123,7 @@ namespace webots_ros2_driver {
     auto image = wb_range_finder_get_range_image(mRangeFinder);
     if (image) {
       mImageMessage.header.stamp = mNode->get_clock()->now();
+      mCameraInfoMessage.header.stamp = mImageMessage.header.stamp;
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
       mImagePublisher->publish(mImageMessage);
     }

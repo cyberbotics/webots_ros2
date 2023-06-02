@@ -67,7 +67,7 @@ class TestTesla(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, Image, '/vehicle/camera', condition=on_image_message_received)
+        self.wait_for_messages(self.__node, Image, '/vehicle/camera/image_color', condition=on_image_message_received)
 
     def testCommand(self):
         def on_cmd_message_received(message):

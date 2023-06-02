@@ -99,7 +99,7 @@ class TestDriver(TestWebots):
             self.assertEqual(message.width, 320)
             return True
 
-        self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/kinect_range', condition=on_image_received)
+        self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/kinect_range/image', condition=on_image_received)
 
     def testDistanceSensor(self):
         self.wait_for_messages(self.__node, Range, '/Pioneer_3_AT/so4',
@@ -111,7 +111,7 @@ class TestDriver(TestWebots):
             self.assertEqual(message.width, 320)
             return True
 
-        self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/kinect_color', condition=on_image_received)
+        self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/kinect_color/image_color', condition=on_image_received)
 
     def testRGBD(self):
         def on_pc_received(message):

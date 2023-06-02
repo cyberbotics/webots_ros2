@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(webots_ros2_driver)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -30,13 +30,18 @@ find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
 find_package(PythonLibs 3.10 EXACT REQUIRED)
 
+if(APPLE)
+  # Don't build a fat binary and use simple UNIX pipes for jobserver
+  set(MAKE_BUILD_VARS "NO_FAT_BINARY=1" "MAKEFLAGS=--jobserver-style=pipe")
+endif()
+
 add_custom_target(compile-lib-controller ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" ${MAKE_BUILD_VARS} make release -f Makefile
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
 )
 
 add_custom_target(compile-lib-vehicle ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" ${MAKE_BUILD_VARS} make release -f Makefile
   DEPENDS compile-lib-controller
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
 )
@@ -70,8 +75,14 @@ ament_python_install_package(vehicle
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})
 
-# Driver
-set(CMAKE_INSTALL_RPATH "$ORIGIN/../controller")
+if(UNIX AND NOT APPLE)
+  set(DYN_LOADER_PREFIX "$ORIGIN")
+elseif(APPLE)
+  set(DYN_LOADER_PREFIX "@executable_path")
+endif()
+
+set(CMAKE_INSTALL_RPATH "${DYN_LOADER_PREFIX}/../controller")
+
 add_executable(driver
   src/Driver.cpp
   src/WebotsNode.cpp
@@ -119,7 +130,7 @@ install(TARGETS driver
 )
 
 # Dynamic IMU
-set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
+set(CMAKE_INSTALL_RPATH "${DYN_LOADER_PREFIX}/controller")
 add_library(
   ${PROJECT_NAME}_imu
   SHARED
@@ -147,7 +158,7 @@ install(TARGETS ${PROJECT_NAME}_imu
 )
 
 # Dynamic RGBD
-set(CMAKE_INSTALL_RPATH "$ORIGIN/controller")
+set(CMAKE_INSTALL_RPATH "${DYN_LOADER_PREFIX}/controller")
 add_library(
   ${PROJECT_NAME}_rgbd
   SHARED

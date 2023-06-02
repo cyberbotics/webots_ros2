@@ -321,6 +321,7 @@ endif
 
 ifeq ($(OSTYPE),darwin)
 ifdef NO_FAT_BINARY
+ PROCESSOR := $(shell uname -m)
  WBCFLAGS += -target $(PROCESSOR)-apple-macos11
  DYNAMIC_LINK_FLAGS += -target $(PROCESSOR)-apple-macos11
 endif
@@ -337,14 +338,14 @@ ifdef USE_CXX
  ifndef EXCLUDE_CONTROLLERS
   DYNAMIC_LIBRARIES += -L"$(WEBOTS_CONTROLLER_LIB_PATH)" -lController
   ifdef USE_C_API
-   ifeq ($(OSTYPE),darwin)
+   ifdef BUILD_MACOS_BUNDLE
     INCLUDE += -I"$(WEBOTS_HOME)/Contents/include/controller/c"
    else
     INCLUDE += -I"$(WEBOTS_HOME)/include/controller/c"
    endif
   else
    DYNAMIC_LIBRARIES += -lCppController
-   ifeq ($(OSTYPE),darwin)
+   ifdef BUILD_MACOS_BUNDLE
     INCLUDE += -I"$(WEBOTS_HOME)/Contents/include/controller/cpp"
    else
     INCLUDE += -I"$(WEBOTS_HOME)/include/controller/cpp"
@@ -365,7 +366,7 @@ else
   LINKER = $(CC)
  endif
  ifndef EXCLUDE_CONTROLLERS
-  ifeq ($(OSTYPE),darwin)
+  ifdef BUILD_MACOS_BUNDLE
    INCLUDE += -I"$(WEBOTS_HOME)/Contents/include/controller/c"
   else
    INCLUDE += -I"$(WEBOTS_HOME)/include/controller/c"
@@ -405,7 +406,11 @@ endif
 
 ifeq ($(OSTYPE),darwin)
  ifdef WEBOTS_LIBRARY
-  INSTALL_NAME ?= @rpath/Contents/lib/controller/$(MAIN_TARGET)
+  ifdef BUILD_MACOS_BUNDLE
+    INSTALL_NAME ?= @rpath/Contents/lib/controller/$(MAIN_TARGET)
+  else
+    INSTALL_NAME ?= @rpath/$(MAIN_TARGET)
+  endif
   LFLAGS += -Xlinker -rpath -Xlinker @loader_path/.. -install_name $(INSTALL_NAME)
  else
   CALLING_MAKEFILE_DIR := $(shell dirname "$(realpath $(firstword $(MAKEFILE_LIST)))")
@@ -436,6 +441,8 @@ ifdef USE_ODE
  endif
  ifeq ($(OSTYPE),darwin)
   DYNAMIC_LINK_FLAGS += -flat_namespace -undefined suppress
+ endif
+ ifdef BUILD_MACOS_BUNDLE
   DYNAMIC_LIBRARIES += "$(WEBOTS_HOME)/Contents/Resources/projects/plugins/physics/physics.a"
   INCLUDE += -I"$(WEBOTS_HOME)/Contents/include/ode" -I"$(WEBOTS_HOME)/Contents/include"
  else

@@ -98,7 +98,11 @@ SHAREDLIBS    = -L$(WEBOTS_CONTROLLER_LIB_PATH) -lController
 CPPFLAGS      = -c -fPIC -Wall -mmacosx-version-min=$(MACOSX_MIN_SDK_VERSION)
 CPPINCLUDES   = -I$(WEBOTS_HOME_PATH)/include/controller/c -I$(WEBOTS_HOME_PATH)/include/controller/cpp
 LIBCONTROLLER = $(WEBOTS_CONTROLLER_LIB_PATH)/libController.dylib
+ifdef BUILD_MACOS_BUNDLE
 LDFLAGS      += -install_name @rpath/Contents/lib/controller/libCppController.dylib
+else
+LD_FLAGS     += -install_name @rpath/libCppController.dylib
+endif
 TARGET        = $(WEBOTS_CONTROLLER_LIB_PATH)/libCppController.dylib
 endif
 
@@ -117,10 +121,9 @@ endif
 
 all debug profile release: $(TARGET)
 
-ifeq ($(OSTYPE),darwin)
-
-X86_64_OBJECTS = $(addprefix $(BUILD_GOAL_DIR)/x86_64/,$(OBJECTS))
-ARM64_OBJECTS = $(addprefix $(BUILD_GOAL_DIR)/arm64/,$(OBJECTS))
+ifdef FAT_BINARY
+    ARM64_OBJECTS = $(addprefix $(BUILD_GOAL_DIR)/arm64/,$(OBJECTS))
+    X86_64_OBJECTS = $(addprefix $(BUILD_GOAL_DIR)/x86_64/,$(OBJECTS))
 
 $(TARGET): $(BUILD_GOAL_DIR)/x86_64/libCppController.dylib $(BUILD_GOAL_DIR)/arm64/libCppController.dylib
 	@echo "# creating fat" $(notdir $@)

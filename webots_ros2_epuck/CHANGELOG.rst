@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_epuck
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.0 (2023-XX-XX)
+------------------
+* Added support for Navigation2 in Iron.
+
 2023.0.4 (2023-05-23)
 ------------------
 * Fixed ability to launch RViz without other tools.

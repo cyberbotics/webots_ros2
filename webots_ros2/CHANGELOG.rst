@@ -5,12 +5,16 @@ Changelog for package webots_ros2
 2023.1.0 (2023-XX-XX)
 ------------------
 * Added support for Navigation2 in Iron.
+* Added new TIAGo project to webots_ros2_tiago to run real robot configuration.
+* Added new WebotsController node in the driver interface to launch robot controller plugins.
+* Fixed unfound robot window library in Tesla example.
+* Default to canonical topic name and fix camera_info stamp in Ros2Camera, Ros2RangeFinder.
 
 2023.0.4 (2023-05-23)
 ------------------
 * Drop support for Foxy.
 * Fixed vertical field of view in static RangeFinder plugin.
-* Added support for painted point clouds
+* Added support for painted point clouds.
 * Fixed ability to launch RViz without other tools in e-puck example.
 * Fixed command line arguments in importer tools.
 * Added custom handler in driver interface to start nodes when Webots is ready.

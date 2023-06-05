@@ -17,7 +17,6 @@
 """Launch Webots and the controller."""
 
 import os
-import pathlib
 import launch
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
@@ -28,8 +27,8 @@ from ament_index_python.packages import get_package_share_directory, get_package
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import IncludeLaunchDescription
 from webots_ros2_driver.webots_launcher import WebotsLauncher
+from webots_ros2_driver.webots_controller import WebotsController
 from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
-from webots_ros2_driver.utils import controller_url_prefix
 
 
 def get_ros2_nodes(*args):
@@ -38,13 +37,25 @@ def get_ros2_nodes(*args):
     use_nav = LaunchConfiguration('nav', default=False)
     use_slam_toolbox = LaunchConfiguration('slam_toolbox', default=False)
     use_slam_cartographer = LaunchConfiguration('slam_cartographer', default=False)
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tiago_webots.urdf')).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'tiago_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     toolbox_params = os.path.join(package_dir, 'resource', 'slam_toolbox_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     cartographer_config_dir = os.path.join(package_dir, 'resource')
     cartographer_config_basename = 'cartographer.lua'
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+
+    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+    tiago_driver = WebotsController(
+        robot_name='Tiago_Lite',
+        parameters=[
+            {'robot_description': robot_description_path,
+             'use_sim_time': use_sim_time,
+             'set_robot_state_publisher': True},
+            ros2_control_params
+        ],
+        remappings=mappings
+    )
 
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '500']
@@ -65,21 +76,6 @@ def get_ros2_nodes(*args):
     )
     ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
-    tiago_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'Tiago_Iron'},
-        parameters=[
-            {'robot_description': robot_description,
-             'use_sim_time': use_sim_time,
-             'set_robot_state_publisher': True},
-            ros2_control_params
-        ],
-        remappings=mappings
-    )
-
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -96,6 +92,7 @@ def get_ros2_nodes(*args):
         arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
+    # RViz
     rviz_config = os.path.join(get_package_share_directory('webots_ros2_tiago'), 'resource', 'default.rviz')
     rviz = Node(
         package='rviz2',

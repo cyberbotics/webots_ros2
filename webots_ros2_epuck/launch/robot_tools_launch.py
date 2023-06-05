@@ -51,6 +51,8 @@ def generate_launch_description():
     )
 
     # Navigation
+    nav2_params_file = 'nav2_params_iron.yaml' if ('ROS_DISTRO' in os.environ
+                                                   and os.environ['ROS_DISTRO'] == 'iron') else 'nav2_params.yaml'
     if 'nav2_bringup' in get_packages_with_prefixes():
         launch_description_nodes.append(
             IncludeLaunchDescription(
@@ -60,7 +62,7 @@ def generate_launch_description():
                 launch_arguments=[
                     ('map', map_filename),
                     ('use_sim_time', use_sim_time),
-                    ('params_file', os.path.join(package_dir, 'resource', 'nav2_params.yaml'))
+                    ('params_file', os.path.join(package_dir, 'resource', nav2_params_file))
                 ],
                 condition=launch.conditions.IfCondition(use_nav)
             )

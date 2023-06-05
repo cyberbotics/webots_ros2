@@ -34,8 +34,9 @@ def generate_test_description():
     initialize_webots_test()
 
     # If ROS_DISTRO is rolling, skip the test as some required packages are missing (cf. ci_after_init.bash)
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling':
-        pytest.skip('ROS_DISTRO is rolling, skipping this test')
+    # If ROS_DISTRO is iron, skip the test as the Navigation packages are not yet available.
+    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] != 'humble':
+        pytest.skip('ROS_DISTRO is rolling or iron, skipping this test')
 
     # Webots
     turtlebot_webots = IncludeLaunchDescription(

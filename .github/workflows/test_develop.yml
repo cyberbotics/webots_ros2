@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         ROS_REPO: [main, testing]
-        ROS_DISTRO: [humble, rolling]
+        ROS_DISTRO: [humble, iron, rolling]
     runs-on: ubuntu-latest
     env:
       AFTER_INIT: ./scripts/ci_after_init.bash ${ROS_DISTRO} ${ROS_REPO}

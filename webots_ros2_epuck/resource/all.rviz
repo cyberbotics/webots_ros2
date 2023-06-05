@@ -92,28 +92,6 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /odom
       Value: true
-    - Class: rviz_default_plugins/Camera
-      Enabled: false
-      Image Rendering: background and overlay
-      Name: Camera
-      Overlay Alpha: 0.5
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /camera/image_raw
-      Value: false
-      Visibility:
-        Grid: true
-        LaserScan: true
-        Map: true
-        Odometry: true
-        Path: true
-        Range: true
-        TF: true
-        Value: true
-      Zoom Factor: 1
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -422,82 +400,81 @@ Visualization Manager:
       Show Names: false
       Tree:
         map:
-          {}
-        odom:
-          base_link:
-            base_footprint:
-              {}
-            camera:
-              {}
-            laser_scanner:
-              {}
-            led0:
-              {}
-            led1:
-              {}
-            led2:
-              {}
-            led3:
-              {}
-            led4:
-              {}
-            led5:
-              {}
-            led6:
-              {}
-            led7:
-              {}
-            led8:
-              {}
-            led9:
-              {}
-            left wheel:
-              {}
-            pi-puck_894:
-              cap screw(0)_999:
+          odom:
+            base_link:
+              base_footprint:
                 {}
-              cap screw(1)_1034:
+              camera:
                 {}
-              cap screw_964:
+              laser_scanner:
                 {}
-              pi-puck led 0:
+              led0:
                 {}
-              pi-puck led 1:
+              led1:
                 {}
-              pi-puck led 2:
+              led2:
                 {}
-              solid_924:
+              led3:
                 {}
-            pipe:
-              {}
-            ps0_533:
-              ps0:
+              led4:
                 {}
-            ps1_542:
-              ps1:
+              led5:
                 {}
-            ps2_551:
-              ps2:
+              led6:
                 {}
-            ps3_560:
-              ps3:
+              led7:
                 {}
-            ps4_569:
-              ps4:
+              led8:
                 {}
-            ps5_578:
-              ps5:
+              led9:
                 {}
-            ps6_587:
-              ps6:
+              left wheel:
                 {}
-            ps7_596:
-              ps7:
+              pi-puck_894:
+                cap screw(0)_999:
+                  {}
+                cap screw(1)_1034:
+                  {}
+                cap screw_964:
+                  {}
+                pi-puck led 0:
+                  {}
+                pi-puck led 1:
+                  {}
+                pi-puck led 2:
+                  {}
+                solid_924:
+                  {}
+              pipe:
                 {}
-            right wheel:
-              {}
-            tof:
-              {}
+              ps0_533:
+                ps0:
+                  {}
+              ps1_542:
+                ps1:
+                  {}
+              ps2_551:
+                ps2:
+                  {}
+              ps3_560:
+                ps3:
+                  {}
+              ps4_569:
+                ps4:
+                  {}
+              ps5_578:
+                ps5:
+                  {}
+              ps6_587:
+                ps6:
+                  {}
+              ps7_596:
+                ps7:
+                  {}
+              right wheel:
+                {}
+              tof:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1

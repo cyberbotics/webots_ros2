@@ -27,6 +27,7 @@ data_files.append(('share/' + package_name + '/protos', [
 data_files.append(('share/' + package_name + '/resource', [
     'resource/all.rviz',
     'resource/nav2_params.yaml',
+    'resource/nav2_params_iron.yaml',
     'resource/map_rats_life.pgm',
     'resource/map_rats_life.yaml',
     'resource/nav2_rats_life_waypoints.yaml',

@@ -14,6 +14,7 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/ros2_control.yml',
     'resource/ros2_control_bringup.yml',
     'resource/nav2_params.yaml',
+    'resource/nav2_params_iron.yaml',
     'resource/default.rviz',
     'resource/default_bringup.rviz',
     'resource/map.pgm',

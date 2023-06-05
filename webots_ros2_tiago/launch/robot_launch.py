@@ -39,17 +39,13 @@ def get_ros2_nodes(*args):
     use_slam_cartographer = LaunchConfiguration('slam_cartographer', default=False)
     robot_description_path = os.path.join(package_dir, 'resource', 'tiago_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
-    nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     toolbox_params = os.path.join(package_dir, 'resource', 'slam_toolbox_params.yaml')
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     cartographer_config_dir = os.path.join(package_dir, 'resource')
     cartographer_config_basename = 'cartographer.lua'
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
-        mappings.append(('/diffdrive_controller/odom', '/odom'))
-
+    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
     tiago_driver = WebotsController(
         robot_name='Tiago_Lite',
         parameters=[
@@ -110,6 +106,9 @@ def get_ros2_nodes(*args):
 
     # Navigation
     navigation_nodes = []
+    nav2_params_file = 'nav2_params_iron.yaml' if ('ROS_DISTRO' in os.environ
+                                                   and os.environ['ROS_DISTRO'] == 'iron') else 'nav2_params.yaml'
+    nav2_params = os.path.join(package_dir, 'resource', nav2_params_file)
     if 'nav2_bringup' in get_packages_with_prefixes():
         navigation_nodes.append(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(

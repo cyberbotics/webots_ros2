@@ -4,6 +4,7 @@ Changelog for package webots_ros2_tests
 
 2023.1.0 (2023-XX-XX)
 ------------------
+* Added iron tests support.
 * Update webots_ros2_driver test to new WebotsController node.
 
 2023.0.4 (2023-05-23)

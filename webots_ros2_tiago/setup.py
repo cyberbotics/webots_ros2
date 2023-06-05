@@ -9,6 +9,7 @@ data_files.append(('share/' + package_name + '/resource', [
     'resource/tiago_webots.urdf',
     'resource/ros2_control.yml',
     'resource/nav2_params.yaml',
+    'resource/nav2_params_iron.yaml',
     'resource/default.rviz',
     'resource/map.pgm',
     'resource/map.yaml',

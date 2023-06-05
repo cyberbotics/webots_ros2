@@ -75,7 +75,7 @@ def get_ros2_nodes(*args):
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
     ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
-    
+
     # State publishers
     robot_state_publisher = Node(
         package='robot_state_publisher',

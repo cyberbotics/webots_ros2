@@ -32,17 +32,36 @@ from webots_ros2_driver.wait_for_controller_connection import WaitForControllerC
 from webots_ros2_driver.utils import controller_url_prefix
 
 
-def get_ros2_nodes(*args):
+def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_turtlebot')
+    world = LaunchConfiguration('world')
+    mode = LaunchConfiguration('mode')
     use_nav = LaunchConfiguration('nav', default=False)
     use_slam = LaunchConfiguration('slam', default=False)
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
-    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
-    nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
-    nav2_map = os.path.join(package_dir, 'resource', 'turtlebot3_burger_example_map.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    # TODO: Revert once the https://github.com/ros-controls/ros2_control/pull/444 PR gets into the release
+    webots = WebotsLauncher(
+        world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        mode=mode,
+        ros2_supervisor=True
+    )
+
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>'
+        }],
+    )
+
+    footprint_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
+    )
+
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '50']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
@@ -62,10 +81,9 @@ def get_ros2_nodes(*args):
     )
     ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel')]
-    if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] in ['humble', 'rolling']:
-        mappings.append(('/diffdrive_controller/odom', '/odom'))
-
+    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')).read_text()
+    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
+    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
     turtlebot_driver = Node(
         package='webots_ros2_driver',
         executable='driver',
@@ -80,25 +98,11 @@ def get_ros2_nodes(*args):
         remappings=mappings
     )
 
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        output='screen',
-        parameters=[{
-            'robot_description': '<robot name=""><link name=""/></robot>'
-        }],
-    )
-
-    footprint_publisher = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
-    )
-
     # Navigation
     navigation_nodes = []
     os.environ['TURTLEBOT3_MODEL'] = 'burger'
+    nav2_map = os.path.join(package_dir, 'resource', 'turtlebot3_burger_example_map.yaml')
+    nav2_params = os.path.join(package_dir, 'resource', 'nav2_params.yaml')
     if 'turtlebot3_navigation2' in get_packages_with_prefixes():
         turtlebot_navigation = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(
@@ -128,34 +132,6 @@ def get_ros2_nodes(*args):
         nodes_to_start=navigation_nodes + ros_control_spawners
     )
 
-    return [
-        robot_state_publisher,
-        turtlebot_driver,
-        footprint_publisher,
-        waiting_nodes,
-    ]
-
-
-def generate_launch_description():
-    package_dir = get_package_share_directory('webots_ros2_turtlebot')
-    world = LaunchConfiguration('world')
-    mode = LaunchConfiguration('mode')
-
-    webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world]),
-        mode=mode,
-        ros2_supervisor=True
-    )
-
-    # The following line is important!
-    # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
-    reset_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=webots._supervisor,
-            on_exit=get_ros2_nodes,
-        )
-    )
-
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -170,19 +146,19 @@ def generate_launch_description():
         webots,
         webots._supervisor,
 
+        robot_state_publisher,
+        footprint_publisher,
+
+        turtlebot_driver,
+        waiting_nodes,
+
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
                 on_exit=[
-                    launch.actions.UnregisterEventHandler(
-                        event_handler=reset_handler.event_handler
-                    ),
                     launch.actions.EmitEvent(event=launch.events.Shutdown())
                 ],
             )
         ),
-
-        # Add the reset event handler
-        reset_handler
-    ] + get_ros2_nodes())
+    ])

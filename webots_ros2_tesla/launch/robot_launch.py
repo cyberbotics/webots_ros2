@@ -34,7 +34,8 @@ def generate_launch_description():
     world = LaunchConfiguration('world')
 
     webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world])
+        world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        ros2_supervisor=True
     )
 
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'tesla_webots.urdf')).read_text()
@@ -60,6 +61,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_tesla/worlds` directory'
         ),
         webots,
+        webots._supervisor,
         tesla_driver,
         lane_follower,
 

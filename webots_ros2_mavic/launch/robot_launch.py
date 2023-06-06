@@ -34,7 +34,8 @@ def generate_launch_description():
     world = LaunchConfiguration('world')
 
     webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world])
+        world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        ros2_supervisor=True
     )
 
     robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'mavic_webots.urdf')).read_text()
@@ -56,6 +57,7 @@ def generate_launch_description():
             description='Choose one of the world files from `/webots_ros2_mavic/worlds` directory'
         ),
         webots,
+        webots._supervisor,
         mavic_driver,
 
         # This action will kill all nodes once the Webots simulation has exited

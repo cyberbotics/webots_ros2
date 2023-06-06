@@ -5,6 +5,7 @@ Changelog for package webots_ros2
 2023.1.0 (2023-XX-XX)
 ------------------
 * Added support for Navigation2 in Iron.
+* Clean simulation reset in launch files.
 
 2023.0.4 (2023-05-23)
 ------------------

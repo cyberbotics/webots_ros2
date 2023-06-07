@@ -1,7 +1,6 @@
-/**:
+abb/controller_manager:
   ros__parameters:
-    # controller_manager
-    update_rate: 20
+    update_rate: 50
 
     abb_joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
@@ -9,7 +8,8 @@
     abb_joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    # abb_joint_trajectory_controller
+abb/abb_joint_trajectory_controller:
+  ros__parameters:
     joints:
       - A motor
       - B motor
@@ -24,4 +24,6 @@
       - position
     state_interfaces:
       - position
-    allow_partial_joints_goal: True
+
+    allow_partial_joints_goal: true
+

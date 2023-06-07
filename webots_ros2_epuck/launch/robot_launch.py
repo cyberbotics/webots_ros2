@@ -31,16 +31,36 @@ from webots_ros2_driver.wait_for_controller_connection import WaitForControllerC
 from webots_ros2_driver.utils import controller_url_prefix
 
 
-def get_ros2_nodes(*args):
+def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_epuck')
+    world = LaunchConfiguration('world')
     use_nav = LaunchConfiguration('nav', default=False)
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_mapper = LaunchConfiguration('mapper', default=False)
     fill_map = LaunchConfiguration('fill_map', default=True)
     map_filename = LaunchConfiguration('map', default=os.path.join(package_dir, 'resource', 'epuck_world_map.yaml'))
-    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'epuck_webots.urdf')).read_text()
-    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
+
+    webots = WebotsLauncher(
+        world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        ros2_supervisor=True
+    )
+
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>'
+        }],
+    )
+
+    footprint_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
+    )
 
     # ROS control spawners
     controller_manager_timeout = ['--controller-manager-timeout', '50']
@@ -67,6 +87,8 @@ def get_ros2_nodes(*args):
     )
     ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
+    robot_description = pathlib.Path(os.path.join(package_dir, 'resource', 'epuck_webots.urdf')).read_text()
+    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
     epuck_driver = Node(
         package='webots_ros2_driver',
@@ -91,22 +113,6 @@ def get_ros2_nodes(*args):
         ],
     )
 
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        output='screen',
-        parameters=[{
-            'robot_description': '<robot name=""><link name=""/></robot>'
-        }],
-    )
-
-    footprint_publisher = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
-    )
-
     # Tools
     tool_nodes = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -128,33 +134,6 @@ def get_ros2_nodes(*args):
         nodes_to_start=[tool_nodes] + ros_control_spawners
     )
 
-    return [
-        robot_state_publisher,
-        epuck_driver,
-        footprint_publisher,
-        epuck_process,
-        waiting_nodes,
-    ]
-
-
-def generate_launch_description():
-    package_dir = get_package_share_directory('webots_ros2_epuck')
-    world = LaunchConfiguration('world')
-
-    webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world]),
-        ros2_supervisor=True
-    )
-
-    # The following line is important!
-    # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
-    reset_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=webots._supervisor,
-            on_exit=get_ros2_nodes,
-        )
-    )
-
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -164,19 +143,20 @@ def generate_launch_description():
         webots,
         webots._supervisor,
 
+        robot_state_publisher,
+        footprint_publisher,
+
+        epuck_driver,
+        epuck_process,
+        waiting_nodes,
+
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
                 on_exit=[
-                    launch.actions.UnregisterEventHandler(
-                        event_handler=reset_handler.event_handler
-                    ),
                     launch.actions.EmitEvent(event=launch.events.Shutdown())
                 ],
             )
-        ),
-
-        # Add the reset event handler
-        reset_handler
-    ] + get_ros2_nodes())
+        )
+    ])

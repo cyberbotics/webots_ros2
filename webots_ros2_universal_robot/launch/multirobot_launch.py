@@ -39,9 +39,6 @@ def get_ros2_nodes(*args):
     package_dir = get_package_share_directory(PACKAGE_NAME)
     ur5e_xacro_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf.xacro')
     ur5e_description = xacro.process_file(ur5e_xacro_path, mappings={'name': 'UR5eWithGripper'}).toxml()
-    abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
-    ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
-    abb_control_params = os.path.join(package_dir, 'resource', 'ros2_control_abb_config.yaml')
 
     # Define your URDF robots here
     # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node
@@ -53,38 +50,6 @@ def get_ros2_nodes(*args):
         relative_path_prefix=os.path.join(package_dir, 'resource'),
         translation='0 0 0.62',
         rotation='0 0 1 -1.5708',
-    )
-
-    # Driver nodes
-    # When having multiple robot it is enough to specify the `additional_env` argument.
-    # The `WEBOTS_CONTROLLER_URL` has to match the robot name in the world file.
-    # You can check for more information at:
-    # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#single-simulation-and-multiple-extern-robot-controllers
-    ur5e_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'UR5e'},
-        namespace='ur5e',
-        parameters=[
-            {'robot_description': ur5e_description},
-            {'use_sim_time': True},
-            ur5e_control_params
-        ]
-    )
-
-    # Standard Webots robot using driver node
-    abb_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'abbirb4600'},
-        namespace='abb',
-        parameters=[
-            {'robot_description': abb_description},
-            {'use_sim_time': True},
-            abb_control_params
-        ]
     )
 
     # ROS control spawners
@@ -139,16 +104,13 @@ def get_ros2_nodes(*args):
         # Request to spawn the URDF robot
         spawn_URDF_ur5e,
 
-        # Standard Webots robot
-        abb_driver,
-
         # Launch the driver node once the URDF robot is spawned.
         # You might include other nodes to start them with the driver node.
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessIO(
                 target_action=spawn_URDF_ur5e,
                 on_stdout=lambda event: get_webots_driver_node(
-                    event, [ur5e_driver, ur5e_controller, abb_controller] + ur5e_spawners + abb_spawners
+                    event, [ur5e_controller, abb_controller] + ur5e_spawners + abb_spawners
                 ),
             )
         ),
@@ -163,6 +125,45 @@ def generate_launch_description():
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world]),
         ros2_supervisor=True
+    )
+
+    # Driver nodes
+    # When having multiple robot it is enough to specify the `additional_env` argument.
+    # The `WEBOTS_CONTROLLER_URL` has to match the robot name in the world file.
+    # You can check for more information at:
+    # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#single-simulation-and-multiple-extern-robot-controllers
+    ur5e_xacro_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf.xacro')
+    ur5e_description = xacro.process_file(ur5e_xacro_path, mappings={'name': 'UR5eWithGripper'}).toxml()
+    ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
+    ur5e_driver = Node(
+        package='webots_ros2_driver',
+        executable='driver',
+        output='screen',
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'UR5e'},
+        namespace='ur5e',
+        parameters=[
+            {'robot_description': ur5e_description},
+            {'use_sim_time': True},
+            ur5e_control_params
+        ],
+        respawn=True
+    )
+
+    # Standard Webots robot using driver node
+    abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
+    abb_control_params = os.path.join(package_dir, 'resource', 'ros2_control_abb_config.yaml')
+    abb_driver = Node(
+        package='webots_ros2_driver',
+        executable='driver',
+        output='screen',
+        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'abbirb4600'},
+        namespace='abb',
+        parameters=[
+            {'robot_description': abb_description},
+            {'use_sim_time': True},
+            abb_control_params
+        ],
+        respawn=True
     )
 
     # The following line is important!
@@ -182,6 +183,9 @@ def generate_launch_description():
         ),
         webots,
         webots._supervisor,
+
+        ur5e_driver,
+        abb_driver,
 
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(

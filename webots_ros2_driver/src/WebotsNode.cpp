@@ -29,6 +29,7 @@
 #include <webots_ros2_driver/plugins/static/Ros2LED.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Lidar.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2LightSensor.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2Pen.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2RangeFinder.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Receiver.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2VacuumGripper.hpp>
@@ -192,6 +193,9 @@ namespace webots_ros2_driver {
           break;
         case WB_NODE_LED:
           plugin = std::make_shared<webots_ros2_driver::Ros2LED>();
+          break;
+        case WB_NODE_PEN:
+          plugin = std::make_shared<webots_ros2_driver::Ros2Pen>();
           break;
         case WB_NODE_EMITTER:
           plugin = std::make_shared<webots_ros2_driver::Ros2Emitter>();

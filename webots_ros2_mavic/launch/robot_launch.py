@@ -41,7 +41,7 @@ def generate_launch_description():
         robot_name='Mavic_2_PRO',
         parameters=[
             {'robot_description': robot_description_path},
-        ]
+        ],
         respawn=True
     )
 

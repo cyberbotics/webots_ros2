@@ -6,6 +6,7 @@ Changelog for package webots_ros2
 ------------------
 * Added support for Navigation2 in Iron.
 * Clean simulation reset in launch files.
+* Fixed Universal Robot trajectory interpolation.
 
 2023.0.4 (2023-05-23)
 ------------------

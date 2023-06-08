@@ -5,6 +5,7 @@ Changelog for package webots_ros2
 2023.1.0 (2023-XX-XX)
 ------------------
 * Added support for Navigation2 in Iron.
+* Clean simulation reset in launch files.
 * Added new TIAGo project to webots_ros2_tiago to run real robot configuration.
 * Added new WebotsController node in the driver interface to launch robot controller plugins.
 * Fixed unfound robot window library in Tesla example.

@@ -31,30 +31,36 @@ from webots_ros2_driver.webots_controller import WebotsController
 from webots_ros2_driver.wait_for_controller_connection import WaitForControllerConnection
 
 
-def get_ros2_nodes(*args):
+def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_tiago')
+    world = LaunchConfiguration('world')
+    mode = LaunchConfiguration('mode')
     use_rviz = LaunchConfiguration('rviz', default=False)
     use_nav = LaunchConfiguration('nav', default=False)
     use_slam_toolbox = LaunchConfiguration('slam_toolbox', default=False)
     use_slam_cartographer = LaunchConfiguration('slam_cartographer', default=False)
-    robot_description_path = os.path.join(package_dir, 'resource', 'tiago_webots.urdf')
-    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
-    toolbox_params = os.path.join(package_dir, 'resource', 'slam_toolbox_params.yaml')
-    nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
-    cartographer_config_dir = os.path.join(package_dir, 'resource')
-    cartographer_config_basename = 'cartographer.lua'
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
-    tiago_driver = WebotsController(
-        robot_name='Tiago_Lite',
-        parameters=[
-            {'robot_description': robot_description_path,
-             'use_sim_time': use_sim_time,
-             'set_robot_state_publisher': True},
-            ros2_control_params
-        ],
-        remappings=mappings
+    webots = WebotsLauncher(
+        world=PathJoinSubstitution([package_dir, 'worlds', world]),
+        mode=mode,
+        ros2_supervisor=True
+    )
+
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>'
+        }],
+    )
+
+    footprint_publisher = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
     )
 
     # ROS control spawners
@@ -76,21 +82,19 @@ def get_ros2_nodes(*args):
     )
     ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
-    # State publishers
-    robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        output='screen',
-        parameters=[{
-            'robot_description': '<robot name=""><link name=""/></robot>'
-        }],
-    )
-
-    footprint_publisher = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'base_footprint'],
+    robot_description_path = os.path.join(package_dir, 'resource', 'tiago_webots.urdf')
+    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
+    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+    tiago_driver = WebotsController(
+        robot_name='Tiago_Lite',
+        parameters=[
+            {'robot_description': robot_description_path,
+             'use_sim_time': use_sim_time,
+             'set_robot_state_publisher': True},
+            ros2_control_params
+        ],
+        remappings=mappings,
+        respawn=True
     )
 
     # RViz
@@ -109,6 +113,7 @@ def get_ros2_nodes(*args):
     nav2_params_file = 'nav2_params_iron.yaml' if ('ROS_DISTRO' in os.environ
                                                    and os.environ['ROS_DISTRO'] == 'iron') else 'nav2_params.yaml'
     nav2_params = os.path.join(package_dir, 'resource', nav2_params_file)
+    nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     if 'nav2_bringup' in get_packages_with_prefixes():
         navigation_nodes.append(IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(
@@ -121,6 +126,8 @@ def get_ros2_nodes(*args):
             condition=launch.conditions.IfCondition(use_nav)))
 
     # SLAM
+    cartographer_config_dir = os.path.join(package_dir, 'resource')
+    cartographer_config_basename = 'cartographer.lua'
     cartographer = Node(
         package='cartographer_ros',
         executable='cartographer_node',
@@ -143,6 +150,7 @@ def get_ros2_nodes(*args):
         condition=launch.conditions.IfCondition(use_slam_cartographer))
     navigation_nodes.append(cartographer_grid)
 
+    toolbox_params = os.path.join(package_dir, 'resource', 'slam_toolbox_params.yaml')
     slam_toolbox = Node(
         parameters=[toolbox_params,
                     {'use_sim_time': use_sim_time}],
@@ -160,34 +168,6 @@ def get_ros2_nodes(*args):
         nodes_to_start=[rviz] + navigation_nodes + ros_control_spawners
     )
 
-    return [
-        robot_state_publisher,
-        tiago_driver,
-        footprint_publisher,
-        waiting_nodes,
-    ]
-
-
-def generate_launch_description():
-    package_dir = get_package_share_directory('webots_ros2_tiago')
-    world = LaunchConfiguration('world')
-    mode = LaunchConfiguration('mode')
-
-    webots = WebotsLauncher(
-        world=PathJoinSubstitution([package_dir, 'worlds', world]),
-        mode=mode,
-        ros2_supervisor=True
-    )
-
-    # The following line is important!
-    # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
-    reset_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=webots._supervisor,
-            on_exit=get_ros2_nodes,
-        )
-    )
-
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -202,19 +182,19 @@ def generate_launch_description():
         webots,
         webots._supervisor,
 
+        robot_state_publisher,
+        footprint_publisher,
+
+        tiago_driver,
+        waiting_nodes,
+
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
                 on_exit=[
-                    launch.actions.UnregisterEventHandler(
-                        event_handler=reset_handler.event_handler
-                    ),
                     launch.actions.EmitEvent(event=launch.events.Shutdown())
                 ],
             )
-        ),
-
-        # Add the reset event handler
-        reset_handler
-    ] + get_ros2_nodes())
+        )
+    ])

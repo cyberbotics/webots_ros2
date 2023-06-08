@@ -6,6 +6,7 @@ Changelog for package webots_ros2_epuck
 ------------------
 * Added support for Navigation2 in Iron.
 * Clean simulation reset in launch file.
+* Update driver node to new WebotsController node.
 
 2023.0.4 (2023-05-23)
 ------------------

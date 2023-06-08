@@ -36,7 +36,7 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world]),
         ros2_supervisor=True
     )
-  
+
     robot_description_path = os.path.join(package_dir, 'resource', 'tesla_webots.urdf')
     tesla_driver = WebotsController(
         robot_name='vehicle',

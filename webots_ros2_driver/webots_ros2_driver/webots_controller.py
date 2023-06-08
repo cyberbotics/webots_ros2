@@ -28,7 +28,8 @@ from webots_ros2_driver.utils import controller_protocol, controller_ip_address
 
 
 class WebotsController(ExecuteProcess):
-    def __init__(self, output='screen', respawn=False, remappings=[], namespace='', parameters=[], robot_name='', port='1234', **kwargs):
+    def __init__(self, output='screen', respawn=False, remappings=[],
+                 namespace='', parameters=[], robot_name='', port='1234', **kwargs):
         webots_controller = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots-controller'))
 
         protocol = controller_protocol()

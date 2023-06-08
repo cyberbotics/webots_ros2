@@ -125,7 +125,7 @@ def generate_launch_description():
         world=PathJoinSubstitution([package_dir, 'worlds', world]),
         ros2_supervisor=True
     )
-    
+
     # Driver nodes
     # When having multiple robot it is mandatory to specify the robot name.
     ur5e_xacro_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf.xacro')
@@ -143,7 +143,7 @@ def generate_launch_description():
     )
 
     # Standard Webots robot using driver node
-    abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
+    abb_description_path = os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')
     abb_control_params = os.path.join(package_dir, 'resource', 'ros2_control_abb_config.yaml')
     abb_driver = WebotsController(
         robot_name='abbirb4600',
@@ -155,7 +155,6 @@ def generate_launch_description():
         ],
         respawn=True
     )
-
 
     # The following line is important!
     # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).

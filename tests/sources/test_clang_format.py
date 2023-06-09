@@ -68,7 +68,10 @@ class TestClangFormat(unittest.TestCase):
         ]
         skippedPaths = [
             'webots_ros2_driver/webots/',
-            'webots_ros2_importer/webots_ros2_importer/urdf2webots/tests'
+            'webots_ros2_importer/webots_ros2_importer/urdf2webots/tests',
+            'webots_ros2_husarion/rosbot_ros',
+            'webots_ros2_husarion/rosbot_xl_ros',
+            'webots_ros2_husarion/ros_components_description'
         ]
         skippedFiles = [
         ]

@@ -34,7 +34,8 @@ def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_husarion')
     rosbot_description_package = get_package_share_directory('rosbot_description')
     rosbot_description_xacro_path = os.path.join(rosbot_description_package, 'urdf', 'rosbot.urdf.xacro')
-    rosbot_description_urdf = Command(['xacro ', rosbot_description_xacro_path, ' use_sim:=true simulation_engine:=webots'])
+    xacro_mappings = ['use_sim:=true', ' ', 'simulation_engine:=webots']
+    rosbot_description_urdf = Command(['xacro ', rosbot_description_xacro_path] + [' '] + xacro_mappings)
 
     ekf_config = os.path.join(package_dir, 'resource', 'ekf.yaml')
 
@@ -64,9 +65,9 @@ def get_ros2_nodes(*args):
         robot_name='rosbot',
         parameters=[
             {'robot_description': rosbot_description_xacro_path,
-             'xacro_mappings': ['use_sim:=true', 'simulation_engine:=webots'],
+             'xacro_mappings': xacro_mappings,
              'use_sim_time': use_sim_time,
-             'set_robot_state_publisher': True},
+             'set_robot_state_publisher': False},
             ros2_control_params
         ],
         remappings=[

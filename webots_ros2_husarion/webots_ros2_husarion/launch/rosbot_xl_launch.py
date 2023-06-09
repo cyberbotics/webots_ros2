@@ -34,7 +34,10 @@ def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_husarion')
     rosbot_description_package = get_package_share_directory('rosbot_xl_description')
     rosbot_description_xacro_path = os.path.join(rosbot_description_package, 'urdf', 'rosbot_xl.urdf.xacro')
-    rosbot_description_urdf = Command(['xacro ', rosbot_description_xacro_path, ' use_sim:=true simulation_engine:=webots'])
+    xacro_mappings = ['use_sim:=true', ' ', 'simulation_engine:=webots', ' ',
+                      'simulation_controllers_config_file:=\'$(find webots_ros2_husarion)/config/rosbot_xl_controllers.yaml\'',
+                      ' ', 'mecanum:=true']
+    rosbot_description_urdf = Command(['xacro ', rosbot_description_xacro_path] + [' '] + xacro_mappings)
 
     laser_filter_config = os.path.join(package_dir, 'resource', 'laser_filter.yaml')
     ekf_config = os.path.join(package_dir, 'resource', 'ekf.yaml')
@@ -65,9 +68,9 @@ def get_ros2_nodes(*args):
         robot_name='rosbot_xl',
         parameters=[
             {'robot_description': rosbot_description_xacro_path,
-             'xacro_mappings': ['use_sim:=true', 'simulation_engine:=webots'],
+             'xacro_mappings': xacro_mappings,
              'use_sim_time': use_sim_time,
-             'set_robot_state_publisher': True},
+             'set_robot_state_publisher': False},
             ros2_control_params
         ],
         remappings=[

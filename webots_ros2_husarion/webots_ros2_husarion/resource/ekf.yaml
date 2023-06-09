@@ -1,0 +1,37 @@
+ekf_filter_node:
+    ros__parameters:
+        predict_to_current_time: false
+        frequency: 25.0
+        sensor_timeout: 0.06
+        two_d_mode: true
+        print_diagnostics: true
+        publish_tf: true
+
+        map_frame: map
+        odom_frame: odom
+        base_link_frame: base_link
+        world_frame: odom
+
+        odom0: /rosbot_base_controller/odom
+        odom0_config: [false, false, false, # X , Y , Z
+                      false, false, false, # roll , pitch ,yaw
+                      true, true, false, # dX , dY , dZ
+                      false, false, false, # droll , dpitch ,dyaw
+                      false, false, false] # ddX , ddY , ddZ
+
+        odom0_queue_size: 10
+        odom0_nodelay: true
+        odom0_differential: false
+        odom0_relative: false
+
+        imu0: /imu_broadcaster/imu
+        imu0_config: [false, false, false, # X , Y , Z
+                      false, false, true, # roll , pitch ,yaw
+                      false, false, false, # dX , dY , dZ
+                      false, false, false, # droll , dpitch ,dyaw
+                      false, false, false] # ddX , ddY , ddZ
+        imu0_queue_size: 10
+        imu0_nodelay: true
+        imu0_differential: false
+        imu0_relative: true
+        imu0_remove_gravitational_acceleration: true

@@ -28,28 +28,6 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
 
 
-def get_ros2_nodes(*args):
-    package_dir = get_package_share_directory('webots_ros2_tesla')
-    robot_description_path = os.path.join(package_dir, 'resource', 'tesla_webots.urdf')
-
-    tesla_driver = WebotsController(
-        robot_name='vehicle',
-        parameters=[
-            {'robot_description': robot_description_path}
-        ]
-    )
-
-    lane_follower = Node(
-        package='webots_ros2_tesla',
-        executable='lane_follower',
-    )
-
-    return [
-        lane_follower,
-        tesla_driver,
-    ]
-
-
 def generate_launch_description():
     package_dir = get_package_share_directory('webots_ros2_tesla')
     world = LaunchConfiguration('world')
@@ -59,13 +37,17 @@ def generate_launch_description():
         ros2_supervisor=True
     )
 
-    # The following line is important!
-    # This event handler respawns the ROS 2 nodes on simulation reset (supervisor process ends).
-    reset_handler = launch.actions.RegisterEventHandler(
-        event_handler=launch.event_handlers.OnProcessExit(
-            target_action=webots._supervisor,
-            on_exit=get_ros2_nodes,
-        )
+    robot_description_path = os.path.join(package_dir, 'resource', 'tesla_webots.urdf')
+    tesla_driver = WebotsController(
+        robot_name='vehicle',
+        parameters=[
+            {'robot_description': robot_description_path}
+        ],
+        respawn=True
+    )
+    lane_follower = Node(
+        package='webots_ros2_tesla',
+        executable='lane_follower',
     )
 
     return LaunchDescription([
@@ -76,20 +58,16 @@ def generate_launch_description():
         ),
         webots,
         webots._supervisor,
+        tesla_driver,
+        lane_follower,
 
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(
             event_handler=launch.event_handlers.OnProcessExit(
                 target_action=webots,
                 on_exit=[
-                    launch.actions.UnregisterEventHandler(
-                        event_handler=reset_handler.event_handler
-                    ),
                     launch.actions.EmitEvent(event=launch.events.Shutdown())
                 ],
             )
-        ),
-
-        # Add the reset event handler
-        reset_handler
-    ] + get_ros2_nodes())
+        )
+    ])

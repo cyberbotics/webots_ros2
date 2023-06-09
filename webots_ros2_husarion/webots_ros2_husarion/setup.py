@@ -16,13 +16,22 @@ data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
     name=package_name,
-    version='0.1.0',
+    version='2023.0.4',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools'],
     zip_safe=True,
+    author='Jakub Delicat',
+    author_email='jakub.delicat@husarion.com',
     maintainer='Husarion',
     maintainer_email='support@husarion.com',
+    keywords=['ROS', 'Webots', 'Robot', 'Simulation', 'Examples', 'ROSbot', 'ROSbot 2R', 'ROSbot XL', 'Husarion'],
+    classifiers=[
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python',
+        'Topic :: Software Development',
+    ],
     description='Husarion ROSbot 2R and XL robots ROS2 interface for Webots.',
     license='Apache License 2.0',
     tests_require=['pytest'],

@@ -34,7 +34,7 @@ namespace webots_ros2_driver {
     mTurnOnSubscription = mNode->create_subscription<std_msgs::msgs::Bool>(
       mTopicName + "/turn_on", rclcpp::SensorDataQoS().reliable(), std::bind(&Ros2VacuumGripper::turnOnCallback, this, _1));
 
-    mIsOnService = mNode->create_service<webots_ros2_msgs::srv::get_bool>(
+    mIsOnService = mNode->create_service<webots_ros2_msgs::srv::GetBool>(
       mTopicName + "/is_on", rclcpp::SensorDataQoS().reliable(), std::bind(&Ros2VacuumGripper::isOnCallback, this, _1, _2));
 
     mIsPresenceEnabled = false;
@@ -49,8 +49,8 @@ namespace webots_ros2_driver {
       wb_vacuum_gripper_turn_off(mVacuumGripper);
   }
 
-  void Ros2VacuumGripper::isOnCallback(const std::shared_ptr<webots_ros2_msgs::srv::get_bool::Request> request,
-                                       std::shared_ptr<webots_ros2_msgs::srv::get_bool::Response> response) {
+  void Ros2VacuumGripper::isOnCallback(const std::shared_ptr<webots_ros2_msgs::srv::GetBool::Request> request,
+                                       std::shared_ptr<webots_ros2_msgs::srv::GetBool::Response> response) {
     response->value = wb_vacuum_gripper_is_on(mVacuumGripper);
   }
 

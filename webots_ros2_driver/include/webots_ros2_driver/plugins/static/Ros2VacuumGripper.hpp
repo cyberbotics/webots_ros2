@@ -19,8 +19,8 @@
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 
 #include <std_msgs/msg/bool.hpp>
-#include <webots_ros2_msgs/msg/bool_stamped.hpp>
-#include <webots_ros2_msgs/srv/get_bool.hpp>
+#include <webots_ros2_msgs/msg/BoolStamped.hpp>
+#include <webots_ros2_msgs/srv/GetBool.hpp>
 
 namespace webots_ros2_driver {
   class Ros2VacuumGripper : public Ros2SensorPlugin {
@@ -33,13 +33,12 @@ namespace webots_ros2_driver {
 
     // ROS2 subscriptions
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr mTurnOnSubscription;
-    void turnOnCallback(const std::shared_ptr<webots_ros2_msgs::srv::set_bool::Request> request,
-                        std::shared_ptr<webots_ros2_msgs::srv::set_bool::Response> response);
+    void turnOnCallback(const std_msgs::msg::Bool::SharedPtr message);
 
     // ROS2 services
-    rclcpp::Service<webots_ros2_msgs::srv::get_bool>::SharedPtr mIsOnService;
-    void isOnCallback(const std::shared_ptr<webots_ros2_msgs::srv::get_bool::Request> request,
-                      std::shared_ptr<webots_ros2_msgs::srv::get_bool::Response> response);
+    rclcpp::Service<webots_ros2_msgs::srv::GetBool>::SharedPtr mIsOnService;
+    void isOnCallback(const std::shared_ptr<webots_ros2_msgs::srv::GetBool::Request> request,
+                      std::shared_ptr<webots_ros2_msgs::srv::GetBool::Response> response);
 
     // ROS2 topics
     rclcpp::Publisher<webots_ros2_msgs::msg::BoolStamped>::SharedPtr mPresencePublisher;

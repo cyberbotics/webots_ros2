@@ -19,8 +19,8 @@
 #include <webots_ros2_driver/plugins/Ros2SensorPlugin.hpp>
 
 #include <std_msgs/msg/bool.hpp>
-#include <webots_ros2_msgs/msg/BoolStamped.hpp>
-#include <webots_ros2_msgs/srv/GetBool.hpp>
+#include <webots_ros2_msgs/msg/bool_stamped.hpp>
+#include <webots_ros2_msgs/srv/get_bool.hpp>
 
 namespace webots_ros2_driver {
   class Ros2VacuumGripper : public Ros2SensorPlugin {

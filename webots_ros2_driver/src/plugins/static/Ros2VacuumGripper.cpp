@@ -31,11 +31,11 @@ namespace webots_ros2_driver {
     assert(mVacuumGripper != 0);
 
     // Initialize services, publishers and subcriptions
-    mTurnOnSubscription = mNode->create_subscription<std_msgs::msgs::Bool>(
+    mTurnOnSubscription = mNode->create_subscription<std_msgs::msg::Bool>(
       mTopicName + "/turn_on", rclcpp::SensorDataQoS().reliable(), std::bind(&Ros2VacuumGripper::turnOnCallback, this, _1));
 
     mIsOnService = mNode->create_service<webots_ros2_msgs::srv::GetBool>(
-      mTopicName + "/is_on", rclcpp::SensorDataQoS().reliable(), std::bind(&Ros2VacuumGripper::isOnCallback, this, _1, _2));
+      mTopicName + "/is_on", std::bind(&Ros2VacuumGripper::isOnCallback, this, _1, _2));
 
     mIsPresenceEnabled = false;
     mPresencePublisher =

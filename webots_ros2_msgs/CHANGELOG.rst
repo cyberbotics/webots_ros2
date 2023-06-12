@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.0 (2023-XX-XX)
+------------------
+* Added BoolStamped message
+
 2022.1.0 (2022-09-23)
 ------------------
 * Added URDF robot messages

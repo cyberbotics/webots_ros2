@@ -10,6 +10,9 @@ Changelog for package webots_ros2
 * Added new WebotsController node in the driver interface to launch robot controller plugins.
 * Fixed unfound robot window library in Tesla example.
 * Default to canonical topic name and fix camera_info stamp in Ros2Camera, Ros2RangeFinder.
+* Added VacuumGripper gripper support in webots_ros2_driver.
+* Added BoolStamped message in webots_ros2_msgs.
+* Added GetBool message in webots_ros2_msgs.
 
 2023.0.4 (2023-05-23)
 ------------------

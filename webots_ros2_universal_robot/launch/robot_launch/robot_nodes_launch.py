@@ -17,13 +17,12 @@
 """Launch Webots Universal Robot simulation nodes."""
 
 import os
-import pathlib
 import launch
 from launch_ros.actions import Node
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
-from webots_ros2_driver.utils import controller_url_prefix
+from webots_ros2_driver.webots_controller import WebotsController
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -31,35 +30,29 @@ PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 def generate_launch_description():
     package_dir = get_package_share_directory(PACKAGE_NAME)
-    ur5e_urdf_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf')
-    robot_description = pathlib.Path(ur5e_urdf_path).read_text()
+    robot_description_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
 
     # Define your URDF robots here
-    # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node
+    # The name of an URDF robot has to match the name of the robot of the driver node
     # You can specify the URDF file to use with "urdf_path"
     spawn_URDF_ur5e = URDFSpawner(
         name='UR5e',
-        urdf_path=ur5e_urdf_path,
+        urdf_path=robot_description_path,
         translation='0 0 0.6',
         rotation='0 0 1 -1.5708',
     )
 
     # Driver nodes
-    # When having multiple robot it is enough to specify the `additional_env` argument.
-    # The `WEBOTS_CONTROLLER_URL` has to match the robot name in the world file.
-    # You can check for more information at:
-    # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#single-simulation-and-multiple-extern-robot-controllers
-    universal_robot_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'UR5e'},
+    # When having multiple robot it is mandatory to specify the robot name.
+    universal_robot_driver = WebotsController(
+        robot_name='UR5e',
         parameters=[
-            {'robot_description': robot_description},
+            {'robot_description': robot_description_path},
             {'use_sim_time': True},
+            {'set_robot_state_publisher': True},
             ros2_control_params
-        ],
+        ]
     )
 
     # Other ROS 2 nodes
@@ -86,7 +79,7 @@ def generate_launch_description():
         executable='robot_state_publisher',
         output='screen',
         parameters=[{
-            'robot_description': robot_description
+            'robot_description': '<robot name=""><link name=""/></robot>'
         }],
     )
 

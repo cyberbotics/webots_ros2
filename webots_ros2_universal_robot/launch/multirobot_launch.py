@@ -18,7 +18,6 @@
 
 import os
 import xacro
-import pathlib
 import launch
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -28,7 +27,7 @@ from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch_ros.actions import Node
 from webots_ros2_driver.urdf_spawner import URDFSpawner, get_webots_driver_node
 from webots_ros2_driver.webots_launcher import WebotsLauncher
-from webots_ros2_driver.utils import controller_url_prefix
+from webots_ros2_driver.webots_controller import WebotsController
 
 
 PACKAGE_NAME = 'webots_ros2_universal_robot'
@@ -41,9 +40,9 @@ def get_ros2_nodes(*args):
     ur5e_description = xacro.process_file(ur5e_xacro_path, mappings={'name': 'UR5eWithGripper'}).toxml()
 
     # Define your URDF robots here
-    # The name of an URDF robot has to match the WEBOTS_CONTROLLER_URL of the driver node
+    # The name of an URDF robot has to match the name of the robot of the driver node
     # You can specify the URDF content to use with robot_description
-    # In case you have relative paths in your URDF, specifiy the relative_path_prefix as the directory of your xacro file
+    # In case you have relative paths in your URDF, specify the relative_path_prefix as the directory of your xacro file
     spawn_URDF_ur5e = URDFSpawner(
         name='UR5e',
         robot_description=ur5e_description,
@@ -53,7 +52,7 @@ def get_ros2_nodes(*args):
     )
 
     # ROS control spawners
-    controller_manager_timeout = ['--controller-manager-timeout', '75']
+    controller_manager_timeout = ['--controller-manager-timeout', '500']
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
     ur5e_trajectory_controller_spawner = Node(
         package='controller_manager',
@@ -128,21 +127,15 @@ def generate_launch_description():
     )
 
     # Driver nodes
-    # When having multiple robot it is enough to specify the `additional_env` argument.
-    # The `WEBOTS_CONTROLLER_URL` has to match the robot name in the world file.
-    # You can check for more information at:
-    # https://cyberbotics.com/doc/guide/running-extern-robot-controllers#single-simulation-and-multiple-extern-robot-controllers
+    # When having multiple robot it is mandatory to specify the robot name.
     ur5e_xacro_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf.xacro')
-    ur5e_description = xacro.process_file(ur5e_xacro_path, mappings={'name': 'UR5eWithGripper'}).toxml()
     ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
-    ur5e_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'UR5e'},
+    ur5e_driver = WebotsController(
+        robot_name='UR5e',
         namespace='ur5e',
         parameters=[
-            {'robot_description': ur5e_description},
+            {'robot_description': ur5e_xacro_path},
+            {'xacro_mappings': ['name:=UR5eWithGripper']},
             {'use_sim_time': True},
             ur5e_control_params
         ],
@@ -150,16 +143,13 @@ def generate_launch_description():
     )
 
     # Standard Webots robot using driver node
-    abb_description = pathlib.Path(os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')).read_text()
+    abb_description_path = os.path.join(package_dir, 'resource', 'webots_abb_description.urdf')
     abb_control_params = os.path.join(package_dir, 'resource', 'ros2_control_abb_config.yaml')
-    abb_driver = Node(
-        package='webots_ros2_driver',
-        executable='driver',
-        output='screen',
-        additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix() + 'abbirb4600'},
+    abb_driver = WebotsController(
+        robot_name='abbirb4600',
         namespace='abb',
         parameters=[
-            {'robot_description': abb_description},
+            {'robot_description': abb_description_path},
             {'use_sim_time': True},
             abb_control_params
         ],

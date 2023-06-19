@@ -23,10 +23,14 @@ namespace webots_ros2_driver {
     mRecognitionIsEnabled = false;
     mCamera = wb_robot_get_device(parameters["name"].c_str());
 
+    mCameraInfoSuffix = parameters.count("cameraInfoSuffix") ? parameters["cameraInfoSuffix"] : "/camera_info";
+    mImageSuffix = parameters.count("imageSuffix") ? parameters["imageSuffix"] : "/image_color";
+
     assert(mCamera != 0);
 
     // Image publisher
-    mImagePublisher = mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName, rclcpp::SensorDataQoS().reliable());
+    mImagePublisher =
+      mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName + mImageSuffix, rclcpp::SensorDataQoS().reliable());
     mImageMessage.header.frame_id = mFrameName;
     mImageMessage.height = wb_camera_get_height(mCamera);
     mImageMessage.width = wb_camera_get_width(mCamera);
@@ -37,7 +41,7 @@ namespace webots_ros2_driver {
 
     // CameraInfo publisher
     mCameraInfoPublisher =
-      mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + "/camera_info", rclcpp::SensorDataQoS().reliable());
+      mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + mCameraInfoSuffix, rclcpp::SensorDataQoS().reliable());
     mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = wb_camera_get_height(mCamera);
@@ -116,6 +120,7 @@ namespace webots_ros2_driver {
     auto image = wb_camera_get_image(mCamera);
     if (image) {
       mImageMessage.header.stamp = mNode->get_clock()->now();
+      mCameraInfoMessage.header.stamp = mImageMessage.header.stamp;
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
       mImagePublisher->publish(mImageMessage);
     }

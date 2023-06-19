@@ -5,6 +5,7 @@ Changelog for package webots_ros2_universal_robot
 2023.1.0 (2023-XX-XX)
 ------------------
 * Clean simulation reset in launch file.
+* Update driver node to new WebotsController node.
 
 2023.0.4 (2023-05-23)
 ------------------

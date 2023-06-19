@@ -38,8 +38,8 @@ class FollowJointTrajectoryClient(Node):
         # hotfix for the new topic name in the last version of joint_trajectory_controller
         # (https://github.com/cyberbotics/webots_ros2/pull/726)
         package_xml_path = os.path.join(get_package_share_directory('joint_trajectory_controller'), "package.xml")
-        version_package = version.parse(ET.parse(package_xml_path).findall("version")[0].text)
-        state_topic = '/state' if version_package < version.parse('3.7.0') else '/controller_state'
+        package_version = version.parse(ET.parse(package_xml_path).findall("version")[0].text)
+        state_topic = '/state' if package_version < version.parse('3.7.0') else '/controller_state'
 
         self.__state_subscriber = self.create_subscription(
             JointTrajectoryControllerState, prefix + state_topic, self.__on_state_received, 1

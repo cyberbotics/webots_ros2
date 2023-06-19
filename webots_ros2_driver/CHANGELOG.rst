@@ -2,10 +2,18 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.0 (2023-XX-XX)
+------------------
+* Added parameters to rename Camera and RangeFinder topics.
+* Added new WebotsController node to launch robot controller plugins.
+* Added compilation of the generic robot window library.
+* Default to canonical topic name and fix camera_info stamp in Ros2Camera, Ros2RangeFinder.
+* Added VacuumGripper device support
+
 2023.0.4 (2023-05-23)
 ------------------
 * Fixed vertical field of view in static RangeFinder plugin.
-* Added support for painted point clouds
+* Added support for painted point clouds.
 * Added custom handler to start nodes when Webots is ready.
 
 2023.0.3 (2023-04-12)

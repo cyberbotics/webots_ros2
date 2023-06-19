@@ -68,7 +68,7 @@ class TestEpuck(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, Image, '/camera', condition=on_image_message_received)
+        self.wait_for_messages(self.__node, Image, '/camera/image_color', condition=on_image_message_received)
 
     def testPs0(self):
         def on_range_message_received(message):

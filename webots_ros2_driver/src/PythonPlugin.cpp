@@ -20,6 +20,11 @@ namespace webots_ros2_driver {
     PyErr_Print();
   }
 
+  void PythonPlugin::stop() {
+    PyObject_CallMethod(mPyPlugin, "stop", "");
+    Py_Finalize();
+  }
+
   PyObject *PythonPlugin::getPyWebotsNodeInstance() {
     if (gPyWebotsNode)
       return gPyWebotsNode;
@@ -36,6 +41,7 @@ from controller import Supervisor
 # to avoid to load another library named "controller" when loading vehicle library
 sys.path.insert(1, os.path.dirname(controller.__file__))
 from vehicle import Driver
+
 
 class WebotsNode:
     def __init__(self):

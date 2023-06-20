@@ -33,8 +33,6 @@
 #include <webots_ros2_driver/plugins/static/Ros2Receiver.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2VacuumGripper.hpp>
 #include "webots_ros2_driver/PluginInterface.hpp"
-
-#include "webots_ros2_driver/PluginInterface.hpp"
 #include "webots_ros2_driver/PythonPlugin.hpp"
 
 namespace webots_ros2_driver {
@@ -258,6 +256,7 @@ namespace webots_ros2_driver {
     if (gShutdownSignalReceived && !mWaitingForUrdfRobotToBeRemoved) {
       mRemoveUrdfRobotPublisher->publish(mRemoveUrdfRobotMessage);
       mWaitingForUrdfRobotToBeRemoved = true;
+      return -1;
     }
 
     const int result = wb_robot_step(mStep);

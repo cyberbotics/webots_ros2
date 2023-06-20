@@ -1,14 +1,15 @@
-
-/**:
+ur5e/controller_manager:
   ros__parameters:
-    # controller_manager
-    update_rate: 20
+    update_rate: 50
+
     ur_joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
+
     ur_joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    # ur_joint_trajectory_controller
+ur5e/ur_joint_trajectory_controller:
+  ros__parameters:
     joints:
       - shoulder_pan_joint
       - shoulder_lift_joint
@@ -23,4 +24,5 @@
       - position
     state_interfaces:
       - position
-    allow_partial_joints_goal: True
+
+    allow_partial_joints_goal: true

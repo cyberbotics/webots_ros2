@@ -16,9 +16,9 @@
 #include <webots/vehicle/driver.h>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
-#include <webots_ros2_driver/WebotsNode.hpp>
 #include <webots_ros2_driver/PluginInterface.hpp>
 #include <webots_ros2_driver/PythonPlugin.hpp>
+#include <webots_ros2_driver/WebotsNode.hpp>
 
 int main(int argc, char **argv) {
   // Check if the robot can be a driver, if not create a simple Supervisor
@@ -49,8 +49,9 @@ int main(int argc, char **argv) {
   // Check if the plugin is actually an instance of PythonPlugin
   bool isPython = false;
   for (std::shared_ptr<webots_ros2_driver::PluginInterface> plugin : node->mPlugins) {
-    std::shared_ptr<webots_ros2_driver::PythonPlugin> pythonPlugin = std::dynamic_pointer_cast<webots_ros2_driver::PythonPlugin>(plugin);
-    if(pythonPlugin) {
+    std::shared_ptr<webots_ros2_driver::PythonPlugin> pythonPlugin =
+      std::dynamic_pointer_cast<webots_ros2_driver::PythonPlugin>(plugin);
+    if (pythonPlugin) {
       pythonPlugin->stop();  // stop only for python plugins
       isPython = true;
       break;

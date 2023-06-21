@@ -7,6 +7,7 @@ Changelog for package webots_ros2
 * Added Ros2Pen static plugin.
 * Added support for Navigation2 in Iron.
 * Clean simulation reset in launch files.
+* Fixed Universal Robot trajectory interpolation.
 * Added new TIAGo project to webots_ros2_tiago to run real robot configuration.
 * Added new WebotsController node in the driver interface to launch robot controller plugins.
 * Fixed unfound robot window library in Tesla example.

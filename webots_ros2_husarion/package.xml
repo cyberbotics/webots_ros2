@@ -18,10 +18,6 @@
   <exec_depend>robot_localization</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
 
-  <exec_depend>rosbot_description</exec_depend>
-  <exec_depend>rosbot_xl_description</exec_depend>
-  <exec_depend>ros_components_description</exec_depend>
-
   <export>
     <build_type>ament_python</build_type>
   </export>

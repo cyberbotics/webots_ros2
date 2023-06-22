@@ -56,7 +56,7 @@ class TestClangFormat(unittest.TestCase):
             'webots_ros2_control',
             'webots_ros2_driver',
             'webots_ros2_epuck',
-            'webots_ros2_husarion/webots_ros2_husarion',
+            'webots_ros2_husarion',
             'webots_ros2_importer',
             'webots_ros2_mavic',
             'webots_ros2_msgs',
@@ -68,10 +68,7 @@ class TestClangFormat(unittest.TestCase):
         ]
         skippedPaths = [
             'webots_ros2_driver/webots/',
-            'webots_ros2_importer/webots_ros2_importer/urdf2webots/tests',
-            'webots_ros2_husarion/rosbot_ros',
-            'webots_ros2_husarion/rosbot_xl_ros',
-            'webots_ros2_husarion/ros_components_description'
+            'webots_ros2_importer/webots_ros2_importer/urdf2webots/tests'
         ]
         skippedFiles = [
         ]

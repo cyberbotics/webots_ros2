@@ -12,7 +12,7 @@ ekf_filter_node:
         base_link_frame: base_link
         world_frame: odom
 
-        odom0: /rosbot_base_controller/odom
+        odom0: /dummy_override_in_launch
         odom0_config: [false, false, false, # X , Y , Z
                       false, false, false, # roll , pitch ,yaw
                       true, true, false, # dX , dY , dZ

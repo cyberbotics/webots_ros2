@@ -18,12 +18,12 @@
 """Launch Webots ROSbot 2R driver."""
 
 import os
-from launch.substitutions import LaunchConfiguration, Command
+import launch
+from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from launch_ros.actions import Node
-import launch
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
@@ -32,9 +32,7 @@ from webots_ros2_driver.wait_for_controller_connection import WaitForControllerC
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_husarion')
-    rosbot_description_xacro_path = os.path.join(package_dir, 'resources', 'rosbot_webots.urdf')
-    xacro_mappings = ['use_sim:=true', ' ', 'simulation_engine:=webots']
-
+    rosbot_webots_xacro_path = os.path.join(package_dir, 'resource', 'rosbot_webots.urdf')
     ekf_config = os.path.join(package_dir, 'resource', 'ekf.yaml')
 
     ros2_control_params = os.path.join(package_dir, 'resource', 'rosbot_controllers.yaml')
@@ -62,10 +60,9 @@ def get_ros2_nodes(*args):
     rosbot_driver = WebotsController(
         robot_name='rosbot',
         parameters=[
-            {'robot_description': rosbot_description_xacro_path,
-             'xacro_mappings': xacro_mappings,
+            {'robot_description': rosbot_webots_xacro_path,
              'use_sim_time': use_sim_time,
-             'set_robot_state_publisher': False},
+             'set_robot_state_publisher': True},
             ros2_control_params
         ],
         remappings=[

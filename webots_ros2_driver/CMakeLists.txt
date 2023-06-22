@@ -92,6 +92,7 @@ add_executable(driver
   src/plugins/static/Ros2Emitter.cpp
   src/plugins/static/Ros2Receiver.cpp
   src/plugins/static/Ros2Compass.cpp
+  src/plugins/static/Ros2VacuumGripper.cpp
   src/utils/Math.cpp
   src/utils/Utils.cpp
 )

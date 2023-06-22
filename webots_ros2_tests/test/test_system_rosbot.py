@@ -85,7 +85,7 @@ class TestROSbot(TestWebots):
             number_of_inf = 0
             number_of_non_zeroes = 0
             for value in message.ranges:
-                if value == float('inf') :
+                if value == float('inf'):
                     number_of_inf += 1
                 elif value > 0.:
                     number_of_non_zeroes += 1

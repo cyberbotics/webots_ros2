@@ -32,10 +32,8 @@ from webots_ros2_driver.wait_for_controller_connection import WaitForControllerC
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_husarion')
-    rosbot_description_package = get_package_share_directory('rosbot_description')
-    rosbot_description_xacro_path = os.path.join(rosbot_description_package, 'urdf', 'rosbot.urdf.xacro')
+    rosbot_description_xacro_path = os.path.join(package_dir, 'resources', 'rosbot_webots.urdf')
     xacro_mappings = ['use_sim:=true', ' ', 'simulation_engine:=webots']
-    rosbot_description_urdf = Command(['xacro ', rosbot_description_xacro_path] + [' '] + xacro_mappings)
 
     ekf_config = os.path.join(package_dir, 'resource', 'ekf.yaml')
 
@@ -86,7 +84,7 @@ def get_ros2_nodes(*args):
         executable='robot_state_publisher',
         output='screen',
         parameters=[{
-            'robot_description': rosbot_description_urdf
+            'robot_description': '<robot name=""><link name=""/></robot>'
         }],
     )
 

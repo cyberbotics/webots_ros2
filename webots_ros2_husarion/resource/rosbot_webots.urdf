@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot name="ROSbot Webots">
+    <webots>
+        <plugin type="webots_ros2_control::Ros2Control" />
+        <plugin type="webots_ros2_driver::Ros2IMU">
+            <enabled>true</enabled>
+            <topicName>/imu_broadcaster/imu</topicName>
+            <alwaysOn>true</alwaysOn>
+            <frameName>imu_link</frameName>
+            <gyroName>imu gyro</gyroName>
+            <accelerometerName>imu accelerometer</accelerometerName>
+            <inertialUnitName>imu inertial_unit</inertialUnitName>
+        </plugin>
+    </webots>
+
+    <ros2_control name="wheels" type="system">
+        <hardware>
+            <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
+        </hardware>
+
+        <joint name="fl_wheel_joint">
+            <command_interface name="velocity" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="fr_wheel_joint">
+            <command_interface name="velocity" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="rl_wheel_joint">
+            <command_interface name="velocity" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="rr_wheel_joint">
+            <command_interface name="velocity" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+    </ros2_control>
+</robot>

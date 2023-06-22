@@ -1,12 +1,3 @@
 [submodule "webots_ros2_importer/webots_ros2_importer/urdf2webots"]
 	path = webots_ros2_importer/webots_ros2_importer/urdf2webots
 	url = https://github.com/cyberbotics/urdf2webots.git
-[submodule "webots_ros2_husarion/ros_components_description"]
-	path = webots_ros2_husarion/ros_components_description
-	url = https://github.com/husarion/ros_components_description.git
-[submodule "webots_ros2_husarion/rosbot_ros"]
-	path = webots_ros2_husarion/rosbot_ros
-	url = https://github.com/husarion/rosbot_ros.git
-[submodule "webots_ros2_husarion/rosbot_xl_ros"]
-	path = webots_ros2_husarion/rosbot_xl_ros
-	url = https://github.com/husarion/rosbot_xl_ros.git

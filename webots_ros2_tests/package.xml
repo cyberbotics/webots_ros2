@@ -22,6 +22,7 @@
   <test_depend>webots_ros2_tesla</test_depend>
   <test_depend>webots_ros2_mavic</test_depend>
   <test_depend>webots_ros2_tiago</test_depend>
+  <test_depend>webots_ros2_husarion</test_depend>
   <test_depend>tf2_ros</test_depend>
   <test_depend>std_msgs</test_depend>
   <test_depend>sensor_msgs</test_depend>

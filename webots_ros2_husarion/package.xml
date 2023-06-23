@@ -12,8 +12,11 @@
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
   <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
 
-  <exec_depend>webots_ros2</exec_depend>
   <exec_depend>webots_ros2_driver</exec_depend>
+  <exec_depend>webots_ros2_control</exec_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
   <exec_depend>laser_filters</exec_depend>
   <exec_depend>robot_localization</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>

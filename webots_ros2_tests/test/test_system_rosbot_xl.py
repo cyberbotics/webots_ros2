@@ -35,6 +35,7 @@ from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
 @pytest.mark.rostest
 def generate_test_description():
+    os.environ["USERNAME"] = "root"
     initialize_webots_test()
     # If ROS_DISTRO is rolling, skip the test as some required packages are missing (cf. ci_after_init.bash)
     if 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling':
@@ -55,6 +56,7 @@ def generate_test_description():
 class TestROSbotXL(TestWebots):
     @classmethod
     def setUpClass(cls):
+        os.environ["USERNAME"] = "root"
         rclpy.init()
 
     @classmethod

@@ -4,6 +4,7 @@ Changelog for package webots_ros2
 
 2023.1.0 (2023-XX-XX)
 ------------------
+* Added Ros2Pen static plugin.
 * Added support for Navigation2 in Iron.
 * Clean simulation reset in launch files.
 * Fixed Universal Robot trajectory interpolation.

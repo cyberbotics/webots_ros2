@@ -139,7 +139,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'world',
             default_value='rosbot_xl.wbt',
-            description='Choose one of the world files from `/webots_ros2_turtlebot/world` directory'
+            description='Choose one of the world files from `/webots_ros2_husarion/world` directory'
         ),
         DeclareLaunchArgument(
             'mode',

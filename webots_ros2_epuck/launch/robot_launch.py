@@ -89,10 +89,12 @@ def generate_launch_description():
     robot_description_path = os.path.join(package_dir, 'resource', 'epuck_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
     mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+    components_mappings = [('cover', 'cover_link')]
     epuck_driver = WebotsController(
         robot_name='e-puck',
         parameters=[
             {'robot_description': robot_description_path,
+             'components_remappings': components_mappings,
              'use_sim_time': use_sim_time,
              'set_robot_state_publisher': True},
             ros2_control_params

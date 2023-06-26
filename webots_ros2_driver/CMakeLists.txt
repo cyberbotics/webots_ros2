@@ -84,6 +84,7 @@ add_executable(driver
   src/plugins/Ros2SensorPlugin.cpp
   src/plugins/static/Ros2Lidar.cpp
   src/plugins/static/Ros2LED.cpp
+  src/plugins/static/Ros2Pen.cpp
   src/plugins/static/Ros2Camera.cpp
   src/plugins/static/Ros2GPS.cpp
   src/plugins/static/Ros2RangeFinder.cpp

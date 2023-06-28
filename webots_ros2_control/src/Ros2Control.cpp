@@ -23,6 +23,8 @@
 #include "hardware_interface/component_parser.hpp"
 #include "hardware_interface/resource_manager.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
+#include "hardware_interface/types/lifecycle_state_names.hpp"
+#include "lifecycle_msgs/msg/state.hpp"
 #include "pluginlib/class_list_macros.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -88,7 +90,10 @@ namespace webots_ros2_control {
       webotsSystem->init(mNode, controlHardware[i]);
       resourceManager->import_component(std::move(webotsSystem), controlHardware[i]);
 
-      resourceManager->activate_all_components();
+      // Configure and activate all components
+      using lifecycle_msgs::msg::State;
+      rclcpp_lifecycle::State active_state(State::PRIMARY_STATE_ACTIVE, hardware_interface::lifecycle_state_names::ACTIVE);
+      resourceManager->set_component_state(controlHardware[i].name, active_state);
     }
 
     // Controller Manager

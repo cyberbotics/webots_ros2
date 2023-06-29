@@ -21,6 +21,10 @@ diffdrive_controller:
 
     use_stamped_vel: false
     base_frame_id: "base_link"
+    
+    linear:
+      x:
+        max_velocity: 0.2 # Maximal speed of turtlebot
 
 joint_state_broadcaster:
   ros__parameters:

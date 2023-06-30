@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.1.0 (2023-XX-XX)
+2023.1.0 (2023-06-29)
 ------------------
 * Added Ros2Pen static plugin.
 * Added parameters to rename Camera and RangeFinder topics.

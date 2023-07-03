@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
   sprintf(buffer, "/proc/%d/cmdline", parentPid);
   const int fd = open(buffer, O_RDONLY);
   if (fd == -1) {
-    RCLCPP_ERROR(node->get_logger(), "Failed to open cmdline file");
+    RCLCPP_ERROR(node->get_logger(), "Failed to open cmdline file.");
     return -1;
   }
   const int size = read(fd, buffer, sizeof(buffer));

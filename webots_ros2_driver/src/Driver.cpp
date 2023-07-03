@@ -44,17 +44,20 @@ int main(int argc, char **argv) {
   // The parent process must be ros2 run. Declaring from launch file is deprecated. Remove with 2024.0.0.
   const int BUFFER_SIZE = 4096;
   const pid_t parentPid = getppid();
-  char processFile[BUFFER_SIZE];
-  sprintf(processFile, "/proc/%d/cmdline", parentPid);
-  int fd = open(processFile, O_RDONLY);
-  char *processName = (char *)malloc(BUFFER_SIZE);
-  int size = read(fd, processName, sizeof(processFile));
+  char buffer[BUFFER_SIZE];
+  sprintf(buffer, "/proc/%d/cmdline", parentPid);
+  const int fd = open(buffer, O_RDONLY);
+  if (fd == -1) {
+    RCLCPP_ERROR(node->get_logger(), "Failed to open cmdline file");
+    return -1;
+  }
+  const int size = read(fd, buffer, sizeof(buffer));
   close(fd);
   for (int i = 0; i < size; i++) {
-    if (!processName[i])
-      processName[i] = ' ';
+    if (!buffer[i])
+      buffer[i] = ' ';
   }
-  if (strstr(processName, "ros2 launch"))
+  if (strstr(buffer, "ros2 launch"))
     RCLCPP_WARN(node->get_logger(), "\033[33mThe direct declaration of the driver node in the launch file is deprecated. "
                                     "Please use the new WebotsController node instead.\033[0m");
 

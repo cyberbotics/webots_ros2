@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.0 (2023-XX-XX)
+------------------
+* Added deprecation message when declaring driver node in launch file.
+
 2023.1.0 (2023-06-29)
 ------------------
 * Added Ros2Pen static plugin.

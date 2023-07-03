@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
   // The parent process must be ros2 run. Declaring from launch file is deprecated. Remove with 2024.0.0.
   const pid_t parentPid = getppid();
   char buffer[4096];
-  sprintf(buffer, "/proc/%d/cmdline", parentPid);
+  snprintf(buffer, sizeof(buffer), "/proc/%d/cmdline", parentPid);
   const int fd = open(buffer, O_RDONLY);
   if (fd == -1) {
     RCLCPP_ERROR(node->get_logger(), "Failed to open cmdline file.");

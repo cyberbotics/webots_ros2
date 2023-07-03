@@ -5,6 +5,7 @@ Changelog for package webots_ros2_driver
 2023.1.1 (2023-XX-XX)
 ------------------
 * Added deprecation message when declaring driver node in launch file.
+* Fixed RangeFinder activation to also check for point cloud subscriptions
 
 2023.1.0 (2023-06-29)
 ------------------
@@ -13,7 +14,7 @@ Changelog for package webots_ros2_driver
 * Added new WebotsController node to launch robot controller plugins.
 * Added compilation of the generic robot window library.
 * Default to canonical topic name and fix camera_info stamp in Ros2Camera, Ros2RangeFinder.
-* Added VacuumGripper device support
+* Added VacuumGripper device support.
 
 2023.0.4 (2023-05-23)
 ------------------

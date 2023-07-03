@@ -2,7 +2,7 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.1.0 (2023-XX-XX)
+2023.1.1 (2023-XX-XX)
 ------------------
 * Added deprecation message when declaring driver node in launch file.
 

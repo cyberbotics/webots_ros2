@@ -10,6 +10,7 @@ Changelog for package webots_ros2_driver
 * Added compilation of the generic robot window library.
 * Default to canonical topic name and fix camera_info stamp in Ros2Camera, Ros2RangeFinder.
 * Added VacuumGripper device support
+* Fixed RangeFinder activation to also check for point cloud subscriptions
 
 2023.0.4 (2023-05-23)
 ------------------

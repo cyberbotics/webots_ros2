@@ -57,6 +57,7 @@ int main(int argc, char **argv) {
     if (!buffer[i])
       buffer[i] = ' ';
   }
+  buffer[size] = '\0';
   if (strstr(buffer, "ros2 launch"))
     RCLCPP_WARN(node->get_logger(), "\033[33mThe direct declaration of the driver node in the launch file is deprecated. "
                                     "Please use the new WebotsController node instead.\033[0m");

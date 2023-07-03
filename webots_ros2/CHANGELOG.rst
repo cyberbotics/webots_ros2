@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.1 (2023-XX-XX)
+------------------
+* Fixed RangeFinder activation to also check for point cloud subscriptions.
+
 2023.1.0 (2023-06-29)
 ------------------
 * Added Ros2Pen static plugin.
@@ -16,7 +20,6 @@ Changelog for package webots_ros2
 * Added BoolStamped message in webots_ros2_msgs.
 * Added GetBool service in webots_ros2_msgs.
 * Fixed webots_ros2_control component activation.
-* Fixed RangeFinder activation to also check for point cloud subscriptions
 
 2023.0.4 (2023-05-23)
 ------------------

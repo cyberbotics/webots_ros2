@@ -14,6 +14,8 @@
 
 #include "webots_ros2_driver/WebotsNode.hpp"
 
+#include <yaml-cpp/yaml.h>
+#include <fstream>
 #include <rcl_interfaces/srv/set_parameters.hpp>
 #include <rclcpp/parameter_value.hpp>
 #include <rclcpp/timer.hpp>
@@ -29,6 +31,7 @@
 #include <webots_ros2_driver/plugins/static/Ros2LED.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Lidar.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2LightSensor.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2Pen.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2RangeFinder.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Receiver.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2VacuumGripper.hpp>
@@ -104,6 +107,21 @@ namespace webots_ros2_driver {
 
     mRemoveUrdfRobotPublisher = create_publisher<std_msgs::msg::String>("/remove_urdf_robot", rclcpp::ServicesQoS());
     mRemoveUrdfRobotMessage.data = name;
+
+    // Path to component remapping YAML
+    mComponentsRemappingFilePath = this->declare_parameter<std::string>("components_remappings", "");
+    if (mComponentsRemappingFilePath != "") {
+      std::ifstream file(mComponentsRemappingFilePath);
+      if (!file)
+        throw std::runtime_error("YAML file for components remappings doesn't exist.");
+
+      YAML::Node root = YAML::Load(file);
+      for (const auto &node : root) {
+        const std::string key = node.first.as<std::string>();
+        const std::string value = node.second.as<std::string>();
+        mComponentsRemapping[key] = value;
+      }
+    }
   }
 
   std::unordered_map<std::string, std::string> WebotsNode::getPluginProperties(tinyxml2::XMLElement *pluginElement) const {
@@ -148,10 +166,26 @@ namespace webots_ros2_driver {
     return properties;
   }
 
+  void WebotsNode::replaceUrdfNames(std::string &urdf) {
+    for (const auto &map : mComponentsRemapping) {
+      const std::string searchStr1 = "name=\"" + map.first + "\"";
+      const std::string searchStr2 = "link=\"" + map.first + "\"";
+      size_t pos = std::min(urdf.find(searchStr1), urdf.find(searchStr2));
+      while (pos != std::string::npos) {
+        const size_t quoteStartPos = pos + 6;
+        const size_t quoteEndPos = quoteStartPos + map.first.length();
+        urdf.replace(quoteStartPos, quoteEndPos - quoteStartPos, map.second);
+        pos = std::min(urdf.find(searchStr1, quoteEndPos), urdf.find(searchStr2, quoteEndPos));
+      }
+    }
+  }
+
   void WebotsNode::init() {
     if (mSetRobotStatePublisher) {
       std::string prefix = "";
-      setAnotherNodeParameter("robot_state_publisher", "robot_description", wb_robot_get_urdf(prefix.c_str()));
+      std::string webotsUrdf = wb_robot_get_urdf(prefix.c_str());
+      replaceUrdfNames(webotsUrdf);
+      setAnotherNodeParameter("robot_state_publisher", "robot_description", webotsUrdf);
     }
 
     mStep = wb_robot_get_basic_time_step();
@@ -192,6 +226,9 @@ namespace webots_ros2_driver {
           break;
         case WB_NODE_LED:
           plugin = std::make_shared<webots_ros2_driver::Ros2LED>();
+          break;
+        case WB_NODE_PEN:
+          plugin = std::make_shared<webots_ros2_driver::Ros2Pen>();
           break;
         case WB_NODE_EMITTER:
           plugin = std::make_shared<webots_ros2_driver::Ros2Emitter>();

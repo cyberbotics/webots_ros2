@@ -2,10 +2,11 @@
 Changelog for package webots_ros2_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.1.0 (2023-XX-XX)
+2023.1.0 (2023-06-29)
 ------------------
 * Added BoolStamped message
 * Added GetBool message
+* Added pen ink properties message.
 
 2022.1.0 (2022-09-23)
 ------------------

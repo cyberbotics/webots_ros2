@@ -29,6 +29,7 @@ set(msg_files
   "msg/CameraRecognitionObject.msg"
   "msg/CameraRecognitionObjects.msg"
   "msg/UrdfRobot.msg"
+  "msg/PenInkProperties.msg"
 )
 set(srv_files
   "srv/GetBool.srv"

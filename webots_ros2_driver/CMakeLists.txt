@@ -116,6 +116,7 @@ add_dependencies(driver
 target_link_libraries(driver
   ${WEBOTS_LIB}
   ${PYTHON_LIBRARIES}
+  yaml-cpp
 )
 install(
   DIRECTORY include/

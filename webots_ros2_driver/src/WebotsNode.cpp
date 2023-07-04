@@ -117,8 +117,8 @@ namespace webots_ros2_driver {
 
       YAML::Node root = YAML::Load(file);
       for (const auto &node : root) {
-        std::string key = node.first.as<std::string>();
-        std::string value = node.second.as<std::string>();
+        const std::string key = node.first.as<std::string>();
+        const std::string value = node.second.as<std::string>();
         mComponentMapping[key] = value;
       }
     }
@@ -166,26 +166,26 @@ namespace webots_ros2_driver {
     return properties;
   }
 
-  std::string WebotsNode::replaceUrdfNames(std::string urdf) {
+  void WebotsNode::replaceUrdfNames(std::string &urdf) {
     for (const auto &map : mComponentMapping) {
-      std::string searchStr1 = "name=\"" + map.first + "\"";
-      std::string searchStr2 = "link=\"" + map.first + "\"";
+      const std::string searchStr1 = "name=\"" + map.first + "\"";
+      const std::string searchStr2 = "link=\"" + map.first + "\"";
       size_t pos = std::min(urdf.find(searchStr1), urdf.find(searchStr2));
       while (pos != std::string::npos) {
-        size_t quoteStartPos = pos + 6;
-        size_t quoteEndPos = quoteStartPos + map.first.length();
+        const size_t quoteStartPos = pos + 6;
+        const size_t quoteEndPos = quoteStartPos + map.first.length();
         urdf.replace(quoteStartPos, quoteEndPos - quoteStartPos, map.second);
         pos = std::min(urdf.find(searchStr1, quoteEndPos), urdf.find(searchStr2, quoteEndPos));
       }
     }
-    return urdf;
   }
 
   void WebotsNode::init() {
     if (mSetRobotStatePublisher) {
       std::string prefix = "";
       std::string webotsUrdf = wb_robot_get_urdf(prefix.c_str());
-      setAnotherNodeParameter("robot_state_publisher", "robot_description", replaceURDFNames(webotsUrdf));
+      replaceUrdfNames(webotsUrdf);
+      setAnotherNodeParameter("robot_state_publisher", "robot_description", webotsUrdf);
     }
 
     mStep = wb_robot_get_basic_time_step();

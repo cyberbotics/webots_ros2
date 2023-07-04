@@ -45,7 +45,7 @@ namespace webots_ros2_driver {
     std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
     std::unordered_map<std::string, std::string> getPluginProperties(tinyxml2::XMLElement *pluginElement) const;
     void setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue);
-    std::string replaceUrdfNames(std::string urdf);
+    void replaceUrdfNames(std::string &urdf);
     rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedPtr mClient;
 
     std::string mRobotDescriptionParam;

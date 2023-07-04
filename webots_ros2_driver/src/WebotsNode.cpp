@@ -109,9 +109,9 @@ namespace webots_ros2_driver {
     mRemoveUrdfRobotMessage.data = name;
 
     // Path to component remapping YAML
-    mComponentMappingFilePath = this->declare_parameter<std::string>("components_remappings", "");
-    if (mComponentMappingFilePath != "") {
-      std::ifstream file(mComponentMappingFilePath);
+    mComponentsRemappingFilePath = this->declare_parameter<std::string>("components_remappings", "");
+    if (mComponentsRemappingFilePath != "") {
+      std::ifstream file(mComponentsRemappingFilePath);
       if (!file)
         throw std::runtime_error("YAML file for components remappings doesn't exist.");
 
@@ -119,7 +119,7 @@ namespace webots_ros2_driver {
       for (const auto &node : root) {
         const std::string key = node.first.as<std::string>();
         const std::string value = node.second.as<std::string>();
-        mComponentMapping[key] = value;
+        mComponentsRemapping[key] = value;
       }
     }
   }
@@ -167,7 +167,7 @@ namespace webots_ros2_driver {
   }
 
   void WebotsNode::replaceUrdfNames(std::string &urdf) {
-    for (const auto &map : mComponentMapping) {
+    for (const auto &map : mComponentsRemapping) {
       const std::string searchStr1 = "name=\"" + map.first + "\"";
       const std::string searchStr2 = "link=\"" + map.first + "\"";
       size_t pos = std::min(urdf.find(searchStr1), urdf.find(searchStr2));

@@ -51,8 +51,8 @@ namespace webots_ros2_driver {
     std::string mRobotDescriptionParam;
     std::string mRobotDescription;
     bool mSetRobotStatePublisher;
-    std::string mComponentMappingFilePath;
-    std::unordered_map<std::string, std::string> mComponentMapping;
+    std::string mComponentsRemappingFilePath;
+    std::unordered_map<std::string, std::string> mComponentsRemapping;
 
     bool mWaitingForUrdfRobotToBeRemoved = false;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr mRemoveUrdfRobotPublisher;

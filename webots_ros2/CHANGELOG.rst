@@ -6,6 +6,7 @@ Changelog for package webots_ros2
 ------------------
 * Added deprecation message when declaring driver node in launch file.
 * Fixed RangeFinder activation to also check for point cloud subscriptions.
+* Added component remapping parameter to WebotsController to rename PROTO components.
 
 2023.1.0 (2023-06-29)
 ------------------

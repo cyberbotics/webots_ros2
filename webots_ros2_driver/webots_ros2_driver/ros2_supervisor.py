@@ -226,12 +226,14 @@ class Ros2Supervisor(Node):
     def __animation_start_recording_callback(self, request: SetString.Request, response: SetString.Response):
         filename = request.value
         self.get_logger().info(f"Start recording animation to {filename}")
-        response.success = self.__robot.animationStartRecording(filename)
+        self.__robot.animationStartRecording(filename)
+        response.success = True
         return response
 
     def __animation_stop_recording_callback(self, request: GetBool.Request, response: GetBool.Response):
         self.get_logger().info(f"Stop recording animation")
-        response.value = self.__robot.animationStopRecording()
+        self.__robot.animationStopRecording()
+        response.value = True
         return response
 
     # Allows to remove any imported node (urdf robots / VRML Nodes) by name.

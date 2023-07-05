@@ -7,9 +7,9 @@
             <topicName>/imu_broadcaster/imu</topicName>
             <alwaysOn>true</alwaysOn>
             <frameName>imu_link</frameName>
-            <gyroName>imu_link gyro</gyroName>
-            <accelerometerName>imu_link accelerometer</accelerometerName>
-            <inertialUnitName>imu_link inertial_unit</inertialUnitName>
+            <gyroName>imu gyro</gyroName>
+            <accelerometerName>imu accelerometer</accelerometerName>
+            <inertialUnitName>imu inertial_unit</inertialUnitName>
         </plugin>
     </webots>
 

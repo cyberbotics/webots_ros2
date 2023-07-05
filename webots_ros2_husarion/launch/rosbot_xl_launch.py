@@ -35,6 +35,8 @@ def get_ros2_nodes(*args):
     rosbot_xl_webots_xacro_path = os.path.join(package_dir, 'resource', 'rosbot_webots.urdf')
     laser_filter_config = os.path.join(package_dir, 'resource', 'laser_filter.yaml')
     ekf_config = os.path.join(package_dir, 'resource', 'ekf.yaml')
+    links_remappings_file_path = os.path.join(
+        package_dir, 'resource', 'rosbot_links_remappings.yaml')
 
     ros2_control_params = os.path.join(package_dir, 'resource', 'rosbot_xl_controllers.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
@@ -64,7 +66,8 @@ def get_ros2_nodes(*args):
             {'robot_description': rosbot_xl_webots_xacro_path,
              'use_sim_time': use_sim_time,
              'set_robot_state_publisher': True},
-            ros2_control_params
+            ros2_control_params,
+            {'components_remappings': links_remappings_file_path}
         ],
         remappings=[
             ('rosbot_xl_base_controller/cmd_vel_unstamped', 'cmd_vel'),

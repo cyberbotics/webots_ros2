@@ -32,10 +32,15 @@ from webots_ros2_driver.wait_for_controller_connection import WaitForControllerC
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_husarion')
-    rosbot_webots_xacro_path = os.path.join(package_dir, 'resource', 'rosbot_webots.urdf')
+    rosbot_webots_xacro_path = os.path.join(
+        package_dir, 'resource', 'rosbot_webots.urdf')
+    links_remappings_file_path = os.path.join(
+        package_dir, 'resource', 'rosbot_links_remappings.yaml')
+
     ekf_config = os.path.join(package_dir, 'resource', 'ekf.yaml')
 
-    ros2_control_params = os.path.join(package_dir, 'resource', 'rosbot_controllers.yaml')
+    ros2_control_params = os.path.join(
+        package_dir, 'resource', 'rosbot_controllers.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     # ROS control spawners
@@ -55,15 +60,19 @@ def get_ros2_nodes(*args):
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,
     )
-    ros_control_spawners = [diff_drive_controller_spawner, joint_state_broadcaster_spawner]
+    ros_control_spawners = [
+        diff_drive_controller_spawner, joint_state_broadcaster_spawner]
 
     rosbot_driver = WebotsController(
         robot_name='rosbot',
         parameters=[
-            {'robot_description': rosbot_webots_xacro_path,
-             'use_sim_time': use_sim_time,
-             'set_robot_state_publisher': True},
-            ros2_control_params
+            {
+                'robot_description': rosbot_webots_xacro_path,
+                'use_sim_time': use_sim_time,
+                'set_robot_state_publisher': True,
+            },
+            ros2_control_params,
+            {'components_remappings': links_remappings_file_path}
         ],
         remappings=[
             ('rosbot_base_controller/cmd_vel_unstamped', 'cmd_vel'),
@@ -73,7 +82,7 @@ def get_ros2_nodes(*args):
             ('rosbot/rr_range', '/range/rr'),
             ('rosbot/fl_range', '/range/fl'),
             ('rosbot/fr_range', '/range/fr')
-        ]
+        ],
     )
 
     robot_state_publisher = Node(

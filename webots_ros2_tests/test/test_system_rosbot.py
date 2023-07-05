@@ -70,11 +70,12 @@ class TestROSbot(TestWebots):
 
         def on_position_message_received(message):
             twist_message = Twist()
-            twist_message.linear.x = 0.1
+            twist_message.linear.x = 0.5
+            twist_message.angular.z = 0.3
             publisher.publish(twist_message)
 
-            # ROSbot should move forward
-            if message.pose.pose.position.x > 0.5:
+            # ROSbot should move in an arc to check the sensor fusion
+            if message.pose.pose.position.x > 0.5 and message.pose.pose.orientation.w < 0.9:
                 return True
             return False
 

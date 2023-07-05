@@ -93,7 +93,7 @@ def get_ros2_nodes(*args):
         parameters=[
             ekf_config,
             {'use_sim_time': True},
-            {'odom0': '/' + 'rosbot_xl_base_controller/odom'}
+            {'odom0': '/rosbot_xl_base_controller/odom'}
         ]
     )
 

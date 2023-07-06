@@ -37,7 +37,7 @@ from std_msgs.msg import String
 from webots_ros2_driver.utils import is_wsl, has_shared_folder, container_shared_folder, host_shared_folder
 sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
 from urdf2webots.importer import convertUrdfFile, convertUrdfContent  # noqa
-from webots_ros2_msgs.srv import GetBool, SetString, SpawnUrdfRobot, SpawnNodeFromString # noqa
+from webots_ros2_msgs.srv import GetBool, SetString, SpawnUrdfRobot, SpawnNodeFromString  # noqa
 
 # As Ros2Supervisor needs the controller library, we extend the path here
 # to avoid to load another library named "controller" or "vehicle".

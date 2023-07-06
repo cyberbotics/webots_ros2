@@ -231,7 +231,7 @@ class Ros2Supervisor(Node):
         return response
 
     def __animation_stop_recording_callback(self, request: GetBool.Request, response: GetBool.Response):
-        self.get_logger().info(f"Stop recording animation")
+        self.get_logger().info("Stop recording animation")
         self.__robot.animationStopRecording()
         response.value = True
         return response

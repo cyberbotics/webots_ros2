@@ -27,8 +27,8 @@ def get_webots_driver_node(event, driver_node):
         print('WARNING: the Ros2Supervisor was not able to spawn this URDF robot.')
     return
 
-# Deprecated, remove in 2024.0.0
-class URDFSpawner(ExecuteProcess):
+
+class URDFSpawner(ExecuteProcess): # Deprecated, remove in 2024.0.0
     def __init__(self, output='log', name=None, urdf_path=None, robot_description=None, relative_path_prefix=None,
                  translation='0 0 0', rotation='0 0 1 0', normal=False, box_collision=False, init_pos=None, **kwargs):
         message = '{robot: {'

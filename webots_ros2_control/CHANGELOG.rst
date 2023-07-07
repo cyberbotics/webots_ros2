@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.0 (2023-06-29)
+------------------
+* Fixed component activation.
+
 2023.0.0 (2022-11-30)
 ------------------
 * Convert C++ controller API functions to C

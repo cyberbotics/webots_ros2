@@ -109,7 +109,8 @@ namespace webots_ros2_driver {
       return;
 
     // Enable/Disable sensor
-    const bool shouldBeEnabled = mImagePublisher->get_subscription_count() > 0;
+    const bool shouldBeEnabled =
+      mImagePublisher->get_subscription_count() > 0 || mPointCloudPublisher->get_subscription_count() > 0;
     if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         wb_range_finder_enable(mRangeFinder, mPublishTimestepSyncedMs);

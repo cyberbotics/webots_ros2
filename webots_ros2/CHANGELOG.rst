@@ -2,7 +2,15 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.1.0 (2023-XX-XX)
+2023.1.1 (2023-XX-XX)
+------------------
+* Added deprecation message when declaring driver node in launch file.
+* Fixed RangeFinder activation to also check for point cloud subscriptions.
+* Added component remapping parameter to WebotsController to rename PROTO components.
+* Added animation_{start,stop}_recording services to Ros2Supervisor node.
+* Added /Ros2Supervisor namespace to Ros2Supervisor node.
+
+2023.1.0 (2023-06-29)
 ------------------
 * Added Ros2Pen static plugin.
 * Added support for Navigation2 in Iron.
@@ -14,7 +22,8 @@ Changelog for package webots_ros2
 * Default to canonical topic name and fix camera_info stamp in Ros2Camera, Ros2RangeFinder.
 * Added VacuumGripper gripper support in webots_ros2_driver.
 * Added BoolStamped message in webots_ros2_msgs.
-* Added GetBool message in webots_ros2_msgs.
+* Added GetBool service in webots_ros2_msgs.
+* Fixed webots_ros2_control component activation.
 
 2023.0.4 (2023-05-23)
 ------------------

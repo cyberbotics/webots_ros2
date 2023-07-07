@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fcntl.h>
 #include <webots/robot.h>
 #include <webots/vehicle/driver.h>
+#include <iostream>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <webots_ros2_driver/PluginInterface.hpp>
@@ -40,6 +42,27 @@ int main(int argc, char **argv) {
 
   std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName);
   node->init();
+
+  // The parent process must be ros2 run. Declaring from launch file is deprecated. Remove with 2024.0.0.
+  const pid_t parentPid = getppid();
+  char buffer[4096];
+  snprintf(buffer, sizeof(buffer), "/proc/%d/cmdline", parentPid);
+  const int fd = open(buffer, O_RDONLY);
+  if (fd == -1) {
+    RCLCPP_ERROR(node->get_logger(), "Failed to open cmdline file.");
+    return -1;
+  }
+  const int size = read(fd, buffer, sizeof(buffer));
+  close(fd);
+  for (int i = 0; i < size; i++) {
+    if (!buffer[i])
+      buffer[i] = ' ';
+  }
+  buffer[size] = '\0';
+  if (strstr(buffer, "ros2 launch"))
+    RCLCPP_WARN(node->get_logger(), "\033[33mThe direct declaration of the driver node in the launch file is deprecated. "
+                                    "Please use the new WebotsController node instead.\033[0m");
+
   RCLCPP_INFO(node->get_logger(), "Controller successfully connected to robot in Webots simulation.");
   while (true) {
     if (node->step() == -1)

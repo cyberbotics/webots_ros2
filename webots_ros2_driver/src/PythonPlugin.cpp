@@ -42,7 +42,6 @@ from controller import Supervisor
 sys.path.insert(1, os.path.dirname(controller.__file__))
 from vehicle import Driver
 
-
 class WebotsNode:
     def __init__(self):
         if Driver.isInitialisationPossible():

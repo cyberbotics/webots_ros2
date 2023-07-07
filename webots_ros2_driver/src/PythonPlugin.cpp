@@ -20,6 +20,11 @@ namespace webots_ros2_driver {
     PyErr_Print();
   }
 
+  void PythonPlugin::stop() {
+    PyObject_CallMethod(mPyPlugin, "stop", "");
+    Py_Finalize();
+  }
+
   PyObject *PythonPlugin::getPyWebotsNodeInstance() {
     if (gPyWebotsNode)
       return gPyWebotsNode;

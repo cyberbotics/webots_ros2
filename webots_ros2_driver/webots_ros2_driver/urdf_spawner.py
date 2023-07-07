@@ -60,7 +60,7 @@ class URDFSpawner(ExecuteProcess):  # Deprecated, remove in 2024.0.0
         command = ['ros2',
                    'service',
                    'call',
-                   '/spawn_urdf_robot',
+                   '/Ros2Supervisor/spawn_urdf_robot',
                    'webots_ros2_msgs/srv/SpawnUrdfRobot',
                    message]
 

@@ -37,7 +37,7 @@ from std_msgs.msg import String
 from webots_ros2_driver.utils import is_wsl, has_shared_folder, container_shared_folder, host_shared_folder
 sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
 from urdf2webots.importer import convertUrdfFile, convertUrdfContent  # noqa
-from webots_ros2_msgs.srv import SpawnUrdfRobot, SpawnNodeFromString  # noqa
+from webots_ros2_msgs.srv import GetBool, SetString, SpawnUrdfRobot, SpawnNodeFromString  # noqa
 
 # As Ros2Supervisor needs the controller library, we extend the path here
 # to avoid to load another library named "controller" or "vehicle".
@@ -65,6 +65,9 @@ class Ros2Supervisor(Node):
         # Services
         self.create_service(SpawnUrdfRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
         self.create_service(SpawnNodeFromString, 'spawn_node_from_string', self.__spawn_node_from_string_callback)
+        self.create_service(SetString, 'animation_start_recording', self.__animation_start_recording_callback)
+        self.create_service(GetBool, 'animation_stop_recording', self.__animation_stop_recording_callback)
+
         # Subscriptions
         self.create_subscription(String, 'remove_node', self.__remove_imported_node_callback, qos_profile_services_default)
 
@@ -220,6 +223,19 @@ class Ros2Supervisor(Node):
 
         self.get_logger().info('Ros2Supervisor has imported the node named "' + str(object_name) + '".')
         response.success = True
+        return response
+
+    def __animation_start_recording_callback(self, request: SetString.Request, response: SetString.Response):
+        filename = request.value
+        self.get_logger().info(f"Start recording animation to {filename}")
+        self.__robot.animationStartRecording(filename)
+        response.success = True
+        return response
+
+    def __animation_stop_recording_callback(self, request: GetBool.Request, response: GetBool.Response):
+        self.get_logger().info("Stop recording animation")
+        self.__robot.animationStopRecording()
+        response.value = True
         return response
 
     # Allows to remove any imported node (urdf robots / VRML Nodes) by name.

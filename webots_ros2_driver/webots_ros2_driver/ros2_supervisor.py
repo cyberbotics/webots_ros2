@@ -69,6 +69,8 @@ class Ros2Supervisor(Node):
         self.create_subscription(String, 'remove_node', self.__remove_imported_node_callback, qos_profile_services_default)
 
     def __spawn_urdf_robot_callback(self, request, response):
+        # Deprecated, remove in 2024.0.0
+        self.get_logger().warn('\033[33mThe URDF Spawner is deprecated. Please use the PROTO Spawner instead.\033[0m')
         robot = request.robot
 
         robot_name = robot.name if robot.name else ''

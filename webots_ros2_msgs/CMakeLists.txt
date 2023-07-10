@@ -32,10 +32,11 @@ set(msg_files
   "msg/PenInkProperties.msg"
 )
 set(srv_files
-  "srv/GetBool.srv"
   "srv/EmitterSendString.srv"
-  "srv/SpawnUrdfRobot.srv"
+  "srv/GetBool.srv"
+  "srv/SetString.srv"
   "srv/SpawnNodeFromString.srv"
+  "srv/SpawnUrdfRobot.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}

@@ -28,7 +28,7 @@ def get_webots_driver_node(event, driver_node):
     return
 
 
-class URDFSpawner(ExecuteProcess):
+class URDFSpawner(ExecuteProcess):  # Deprecated, remove in 2024.0.0
     def __init__(self, output='log', name=None, urdf_path=None, robot_description=None, relative_path_prefix=None,
                  translation='0 0 0', rotation='0 0 1 0', normal=False, box_collision=False, init_pos=None, **kwargs):
         message = '{robot: {'
@@ -60,7 +60,7 @@ class URDFSpawner(ExecuteProcess):
         command = ['ros2',
                    'service',
                    'call',
-                   '/spawn_urdf_robot',
+                   '/Ros2Supervisor/spawn_urdf_robot',
                    'webots_ros2_msgs/srv/SpawnUrdfRobot',
                    message]
 

@@ -40,6 +40,7 @@ namespace webots_ros2_driver {
     int step();
     std::string urdf() const { return mRobotDescription; };
     static void handleSignals();
+    std::vector<std::shared_ptr<PluginInterface>> mPlugins;
 
   private:
     std::unordered_map<std::string, std::string> getDeviceRosProperties(const std::string &name) const;
@@ -60,7 +61,6 @@ namespace webots_ros2_driver {
 
     rclcpp::TimerBase::SharedPtr mTimer;
     int mStep;
-    std::vector<std::shared_ptr<PluginInterface>> mPlugins;
     pluginlib::ClassLoader<PluginInterface> mPluginLoader;
     tinyxml2::XMLElement *mWebotsXMLElement;
     std::shared_ptr<tinyxml2::XMLDocument> mRobotDescriptionDocument;

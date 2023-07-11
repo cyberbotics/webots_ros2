@@ -80,7 +80,7 @@ class TestROSbotXL(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, Odometry, '/odometry/filtered', condition=on_position_message_received)
+        self.wait_for_messages(self.__node, Odometry, '/rosbot_xl_base_controller/odom', condition=on_position_message_received)
 
     def testScan(self):
         def on_scan_message_received(message):

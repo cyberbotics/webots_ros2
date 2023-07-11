@@ -43,6 +43,3 @@ fi
 
 # Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).
 #export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
-
-# ROSbots test:
-apt install -y ros-${ROS_DISTRO}-robot-localization

@@ -22,12 +22,10 @@
 import os
 import pytest
 import rclpy
-from nav_msgs.msg import Odometry
 from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing.actions
 from launch.actions import IncludeLaunchDescription
-from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test

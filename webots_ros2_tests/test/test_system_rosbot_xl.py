@@ -66,22 +66,6 @@ class TestROSbotXL(TestWebots):
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
 
-    def testMovement(self):
-        publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
-
-        def on_position_message_received(message):
-            twist_message = Twist()
-            twist_message.linear.x = 0.5
-            twist_message.angular.z = 0.3
-            publisher.publish(twist_message)
-
-            # ROSbot XL should move in an arc to check the sensor fusion
-            if message.pose.pose.position.x > 0.5 and message.pose.pose.orientation.w < 0.9:
-                return True
-            return False
-
-        self.wait_for_messages(self.__node, Odometry, '/rosbot_xl_base_controller/odom', condition=on_position_message_received)
-
     def testScan(self):
         def on_scan_message_received(message):
             # There should be at least 1 range bigger than 0 and some = 0

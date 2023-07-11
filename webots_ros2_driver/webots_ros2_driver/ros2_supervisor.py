@@ -75,7 +75,7 @@ class Ros2Supervisor(Node):
         # Deprecated, remove in 2024.0.0
         self.get_logger().warn(
             '\033[33mThe URDF Spawner is deprecated. It will be replaced by a new PROTOSpawner in the future. '
-            'See https://github.com/cyberbotics/webots_ros2/issues/818 for more info.\033[0m'
+            'See https://github.com/cyberbotics/webots_ros2/issues/818 for more information.\033[0m'
         )
         robot = request.robot
 

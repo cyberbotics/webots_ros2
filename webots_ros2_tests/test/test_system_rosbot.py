@@ -16,6 +16,7 @@
 """Test the `webots_ros2_husarion` package."""
 # Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_rosbot.py
 import os
+import math
 import pytest
 import rclpy
 from nav_msgs.msg import Odometry
@@ -88,7 +89,7 @@ class TestROSbot(TestWebots):
             number_of_inf = 0
             number_of_non_zeroes = 0
             for value in message.ranges:
-                if value == float('inf') or value == float('inf'):
+                if value == float('inf') or math.isnan(value):
                     number_of_inf += 1
                 elif value > 0.:
                     number_of_non_zeroes += 1

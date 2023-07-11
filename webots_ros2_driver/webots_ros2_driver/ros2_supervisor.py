@@ -73,7 +73,10 @@ class Ros2Supervisor(Node):
 
     def __spawn_urdf_robot_callback(self, request, response):
         # Deprecated, remove in 2024.0.0
-        self.get_logger().warn('\033[33mThe URDF Spawner is deprecated. Please use the PROTO Spawner instead.\033[0m')
+        self.get_logger().warn(
+            '\033[33mThe URDF Spawner is deprecated. It will be replaced by a new PROTOSpawner in the future. '
+            'See https://github.com/cyberbotics/webots_ros2/issues/818 for more information.\033[0m'
+        )
         robot = request.robot
 
         robot_name = robot.name if robot.name else ''

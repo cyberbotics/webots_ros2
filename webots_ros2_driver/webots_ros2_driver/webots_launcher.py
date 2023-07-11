@@ -256,6 +256,8 @@ class Ros2SupervisorLauncher(Node):
         super().__init__(
             package='webots_ros2_driver',
             executable='ros2_supervisor.py',
+            namespace='Ros2Supervisor',
+            remappings=[('/Ros2Supervisor/clock', '/clock')],
             output=output,
             # Set WEBOTS_HOME to the webots_ros2_driver installation folder
             # to load the correct libController libraries from the Python API

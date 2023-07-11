@@ -2,7 +2,7 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.1.1 (2023-XX-XX)
+2023.1.1 (2023-07-11)
 ------------------
 * Added deprecation message when declaring driver node in launch file.
 * Fixed RangeFinder activation to also check for point cloud subscriptions.

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 # Copyright 1996-2023 Cyberbotics Ltd.
 # Copyright 2023 Husarion
 #
@@ -14,11 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Test the `webots_ros2_husarion` package."""
-
 # Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_system_rosbot.py
-
 import os
 import pytest
 import rclpy
@@ -28,6 +24,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing.actions
 from launch.actions import IncludeLaunchDescription
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
@@ -42,7 +39,8 @@ def generate_test_description():
 
     rosbot_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('webots_ros2_husarion'), 'launch', 'rosbot_launch.py'),
+            os.path.join(get_package_share_directory(
+                'webots_ros2_husarion'), 'launch', 'rosbot_launch.py'),
         )
     )
 
@@ -68,6 +66,8 @@ class TestROSbot(TestWebots):
         publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
 
         def on_position_message_received(message):
+            print(message.header)
+            print(message.pose.pose)
             twist_message = Twist()
             twist_message.linear.x = 0.5
             twist_message.angular.z = 0.3
@@ -78,7 +78,21 @@ class TestROSbot(TestWebots):
                 return True
             return False
 
-        self.wait_for_messages(self.__node, Odometry, '/rosbot_base_controller/odom', condition=on_position_message_received)
+        self.wait_for_messages(self.__node, Odometry, '/odometry/filtered', condition=on_position_message_received)
+
+    def testScan(self):
+        def on_scan_message_received(message):
+            print(message.header)
+            # There should be at least 1 range bigger than 0 and some = 0
+            number_of_inf = 0
+            number_of_non_zeroes = 0
+            for value in message.ranges:
+                if value == float('inf'):
+                    number_of_inf += 1
+                elif value > 0.:
+                    number_of_non_zeroes += 1
+            return number_of_inf > 0 and number_of_non_zeroes > 0
+        self.wait_for_messages(self.__node, LaserScan, '/scan', condition=on_scan_message_received)
 
     def tearDown(self):
         self.__node.destroy_node()

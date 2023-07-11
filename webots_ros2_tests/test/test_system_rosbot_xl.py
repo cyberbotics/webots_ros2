@@ -22,10 +22,18 @@
 import os
 import pytest
 import rclpy
+from nav_msgs.msg import Odometry
+from nav_msgs.msg import Odometry
+from nav_msgs.msg import Odometry
+from nav_msgs.msg import Odometry
 from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing.actions
 from launch.actions import IncludeLaunchDescription
+from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
@@ -64,8 +72,28 @@ class TestROSbotXL(TestWebots):
     def setUp(self):
         self.__node = rclpy.create_node('driver_tester')
 
+    def testMovement(self):
+        publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
+
+        def on_position_message_received(message):
+            print(message.header)
+            print(message.pose.pose)
+
+            twist_message = Twist()
+            twist_message.linear.x = 0.5
+            twist_message.angular.z = 0.3
+            publisher.publish(twist_message)
+            # ROSbot XL should move in an arc to check the sensor fusion
+            if message.pose.pose.position.x > 0.5 and message.pose.pose.orientation.w < 0.9:
+                return True
+            return False
+
+        self.wait_for_messages(
+            self.__node, Odometry, '/odometry/filtered', condition=on_position_message_received)
+
     def testScan(self):
         def on_scan_message_received(message):
+            print(message.header)
             # There should be at least 1 range bigger than 0 and some = 0
             number_of_inf = 0
             number_of_non_zeroes = 0

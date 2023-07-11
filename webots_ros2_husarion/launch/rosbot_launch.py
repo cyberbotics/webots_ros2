@@ -75,8 +75,7 @@ def get_ros2_nodes(*args):
             {'components_remappings': links_remappings_file_path}
         ],
         remappings=[
-            ('rosbot_base_controller/cmd_vel_unstamped', 'cmd_vel'),
-            ('odom', 'rosbot_base_controller/odom'),
+            ('rosbot_base_controller/cmd_vel_unstamped', '/cmd_vel'),
             ('rosbot/laser', '/scan'),
             ('rosbot/rl_range', '/range/rl'),
             ('rosbot/rr_range', '/range/rr'),

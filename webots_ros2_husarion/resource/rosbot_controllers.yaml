@@ -21,6 +21,9 @@ rosbot_base_controller:
 
     use_stamped_vel: false
     enable_odom_tf: false
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+
     linear:
       x:
         has_velocity_limits: true

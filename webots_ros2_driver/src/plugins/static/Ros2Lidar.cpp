@@ -130,7 +130,7 @@ namespace webots_ros2_driver {
     int size = wb_lidar_get_horizontal_resolution(mLidar);
     auto rangeImage = wb_lidar_get_layer_range_image(mLidar, 0);
     for (int i = 0; i < size; i++){
-        RCLCPP_WARN(mNode->get_logger(), "%f ", rangeImage[i]);
+        RCLCPP_WARN(mNode->get_logger(), "%f", rangeImage[i]);
     }
 
     if (rangeImage) {

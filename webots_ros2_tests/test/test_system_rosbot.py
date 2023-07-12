@@ -67,8 +67,8 @@ class TestROSbot(TestWebots):
         publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
 
         def on_position_message_received(message):
-            print(message.header)
-            print(message.pose.pose)
+            # print(message.header)
+            # print(message.pose.pose)
             twist_message = Twist()
             twist_message.linear.x = 0.5
             twist_message.angular.z = 0.3
@@ -83,8 +83,8 @@ class TestROSbot(TestWebots):
 
     def testScan(self):
         def on_scan_message_received(message):
-            print(message.header)
-            print(message.ranges)
+            # print(message.header)
+            # print(message.ranges)
             # There should be at least 1 range bigger than 0 and some = 0
             number_of_inf = 0
             number_of_non_zeroes = 0

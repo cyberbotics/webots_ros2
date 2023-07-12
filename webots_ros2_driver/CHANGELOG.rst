@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.1.1 (2023-XX-XX)
+2023.1.1 (2023-07-11)
 ------------------
 * Fixed RangeFinder activation to also check for point cloud subscriptions.
 * Added component remapping parameter to rename PROTO components.

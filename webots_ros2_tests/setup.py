@@ -11,7 +11,7 @@ data_files = [
 
 setup(
     name=package_name,
-    version='2023.1.0',
+    version='2023.1.1',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

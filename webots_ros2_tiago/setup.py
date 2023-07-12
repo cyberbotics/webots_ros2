@@ -32,7 +32,7 @@ data_files.append(('share/' + package_name + '/worlds', [
 
 setup(
     name=package_name,
-    version='2023.1.0',
+    version='2023.1.1',
     packages=[],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

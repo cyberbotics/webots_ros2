@@ -32,11 +32,10 @@ from webots_ros2_driver.wait_for_controller_connection import WaitForControllerC
 
 def get_ros2_nodes(*args):
     package_dir = get_package_share_directory('webots_ros2_husarion')
-    rosbot_xl_webots_xacro_path = os.path.join(package_dir, 'resource', 'rosbot_webots.urdf')
+    robot_description_path = os.path.join(package_dir, 'resource', 'rosbot_webots.urdf')
     laser_filter_config = os.path.join(package_dir, 'resource', 'laser_filter.yaml')
     ekf_config = os.path.join(package_dir, 'resource', 'ekf.yaml')
-    links_remappings_file_path = os.path.join(
-        package_dir, 'resource', 'rosbot_links_remappings.yaml')
+    links_remappings_file_path = os.path.join(package_dir, 'resource', 'rosbot_links_remappings.yaml')
 
     ros2_control_params = os.path.join(package_dir, 'resource', 'rosbot_xl_controllers.yaml')
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
@@ -63,7 +62,7 @@ def get_ros2_nodes(*args):
     rosbot_driver = WebotsController(
         robot_name='rosbot_xl',
         parameters=[
-            {'robot_description': rosbot_xl_webots_xacro_path,
+            {'robot_description': robot_description_path,
              'use_sim_time': use_sim_time,
              'set_robot_state_publisher': True},
             ros2_control_params,

@@ -2,6 +2,6 @@
 Changelog for package webots_ros2_husarion
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.1.2 (2023-07-17)
+2024.0.0 (2023-XX-XX)
 ------------------
 * Created webots_ros2_husarion package.

@@ -179,16 +179,17 @@ class Ros2Supervisor(Node):
     def __spawn_proto_robot_callback(self, request, response):
         robot = request.robot
         # Choose the conversion according to the input and platform
-        if robot.proto_path:
+        if robot.proto_urls:
+            # TODO: iterate over all urls
             if has_shared_folder() or is_wsl():
                 # Check that the file exists and is an URDF
-                if not os.path.isfile(robot.proto_path):
-                    sys.exit('Input file "%s" does not exist.' % robot.proto_path)
+                if not os.path.isfile(robot.proto_urls):
+                    sys.exit('Input file "%s" does not exist.' % robot.proto_urls)
                 if not robot.proto_path.endswith('.urdf'):
-                    sys.exit('"%s" is not a URDF file.' % robot.proto_path)
+                    sys.exit('"%s" is not a URDF file.' % robot.proto_urls)
 
                 # Read the content of the URDF
-                with open(robot.urdf_path, 'r') as file:
+                with open(robot.proto_urls, 'r') as file:
                     urdfContent = file.read()
                     if urdfContent is None:
                         sys.exit('Could not read the URDF file.')

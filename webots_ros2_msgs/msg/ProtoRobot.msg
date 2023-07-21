@@ -1,2 +1,2 @@
-string proto_paths
-string robot_string
+string proto_urls
+string node_string

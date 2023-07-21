@@ -64,7 +64,7 @@ class Ros2Supervisor(Node):
 
         # Services
         self.create_service(SpawnUrdfRobot, 'spawn_urdf_robot', self.__spawn_urdf_robot_callback)
-        self.create_service(SpawnNodeFromString, 'spawn_proto_robot', self.__spawn_proto_robot_callback)
+        self.create_service(SpawnNodeFromString, 'spawn_node_from_string', self.__spawn_node_from_string_callback)
         # Subscriptions
         self.create_subscription(String, 'remove_node', self.__remove_imported_node_callback, qos_profile_services_default)
 
@@ -176,7 +176,7 @@ class Ros2Supervisor(Node):
         response.success = True
         return response
 
-    def __spawn_proto_robot_callback(self, request, response):
+    def __spawn_node_from_string_callback(self, request, response):
         robot = request.robot
         # Choose the conversion according to the input and platform
         if robot.proto_urls:

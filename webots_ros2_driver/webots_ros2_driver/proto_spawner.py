@@ -42,7 +42,7 @@ class PROTOSpawner(ExecuteProcess):
         command = ['ros2',
                    'service',
                    'call',
-                   '/Ros2Supervisor/spawn_urdf_robot',
+                   '/Ros2Supervisor/spawn_proto_robot',
                    'webots_ros2_msgs/srv/SpawnProtoRobot',
                    message]
 

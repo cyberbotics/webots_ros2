@@ -259,7 +259,7 @@ class Ros2Supervisor(Node):
                                    '"robot_description" in the URDFSpawner object.')
             response.success = False
             return response
-        object_string = request.data
+        object_string = robot.node_string
         if object_string == '':
             self.get_logger().info('Ros2Supervisor cannot import an empty string.')
             response.success = False

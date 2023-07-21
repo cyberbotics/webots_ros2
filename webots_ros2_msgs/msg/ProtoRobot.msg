@@ -1,2 +1,2 @@
-string proto_path
+string proto_paths
 string robot_string

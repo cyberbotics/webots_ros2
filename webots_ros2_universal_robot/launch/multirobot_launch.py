@@ -129,7 +129,7 @@ def generate_launch_description():
     # Driver nodes
     # When having multiple robot it is mandatory to specify the robot name.
     ur5e_xacro_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf.xacro')
-    ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_config.yaml')
+    ur5e_control_params = os.path.join(package_dir, 'resource', 'ros2_control_ur5e_config.yaml')
     ur5e_driver = WebotsController(
         robot_name='UR5e',
         namespace='ur5e',

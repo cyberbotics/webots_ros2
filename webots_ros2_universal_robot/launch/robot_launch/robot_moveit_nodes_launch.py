@@ -85,6 +85,7 @@ def generate_launch_description():
                     movegroup,
                     sim_time
                 ],
+                remappings=[('/joint_states', '/ur5e/joint_states')]
             )
         )
 

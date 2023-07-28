@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.2 (2023-07-28)
+------------------
+* Fixed errors showing up when launching moveit for ur5e.
+
 2023.1.1 (2023-07-11)
 ------------------
 * Added deprecation message when declaring driver node in launch file.

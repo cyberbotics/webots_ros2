@@ -82,6 +82,10 @@ def generate_launch_description():
         parameters=[{
             'robot_description': '<robot name=""><link name=""/></robot>'
         }],
+        remappings=[
+            ('/joint_states', '/ur5e/joint_states'),
+            ('/robot_state_publisher/set_parameters', '/ur5erobot_state_publisher/set_parameters'),
+        ],
     )
 
     return LaunchDescription([

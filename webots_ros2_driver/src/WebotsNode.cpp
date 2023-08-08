@@ -306,7 +306,7 @@ namespace webots_ros2_driver {
   }
 
   void WebotsNode::setAnotherNodeParameter(std::string anotherNodeName, std::string parameterName, std::string parameterValue) {
-    mClient = create_client<rcl_interfaces::srv::SetParameters>(get_namespace() + anotherNodeName + "/set_parameters");
+    mClient = create_client<rcl_interfaces::srv::SetParameters>(anotherNodeName + "/set_parameters");
     mClient->wait_for_service(std::chrono::seconds(1));
     rcl_interfaces::srv::SetParameters::Request::SharedPtr request =
       std::make_shared<rcl_interfaces::srv::SetParameters::Request>();

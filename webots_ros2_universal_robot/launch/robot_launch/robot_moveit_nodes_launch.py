@@ -41,6 +41,13 @@ def generate_launch_description():
 
     # Check if moveit is installed
     if 'moveit' in get_packages_with_prefixes():
+        # Webots simulation with robot
+        launch_description_nodes.append(
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(os.path.join(package_dir, 'launch', 'robot_nodes_launch.py'))
+            )
+        )
+
         # Configuration
         description = {'robot_description': load_file('ur5e_with_gripper.urdf')}
         description_semantic = {'robot_description_semantic': load_file('moveit_ur5e.srdf')}
@@ -86,13 +93,6 @@ def generate_launch_description():
                     sim_time
                 ],
                 remappings=[('/joint_states', '/ur5e/joint_states')]
-            )
-        )
-
-        # Webots simulation with robot
-        launch_description_nodes.append(
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(os.path.join(package_dir, 'launch', 'robot_nodes_launch.py'))
             )
         )
     else:

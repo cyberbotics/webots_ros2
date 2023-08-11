@@ -47,13 +47,13 @@ def generate_launch_description():
     # When having multiple robot it is mandatory to specify the robot name.
     universal_robot_driver = WebotsController(
         robot_name='UR5e',
+        namespace='ur5e',
         parameters=[
             {'robot_description': robot_description_path},
             {'use_sim_time': True},
             {'set_robot_state_publisher': True},
             ros2_control_params
         ],
-        namespace='ur5e'
     )
 
     # Other ROS 2 nodes
@@ -77,6 +77,7 @@ def generate_launch_description():
 
     robot_state_publisher = Node(
         package='robot_state_publisher',
+        namespace='ur5e',
         executable='robot_state_publisher',
         output='screen',
         parameters=[{

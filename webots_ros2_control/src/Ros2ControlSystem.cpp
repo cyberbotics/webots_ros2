@@ -133,6 +133,43 @@ namespace webots_ros2_control {
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
 
+  hardware_interface::return_type Ros2ControlSystem::perform_command_mode_switch(
+    const std::vector<std::string> &start_interfaces, const std::vector<std::string> &stop_interfaces) {
+    for (Joint &joint : mJoints) {
+      for (const std::string &interface_name : stop_interfaces) {
+        // Clear joint control method bits corresponding to stop interfaces
+        if (interface_name == (joint.name + "/" + hardware_interface::HW_IF_POSITION)) {
+          joint.controlPosition = false;
+        }
+        if (interface_name == (joint.name + "/" + hardware_interface::HW_IF_VELOCITY)) {
+          joint.controlVelocity = false;
+        }
+        if (interface_name == (joint.name + "/" + hardware_interface::HW_IF_EFFORT)) {
+          joint.controlEffort = false;
+        }
+      }
+
+      // Set joint control method bits corresponding to start interfaces
+      for (const std::string &interface_name : start_interfaces) {
+        if (interface_name == (joint.name + "/" + hardware_interface::HW_IF_POSITION)) {
+          joint.controlPosition = true;
+        }
+        if (interface_name == (joint.name + "/" + hardware_interface::HW_IF_VELOCITY)) {
+          joint.controlVelocity = true;
+        }
+        if (interface_name == (joint.name + "/" + hardware_interface::HW_IF_EFFORT)) {
+          joint.controlEffort = true;
+        }
+      }
+      if (joint.motor && joint.controlVelocity && !joint.controlPosition) {
+        wb_motor_set_position(joint.motor, INFINITY);
+        wb_motor_set_velocity(joint.motor, 0.0);
+      }
+    }
+
+    return hardware_interface::return_type::OK;
+  }
+
   hardware_interface::return_type Ros2ControlSystem::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     static double lastReadTime = 0;
 

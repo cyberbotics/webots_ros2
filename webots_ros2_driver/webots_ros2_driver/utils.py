@@ -132,7 +132,7 @@ def get_host_ip():
                 return fields[2]
         sys.exit('Unable to get host IP address.')
     except subprocess.CalledProcessError:
-        sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
+        sys.exit('Unable to get host IP address. \'ip route\' could not be executed. Make sure that iproute2 is installed.')
 
 
 def controller_protocol():

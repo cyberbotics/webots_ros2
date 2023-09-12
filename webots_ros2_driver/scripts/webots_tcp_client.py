@@ -35,26 +35,30 @@ def get_host_ip():
         sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
 
 
-HOST = get_host_ip()  # Connect to host of the VM
-PORT = 2000  # Port to connect to
-
-tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-launch_arguments = ''
-for arg in sys.argv:
-    if arg.endswith('.py') or arg == '':
-        continue
-    elif arg.endswith('.wbt'):
-        world_name = arg
-    else:
-        launch_arguments = launch_arguments + ' ' + arg
-
-
 def host_shared_folder():
     shared_folder_list = os.environ['WEBOTS_SHARED_FOLDER'].split(':')
     return shared_folder_list[0]
 
 
-while tcp_socket.connect_ex((HOST, PORT)) != 0:
+host_ip = None
+host_port = None
+
+launch_arguments = ''
+for arg in sys.argv[1:]:
+    if arg.endswith('.wbt'):
+        world_name = arg
+    elif "--host_ip=" in arg:
+        host_ip = arg.replace("--host_ip=", "")
+    elif "--host_port=" in arg:
+        host_port = int(arg.replace("--host_port=", ""))
+    else:
+        launch_arguments = launch_arguments + ' ' + arg
+
+host_ip = get_host_ip() if host_ip is None else host_ip
+host_port = 2000 if host_port is None else host_port
+
+tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+while tcp_socket.connect_ex((host_ip, host_port)) != 0:
     print('WARNING: Unable to start Webots. Please start the local simulation server on your host machine. Next connection '
           'attempt in 1 second.', file=sys.stderr)
     time.sleep(1)

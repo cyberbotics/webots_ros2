@@ -54,7 +54,7 @@ class _ConditionalSubstitution(Substitution):
 
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, ros2_supervisor=False,
-                 port='1234', **kwargs):
+                 port='1234', host_ip=None, host_port=2000, **kwargs):
         if sys.platform == 'win32':
             print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a '
                   'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
@@ -100,6 +100,14 @@ class WebotsLauncher(ExecuteProcess):
             stream_argument = "--stream=" + stream
         port_argument = '--port=' + port
 
+        host_ip_argument = ""
+        if host_ip is not None:
+            host_ip_argument = "--host_ip=" + host_ip
+
+        host_port_argument = ""
+        if host_port is not None:
+            host_port_argument = "--host_port=" + str(host_port)
+
         xvfb_run_prefix = []
 
         if 'WEBOTS_OFFSCREEN' in os.environ:
@@ -138,6 +146,8 @@ class WebotsLauncher(ExecuteProcess):
                     webots_path,
                     stream_argument,
                     port_argument,
+                    host_ip_argument,
+                    host_port_argument,
                     no_rendering,
                     stdout,
                     stderr,

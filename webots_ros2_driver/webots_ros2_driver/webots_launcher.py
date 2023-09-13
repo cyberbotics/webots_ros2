@@ -100,13 +100,8 @@ class WebotsLauncher(ExecuteProcess):
             stream_argument = "--stream=" + stream
         port_argument = '--port=' + port
 
-        host_ip_argument = ""
-        if host_ip is not None:
-            host_ip_argument = "--host_ip=" + host_ip
-
-        host_port_argument = ""
-        if host_port is not None:
-            host_port_argument = "--host_port=" + str(host_port)
+        host_ip_argument = "" if host_ip is None else "--host_ip=" + host_ip
+        host_port_argument = "" if host_port is None else "--host_port=" + str(host_port)
 
         xvfb_run_prefix = []
 

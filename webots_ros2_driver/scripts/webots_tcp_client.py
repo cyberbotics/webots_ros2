@@ -40,25 +40,25 @@ def host_shared_folder():
     return shared_folder_list[0]
 
 
-host_ip = None
-host_port = None
+simulation_server_ip = None
+simulation_server_port = None
 
 launch_arguments = ''
 for arg in sys.argv[1:]:
     if arg.endswith('.wbt'):
         world_name = arg
-    elif "--host_ip=" in arg:
-        host_ip = arg.replace("--host_ip=", "")
-    elif "--host_port=" in arg:
-        host_port = int(arg.replace("--host_port=", ""))
+    elif "--simulation_server_ip=" in arg:
+        simulation_server_ip = arg.replace("--simulation_server_ip=", "")
+    elif "--simulation_server_port=" in arg:
+        simulation_server_port = int(arg.replace("--simulation_server_port=", ""))
     else:
         launch_arguments = launch_arguments + ' ' + arg
 
-host_ip = get_host_ip() if host_ip is None else host_ip
-host_port = 2000 if host_port is None else host_port
+simulation_server_ip = get_host_ip() if simulation_server_ip is None else simulation_server_ip
+simulation_server_port = 2000 if simulation_server_port is None else simulation_server_port
 
 tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-while tcp_socket.connect_ex((host_ip, host_port)) != 0:
+while tcp_socket.connect_ex((simulation_server_ip, simulation_server_port)) != 0:
     print('WARNING: Unable to start Webots. Please start the local simulation server on your host machine. Next connection '
           'attempt in 1 second.', file=sys.stderr)
     time.sleep(1)

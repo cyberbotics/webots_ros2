@@ -1,10 +1,10 @@
 #VRML_SIM R2023b utf8
 
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/Floor.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/ThreadMetalPlate.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/solids/protos/SolidBox.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/GalvanizedMetal.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/objects/floors/protos/Floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/appearances/protos/ThreadMetalPlate.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/objects/solids/protos/SolidBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/develop/projects/appearances/protos/GalvanizedMetal.proto"
 
 WorldInfo {
   info [

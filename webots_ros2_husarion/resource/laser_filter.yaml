@@ -1,0 +1,18 @@
+scan_to_scan_filter_chain:
+  ros__parameters:
+    filter1:
+      name: box_filter
+      type: laser_filters/LaserScanBoxFilter
+      params:
+        box_frame: base_link
+
+        max_x: 0.165
+        min_x: -0.195 # 0.165 + 0.03 (wifi antenna)
+
+        max_y: 0.145
+        min_y: -0.145
+
+        max_z: 0.5
+        min_z: -0.5
+
+        invert: false # activate to remove all points outside of the box

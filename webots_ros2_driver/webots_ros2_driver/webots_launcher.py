@@ -64,7 +64,7 @@ class WebotsLauncher(ExecuteProcess):
         self.__has_shared_folder = has_shared_folder()
         self.__is_supervisor = ros2_supervisor
         if self.__is_supervisor:
-            self._supervisor = Ros2SupervisorLauncher(webots_port=webots_port)
+            self._supervisor = Ros2SupervisorLauncher(simulation_server_ip=simulation_server_ip, webots_port=webots_port)
 
         # Find Webots executable
         if not self.__has_shared_folder:
@@ -256,7 +256,7 @@ class WebotsLauncher(ExecuteProcess):
 
 
 class Ros2SupervisorLauncher(Node):
-    def __init__(self, output='screen', respawn=True, webots_port='1234', **kwargs):
+    def __init__(self, output='screen', respawn=True, simulation_server_ip=None, webots_port='1234', **kwargs):
         # Launch the Ros2Supervisor node
         super().__init__(
             package='webots_ros2_driver',
@@ -266,7 +266,7 @@ class Ros2SupervisorLauncher(Node):
             output=output,
             # Set WEBOTS_HOME to the webots_ros2_driver installation folder
             # to load the correct libController libraries from the Python API
-            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix(webots_port) + 'Ros2Supervisor',
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix(ip_address=simulation_server_ip, port=webots_port) + 'Ros2Supervisor',
                             'WEBOTS_HOME': get_package_prefix('webots_ros2_driver')},
             respawn=respawn,
             **kwargs

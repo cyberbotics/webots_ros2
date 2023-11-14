@@ -31,7 +31,8 @@ namespace webots_ros2_control {
   Ros2ControlSystem::Ros2ControlSystem() {
     mNode = NULL;
   }
-  void Ros2ControlSystem::init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info, const hardware_interface::ResourceManager &resource) {
+  void Ros2ControlSystem::init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info,
+                               const hardware_interface::ResourceManager &resource) {
     mNode = node;
     for (hardware_interface::ComponentInfo component : info.joints) {
       Joint joint;

@@ -87,7 +87,7 @@ namespace webots_ros2_control {
       auto webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
         mHardwareLoader->createUnmanagedInstance(hardwareType));
 #endif
-      webotsSystem->init(mNode, controlHardware[i]);
+      webotsSystem->init(mNode, controlHardware[i], *resourceManager);
       resourceManager->import_component(std::move(webotsSystem), controlHardware[i]);
 
 // Configure and activate all components

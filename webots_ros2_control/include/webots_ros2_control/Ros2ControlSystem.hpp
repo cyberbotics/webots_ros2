@@ -22,6 +22,7 @@
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
+#include "hardware_interface/resource_manager.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "rclcpp/macros.hpp"
 #include "webots_ros2_driver/PluginInterface.hpp"
@@ -50,7 +51,7 @@ namespace webots_ros2_control {
   class Ros2ControlSystem : public Ros2ControlSystemInterface {
   public:
     Ros2ControlSystem();
-    void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) override;
+    void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info, const hardware_interface::ResourceManager &resource) override;
 
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(
       const hardware_interface::HardwareInfo &info) override;

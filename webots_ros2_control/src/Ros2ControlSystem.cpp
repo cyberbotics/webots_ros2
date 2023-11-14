@@ -31,7 +31,7 @@ namespace webots_ros2_control {
   Ros2ControlSystem::Ros2ControlSystem() {
     mNode = NULL;
   }
-  void Ros2ControlSystem::init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) {
+  void Ros2ControlSystem::init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info, const hardware_interface::ResourceManager &resource) {
     mNode = node;
     for (hardware_interface::ComponentInfo component : info.joints) {
       Joint joint;
@@ -64,14 +64,16 @@ namespace webots_ros2_control {
 
       // Configure the command interface
       for (hardware_interface::InterfaceInfo commandInterface : component.command_interfaces) {
-        if (commandInterface.name == "position")
-          joint.controlPosition = true;
-        else if (commandInterface.name == "velocity")
-          joint.controlVelocity = true;
-        else if (commandInterface.name == "effort")
-          joint.controlEffort = true;
-        else
-          throw std::runtime_error("Invalid hardware info name `" + commandInterface.name + "`");
+        if (resource.command_interface_is_claimed(commandInterface.name)) {
+          if (commandInterface.name == "position")
+            joint.controlPosition = true;
+          else if (commandInterface.name == "velocity")
+            joint.controlVelocity = true;
+          else if (commandInterface.name == "effort")
+            joint.controlEffort = true;
+          else
+            throw std::runtime_error("Invalid hardware info name `" + commandInterface.name + "`");
+        }
       }
       if (joint.motor && joint.controlVelocity && !joint.controlPosition) {
         wb_motor_set_position(joint.motor, INFINITY);

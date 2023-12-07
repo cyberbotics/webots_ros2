@@ -1,20 +1,24 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#  ...........       ____  _ __
+#  |  ,-^-,  |      / __ )(_) /_______________ _____  ___
+#  | (  O  ) |     / __  / / __/ ___/ ___/ __ `/_  / / _ \
+#  | / ,..´  |    / /_/ / / /_/ /__/ /  / /_/ / / /_/  __/
+#     +.......   /_____/_/\__/\___/_/   \__,_/ /___/\___/
 
-# Copyright 1996-2023 Cyberbotics Ltd.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# MIT License
 
-"""Launch Webots Crazyflie driver."""
+# Copyright (c) 2023 Bitcraze
+
+
+"""
+file: robot_launch.py
+
+Launch Webots Crazyflie ROS2 driver.
+
+Author:   Kimberly McGuire (Bitcraze AB)
+"""
+
 
 import os
 import launch
@@ -36,7 +40,8 @@ def generate_launch_description():
         ros2_supervisor=True
     )
 
-    robot_description_path = os.path.join(package_dir, 'resource', 'crazyflie_webots.urdf')
+    robot_description_path = os.path.join(
+        package_dir, 'resource', 'crazyflie_webots.urdf')
     crazyflie_driver = WebotsController(
         robot_name='Crazyflie',
         parameters=[

@@ -6,12 +6,12 @@
 
 # MIT License
 
-# Copyright (c) 2022 Bitcraze
+# Copyright (c) 2023 Bitcraze
 
-# @file crazyflie_controllers_py.py
-# Controls the crazyflie motors in webots in Python
+# @file crazyflie_driver.py
+# Controls the crazyflie motors in Webots using ROS2.
 
-"""crazyflie_controller_py controller."""
+"""crazyflie_driver"""
 
 
 import math

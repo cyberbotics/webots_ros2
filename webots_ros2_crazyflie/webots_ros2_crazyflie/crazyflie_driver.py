@@ -25,7 +25,6 @@ import tf_transformations
 
 from math import cos, sin
 
-import sys
 
 FLYING_ATTITUDE = 1
 

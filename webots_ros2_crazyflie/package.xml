@@ -2,10 +2,10 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>webots_ros2_crazyflie</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="kimberly@bitcraze.io">kimberly</maintainer>
-  <license>TODO: License declaration</license>
+  <version>2024.1.3</version>
+  <description>ROS2 package for Crazyflie webots simulator</description>
+  <maintainer email="kimberly@bitcraze.io">Kimberly McGuire (Bitcraze AB)</maintainer>
+  <license>MIT</license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>

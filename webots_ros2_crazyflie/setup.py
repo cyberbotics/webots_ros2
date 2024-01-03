@@ -14,12 +14,12 @@ data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='2024.1.3',
     packages=find_packages(exclude=['test']),
     data_files=data_files,
     install_requires=['setuptools', 'launch'],
     zip_safe=True,
-    maintainer='kimberly (Bitcraze AB)',
+    maintainer='Kimberly McGuire (Bitcraze AB)',
     maintainer_email='kimberly@bitcraze.io',
     description='ROS2 package for Crazyflie webots simulator',
     license='MIT',

@@ -139,7 +139,8 @@ def get_wsl_ip_address():
     # wsl2 net mode
     # NAT: if get_router_ip() == get_wsl_host_ip()
     # Mirrored: if get_router_ip() != get_wsl_host_ip()
-    return get_wsl_host_ip() if get_router_ip() == get_wsl_host_ip() else '127.0.0.1'
+    wsl_host_ip = get_wsl_host_ip()
+    return wsl_host_ip if get_router_ip() == wsl_host_ip else '127.0.0.1'
 
 
 def controller_protocol():

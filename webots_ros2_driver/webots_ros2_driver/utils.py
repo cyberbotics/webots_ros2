@@ -86,7 +86,7 @@ def is_wsl():
     return 'microsoft-standard' in uname().release
 
 
-def get_wsl_ip_address():
+def get_wsl_host_ip():
     try:
         file = open('/etc/resolv.conf', 'r')
     except IOError:
@@ -123,7 +123,7 @@ def container_shared_folder():
     return shared_folder_list[1]
 
 
-def get_host_ip():
+def get_router_ip():
     try:
         output = subprocess.run(['ip', 'route'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
         for line in output.stdout.split('\n'):
@@ -135,19 +135,26 @@ def get_host_ip():
         sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
 
 
+def get_wsl_ip_address():
+    # wsl2 net mode
+    # NAT: if get_router_ip() == get_wsl_host_ip()
+    # Mirrored: if get_router_ip() != get_wsl_host_ip()
+    return get_wsl_host_ip() if get_router_ip() == get_wsl_host_ip() else '127.0.0.1'
+
+
 def controller_protocol():
     protocol = 'tcp' if (has_shared_folder() or is_wsl()) else 'ipc'
     return protocol
 
 
 def controller_ip_address():
-    ip_address = get_host_ip() if has_shared_folder() else get_wsl_ip_address()
+    ip_address = get_router_ip() if has_shared_folder() else get_wsl_ip_address()
     return ip_address
 
 
 def controller_url_prefix(port='1234'):
     if has_shared_folder() or is_wsl():
-        return 'tcp://' + (get_host_ip() if has_shared_folder() else get_wsl_ip_address()) + ':' + port + '/'
+        return 'tcp://' + (get_router_ip() if has_shared_folder() else get_wsl_ip_address()) + ':' + port + '/'
     else:
         return ''
 

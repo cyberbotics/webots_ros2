@@ -56,6 +56,7 @@ class TestClangFormat(unittest.TestCase):
             'webots_ros2_control',
             'webots_ros2_driver',
             'webots_ros2_epuck',
+            'webots_ros2_husarion',
             'webots_ros2_importer',
             'webots_ros2_mavic',
             'webots_ros2_msgs',

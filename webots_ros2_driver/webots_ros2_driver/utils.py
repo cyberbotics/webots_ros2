@@ -123,7 +123,15 @@ def container_shared_folder():
     return shared_folder_list[1]
 
 
+def is_docker():
+    mountinfo = Path("/proc/self/mountinfo")
+    return mountinfo.is_file() and "docker" in mountinfo.read_text()
+
+
 def get_host_ip():
+    if is_docker():
+        return "host.docker.internal"
+
     try:
         output = subprocess.run(['ip', 'route'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
         for line in output.stdout.split('\n'):

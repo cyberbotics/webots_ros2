@@ -2,6 +2,13 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.2 (2024-02-02)
+------------------
+* Fix host IP address resolution for nodes running in Docker.
+* Fix hardware_interface version check with latest ros2_controls.
+* Copy forests with world.
+* Sync libcontroller master.
+
 2023.1.0 (2023-06-29)
 ------------------
 * Fixed component activation.

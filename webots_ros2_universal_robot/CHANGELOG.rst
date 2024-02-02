@@ -2,6 +2,11 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.2 (2024-02-02)
+------------------
+* Add remappings to robot state publisher for ur5e example.
+* Fixed control_config for ur5e moveit example.
+
 2023.1.0 (2023-06-29)
 ------------------
 * Clean simulation reset in launch file.

@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.2 (2024-02-02)
+------------------
+* Fix hardware_interface version check with latest ros2_controls on Rolling.
+
 2023.1.0 (2023-06-29)
 ------------------
 * Fixed component activation.

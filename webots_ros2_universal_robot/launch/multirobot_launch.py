@@ -56,14 +56,14 @@ def get_ros2_nodes(*args):
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
     ur5e_trajectory_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner',
+        executable='ros2_control_node',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['ur_joint_trajectory_controller', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
     )
     ur5e_joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner',
+        executable='ros2_control_node',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['ur_joint_state_broadcaster', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
@@ -71,14 +71,14 @@ def get_ros2_nodes(*args):
     ur5e_spawners = [ur5e_trajectory_controller_spawner, ur5e_joint_state_broadcaster_spawner]
     abb_trajectory_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner',
+        executable='ros2_control_node',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['abb_joint_trajectory_controller', '-c', 'abb/controller_manager'] + controller_manager_timeout,
     )
     abb_joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner',
+        executable='ros2_control_node',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['abb_joint_state_broadcaster', '-c', 'abb/controller_manager'] + controller_manager_timeout,

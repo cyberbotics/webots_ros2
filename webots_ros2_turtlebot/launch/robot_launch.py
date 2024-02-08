@@ -66,14 +66,14 @@ def generate_launch_description():
     controller_manager_prefix = 'python.exe' if os.name == 'nt' else ''
     diffdrive_controller_spawner = Node(
         package='controller_manager',
-        executable='spawner',
+        executable='ros2_control_node',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['diffdrive_controller'] + controller_manager_timeout,
     )
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
-        executable='spawner',
+        executable='ros2_control_node',
         output='screen',
         prefix=controller_manager_prefix,
         arguments=['joint_state_broadcaster'] + controller_manager_timeout,

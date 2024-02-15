@@ -99,8 +99,8 @@ namespace webots_ros2_control {
       resourceManager->set_component_state(controlHardware[i].name, active_state);
 #else
       resourceManager->activate_all_components();
-      resourceManager->load_urdf(urdfString, false, false);
 #endif
+      resourceManager->load_urdf(urdfString, false, false);
     }
 
     // Controller Manager

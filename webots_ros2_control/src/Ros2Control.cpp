@@ -100,6 +100,7 @@ namespace webots_ros2_control {
 #else
       resourceManager->activate_all_components();
 #endif
+      resourceManager->load_urdf(urdfString, false, false);
     }
 
     // Controller Manager

@@ -90,16 +90,10 @@ namespace webots_ros2_control {
       webotsSystem->init(mNode, controlHardware[i]);
       resourceManager->import_component(std::move(webotsSystem), controlHardware[i]);
 
-// Configure and activate all components
-// Necessary hotfix for deprecation of component activation present in "hardware_interface" package for versions above 3.15
-// (#793)
-#if HARDWARE_INTERFACE_VERSION_MAJOR >= 4 || HARDWARE_INTERFACE_VERSION_MAJOR >= 3 && HARDWARE_INTERFACE_VERSION_MINOR >= 15
+      // Configure and activate all components
       using lifecycle_msgs::msg::State;
       rclcpp_lifecycle::State active_state(State::PRIMARY_STATE_ACTIVE, hardware_interface::lifecycle_state_names::ACTIVE);
       resourceManager->set_component_state(controlHardware[i].name, active_state);
-#else
-      resourceManager->activate_all_components();
-#endif
       resourceManager->load_urdf(urdfString, false, false);
     }
 

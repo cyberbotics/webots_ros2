@@ -22,7 +22,7 @@ import os
 import pytest
 import rclpy
 from sensor_msgs.msg import Range, Image, LaserScan
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, TwistStamped
 from nav_msgs.msg import Odometry
 from launch import LaunchDescription
 import launch_testing.actions
@@ -89,17 +89,34 @@ class TestEpuck(TestWebots):
         self.wait_for_messages(self.__node, Range, '/tof', condition=on_range_message_received)
 
     def testMovement(self):
-        publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
+        use_twist_stamped = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'
 
-        def on_position_message_received(message):
-            twist_message = Twist()
-            twist_message.linear.x = 0.1
-            publisher.publish(twist_message)
+        if use_twist_stamped:
+            publisher = self.__node.create_publisher(TwistStamped, '/cmd_vel', 1)
 
-            # E_puck should move forward
-            if message.pose.pose.position.x > 0.5:
-                return True
-            return False
+            def on_position_message_received(message):
+                twist_message = TwistStamped()
+                twist_message.header.stamp = self.__node.get_clock().now().to_msg()
+                twist_message.twist.linear.x = 0.1
+                publisher.publish(twist_message)
+
+                # E_puck should move forward
+                if message.pose.pose.position.x > 0.5:
+                    return True
+                return False
+
+        else:
+            publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
+
+            def on_position_message_received(message):
+                twist_message = Twist()
+                twist_message.linear.x = 0.1
+                publisher.publish(twist_message)
+
+                # E_puck should move forward
+                if message.pose.pose.position.x > 0.5:
+                    return True
+                return False
 
         self.wait_for_messages(self.__node, Odometry, '/odom', condition=on_position_message_received)
 

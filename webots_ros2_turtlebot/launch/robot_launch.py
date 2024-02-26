@@ -82,7 +82,11 @@ def generate_launch_description():
 
     robot_description_path = os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+    use_twist_stamped = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'
+    if use_twist_stamped:
+        mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+    else:
+        mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
     turtlebot_driver = WebotsController(
         robot_name='TurtleBot3Burger',
         parameters=[
@@ -108,6 +112,7 @@ def generate_launch_description():
                 ('map', nav2_map),
                 ('params_file', nav2_params),
                 ('use_sim_time', use_sim_time),
+                ('enable_stamped_cmd_vel', use_twist_stamped),
             ],
             condition=launch.conditions.IfCondition(use_nav))
         navigation_nodes.append(turtlebot_navigation)

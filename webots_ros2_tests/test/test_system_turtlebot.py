@@ -21,7 +21,7 @@
 import os
 import pytest
 import rclpy
-from geometry_msgs.msg import PointStamped, Twist
+from geometry_msgs.msg import PointStamped, Twist, TwistStamped
 from sensor_msgs.msg import LaserScan
 from launch import LaunchDescription
 import launch_testing.actions
@@ -61,14 +61,28 @@ class TestTurtlebot(TestWebots):
         self.wait_for_clock(self.__node, messages_to_receive=20)
 
     def testMovement(self):
-        publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
+        use_twist_stamped = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'
 
-        def on_position_message_received(message):
-            twist_message = Twist()
-            twist_message.linear.x = 0.1
-            publisher.publish(twist_message)
+        if use_twist_stamped:
+            publisher = self.__node.create_publisher(TwistStamped, '/cmd_vel', 1)
 
-            return message.point.x > 6.7
+            def on_position_message_received(message):
+                twist_message = TwistStamped()
+                twist_message.header.stamp = self.__node.get_clock().now().to_msg()
+                twist_message.twist.linear.x = 0.1
+                publisher.publish(twist_message)
+
+                return message.point.x > 6.7
+
+        else:
+            publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
+
+            def on_position_message_received(message):
+                twist_message = Twist()
+                twist_message.linear.x = 0.1
+                publisher.publish(twist_message)
+
+                return message.point.x > 6.7
 
         self.wait_for_messages(self.__node, PointStamped, '/TurtleBot3Burger/gps', condition=on_position_message_received)
 

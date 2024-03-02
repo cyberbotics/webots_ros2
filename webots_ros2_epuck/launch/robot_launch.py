@@ -88,7 +88,11 @@ def generate_launch_description():
 
     robot_description_path = os.path.join(package_dir, 'resource', 'epuck_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
-    mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+    use_twist_stamped = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'
+    if use_twist_stamped:
+        mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
+    else:
+        mappings = [('/diffdrive_controller/cmd_vel_unstamped', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
     epuck_driver = WebotsController(
         robot_name='e-puck',
         parameters=[

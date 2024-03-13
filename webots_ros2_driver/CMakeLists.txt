@@ -29,7 +29,15 @@ find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
+
+# Check which ROS distribution is used, vision_msgs depends of that
+if($ENV{ROS_DISTRO} MATCHES "humble")
+  find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
+elseif($ENV{ROS_DISTRO} MATCHES "iron")
+  find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
+elseif($ENV{ROS_DISTRO} MATCHES "rolling")
+  find_package(Python 3.12 EXACT REQUIRED COMPONENTS Development)
+endif()
 
 add_custom_target(compile-lib-controller ALL
   COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1

@@ -43,3 +43,14 @@ fi
 
 # Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).
 #export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
+
+# TODO: Remove once the https://packages.ubuntu.com/noble/python3-flake8 package version is updated.
+# Manually upgrade python3-flake8 to 7.0.0 for noble
+if [[ "${ROS_DISTRO}" == "rolling" ]]; then
+    apt install -y python3-flake8
+    wget http://ftp.ubuntu.com/ubuntu/ubuntu/pool/universe/p/pyflakes/python3-pyflakes_3.2.0-1_all.deb -P /tmp
+    dpkg -i /tmp/python3-pyflakes_3.2.0-1_all.deb
+    wget http://ftp.ubuntu.com/ubuntu/ubuntu/pool/universe/p/python-flake8/python3-flake8_7.0.0-1_all.deb -P /tmp
+    dpkg -i /tmp/python3-flake8_7.0.0-1_all.deb
+    apt --fix-broken install -y
+fi

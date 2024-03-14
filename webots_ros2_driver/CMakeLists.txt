@@ -30,7 +30,6 @@ find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
-# Check which ROS distribution is used, vision_msgs depends of that
 if($ENV{ROS_DISTRO} MATCHES "humble")
   find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
 elseif($ENV{ROS_DISTRO} MATCHES "iron")

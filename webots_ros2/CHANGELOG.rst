@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2024.0.0 (2023-XX-XX)
+------------------
+* Created webots_ros2_husarion package.
+
 2023.1.1 (2023-07-11)
 ------------------
 * Added deprecation message when declaring driver node in launch file.

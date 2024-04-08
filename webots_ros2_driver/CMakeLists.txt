@@ -29,7 +29,14 @@ find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_package(PythonLibs 3.10 EXACT REQUIRED)
+
+if($ENV{ROS_DISTRO} MATCHES "humble")
+  find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
+elseif($ENV{ROS_DISTRO} MATCHES "iron")
+  find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
+elseif($ENV{ROS_DISTRO} MATCHES "rolling")
+  find_package(Python 3.12 EXACT REQUIRED COMPONENTS Development)
+endif()
 
 add_custom_target(compile-lib-controller ALL
   COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
@@ -54,7 +61,7 @@ include_directories(
   include
   webots/include/controller/c
   webots/include/controller/cpp
-  ${PYTHON_INCLUDE_DIRS}
+  ${Python_INCLUDE_DIRS}
 )
 
 link_directories(${WEBOTS_LIB_BASE})
@@ -117,7 +124,7 @@ add_dependencies(driver
 )
 target_link_libraries(driver
   ${WEBOTS_LIB}
-  ${PYTHON_LIBRARIES}
+  ${Python_LIBRARIES}
   yaml-cpp
 )
 install(

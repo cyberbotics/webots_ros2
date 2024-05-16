@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.2 (2023-07-28)
+------------------
+* Fixed errors showing up when launching moveit for ur5e.
+
 2023.1.0 (2023-06-29)
 ------------------
 * Clean simulation reset in launch file.

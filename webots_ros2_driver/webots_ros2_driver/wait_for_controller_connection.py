@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright 1996-2023 Cyberbotics Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

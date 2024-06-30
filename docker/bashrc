@@ -1,0 +1,3 @@
+source /opt/ros/${ROS_DISTRO}/setup.bash
+source ~/ros2_ws/install/local_setup.bash
+alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug'

@@ -25,5 +25,6 @@ RUN apt-get update && apt-get install -y \
 COPY ./docker/bashrc /tmp/bashrc
 RUN cat /tmp/bashrc >> /${DOCKERUSER}/.bashrc
 
+ENV USERNAME default
 USER ${DOCKERUSER}
 WORKDIR /${DOCKERUSER}/ros2_ws

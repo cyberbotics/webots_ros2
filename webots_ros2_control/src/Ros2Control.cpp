@@ -62,7 +62,7 @@ namespace webots_ros2_control {
       mHardwareLoader.reset(new pluginlib::ClassLoader<webots_ros2_control::Ros2ControlSystemInterface>(
         "webots_ros2_control", "webots_ros2_control::Ros2ControlSystemInterface"));
     } catch (pluginlib::LibraryLoadException &ex) {
-      throw std::runtime_error("Hardware loader cannot be created: " + atoi(ex.what()));
+      throw std::runtime_error("Hardware loader cannot be created: " + std::string(ex.what()));
     }
 
     // Control Hardware
@@ -74,7 +74,7 @@ namespace webots_ros2_control {
       urdfString = mNode->urdf();
       controlHardware = hardware_interface::parse_control_resources_from_urdf(urdfString);
     } catch (const std::runtime_error &ex) {
-      throw std::runtime_error("URDF cannot be parsed by a `ros2_control` component parser: " + atoi(ex.what()));
+      throw std::runtime_error("URDF cannot be parsed by a `ros2_control` component parser: " + std::string(ex.what()));
     }
     for (unsigned int i = 0; i < controlHardware.size(); i++) {
 // Necessary hotfix for renamed variables present in "hardware_interface" package for versions above 3.5 (#590)

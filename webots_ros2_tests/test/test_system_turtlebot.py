@@ -61,7 +61,7 @@ class TestTurtlebot(TestWebots):
         self.wait_for_clock(self.__node, messages_to_receive=20)
 
     def testMovement(self):
-        use_twist_stamped = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'
+        use_twist_stamped = 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy'])
 
         if use_twist_stamped:
             publisher = self.__node.create_publisher(TwistStamped, '/cmd_vel', 1)

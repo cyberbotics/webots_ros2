@@ -1,5 +1,105 @@
 <?xml version="1.0" ?>
 <robot name="Tiago Webots">
+    <link name="base_link" />
+
+    <joint name="wheel_right_joint" type="continuous">
+        <parent link="base_link" />
+        <child link="wheel_right_link" />
+    </joint>
+
+    <link name="wheel_right_link" />
+
+    <joint name="wheel_left_joint" type="continuous">
+        <parent link="base_link" />
+        <child link="wheel_left_link" />
+    </joint>
+
+    <link name="wheel_left_link" />
+
+    <joint name="head_1_joint" type="continuous">
+        <parent link="base_link" />
+        <child link="head_1_link" />
+    </joint>
+
+    <link name="head_1_link" />
+
+    <joint name="head_2_joint" type="continuous">
+        <parent link="head_1_link" />
+        <child link="head_2_link" />
+    </joint>
+
+    <link name="head_2_link" />
+    
+    <joint name="torso_lift_joint" type="continuous">
+        <parent link="base_link" />
+        <child link="torso_lift_link" />
+    </joint>
+
+    <link name="torso_lift_link" />
+
+    <joint name="arm_1_joint" type="continuous">
+        <parent link="torso_lift_link" />
+        <child link="arm_1_link" />
+    </joint>
+
+    <link name="arm_1_link" />
+    
+    <joint name="arm_2_joint" type="continuous">
+        <parent link="arm_1_link" />
+        <child link="arm_2_link" />
+    </joint>
+
+    <link name="arm_2_link" />
+
+    <joint name="arm_3_joint" type="continuous">
+        <parent link="arm_2_link" />
+        <child link="arm_3_link" />
+    </joint>
+
+    <link name="arm_3_link" />
+
+    <joint name="arm_4_joint" type="continuous">
+        <parent link="arm_3_link" />
+        <child link="arm_4_link" />
+    </joint>
+
+    <link name="arm_4_link" />
+
+    <joint name="arm_5_joint" type="continuous">
+        <parent link="arm_4_link" />
+        <child link="arm_5_link" />
+    </joint>
+
+    <link name="arm_5_link" />
+    
+    <joint name="arm_6_joint" type="continuous">
+        <parent link="arm_5_link" />
+        <child link="arm_6_link" />
+    </joint>
+
+    <link name="arm_6_link" />
+
+    <joint name="arm_7_joint" type="continuous">
+        <parent link="arm_6_link" />
+        <child link="arm_7_link" />
+    </joint>
+
+    <link name="arm_7_link" />
+
+    <joint name="gripper_left_finger_joint" type="continuous">
+        <parent link="arm_7_link" />
+        <child link="gripper_left_finger_link" />
+    </joint>
+
+    <link name="gripper_left_finger_link" />
+    
+    <joint name="gripper_right_finger_joint" type="continuous">
+        <parent link="arm_7_link" />
+        <child link="gripper_right_finger_link" />
+    </joint>
+
+    <link name="gripper_right_finger_link" />
+
     <webots>
         <device reference="hokuyo" type="Lidar">
             <ros>

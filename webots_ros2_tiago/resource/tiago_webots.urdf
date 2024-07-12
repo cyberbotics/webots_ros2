@@ -1,5 +1,21 @@
 <?xml version="1.0" ?>
 <robot name="Tiago Webots">
+    <link name="base_link" />
+
+    <joint name="wheel_right_joint" type="continuous">
+        <parent link="base_link" />
+        <child link="wheel_right_link" />
+    </joint>
+
+    <link name="wheel_right_link" />
+
+    <joint name="wheel_left_joint" type="continuous">
+        <parent link="base_link" />
+        <child link="wheel_left_link" />
+    </joint>
+
+    <link name="wheel_left_link" />
+
     <webots>
         <device reference="hokuyo" type="Lidar">
             <ros>

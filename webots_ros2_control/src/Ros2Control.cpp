@@ -74,7 +74,8 @@ namespace webots_ros2_control {
     std::vector<hardware_interface::HardwareInfo> controlHardware;
 #if HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 13
     std::unique_ptr<hardware_interface::ResourceManager> resourceManager =
-      std::make_unique<hardware_interface::ResourceManager>(node->get_node_clock_interface(), node->get_node_logging_interface());
+      std::make_unique<hardware_interface::ResourceManager>(node->get_node_clock_interface(),
+                                                            node->get_node_logging_interface());
 #else
     std::unique_ptr<hardware_interface::ResourceManager> resourceManager =
       std::make_unique<hardware_interface::ResourceManager>();

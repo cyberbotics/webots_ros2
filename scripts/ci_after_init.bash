@@ -3,19 +3,23 @@
 ROS_DISTRO=$1
 ROS_REPO=$2
 
-# Take the latest nightly build
-YESTERDAY_WEEK_DAY_NUMBER=`date --date="1 day ago" +"%u"`
-LAST_NIGHTLY_DAY_OLD=1
-# There is no nightly build the weekend
-if [ ${YESTERDAY_WEEK_DAY_NUMBER} -gt 5 ]; then
-    LAST_NIGHTLY_DAY_OLD="$((${YESTERDAY_WEEK_DAY_NUMBER}-4))"
+WEBOTS_VERSION=${WEBOTS_RELEASE_VERSION}
+
+if [ "${TEST_WITH_WEBOTS_NIGTHLY}" == "1" ]; then
+    # Take the latest nightly build
+    YESTERDAY_WEEK_DAY_NUMBER=`date --date="1 day ago" +"%u"`
+    LAST_NIGHTLY_DAY_OLD=1
+    # There is no nightly build the weekend
+    if [ ${YESTERDAY_WEEK_DAY_NUMBER} -gt 5 ]; then
+        LAST_NIGHTLY_DAY_OLD="$((${YESTERDAY_WEEK_DAY_NUMBER}-4))"
+    fi
+    NIGHTLY_DATE=`date --date="${LAST_NIGHTLY_DAY_OLD} day ago" +"%-d_%-m_%Y"`
+    WEBOTS_VERSION="nightly_${NIGHTLY_DATE}"
 fi
-NIGHTLY_DATE=`date --date="${LAST_NIGHTLY_DAY_OLD} day ago" +"%-d_%-m_%Y"`
-WEBOTS_NIGHTLY_VERSION="nightly_${NIGHTLY_DATE}"
 
 apt update
 apt install -y wget dialog apt-utils psmisc lsb-release git
-wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_NIGHTLY_VERSION}/webots_${WEBOTS_RELEASE_VERSION}_amd64.deb -O /tmp/webots.deb
+wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_VERSION}/webots_${WEBOTS_RELEASE_VERSION}_amd64.deb -O /tmp/webots.deb
 apt install -y /tmp/webots.deb xvfb
 
 # OpenSSL patch for ubuntu 22

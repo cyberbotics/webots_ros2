@@ -65,6 +65,10 @@ namespace webots_ros2_control {
       throw std::runtime_error("Hardware loader cannot be created: " + std::string(ex.what()));
     }
 
+    // Update rate
+    const int updateRate = mControllerManager->get_parameter("update_rate").as_int();
+    mControlPeriodMs = (1.0 / updateRate) * 1000.0;
+
     // Control Hardware
     std::string urdfString;
     std::vector<hardware_interface::HardwareInfo> controlHardware;
@@ -94,16 +98,17 @@ namespace webots_ros2_control {
       using lifecycle_msgs::msg::State;
       rclcpp_lifecycle::State active_state(State::PRIMARY_STATE_ACTIVE, hardware_interface::lifecycle_state_names::ACTIVE);
       resourceManager->set_component_state(controlHardware[i].name, active_state);
+
+#if HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
+      resourceManager->load_and_initialize_components(urdfString, updateRate);
+#else
       resourceManager->load_urdf(urdfString, false, false);
+#endif
     }
 
     // Controller Manager
     mExecutor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
     mControllerManager.reset(new controller_manager::ControllerManager(std::move(resourceManager), mExecutor));
-
-    // Update rate
-    const int updateRate = mControllerManager->get_parameter("update_rate").as_int();
-    mControlPeriodMs = (1.0 / updateRate) * 1000.0;
 
     int controlPeriodProductMs = wb_robot_get_basic_time_step();
     while (controlPeriodProductMs < mControlPeriodMs)

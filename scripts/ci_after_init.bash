@@ -3,7 +3,7 @@
 ROS_DISTRO=$1
 ROS_REPO=$2
 
-WEBOTS_VERSION=${WEBOTS_RELEASE_VERSION}
+WEBOTS_VERSION="R${WEBOTS_RELEASE_VERSION}"
 
 if [ "${TEST_WITH_WEBOTS_NIGTHLY}" == "1" ]; then
     # Take the latest nightly build
@@ -17,10 +17,10 @@ if [ "${TEST_WITH_WEBOTS_NIGTHLY}" == "1" ]; then
     WEBOTS_VERSION="nightly_${NIGHTLY_DATE}"
 fi
 
-apt update
-apt install -y wget dialog apt-utils psmisc lsb-release git
-wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_VERSION}/webots_${WEBOTS_RELEASE_VERSION}_amd64.deb -O /tmp/webots.deb
-apt install -y /tmp/webots.deb xvfb
+apt update > /dev/null
+apt install -y wget dialog apt-utils psmisc lsb-release git > /dev/null
+wget https://github.com/cyberbotics/webots/releases/download/${WEBOTS_VERSION}/webots_${WEBOTS_RELEASE_VERSION}_amd64.deb -O /tmp/webots.deb > /dev/null
+apt install -y /tmp/webots.deb xvfb > /dev/null
 
 # OpenSSL patch for ubuntu 22
 if [[ $(lsb_release -rs) == "22.04" && ${WEBOTS_RELEASE_VERSION} == "2022a" ]]; then

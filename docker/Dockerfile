@@ -20,7 +20,8 @@ RUN userdel -r ubuntu && \
 RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-vision-msgs \
     ros-${ROS_DISTRO}-ros2-control \
-    ros-${ROS_DISTRO}-ros2-controllers
+    ros-${ROS_DISTRO}-ros2-controllers \
+    gdb
 
 COPY ./docker/bashrc /tmp/bashrc
 RUN cat /tmp/bashrc >> /${DOCKERUSER}/.bashrc

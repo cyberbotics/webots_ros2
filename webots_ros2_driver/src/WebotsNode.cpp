@@ -188,8 +188,6 @@ namespace webots_ros2_driver {
       const std::vector<std::string> tags = {"ros2_control", "webots"};
       std::shared_ptr<tinyxml2::XMLDocument> webotsUrdfModelDocument = std::make_shared<tinyxml2::XMLDocument>();
       webotsUrdfModelDocument->Parse(webotsUrdf.c_str());
-      if (!webotsUrdfModelDocument)
-        throw std::runtime_error("Invalid Webots URDF, it cannot be parsed");
       tinyxml2::XMLElement *webotsRobotXMLElement = webotsUrdfModelDocument->FirstChildElement("robot");
       tinyxml2::XMLElement *robotXMLElement = mRobotDescriptionDocument->FirstChildElement("robot");
       if (!robotXMLElement)

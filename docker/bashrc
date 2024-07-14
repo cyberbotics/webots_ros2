@@ -3,5 +3,5 @@ source ~/ros2_ws/install/local_setup.bash
 alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug'
 
 # For debugging
-# export WEBOTS_HOME=$HOME/.ros/webotsR2023b
-# export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/cyberbotics/ros2_ws/src/webots_ros2/webots_ros2_driver/webots/lib/controller
+export WEBOTS_HOME=/usr/local/webots
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/cyberbotics/ros2_ws/src/webots_ros2/webots_ros2_driver/webots/lib/controller

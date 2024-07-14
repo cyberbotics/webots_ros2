@@ -4,18 +4,21 @@ NVIDIA_GPU:=$(shell docker info | grep Runtimes | grep nvidia 1> /dev/null && nv
 DOCKERUSER:=cyberbotics
 BASENAME:=webots_ros2
 DOCKERUSERCOMMENT:="Cyberbotics"
-ROS_DISTRO:=jazzy
-
+ROS_DISTRO?=jazzy
+ROS_TESTING?=0
+WEBOTS_VERSION?=2023b
 
 build:
+	echo "ROS_TESTING=${ROS_TESTING}"
 	docker build ${ROOT_DIR} \
 		-f ${ROOT_DIR}/docker/Dockerfile \
 		-t ${BASENAME}-image ${DOCKER_ARGS} \
 		--build-arg UID=${UID} \
 		--build-arg DOCKERUSER=${DOCKERUSER} \
 		--build-arg DOCKERUSERCOMMENT=${DOCKERUSERCOMMENT} \
-		--build-arg ROS_DISTRO=${ROS_DISTRO} --progress=plain
-
+		--build-arg ROS_TESTING=${ROS_TESTING} \
+		--build-arg WEBOTS_VERSION=${WEBOTS_VERSION} \
+		--build-arg ROS_DISTRO=${ROS_DISTRO}
 
 run:
 	@docker container rm -f ${BASENAME}-container

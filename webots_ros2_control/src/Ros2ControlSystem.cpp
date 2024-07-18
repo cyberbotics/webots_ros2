@@ -62,6 +62,14 @@ namespace webots_ros2_control {
       joint.velocity = NAN;
       joint.acceleration = NAN;
 
+      // Check if state interfaces have initial positions
+      for (hardware_interface::InterfaceInfo stateInterface : component.state_interfaces) {
+        if (stateInterface.name == "position" && !stateInterface.initial_value.empty()) {
+          joint.position = std::stod(stateInterface.initial_value);
+          wb_motor_set_position(joint.motor, std::stod(stateInterface.initial_value));
+        }
+      }
+
       // Configure the command interface
       for (hardware_interface::InterfaceInfo commandInterface : component.command_interfaces) {
         if (commandInterface.name == "position")

@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2024.0.0 (2023-XX-XX)
+------------------
+* Created webots_ros2_husarion package.
+
 2023.1.2 (2024-04-08)
 ------------------
 * Fixed errors showing up when launching moveit for ur5e.

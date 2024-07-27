@@ -53,7 +53,5 @@ fi
 #   MESA: error: ZINK: failed to choose pdev
 #   2024-07-27T19:23:20.1063344Z [webots-4] glx: failed to create drisw screen
 if [[ "${ROS_DISTRO}" != "rolling" ]]; then
-    apt-get update && apt-get install -y software-properties-common && add-apt-repository -y ppa:kisak/kisak-mesa && \
-        apt update -y && \
-        apt upgrade -y
+    apt-get install -y qt5-quickcontrols
 fi

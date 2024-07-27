@@ -2,6 +2,10 @@
 Changelog for package webots_ros2_universal_robot
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2023.1.3 (2024-XX-XX)
+------------------
+* Fixed passing the `robot_description` parameter to ros2_control.
+
 2023.1.2 (2023-07-28)
 ------------------
 * Fixed errors showing up when launching moveit for ur5e.

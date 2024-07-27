@@ -53,5 +53,5 @@ fi
 #   MESA: error: ZINK: failed to choose pdev
 #   2024-07-27T19:23:20.1063344Z [webots-4] glx: failed to create drisw screen
 if [[ "${ROS_DISTRO}" == "rolling" ]]; then
-    apt-get install -y gqrx-sdr libqt5quickcontrols2-5 qtquickcontrols2-5-dev
+    apt-get install -y libqt5quickcontrols2-5 qtquickcontrols2-5-dev
 fi

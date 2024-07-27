@@ -48,3 +48,12 @@ fi
 # Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).
 #export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
 
+
+# Fixes:
+#   MESA: error: ZINK: failed to choose pdev
+#   2024-07-27T19:23:20.1063344Z [webots-4] glx: failed to create drisw screen
+if [[ "${ROS_DISTRO}" != "rolling" ]]; then
+    apt-get update && apt-get install -y software-properties-common && add-apt-repository -y ppa:kisak/kisak-mesa && \
+        apt update -y && \
+        apt upgrade -y
+fi

@@ -36,6 +36,53 @@ const double CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS = 1.0;
 
 namespace webots_ros2_control {
 
+#if HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
+  class WebotsResourceManager : public hardware_interface::ResourceManager {
+  public:
+    WebotsResourceManager(webots_ros2_driver::WebotsNode *node) :
+      hardware_interface::ResourceManager(node->get_node_clock_interface(), node->get_node_logging_interface()),
+      mHardwareLoader("webots_ros2_control", "webots_ros2_control::Ros2ControlSystemInterface"),
+      mLogger(node->get_logger().get_child("WebotsResourceManager")) {
+      mNode = node;
+    }
+
+    WebotsResourceManager(const WebotsResourceManager &) = delete;
+
+    bool load_and_initialize_components(const std::string &urdf, unsigned int update_rate) override {
+      components_are_loaded_and_initialized_ = true;
+
+      std::vector<hardware_interface::HardwareInfo> controlHardware;
+      try {
+        controlHardware = hardware_interface::parse_control_resources_from_urdf(urdf);
+      } catch (const std::runtime_error &ex) {
+        throw std::runtime_error("URDF cannot be parsed by a `ros2_control` component parser: " + std::string(ex.what()));
+      }
+      for (unsigned int i = 0; i < controlHardware.size(); i++) {
+        const std::string pluginName = controlHardware[i].hardware_plugin_name;
+
+        std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface> webotsSystem;
+        try {
+          webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
+            mHardwareLoader.createUnmanagedInstance(pluginName));
+        } catch (pluginlib::PluginlibException &ex) {
+          RCLCPP_ERROR(mLogger, "The plugin failed to load for some reason. Error: %s\n", ex.what());
+          continue;
+        }
+
+        webotsSystem->init(mNode, controlHardware[i]);
+        import_component(std::move(webotsSystem), controlHardware[i]);
+      }
+
+      return components_are_loaded_and_initialized_;
+    }
+
+  private:
+    webots_ros2_driver::WebotsNode *mNode;
+    pluginlib::ClassLoader<webots_ros2_control::Ros2ControlSystemInterface> mHardwareLoader;
+    rclcpp::Logger mLogger;
+  };
+#endif
+
   Ros2Control::Ros2Control() {
     mNode = NULL;
   }
@@ -62,10 +109,14 @@ namespace webots_ros2_control {
       mHardwareLoader.reset(new pluginlib::ClassLoader<webots_ros2_control::Ros2ControlSystemInterface>(
         "webots_ros2_control", "webots_ros2_control::Ros2ControlSystemInterface"));
     } catch (pluginlib::LibraryLoadException &ex) {
-      throw std::runtime_error("Hardware loader cannot be created: " + atoi(ex.what()));
+      throw std::runtime_error("Hardware loader cannot be created: " + std::string(ex.what()));
     }
 
     // Control Hardware
+#if HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
+    std::unique_ptr<hardware_interface::ResourceManager> resourceManager =
+      std::make_unique<webots_ros2_control::WebotsResourceManager>(node);
+#else
     std::string urdfString;
     std::vector<hardware_interface::HardwareInfo> controlHardware;
     std::unique_ptr<hardware_interface::ResourceManager> resourceManager =
@@ -74,7 +125,7 @@ namespace webots_ros2_control {
       urdfString = mNode->urdf();
       controlHardware = hardware_interface::parse_control_resources_from_urdf(urdfString);
     } catch (const std::runtime_error &ex) {
-      throw std::runtime_error("URDF cannot be parsed by a `ros2_control` component parser: " + atoi(ex.what()));
+      throw std::runtime_error("URDF cannot be parsed by a `ros2_control` component parser: " + std::string(ex.what()));
     }
     for (unsigned int i = 0; i < controlHardware.size(); i++) {
 // Necessary hotfix for renamed variables present in "hardware_interface" package for versions above 3.5 (#590)
@@ -94,8 +145,10 @@ namespace webots_ros2_control {
       using lifecycle_msgs::msg::State;
       rclcpp_lifecycle::State active_state(State::PRIMARY_STATE_ACTIVE, hardware_interface::lifecycle_state_names::ACTIVE);
       resourceManager->set_component_state(controlHardware[i].name, active_state);
+
       resourceManager->load_urdf(urdfString, false, false);
     }
+#endif
 
     // Controller Manager
     mExecutor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();

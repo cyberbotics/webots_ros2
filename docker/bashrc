@@ -1,0 +1,8 @@
+source /opt/ros/${ROS_DISTRO}/setup.bash
+source ~/ros2_ws/install/local_setup.bash
+alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug'
+alias teleop='ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true'
+
+# For debugging
+export WEBOTS_HOME=/usr/local/webots
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/cyberbotics/ros2_ws/src/webots_ros2/webots_ros2_driver/webots/lib/controller

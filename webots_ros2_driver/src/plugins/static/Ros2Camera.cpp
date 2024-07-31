@@ -110,12 +110,12 @@ namespace webots_ros2_driver {
       mIsEnabled = shouldBeEnabled;
     }
 
-    if (recognitionSubscriptionsExist != mRecognitionIsEnabled) {
-      if (recognitionSubscriptionsExist)
+    if ( (recognitionSubscriptionsExist || segmentationSubscriptionsExist) != mRecognitionIsEnabled) {
+      if (recognitionSubscriptionsExist || segmentationSubscriptionsExist)
         wb_camera_recognition_enable(mCamera, mPublishTimestepSyncedMs);
       else
         wb_camera_recognition_disable(mCamera);
-      mRecognitionIsEnabled = recognitionSubscriptionsExist;
+      mRecognitionIsEnabled = recognitionSubscriptionsExist || segmentationSubscriptionsExist;
     }
 
     if (segmentationSubscriptionsExist != mSegmentationIsEnabled) {

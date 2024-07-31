@@ -21,6 +21,7 @@ namespace webots_ros2_driver {
     Ros2SensorPlugin::init(node, parameters);
     mIsEnabled = false;
     mRecognitionIsEnabled = false;
+    mSegmentationIsEnabled = false;
     mCamera = wb_robot_get_device(parameters["name"].c_str());
 
     mCameraInfoSuffix = parameters.count("cameraInfoSuffix") ? parameters["cameraInfoSuffix"] : "/camera_info";
@@ -78,6 +79,13 @@ namespace webots_ros2_driver {
       mRecognitionMessage.header.frame_id = mFrameName;
       mWebotsRecognitionMessage.header.frame_id = mFrameName;
     }
+
+    // Segmentation publisher
+    if (wb_camera_recognition_has_segmentation(mCamera)) {
+      mSegmentationPublisher = mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName + "/segmentation", 
+                                                                                rclcpp::SensorDataQoS().reliable());
+      mSegmentationMessage = mImageMessage;
+    }
   }
 
   void Ros2Camera::step() {
@@ -89,7 +97,10 @@ namespace webots_ros2_driver {
     const bool recognitionSubscriptionsExist =
       (mRecognitionPublisher != nullptr && mRecognitionPublisher->get_subscription_count() > 0) ||
       (mWebotsRecognitionPublisher != nullptr && mWebotsRecognitionPublisher->get_subscription_count() > 0);
-    const bool shouldBeEnabled = mAlwaysOn || imageSubscriptionsExist || recognitionSubscriptionsExist;
+    const bool segmentationSubscriptionsExist = 
+      mSegmentationPublisher != nullptr && mSegmentationPublisher->get_subscription_count() > 0;
+    const bool shouldBeEnabled = mAlwaysOn || imageSubscriptionsExist || 
+      recognitionSubscriptionsExist || segmentationSubscriptionsExist;
 
     if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
@@ -107,11 +118,21 @@ namespace webots_ros2_driver {
       mRecognitionIsEnabled = recognitionSubscriptionsExist;
     }
 
+    if (segmentationSubscriptionsExist != mSegmentationIsEnabled) {
+      if (segmentationSubscriptionsExist)
+        wb_camera_recognition_enable_segmentation(mCamera);
+      else
+        wb_camera_recognition_disable_segmentation(mCamera);
+      mSegmentationIsEnabled = segmentationSubscriptionsExist;
+    }
+
     // Publish data
     if (mAlwaysOn || imageSubscriptionsExist)
       publishImage();
     if (recognitionSubscriptionsExist)
       publishRecognition();
+    if (segmentationSubscriptionsExist)
+      publishSegmentation();
     if (mCameraInfoPublisher->get_subscription_count() > 0)
       mCameraInfoPublisher->publish(mCameraInfoMessage);
   }
@@ -184,5 +205,14 @@ namespace webots_ros2_driver {
     }
     mWebotsRecognitionPublisher->publish(mWebotsRecognitionMessage);
     mRecognitionPublisher->publish(mRecognitionMessage);
+  }
+
+  void Ros2Camera::publishSegmentation() {
+    auto image = wb_camera_recognition_get_segmentation_image(mCamera);
+    if (image) {
+      mSegmentationMessage.header.stamp = mNode->get_clock()->now();
+      memcpy(mSegmentationMessage.data.data(), image, mSegmentationMessage.data.size());
+      mSegmentationPublisher->publish(mSegmentationMessage);
+    }
   }
 }  // namespace webots_ros2_driver

@@ -31,7 +31,10 @@ ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 skippedDirectories = [
     '.git',
     'webots_ros2_importer/webots_ros2_importer/urdf2webots/',
-    'webots_ros2_driver/webots/lib'
+    'webots_ros2_driver/webots/lib',
+    'webots_ros2_husarion/rosbot_ros',
+    'webots_ros2_husarion/rosbot_xl_ros',
+    'webots_ros2_husarion/ros_components_description'
 ]
 skippedDirectoriesFull = [os.path.join(ROOT_FOLDER, os.path.normpath(path)) for path in skippedDirectories]
 

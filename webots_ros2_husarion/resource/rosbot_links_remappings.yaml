@@ -1,0 +1,7 @@
+imu: imu_link
+cover: cover_link
+front left wheel: fl_wheel_link
+front right wheel: fr_wheel_link
+rear left wheel: rl_wheel_link
+rear right wheel: rr_wheel_link
+camera: camera_link

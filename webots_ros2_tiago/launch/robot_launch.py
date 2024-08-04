@@ -84,7 +84,7 @@ def generate_launch_description():
 
     robot_description_path = os.path.join(package_dir, 'resource', 'tiago_webots.urdf')
     ros2_control_params = os.path.join(package_dir, 'resource', 'ros2_control.yml')
-    use_twist_stamped = 'ROS_DISTRO' in os.environ and os.environ['ROS_DISTRO'] == 'rolling'
+    use_twist_stamped = 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy'])
     if use_twist_stamped:
         mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]
     else:
@@ -114,8 +114,7 @@ def generate_launch_description():
 
     # Navigation
     navigation_nodes = []
-    nav2_params_file = 'nav2_params_iron.yaml' if ('ROS_DISTRO' in os.environ
-                                                   and os.environ['ROS_DISTRO'] == 'iron') else 'nav2_params.yaml'
+    nav2_params_file = 'nav2_params.yaml'
     nav2_params = os.path.join(package_dir, 'resource', nav2_params_file)
     nav2_map = os.path.join(package_dir, 'resource', 'map.yaml')
     if 'nav2_bringup' in get_packages_with_prefixes():

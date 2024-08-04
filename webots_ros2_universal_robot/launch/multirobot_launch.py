@@ -99,6 +99,26 @@ def get_ros2_nodes(*args):
         output='screen'
     )
 
+    ur5e_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>'
+        }],
+        namespace='ur5e'
+    )
+
+    abb_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[{
+            'robot_description': '<robot name=""><link name=""/></robot>'
+        }],
+        namespace='abb'
+    )
+
     return [
         # Request to spawn the URDF robot
         spawn_URDF_ur5e,
@@ -109,7 +129,12 @@ def get_ros2_nodes(*args):
             event_handler=launch.event_handlers.OnProcessIO(
                 target_action=spawn_URDF_ur5e,
                 on_stdout=lambda event: get_webots_driver_node(
-                    event, [ur5e_controller, abb_controller] + ur5e_spawners + abb_spawners
+                    event, [
+                        ur5e_controller,
+                        abb_controller,
+                        abb_robot_state_publisher,
+                        ur5e_robot_state_publisher
+                    ] + ur5e_spawners + abb_spawners
                 ),
             )
         ),
@@ -137,6 +162,7 @@ def generate_launch_description():
             {'robot_description': ur5e_xacro_path},
             {'xacro_mappings': ['name:=UR5eWithGripper']},
             {'use_sim_time': True},
+            {'set_robot_state_publisher': True},
             ur5e_control_params
         ],
         respawn=True
@@ -151,6 +177,7 @@ def generate_launch_description():
         parameters=[
             {'robot_description': abb_description_path},
             {'use_sim_time': True},
+            {'set_robot_state_publisher': True},
             abb_control_params
         ],
         respawn=True

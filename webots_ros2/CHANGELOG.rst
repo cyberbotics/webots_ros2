@@ -2,9 +2,17 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2024.0.0 (2023-XX-XX)
+2024.0.0 (2024-XX-XX)
 ------------------
 * Created webots_ros2_husarion package.
+
+2023.1.3 (2024-XX-XX)
+------------------
+* Added support for ROS 2 Jazzy.
+* Make webots_ros2_driver scripts executable.
+* Fixed passing the `robot_description` parameter to ros2_control.
+* Fixed the produced URDF to also contain joint limits necessary for ros2_control.
+* Added support for the new `ros2_control` API affecting resource_manager and controller_manager.
 
 2023.1.2 (2024-04-08)
 ------------------

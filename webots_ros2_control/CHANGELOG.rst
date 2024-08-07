@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.1.3 (2024-XX-XX)
+2023.1.3 (2024-08-07)
 ------------------
 * Added support for the new `ros2_control` API affecting resource_manager and controller_manager.
 

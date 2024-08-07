@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2023.1.3 (2024-XX-XX)
+2023.1.3 (2024-08-07)
 ------------------
 * Make webots_ros2_driver scripts executable.
 * Fixed the produced URDF to also contain joint limits necessary for ros2_control.

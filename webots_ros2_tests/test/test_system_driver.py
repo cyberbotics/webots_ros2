@@ -129,6 +129,18 @@ class TestDriver(TestWebots):
         self.wait_for_messages(self.__node, CameraRecognitionObjects, '/Pioneer_3_AT/camera/recognitions/webots',
                                condition=on_objects_received)
 
+    def testSegmentation(self):
+        def on_image_received(message):
+            self.assertEqual(message.height, 64)
+            self.assertEqual(message.width, 64)
+
+            pixels = set([tuple(message.data[i:i+4]) for i in range(0,len(message.data),4)])
+            self.assertEqual(pixels, {(0, 0, 0, 255), (0, 0, 255, 255)})
+            return True
+
+        self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/camera/segmentation', 
+                               condition=on_image_received)
+
     def testPythonPluginService(self):
         client = self.__node.create_client(Trigger, 'move_forward')
         if not client.wait_for_service(timeout_sec=10.0):

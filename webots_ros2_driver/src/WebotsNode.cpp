@@ -35,6 +35,7 @@
 #include <webots_ros2_driver/plugins/static/Ros2RangeFinder.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Receiver.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2VacuumGripper.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2Connector.hpp>
 #include "webots_ros2_driver/PluginInterface.hpp"
 #include "webots_ros2_driver/PythonPlugin.hpp"
 
@@ -258,6 +259,9 @@ namespace webots_ros2_driver {
           break;
         case WB_NODE_VACUUM_GRIPPER:
           plugin = std::make_shared<webots_ros2_driver::Ros2VacuumGripper>();
+          break;
+        case WB_NODE_CONNECTOR:
+          plugin = std::make_shared<webots_ros2_driver::Ros2Connector>();
           break;
       }
       if (plugin) {

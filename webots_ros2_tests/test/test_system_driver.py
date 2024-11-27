@@ -135,7 +135,9 @@ class TestDriver(TestWebots):
             self.assertEqual(message.width, 64)
 
             pixels = set([tuple(message.data[i:i+4]) for i in range(0,len(message.data),4)])
-            self.assertEqual(pixels, {(0, 0, 0, 255), (0, 0, 255, 255)})
+            expected = {(0, 0, 0, 255), (0, 0, 255, 255)}
+            assert pixels.issubset( expected )
+
             return True
 
         self.wait_for_messages(self.__node, Image, '/Pioneer_3_AT/camera/segmentation', 

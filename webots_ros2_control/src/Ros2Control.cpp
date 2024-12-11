@@ -147,14 +147,14 @@ namespace webots_ros2_control {
       resourceManager->set_component_state(controlHardware[i].name, active_state);
 
       resourceManager->load_urdf(
-          "<robot name=\"default_robot\">"
-          "  <ros2_control name=\"default_control\" type=\"hardware_interface/DefaultHardware\">"
-          "    <hardware>"
-          "      <plugin>hardware_interface/DefaultPlugin</plugin>"
-          "    </hardware>"
-          "  </ros2_control>"
-          "</robot>",
-          false, false);
+        "<robot name=\"default_robot\">"
+        "  <ros2_control name=\"default_control\" type=\"hardware_interface/DefaultHardware\">"
+        "    <hardware>"
+        "      <plugin>hardware_interface/DefaultPlugin</plugin>"
+        "    </hardware>"
+        "  </ros2_control>"
+        "</robot>",
+        false, false);
     }
 #endif
 

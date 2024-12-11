@@ -39,6 +39,7 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
 
+
 def wait_for_topic(topic_name, timeout=30.0):
     rclpy.init()
     node = Node('readiness_checker')

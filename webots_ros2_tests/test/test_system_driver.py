@@ -63,6 +63,7 @@ def wait_for_topic(topic_name, timeout=30.0):
     finally:
         rclpy.shutdown()
 
+
 @pytest.mark.rostest
 def generate_test_description():
     initialize_webots_test()

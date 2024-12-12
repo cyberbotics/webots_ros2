@@ -12,25 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef VACUUM_GRIPPER_HPP
-#define VACUUM_GRIPPER_HPP
+#ifndef PROTO_HPP
+#define PROTO_HPP
 
-#include <webots/Device.hpp>
+#define WB_USING_CPP_API
+#include <string>
+#include <webots/Field.hpp>
+#include "../../c/webots/types.h"
 
 namespace webots {
-  class VacuumGripper : public Device {
+  class Field;
+  class Proto {
   public:
-    explicit VacuumGripper(const std::string &name) : Device(name) {}  // Use Robot::getVacuumGripper() instead
-    explicit VacuumGripper(WbDeviceTag tag) : Device(tag) {}
-    virtual ~VacuumGripper() {}
-    virtual void enablePresence(int samplingPeriod);
-    virtual void disablePresence();
-    int getPresenceSamplingPeriod() const;
-    bool getPresence() const;
-    bool isOn() const;
-    virtual void turnOn();
-    virtual void turnOff();
+    std::string getTypeName() const;
+    bool isDerived() const;
+    Proto *getParent() const;
+    Field *getField(const std::string &fieldName) const;
+    Field *getFieldByIndex(const int index) const;
+    int getNumberOfFields() const;
+
+    // DO NOT USE THESE FUNCTIONS: THEY ARE RESERVED FOR INTERNAL USE:
+    static Proto *findProto(WbProtoRef ref);
+    static void cleanup();
+
+  private:
+    Proto(WbProtoRef ref);
+    ~Proto() {}
+
+    WbProtoRef protoRef;
   };
 }  // namespace webots
 
-#endif  // VACUUM_GRIPPER_HPP
+#endif  // PROTO_HPP

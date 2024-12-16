@@ -39,6 +39,9 @@ def generate_launch_description():
     use_slam = LaunchConfiguration('slam', default=False)
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
+    robot_description_path = os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')
+    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
+
     webots = WebotsLauncher(
         world=PathJoinSubstitution([package_dir, 'worlds', world]),
         mode=mode,
@@ -69,19 +72,17 @@ def generate_launch_description():
         executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
-        arguments=['diffdrive_controller'] + controller_manager_timeout,
+        arguments=['diffdrive_controller'] + controller_manager_timeout + ['--param-file', ros2_control_params],
     )
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
-        arguments=['joint_state_broadcaster'] + controller_manager_timeout,
+        arguments=['joint_state_broadcaster'] + controller_manager_timeout + ['--param-file', ros2_control_params],
     )
     ros_control_spawners = [diffdrive_controller_spawner, joint_state_broadcaster_spawner]
 
-    robot_description_path = os.path.join(package_dir, 'resource', 'turtlebot_webots.urdf')
-    ros2_control_params = os.path.join(package_dir, 'resource', 'ros2control.yml')
     use_twist_stamped = 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy'])
     if use_twist_stamped:
         mappings = [('/diffdrive_controller/cmd_vel', '/cmd_vel'), ('/diffdrive_controller/odom', '/odom')]

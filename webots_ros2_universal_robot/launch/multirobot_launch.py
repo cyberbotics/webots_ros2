@@ -34,7 +34,7 @@ PACKAGE_NAME = 'webots_ros2_universal_robot'
 
 
 # Define all the ROS 2 nodes that need to be restart on simulation reset here
-def get_ros2_nodes(*args):
+def get_ros2_nodes(abb_control_params, ur5e_control_params):
     package_dir = get_package_share_directory(PACKAGE_NAME)
     ur5e_xacro_path = os.path.join(package_dir, 'resource', 'ur5e_with_gripper.urdf.xacro')
     ur5e_description = xacro.process_file(ur5e_xacro_path, mappings={'name': 'UR5eWithGripper'}).toxml()
@@ -59,14 +59,14 @@ def get_ros2_nodes(*args):
         executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
-        arguments=['ur_joint_trajectory_controller', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
+        arguments=['ur_joint_trajectory_controller', '-c', 'ur5e/controller_manager'] + controller_manager_timeout + ['--param-file', ur5e_control_params],
     )
     ur5e_joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
-        arguments=['ur_joint_state_broadcaster', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
+        arguments=['ur_joint_state_broadcaster', '-c', 'ur5e/controller_manager'] + controller_manager_timeout  + ['--param-file', ur5e_control_params],
     )
     ur5e_spawners = [ur5e_trajectory_controller_spawner, ur5e_joint_state_broadcaster_spawner]
     abb_trajectory_controller_spawner = Node(
@@ -74,14 +74,14 @@ def get_ros2_nodes(*args):
         executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
-        arguments=['abb_joint_trajectory_controller', '-c', 'abb/controller_manager'] + controller_manager_timeout,
+        arguments=['abb_joint_trajectory_controller', '-c', 'abb/controller_manager'] + controller_manager_timeout + ['--param-file', abb_control_params],
     )
     abb_joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
-        arguments=['abb_joint_state_broadcaster', '-c', 'abb/controller_manager'] + controller_manager_timeout,
+        arguments=['abb_joint_state_broadcaster', '-c', 'abb/controller_manager'] + controller_manager_timeout + ['--param-file', abb_control_params],
     )
     abb_spawners = [abb_trajectory_controller_spawner, abb_joint_state_broadcaster_spawner]
 
@@ -219,4 +219,4 @@ def generate_launch_description():
 
         # Add the reset event handler
         reset_handler
-    ] + get_ros2_nodes())
+    ] + get_ros2_nodes(abb_control_params, ur5e_control_params))

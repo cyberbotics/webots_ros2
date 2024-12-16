@@ -64,7 +64,7 @@ def generate_launch_description():
         executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
-        arguments=['ur_joint_trajectory_controller', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
+        arguments=['ur_joint_trajectory_controller', '-c', 'ur5e/controller_manager'] + controller_manager_timeout  + ['--param-file', ros2_control_params],
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -72,7 +72,7 @@ def generate_launch_description():
         executable='spawner',
         output='screen',
         prefix=controller_manager_prefix,
-        arguments=['ur_joint_state_broadcaster', '-c', 'ur5e/controller_manager'] + controller_manager_timeout,
+        arguments=['ur_joint_state_broadcaster', '-c', 'ur5e/controller_manager'] + controller_manager_timeout  + ['--param-file', ros2_control_params],
     )
 
     robot_state_publisher = Node(

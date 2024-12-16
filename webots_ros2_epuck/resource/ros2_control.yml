@@ -21,3 +21,8 @@ diffdrive_controller:
 
     use_stamped_vel: false
     base_frame_id: "base_link"
+
+
+joint_state_broadcaster:
+  ros__parameters:
+    use_local_topics: false

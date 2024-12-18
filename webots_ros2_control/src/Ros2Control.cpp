@@ -155,13 +155,8 @@ namespace webots_ros2_control {
 
     rclcpp::NodeOptions options = controller_manager::get_cm_node_options();
     options.arguments(node->get_node_options().arguments());
-    mControllerManager.reset(new controller_manager::ControllerManager(
-      std::move(resourceManager),
-      mExecutor,
-      "controller_manager",
-      node->get_namespace(),
-      options
-    ));
+    mControllerManager.reset(new controller_manager::ControllerManager(std::move(resourceManager), mExecutor,
+                                                                       "controller_manager", node->get_namespace(), options));
 
     // Update rate
     const int updateRate = mControllerManager->get_parameter("update_rate").as_int();

@@ -42,7 +42,8 @@ int main(int argc, char **argv) {
 
   rclcpp::NodeOptions nodeOptions;
   nodeOptions.arguments(std::vector<std::string>(argv + 1, argv + argc));
-  std::shared_ptr<webots_ros2_driver::WebotsNode> node = std::make_shared<webots_ros2_driver::WebotsNode>(robotName, nodeOptions);
+  std::shared_ptr<webots_ros2_driver::WebotsNode> node =
+    std::make_shared<webots_ros2_driver::WebotsNode>(robotName, nodeOptions);
   node->init();
 
   // The parent process must be ros2 run. Declaring from launch file is deprecated. Remove with 2024.0.0.

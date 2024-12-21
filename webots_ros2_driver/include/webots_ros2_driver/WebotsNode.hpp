@@ -35,7 +35,7 @@ namespace webots_ros2_driver {
 
   class WebotsNode : public rclcpp::Node {
   public:
-    WebotsNode(std::string name);
+    WebotsNode(std::string name, rclcpp::NodeOptions &options);
     void init();
     int step();
     std::string urdf() const { return mRobotDescription; };

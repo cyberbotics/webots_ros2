@@ -1,4 +1,5 @@
 source /opt/ros/${ROS_DISTRO}/setup.bash
+source ~/ros2_libs_ws/install/local_setup.bash
 source ~/ros2_ws/install/local_setup.bash
 alias cb='colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug'
 alias teleop='ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true'

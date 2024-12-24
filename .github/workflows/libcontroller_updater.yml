@@ -1,8 +1,7 @@
 name: Libcontroller Updater
 
 on:
-  schedule:
-    - cron:  '0 04 * * *'
+  workflow_dispatch:
 
 jobs:
   automatic-libcontroller-sync:

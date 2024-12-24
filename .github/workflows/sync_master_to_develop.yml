@@ -3,9 +3,6 @@ name: Branch synchronizer
 on:
   workflow_dispatch:
 
-  # schedule:
-  #   - cron:  '0 04 * * *'
-
 jobs:
   sync-develop-with-master:
     runs-on: ubuntu-latest

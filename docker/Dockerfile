@@ -8,7 +8,7 @@ ARG DOCKERUSER=
 ARG DOCKERUSERCOMMENT=
 ARG ROS_DISTRO=jazzy
 ARG ROS_TESTING=0
-ARG WEBOTS_VERSION=2023b
+ARG WEBOTS_VERSION=2025a
 
 RUN if [ "${ROS_DISTRO}" != "humble" ]; then userdel -r ubuntu; fi
 RUN useradd -d /${DOCKERUSER} -m \
@@ -20,7 +20,7 @@ RUN useradd -d /${DOCKERUSER} -m \
     usermod -a -G dialout ${DOCKERUSER}
 
 RUN apt update && apt install -y wget && \
-    wget https://github.com/cyberbotics/webots/releases/download/R${WEBOTS_VERSION}/webots_${WEBOTS_VERSION}_amd64.deb -O /tmp/webots.deb && \
+    wget https://github.com/cyberbotics/webots/releases/download/nightly_25_12_2024/webots_2025a_amd64.deb -O /tmp/webots.deb && \
     apt install -y /tmp/webots.deb && \
     rm /tmp/webots.deb
 

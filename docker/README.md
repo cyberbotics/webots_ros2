@@ -13,7 +13,7 @@ curl -sSL https://get.docker.com | sh && sudo usermod -aG docker $USER
 
 You need to build & run the container only the first time:
 ```bash
-ROS_DISTRO=jazzy ROS_TESTING=1 WEBOTS_VERSION=2023b make build run exec
+ROS_DISTRO=jazzy ROS_TESTING=0 WEBOTS_VERSION=2025a make build run exec
 ```
 
 After that, you can just attach to the container with:

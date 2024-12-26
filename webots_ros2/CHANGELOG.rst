@@ -2,6 +2,10 @@
 Changelog for package webots_ros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2024.0.0 (2024-XX-XX)
+------------------
+* Created webots_ros2_husarion package.
+
 2023.1.3 (2024-08-07)
 ------------------
 * Added support for ROS 2 Jazzy.

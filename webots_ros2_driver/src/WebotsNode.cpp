@@ -50,7 +50,9 @@ namespace webots_ros2_driver {
     gShutdownSignalReceived = true;
   }
 
-  WebotsNode::WebotsNode(std::string name) : Node(name), mPluginLoader(gPluginInterfaceName, gPluginInterface) {
+  WebotsNode::WebotsNode(std::string name, rclcpp::NodeOptions &options) :
+    Node(name, options),
+    mPluginLoader(gPluginInterfaceName, gPluginInterface) {
     mRobotDescriptionParam = this->declare_parameter<std::string>("robot_description", "");
     mSetRobotStatePublisher = this->declare_parameter<bool>("set_robot_state_publisher", false);
     if (mRobotDescriptionParam != "") {

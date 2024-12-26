@@ -1,8 +1,7 @@
 name: Branch synchronizer
 
 on:
-  schedule:
-    - cron:  '0 04 * * *'
+  workflow_dispatch:
 
 jobs:
   sync-develop-with-master:

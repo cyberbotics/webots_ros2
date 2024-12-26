@@ -6,7 +6,7 @@ Changelog for package webots_ros2
 ------------------
 * Created webots_ros2_husarion package.
 
-2023.1.3 (2024-XX-XX)
+2023.1.3 (2024-08-07)
 ------------------
 * Added support for ROS 2 Jazzy.
 * Make webots_ros2_driver scripts executable.

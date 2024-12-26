@@ -1,0 +1,47 @@
+controller_manager:
+  ros__parameters:
+    # Adjusted to the Webots step time (32ms) 1s/0.032.
+    update_rate: 32 # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    rosbot_xl_base_controller:
+      type: diff_drive_controller/DiffDriveController
+
+rosbot_xl_base_controller:
+  ros__parameters:
+    left_wheel_names: ["fl_wheel_joint", "rl_wheel_joint"]
+    right_wheel_names: ["fr_wheel_joint", "rr_wheel_joint"]
+
+    wheel_separation: 0.252
+    wheel_radius: 0.048
+    wheel_separation_multiplier: 1.3
+    base_frame_id: "base_link"
+    odom_frame_id: "odom"
+
+    use_stamped_vel: false
+    enable_odom_tf: false
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+
+    linear:
+      x:
+        has_velocity_limits: true
+        has_acceleration_limits: true
+        has_jerk_limits: false
+        max_velocity: 1.0 # m/s
+        # min_velocity -  When unspecified, -max_velocity is used
+        max_acceleration: 1.0 # m/s^2
+        # min_acceleration - When unspecified, -max_acceleration is used.
+        max_jerk: 0.0 # m/s^3
+
+    angular:
+      z:
+        has_velocity_limits: true
+        has_acceleration_limits: true
+        has_jerk_limits: false
+        max_velocity: 3.0 # rad/s
+        # min_velocity -  When unspecified, -max_velocity is used
+        max_acceleration: 4.0 # rad/s^2
+        # min_acceleration - When unspecified, -max_acceleration is used.
+        max_jerk: 0.0 # rad/s^3

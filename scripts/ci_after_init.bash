@@ -58,6 +58,12 @@ fi
 # Fixes:
 #   MESA: error: ZINK: failed to choose pdev
 #   2024-07-27T19:23:20.1063344Z [webots-4] glx: failed to create drisw screen
-apt-get install -y mesa-utils libgl1-mesa-dri
+apt-get update && apt-get install -y \
+    mesa-utils \
+    libgl1-mesa-dri \
+    libgl1-mesa-glx \
+    libxrender1 \
+    libxext6
 export LIBGL_ALWAYS_SOFTWARE=1
 export MESA_GL_VERSION_OVERRIDE=3.3
+chmod -R 777 /usr/lib/x86_64-linux-gnu/dri/

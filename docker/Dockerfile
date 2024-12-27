@@ -30,29 +30,17 @@ RUN [ "$ROS_TESTING" -eq "1" ] && echo "deb [ signed-by=/usr/share/keyrings/ros2
 RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-vision-msgs \
     ros-${ROS_DISTRO}-xacro \
-    ros-${ROS_DISTRO}-backward-ros \
-    ros-${ROS_DISTRO}-control-msgs \
-    ros-${ROS_DISTRO}-ackermann-msgs \
-    ros-${ROS_DISTRO}-realtime-tools \
-    ros-${ROS_DISTRO}-kinematics-interface \
-    ros-${ROS_DISTRO}-kinematics-interface-kdl \
-    ros-${ROS_DISTRO}-control-toolbox \
+    ros-${ROS_DISTRO}-ros2-control \
+    ros-${ROS_DISTRO}-ros2-controllers \
     ros-${ROS_DISTRO}-robot-localization \
     ros-${ROS_DISTRO}-laser-filters \
     gdb \
     git
 
-# Comment for compiled ros2_control
-RUN apt-get update && apt-get install -y \
-    ros-${ROS_DISTRO}-ros2-control \
-    ros-${ROS_DISTRO}-ros2-controllers
-
-# Uncomment for compiled ros2_control
-# RUN git clone --branch=${ROS_DISTRO} https://github.com/ros-controls/ros2_control.git /${DOCKERUSER}/ros2_libs_ws/src/ros2_control && \
-#     git clone --branch=${ROS_DISTRO} https://github.com/ros-controls/ros2_controllers.git /${DOCKERUSER}/ros2_libs_ws/src/ros2_controllers && \
-#     . /opt/ros/humble/setup.sh && \
-#     cd /${DOCKERUSER}/ros2_libs_ws && \
-#     colcon build --symlink-install
+# HOTFIX: https://github.com/ros-controls/ros2_control/pull/1960
+RUN [ "${ROS_DISTRO}" = "humble" ] && wget -O /tmp/hotfix.deb http://snapshots.ros.org/humble/2024-08-28/ubuntu/pool/main/r/ros-humble-hardware-interface/ros-humble-hardware-interface_2.43.0-1jammy.20240823.145349_amd64.deb && \
+    apt install -y --allow-downgrades /tmp/hotfix.deb && \
+    rm -f /tmp/hotfix.deb || true
 
 COPY ./docker/bashrc /tmp/bashrc
 COPY ./docker/webots.conf /${DOCKERUSER}/.config/Cyberbotics/Webots-R${WEBOTS_VERSION}.conf

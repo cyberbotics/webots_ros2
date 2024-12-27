@@ -24,6 +24,8 @@
   <exec_depend>webots_ros2_tiago</exec_depend>
   <exec_depend>webots_ros2_turtlebot</exec_depend>
   <exec_depend>webots_ros2_universal_robot</exec_depend>
+  <exec_depend>webots_ros2_crazyflie</exec_depend>
+  <exec_depend>webots_ros2_husarion</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>python3-pytest</test_depend>

@@ -16,6 +16,11 @@ You need to build & run the container only the first time:
 ROS_DISTRO=jazzy ROS_TESTING=0 WEBOTS_VERSION=2025a make build run exec
 ```
 
+if you want to test a nightly build:
+```bash
+ROS_DISTRO=jazzy ROS_TESTING=0 WEBOTS_VERSION=nightly_25_12_2024/webots_2025a make build run exec
+```
+
 After that, you can just attach to the container with:
 ```bash
 make exec

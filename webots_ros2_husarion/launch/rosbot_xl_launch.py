@@ -70,6 +70,7 @@ def get_ros2_nodes(*args):
         ],
         remappings=[
             ('rosbot_xl_base_controller/cmd_vel_unstamped', '/cmd_vel'),
+            ('rosbot_xl_base_controller/cmd_vel', '/cmd_vel'),
             ('rosbot_xl/laser', '/scan')
         ]
     )

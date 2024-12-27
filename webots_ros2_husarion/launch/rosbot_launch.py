@@ -72,6 +72,7 @@ def get_ros2_nodes(*args):
         ],
         remappings=[
             ('rosbot_base_controller/cmd_vel_unstamped', '/cmd_vel'),
+            ('rosbot_base_controller/cmd_vel', '/cmd_vel'),
             ('rosbot/laser', '/scan'),
             ('rosbot/rl_range', '/range/rl'),
             ('rosbot/rr_range', '/range/rr'),

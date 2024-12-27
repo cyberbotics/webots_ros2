@@ -24,7 +24,7 @@ from launch import LaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import launch_testing.actions
 from launch.actions import IncludeLaunchDescription
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, TwistStamped
 from sensor_msgs.msg import LaserScan
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_tests.utils import TestWebots, initialize_webots_test
@@ -64,18 +64,34 @@ class TestROSbot(TestWebots):
         self.__node = rclpy.create_node('driver_tester')
 
     def testMovement(self):
-        publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
+        use_twist_stamped = 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy'])
 
-        def on_position_message_received(message):
-            twist_message = Twist()
-            twist_message.linear.x = 0.5
-            twist_message.angular.z = 0.3
-            publisher.publish(twist_message)
+        publisher = None
+        if use_twist_stamped:
+            publisher = self.__node.create_publisher(TwistStamped, '/cmd_vel', 1)
 
-            # ROSbot should move in an arc to check the sensor fusion
-            if message.pose.pose.position.x > 0.5 and message.pose.pose.orientation.w < 0.9:
-                return True
-            return False
+            def on_position_message_received(message):
+                twist_message = TwistStamped()
+                twist_message.header.stamp = self.__node.get_clock().now().to_msg()
+                twist_message.twist.linear.x = 0.5
+                twist_message.twist.angular.z = 0.3
+                publisher.publish(twist_message)
+
+                if message.pose.pose.position.x > 0.5 and message.pose.pose.orientation.w < 0.9:
+                    return True
+                return False
+        else:
+            publisher = self.__node.create_publisher(Twist, '/cmd_vel', 1)
+
+            def on_position_message_received(message):
+                twist_message = Twist()
+                twist_message.linear.x = 0.5
+                twist_message.angular.z = 0.3
+                publisher.publish(twist_message)
+
+                if message.pose.pose.position.x > 0.5 and message.pose.pose.orientation.w < 0.9:
+                    return True
+                return False
 
         self.wait_for_messages(self.__node, Odometry, '/odometry/filtered', condition=on_position_message_received)
 

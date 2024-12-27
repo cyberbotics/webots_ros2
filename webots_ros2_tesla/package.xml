@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>webots_ros2_tesla</name>
-  <version>2023.1.3</version>
+  <version>2025.0.0</version>
   <description>Tesla ROS2 interface for Webots.</description>
 
   <maintainer email="support@cyberbotics.com">Cyberbotics</maintainer>

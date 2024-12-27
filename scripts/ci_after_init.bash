@@ -54,10 +54,3 @@ if [[ "${ROS_DISTRO}" == "humble" ]]; then
         apt install -y --allow-downgrades /tmp/hotfix.deb && \
         rm -f /tmp/hotfix.deb
 fi
-
-# Fixes:
-#   MESA: error: ZINK: failed to choose pdev
-#   2024-07-27T19:23:20.1063344Z [webots-4] glx: failed to create drisw screen
-add-apt-repository -y ppa:kisak/kisak-mesa
-apt update -y
-apt upgrade -y

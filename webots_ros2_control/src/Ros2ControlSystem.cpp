@@ -153,7 +153,7 @@ namespace webots_ros2_control {
         const double velocity = std::isnan(joint.position) ? NAN : (position - joint.position) / deltaTime;
 
         if (!std::isnan(joint.velocity))
-          joint.acceleration = (joint.velocity - velocity) / deltaTime;
+          joint.acceleration = (velocity - joint.velocity) / deltaTime;
         joint.velocity = velocity;
         joint.position = position;
       }

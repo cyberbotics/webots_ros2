@@ -48,7 +48,9 @@ namespace webots_ros2_control {
 
     WebotsResourceManager(const WebotsResourceManager &) = delete;
 
-    bool load_and_initialize_components(const std::string &urdf, unsigned int update_rate) override {
+    bool load_and_initialize_components(
+                                        const std::string &urdf, unsigned int update_rate,
+                                        const std::vector<std::string> & dont_load_components) override {
       components_are_loaded_and_initialized_ = true;
 
       std::vector<hardware_interface::HardwareInfo> controlHardware;

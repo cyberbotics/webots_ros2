@@ -10,8 +10,8 @@ ARG ROS_DISTRO=jazzy
 ARG ROS_TESTING=0
 ARG WEBOTS_VERSION=2023b
 
-RUN userdel -r ubuntu && \
-    useradd -d /${DOCKERUSER} -m \
+RUN if [ "${ROS_DISTRO}" != "humble" ]; then userdel -r ubuntu; fi
+RUN useradd -d /${DOCKERUSER} -m \
             -u ${UID} -U \
             -s /usr/bin/bash \
             -c "${DOCKERUSERCOMMENT}" ${DOCKERUSER} && \
@@ -28,10 +28,28 @@ RUN [ "$ROS_TESTING" -eq "1" ] && echo "deb [ signed-by=/usr/share/keyrings/ros2
 
 RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-vision-msgs \
-    ros-${ROS_DISTRO}-ros2-control \
-    ros-${ROS_DISTRO}-ros2-controllers \
     ros-${ROS_DISTRO}-xacro \
-    gdb
+    ros-${ROS_DISTRO}-backward-ros \
+    ros-${ROS_DISTRO}-control-msgs \
+    ros-${ROS_DISTRO}-ackermann-msgs \
+    ros-${ROS_DISTRO}-realtime-tools \
+    ros-${ROS_DISTRO}-kinematics-interface \
+    ros-${ROS_DISTRO}-kinematics-interface-kdl \
+    ros-${ROS_DISTRO}-control-toolbox \
+    gdb \
+    git
+
+# Comment for compiled ros2_control
+RUN apt-get update && apt-get install -y \
+    ros-${ROS_DISTRO}-ros2-control \
+    ros-${ROS_DISTRO}-ros2-controllers
+
+# Uncomment for compiled ros2_control
+# RUN git clone --branch=${ROS_DISTRO} https://github.com/ros-controls/ros2_control.git /${DOCKERUSER}/ros2_libs_ws/src/ros2_control && \
+#     git clone --branch=${ROS_DISTRO} https://github.com/ros-controls/ros2_controllers.git /${DOCKERUSER}/ros2_libs_ws/src/ros2_controllers && \
+#     . /opt/ros/humble/setup.sh && \
+#     cd /${DOCKERUSER}/ros2_libs_ws && \
+#     colcon build --symlink-install
 
 COPY ./docker/bashrc /tmp/bashrc
 COPY ./docker/webots.conf /${DOCKERUSER}/.config/Cyberbotics/Webots-R${WEBOTS_VERSION}.conf

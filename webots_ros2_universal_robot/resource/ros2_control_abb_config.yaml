@@ -26,4 +26,3 @@ abb/abb_joint_trajectory_controller:
       - position
 
     allow_partial_joints_goal: true
-

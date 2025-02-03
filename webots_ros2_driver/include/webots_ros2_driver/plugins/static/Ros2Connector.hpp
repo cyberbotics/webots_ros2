@@ -38,7 +38,7 @@ namespace webots_ros2_driver {
     // ROS2 services
     rclcpp::Service<webots_ros2_msgs::srv::GetBool>::SharedPtr mLockService;
     void isLockedCallback(const std::shared_ptr<webots_ros2_msgs::srv::GetBool::Request> request,
-                      std::shared_ptr<webots_ros2_msgs::srv::GetBool::Response> response);
+                          std::shared_ptr<webots_ros2_msgs::srv::GetBool::Response> response);
 
     // ROS2 topics
     rclcpp::Publisher<webots_ros2_msgs::msg::IntStamped>::SharedPtr mPresencePublisher;

@@ -25,6 +25,7 @@
 
 #include <webots_ros2_driver/plugins/static/Ros2Camera.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Compass.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2Connector.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2DistanceSensor.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Emitter.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2GPS.hpp>
@@ -35,7 +36,6 @@
 #include <webots_ros2_driver/plugins/static/Ros2RangeFinder.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Receiver.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2VacuumGripper.hpp>
-#include <webots_ros2_driver/plugins/static/Ros2Connector.hpp>
 #include "webots_ros2_driver/PluginInterface.hpp"
 #include "webots_ros2_driver/PythonPlugin.hpp"
 

@@ -25,3 +25,6 @@ After that, you can just attach to the container with:
 ```bash
 make exec
 ```
+
+> [!NOTE]
+> In case you get an error something like `qt.qpa.xcb: could not connect to display :0` then please run `xhost local:root` on the host.

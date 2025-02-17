@@ -35,6 +35,7 @@ RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-robot-localization \
     ros-${ROS_DISTRO}-laser-filters \
     ros-${ROS_DISTRO}-tf-transformations \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     gdb \
     git
 

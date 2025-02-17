@@ -7,3 +7,4 @@ alias teleop='ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p
 # For debugging
 export WEBOTS_HOME=/usr/local/webots
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/cyberbotics/ros2_ws/src/webots_ros2/webots_ros2_driver/webots/lib/controller
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp

@@ -185,7 +185,89 @@ class Ros2Supervisor(Node):
         return response
 
     def __spawn_node_from_string_callback(self, request, response):
-        object_string = request.data
+        robot = request.robot
+        # Choose the conversion according to the input and platform
+        if robot.proto_urls:
+            # TODO: iterate over all urls
+            if has_shared_folder() or is_wsl():
+                # Check that the file exists and is an URDF
+                if not os.path.isfile(robot.proto_urls):
+                    sys.exit('Input file "%s" does not exist.' % robot.proto_urls)
+                if not robot.proto_path.endswith('.urdf'):
+                    sys.exit('"%s" is not a URDF file.' % robot.proto_urls)
+
+                # Read the content of the URDF
+                with open(robot.proto_urls, 'r') as file:
+                    urdfContent = file.read()
+                    if urdfContent is None:
+                        sys.exit('Could not read the URDF file.')
+
+                # Get the package name and parent resource directory from URDF path
+                split_path = robot.urdf_path.split(os.path.sep)
+                for i, folder in (list(enumerate(split_path))):
+                    if folder == "share":
+                        package_dir = os.path.sep.join(split_path[:i + 2])
+                        resource_dir = os.path.sep.join(split_path[:i + 3])
+                        break
+                # On macOS, the resources are copied to shared_folder/package_name/resource_folder
+                # The path prefix is updated to the path of the shared folder
+                if has_shared_folder():
+                    shared_package_dir = os.path.join(container_shared_folder(), os.path.basename(package_dir))
+                    shared_resource_dir = os.path.join(shared_package_dir, os.path.basename(resource_dir))
+                    if (not os.path.isdir(shared_package_dir)):
+                        os.mkdir(shared_package_dir)
+                    if (not os.path.isdir(shared_resource_dir)):
+                        shutil.copytree(resource_dir, shared_resource_dir)
+                    relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir),
+                                                        os.path.basename(resource_dir))
+                # In WSL, the prefix must be converted to WSL path to work in Webots running on native Windows
+                if is_wsl():
+                    relative_path_prefix = resource_dir
+                    command = ['wslpath', '-w', relative_path_prefix]
+                    relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
+
+                robot_string = convertUrdfContent(input=urdfContent, robotName=robot_name, normal=normal,
+                                                  boxCollision=box_collision, initTranslation=robot_translation,
+                                                  initRotation=robot_rotation, initPos=init_pos,
+                                                  relativePathPrefix=relative_path_prefix)
+            else:
+                robot_string = convertUrdfFile(input=robot.urdf_path, robotName=robot_name, normal=normal,
+                                               boxCollision=box_collision, initTranslation=robot_translation,
+                                               initRotation=robot_rotation, initPos=init_pos)
+        elif robot.robot_description:
+            relative_path_prefix = robot.relative_path_prefix if robot.relative_path_prefix else None
+            # In WSL, the prefix must be converted to WSL path to work in Webots running on native Windows
+            if is_wsl() and relative_path_prefix:
+                command = ['wslpath', '-w', relative_path_prefix]
+                relative_path_prefix = subprocess.check_output(command).strip().decode('utf-8').replace('\\', '/')
+            if has_shared_folder() and relative_path_prefix:
+                # Get the package name and parent resource directory from URDF path
+                split_path = relative_path_prefix.split(os.path.sep)
+                for i, folder in (list(enumerate(split_path))):
+                    if folder == "share":
+                        package_dir = os.path.sep.join(split_path[:i + 2])
+                        resource_dir = os.path.sep.join(split_path[:i + 3])
+                        break
+                # On macOS, the resources are copied to shared_folder/package_name/resource_folder
+                # The path prefix is updated to the path of the shared folder
+                shared_package_dir = os.path.join(container_shared_folder(), os.path.basename(package_dir))
+                shared_resource_dir = os.path.join(shared_package_dir, os.path.basename(resource_dir))
+                if (not os.path.isdir(shared_package_dir)):
+                    os.mkdir(shared_package_dir)
+                if (not os.path.isdir(shared_resource_dir)):
+                    shutil.copytree(resource_dir, shared_resource_dir)
+                relative_path_prefix = os.path.join(host_shared_folder(), os.path.basename(package_dir),
+                                                    os.path.basename(resource_dir))
+            robot_string = convertUrdfContent(input=robot.robot_description, robotName=robot_name, normal=normal,
+                                              boxCollision=box_collision, initTranslation=robot_translation,
+                                              initRotation=robot_rotation, initPos=init_pos,
+                                              relativePathPrefix=relative_path_prefix)
+        else:
+            self.get_logger().info('Ros2Supervisor can not import a URDF file without a specified "urdf_path" or '
+                                   '"robot_description" in the URDFSpawner object.')
+            response.success = False
+            return response
+        object_string = robot.node_string
         if object_string == '':
             self.get_logger().info('Ros2Supervisor cannot import an empty string.')
             response.success = False

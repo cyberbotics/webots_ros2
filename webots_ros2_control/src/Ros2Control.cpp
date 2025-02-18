@@ -94,7 +94,12 @@ namespace webots_ros2_control {
       const rclcpp::Duration dt = rclcpp::Duration::from_seconds(mControlPeriodMs / 1000.0);
       mControllerManager->read(mNode->get_clock()->now(), dt);
 
-      mControllerManager->update(mNode->get_clock()->now(), dt);
+      try {
+        mControllerManager->update(mNode->get_clock()->now(), dt);
+      } catch (const std::exception &ex) {
+        RCLCPP_WARN_STREAM(mNode->get_logger(), "Controller manager update failed: " << ex.what());
+      }
+
       mLastControlUpdateMs = nowMs;
 
       mControllerManager->write(mNode->get_clock()->now(), dt);

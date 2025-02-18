@@ -19,7 +19,7 @@ RUN useradd -d /${DOCKERUSER} -m \
     usermod -a -G video ${DOCKERUSER} && \
     usermod -a -G dialout ${DOCKERUSER}
 
-RUN echo $WEBOTS_VERSION | grep -q "nigthly" && export WEBOTS_URL="https://github.com/cyberbotics/webots/releases/download/R${WEBOTS_VERSION}/webots_${WEBOTS_VERSION}_amd64.deb" || export WEBOTS_URL="https://github.com/cyberbotics/webots/releases/download/${WEBOTS_VERSION}_amd64.deb" && \
+RUN echo $WEBOTS_VERSION | grep -q "nightly" && export WEBOTS_URL="https://github.com/cyberbotics/webots/releases/download/${WEBOTS_VERSION}_amd64.deb" || export WEBOTS_URL="https://github.com/cyberbotics/webots/releases/download/R${WEBOTS_VERSION}/webots_${WEBOTS_VERSION}_amd64.deb" && \
     apt update && apt install -y wget && \
     wget ${WEBOTS_URL} -O /tmp/webots.deb && \
     apt install -y /tmp/webots.deb && \
@@ -35,6 +35,7 @@ RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-robot-localization \
     ros-${ROS_DISTRO}-laser-filters \
     ros-${ROS_DISTRO}-tf-transformations \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     gdb \
     git
 

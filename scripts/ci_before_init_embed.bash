@@ -15,6 +15,4 @@ fi
 
 # TODO: Revert once the https://github.com/ros-planning/navigation2/issues/3033 issue is fixed.
 # Fast-DDS is not working properly with the Nav2 package on Humble. Using Cyclone DDS instead.
-if [[ "${ROS_DISTRO}" != "rolling" ]]; then
-    export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-fi
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp

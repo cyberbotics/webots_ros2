@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>webots_ros2_husarion</name>
+  <version>2025.0.0</version>
+  <description>Husarion ROSbot 2R and XL robots ROS2 interface for Webots.</description>
+
+  <author email="jakub.delicat@husarion.com">Jakub Delicat</author>
+  <maintainer email="support@husarion.com">Husarion</maintainer>
+  <license>Apache License 2.0</license>
+  <url type="website">http://wiki.ros.org/webots_ros2</url>
+  <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
+  <url type="bugtracker">https://github.com/cyberbotics/webots_ros2/issues</url>
+
+  <exec_depend>webots_ros2_driver</exec_depend>
+  <exec_depend>webots_ros2_control</exec_depend>
+  <exec_depend>diff_drive_controller</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>laser_filters</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

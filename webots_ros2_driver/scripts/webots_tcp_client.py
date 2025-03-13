@@ -41,21 +41,7 @@ def get_host_ip():
                 return fields[2]
         sys.exit('Unable to get host IP address.')
     except subprocess.CalledProcessError:
-        sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
-
-
-HOST = get_host_ip()  # Connect to host of the VM
-PORT = 2000  # Port to connect to
-
-tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-launch_arguments = ''
-for arg in sys.argv:
-    if arg.endswith('.py') or arg == '':
-        continue
-    elif arg.endswith('.wbt'):
-        world_name = arg
-    else:
-        launch_arguments = launch_arguments + ' ' + arg
+        sys.exit('Unable to get host IP address. \'ip route\' could not be executed. Make sure that iproute2 is installed.')
 
 
 def host_shared_folder():
@@ -63,7 +49,25 @@ def host_shared_folder():
     return shared_folder_list[0]
 
 
-while tcp_socket.connect_ex((HOST, PORT)) != 0:
+simulation_server_ip = None
+simulation_server_port = None
+
+launch_arguments = ''
+for arg in sys.argv[1:]:
+    if arg.endswith('.wbt'):
+        world_name = arg
+    elif "--simulation_server_ip=" in arg:
+        simulation_server_ip = arg.replace("--simulation_server_ip=", "")
+    elif "--simulation_server_port=" in arg:
+        simulation_server_port = int(arg.replace("--simulation_server_port=", ""))
+    else:
+        launch_arguments = launch_arguments + ' ' + arg
+
+simulation_server_ip = get_host_ip() if simulation_server_ip is None else simulation_server_ip
+simulation_server_port = 2000 if simulation_server_port is None else simulation_server_port
+
+tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+while tcp_socket.connect_ex((simulation_server_ip, simulation_server_port)) != 0:
     print('WARNING: Unable to start Webots. Please start the local simulation server on your host machine. Next connection '
           'attempt in 1 second.', file=sys.stderr)
     time.sleep(1)

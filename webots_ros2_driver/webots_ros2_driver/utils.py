@@ -140,7 +140,7 @@ def get_host_ip():
                 return fields[2]
         sys.exit('Unable to get host IP address.')
     except subprocess.CalledProcessError:
-        sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
+        sys.exit('Unable to get host IP address. \'ip route\' could not be executed. Make sure that iproute2 is installed.')
 
 
 def controller_protocol():
@@ -153,7 +153,9 @@ def controller_ip_address():
     return ip_address
 
 
-def controller_url_prefix(port='1234'):
+def controller_url_prefix(ip_address=None, port='1234'):
+    if ip_address is not None:
+        return 'tcp://' + str(ip_address) + ':' + port + '/'
     if has_shared_folder() or is_wsl():
         return 'tcp://' + (get_host_ip() if has_shared_folder() else get_wsl_ip_address()) + ':' + port + '/'
     else:

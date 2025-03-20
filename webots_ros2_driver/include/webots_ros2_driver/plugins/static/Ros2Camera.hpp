@@ -22,6 +22,7 @@
 #include <geometry_msgs/msg/point.hpp>
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
+#include <image_transport/image_transport.hpp>
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -53,10 +54,8 @@ namespace webots_ros2_driver {
     std::string mCameraInfoSuffix;
     std::string mImageSuffix;
 
-    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mImagePublisher;
+    image_transport::CameraPublisher mCameraPublisher;
     sensor_msgs::msg::Image mImageMessage;
-
-    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr mCameraInfoPublisher;
     sensor_msgs::msg::CameraInfo mCameraInfoMessage;
 
     rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr mRecognitionPublisher;

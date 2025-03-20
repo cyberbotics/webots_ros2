@@ -19,6 +19,7 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(rosgraph_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(image_transport REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -112,6 +113,7 @@ ament_target_dependencies(driver
   rosgraph_msgs
   rclcpp
   pluginlib
+  image_transport
   sensor_msgs
   std_msgs
   tf2_geometry_msgs
@@ -258,6 +260,7 @@ ament_export_include_directories(
 ament_export_dependencies(
   rclcpp
   rclpy
+  image_transport
   sensor_msgs
   std_msgs
   tf2_geometry_msgs

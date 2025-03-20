@@ -22,15 +22,13 @@ namespace webots_ros2_driver {
     mIsEnabled = false;
     mRecognitionIsEnabled = false;
     mCamera = wb_robot_get_device(parameters["name"].c_str());
-
-    mCameraInfoSuffix = parameters.count("cameraInfoSuffix") ? parameters["cameraInfoSuffix"] : "/camera_info";
     mImageSuffix = parameters.count("imageSuffix") ? parameters["imageSuffix"] : "/image_color";
 
     assert(mCamera != 0);
 
-    // Image publisher
-    mImagePublisher =
-      mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName + mImageSuffix, rclcpp::SensorDataQoS().reliable());
+    mCameraPublisher = image_transport::create_camera_publisher(mNode, mTopicName + mImageSuffix);
+
+    // Initialize Image message.
     mImageMessage.header.frame_id = mFrameName;
     mImageMessage.height = wb_camera_get_height(mCamera);
     mImageMessage.width = wb_camera_get_width(mCamera);
@@ -39,10 +37,7 @@ namespace webots_ros2_driver {
     mImageMessage.data.resize(4 * wb_camera_get_width(mCamera) * wb_camera_get_height(mCamera));
     mImageMessage.encoding = sensor_msgs::image_encodings::BGRA8;
 
-    // CameraInfo publisher
-    mCameraInfoPublisher =
-      mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + mCameraInfoSuffix, rclcpp::SensorDataQoS().reliable());
-    mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
+    // Initialize CameraInfo message.
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = wb_camera_get_height(mCamera);
     mCameraInfoMessage.width = wb_camera_get_width(mCamera);
@@ -85,7 +80,7 @@ namespace webots_ros2_driver {
       return;
 
     // Enable/Disable sensor
-    const bool imageSubscriptionsExist = mImagePublisher->get_subscription_count() > 0;
+    const bool imageSubscriptionsExist = mCameraPublisher.getNumSubscribers() > 0;
     const bool recognitionSubscriptionsExist =
       (mRecognitionPublisher != nullptr && mRecognitionPublisher->get_subscription_count() > 0) ||
       (mWebotsRecognitionPublisher != nullptr && mWebotsRecognitionPublisher->get_subscription_count() > 0);
@@ -112,8 +107,6 @@ namespace webots_ros2_driver {
       publishImage();
     if (recognitionSubscriptionsExist)
       publishRecognition();
-    if (mCameraInfoPublisher->get_subscription_count() > 0)
-      mCameraInfoPublisher->publish(mCameraInfoMessage);
   }
 
   void Ros2Camera::publishImage() {
@@ -122,7 +115,8 @@ namespace webots_ros2_driver {
       mImageMessage.header.stamp = mNode->get_clock()->now();
       mCameraInfoMessage.header.stamp = mImageMessage.header.stamp;
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
-      mImagePublisher->publish(mImageMessage);
+      // Publish both the image and the camera info using the unified camera publisher.
+      mCameraPublisher.publish(mImageMessage, mCameraInfoMessage);
     }
   }
 

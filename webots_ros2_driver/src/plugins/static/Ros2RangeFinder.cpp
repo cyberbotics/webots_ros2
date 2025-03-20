@@ -34,9 +34,9 @@ namespace webots_ros2_driver {
     const int width = wb_range_finder_get_width(mRangeFinder);
     const int height = wb_range_finder_get_height(mRangeFinder);
 
-    // Image publisher
-    mImagePublisher =
-      mNode->create_publisher<sensor_msgs::msg::Image>(mTopicName + mImageSuffix, rclcpp::SensorDataQoS().reliable());
+    mCameraPublisher = image_transport::create_camera_publisher(mNode, mTopicName + mImageSuffix);
+
+    // Image message
     mImageMessage.header.frame_id = mFrameName;
     mImageMessage.height = height;
     mImageMessage.width = width;
@@ -45,9 +45,7 @@ namespace webots_ros2_driver {
     mImageMessage.data.resize(4 * width * height);
     mImageMessage.encoding = sensor_msgs::image_encodings::TYPE_32FC1;
 
-    // CameraInfo publisher
-    mCameraInfoPublisher =
-      mNode->create_publisher<sensor_msgs::msg::CameraInfo>(mTopicName + mCameraInfoSuffix, rclcpp::SensorDataQoS().reliable());
+    // CameraInfo message
     mCameraInfoMessage.header.stamp = mNode->get_clock()->now();
     mCameraInfoMessage.header.frame_id = mFrameName;
     mCameraInfoMessage.height = height;
@@ -102,15 +100,12 @@ namespace webots_ros2_driver {
       publishPointCloud();
     }
 
-    if (mCameraInfoPublisher->get_subscription_count() > 0)
-      mCameraInfoPublisher->publish(mCameraInfoMessage);
-
     if (mAlwaysOn)
       return;
 
     // Enable/Disable sensor
-    const bool shouldBeEnabled =
-      mImagePublisher->get_subscription_count() > 0 || mPointCloudPublisher->get_subscription_count() > 0;
+    const bool shouldBeEnabled = mCameraPublisher.getNumSubscribers() > 0 || mPointCloudPublisher->get_subscription_count() > 0;
+
     if (shouldBeEnabled != mIsEnabled) {
       if (shouldBeEnabled)
         wb_range_finder_enable(mRangeFinder, mPublishTimestepSyncedMs);
@@ -126,7 +121,7 @@ namespace webots_ros2_driver {
       mImageMessage.header.stamp = mNode->get_clock()->now();
       mCameraInfoMessage.header.stamp = mImageMessage.header.stamp;
       memcpy(mImageMessage.data.data(), image, mImageMessage.data.size());
-      mImagePublisher->publish(mImageMessage);
+      mCameraPublisher.publish(mImageMessage, mCameraInfoMessage);
     }
   }
 

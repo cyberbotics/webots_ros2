@@ -54,9 +54,7 @@ namespace webots_ros2_driver {
     std::string mCameraInfoSuffix;
     std::string mImageSuffix;
 
-    // Unified publisher for image and camera info.
     image_transport::CameraPublisher mCameraPublisher;
-
     sensor_msgs::msg::Image mImageMessage;
     sensor_msgs::msg::CameraInfo mCameraInfoMessage;
 

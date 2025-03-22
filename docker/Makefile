@@ -6,13 +6,13 @@ BASENAME:=webots_ros2
 DOCKERUSERCOMMENT:="Cyberbotics"
 ROS_DISTRO?=jazzy
 ROS_TESTING?=0
-WEBOTS_VERSION?=2023b
+WEBOTS_VERSION?=2025a
 
 build:
 	echo "ROS_TESTING=${ROS_TESTING}"
 	docker build ${ROOT_DIR} \
 		-f ${ROOT_DIR}/docker/Dockerfile \
-		-t ${BASENAME}-image ${DOCKER_ARGS} \
+		-t ${BASENAME} ${DOCKER_ARGS} \
 		--build-arg UID=${UID} \
 		--build-arg DOCKERUSER=${DOCKERUSER} \
 		--build-arg DOCKERUSERCOMMENT=${DOCKERUSERCOMMENT} \
@@ -21,12 +21,12 @@ build:
 		--build-arg ROS_DISTRO=${ROS_DISTRO}
 
 run:
-	@docker container rm -f ${BASENAME}-container
+	@docker container rm -f ${BASENAME}
 	docker run \
 		--net=host \
 		--ipc=host \
 		--cap-add SYS_ADMIN \
-		--name ${BASENAME}-container \
+		--name ${BASENAME} \
 		--privileged \
 		--restart unless-stopped \
 		-e NVIDIA_DRIVER_CAPABILITIES=all ${NVIDIA_GPU} \
@@ -37,8 +37,8 @@ run:
 		-v ${ROOT_DIR}:/${DOCKERUSER}/ros2_ws/src/${BASENAME} \
 		-v /dev:/dev:rw \
 		--entrypoint bash \
-		-d -it ${BASENAME}-image
+		-d -it ${BASENAME}
 
 
 exec:
-	docker exec -it ${BASENAME}-container bash
+	docker exec -it ${BASENAME} bash

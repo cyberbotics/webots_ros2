@@ -41,17 +41,14 @@ fi
 
 # TODO: Revert once the https://github.com/ros-planning/navigation2/issues/3033 issue is fixed.
 # Fast-DDS is not working properly with the Nav2 package on Humble and Iron. Using Cyclone DDS instead.
-if [[ "${ROS_DISTRO}" != "rolling" ]]; then
-    apt install -y ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
-fi
+apt install -y ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
 
 # Setup Qt plugins for RViz (can be used once RViz does not randomly crash anymore in GitHub CI).
-#export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
+# export QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
 
-
-# Fixes:
-#   MESA: error: ZINK: failed to choose pdev
-#   2024-07-27T19:23:20.1063344Z [webots-4] glx: failed to create drisw screen
-if [[ "${ROS_DISTRO}" == "rolling" ]]; then
-    apt-get install -y libqt5quickcontrols2-5 qtquickcontrols2-5-dev
+# HOTFIX: https://github.com/ros-controls/ros2_control/pull/1960
+if [[ "${ROS_DISTRO}" == "humble" ]]; then
+    wget -O /tmp/hotfix.deb http://snapshots.ros.org/humble/2024-08-28/ubuntu/pool/main/r/ros-humble-hardware-interface/ros-humble-hardware-interface_2.43.0-1jammy.20240823.145349_amd64.deb && \
+        apt install -y --allow-downgrades /tmp/hotfix.deb && \
+        rm -f /tmp/hotfix.deb
 fi

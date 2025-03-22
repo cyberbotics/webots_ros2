@@ -18,7 +18,7 @@ data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
     name=package_name,
-    version='2023.1.3',
+    version='2025.0.0',
     packages=[package_name],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

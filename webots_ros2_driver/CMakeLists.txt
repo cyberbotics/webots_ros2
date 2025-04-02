@@ -32,6 +32,8 @@ find_package(yaml-cpp REQUIRED)
 
 if($ENV{ROS_DISTRO} MATCHES "humble")
   find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
+elseif($ENV{ROS_DISTRO} MATCHES "iron")
+  find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
 elseif($ENV{ROS_DISTRO} MATCHES "jazzy")
   find_package(Python 3.12 EXACT REQUIRED COMPONENTS Development)
 elseif($ENV{ROS_DISTRO} MATCHES "rolling")

@@ -27,7 +27,7 @@ from platform import uname
 
 
 # The minimal version should be the last stable release of Webots (both on master and develop branches)
-MINIMUM_VERSION_STR = 'R2023b'
+MINIMUM_VERSION_STR = 'R2025a'
 
 
 @functools.total_ordering
@@ -102,6 +102,8 @@ def get_wsl_ip_address():
                 file.close()
                 if len(tokens[1]) == 0:
                     return '127.0.0.1'
+                if tokens[1] == '10.255.255.254':
+                    return get_host_ip()
                 return tokens[1]
     finally:
         file.close()

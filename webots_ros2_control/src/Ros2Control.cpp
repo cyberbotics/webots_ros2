@@ -90,11 +90,16 @@ namespace webots_ros2_control {
   void Ros2Control::step() {
     const int nowMs = wb_robot_get_time() * 1000.0;
     const int periodMs = nowMs - mLastControlUpdateMs;
-    if (periodMs >= mControlPeriodMs) {
+    if (periodMs >= mControlPeriodMs && mNode->get_clock()->now() != rclcpp::Time(0, 0, mNode->get_clock()->get_clock_type())) {
       const rclcpp::Duration dt = rclcpp::Duration::from_seconds(mControlPeriodMs / 1000.0);
       mControllerManager->read(mNode->get_clock()->now(), dt);
 
-      mControllerManager->update(mNode->get_clock()->now(), dt);
+      try {
+        mControllerManager->update(mNode->get_clock()->now(), dt);
+      } catch (const std::exception &ex) {
+        RCLCPP_WARN_STREAM(mNode->get_logger(), "Controller manager update failed: " << ex.what());
+      }
+
       mLastControlUpdateMs = nowMs;
 
       mControllerManager->write(mNode->get_clock()->now(), dt);

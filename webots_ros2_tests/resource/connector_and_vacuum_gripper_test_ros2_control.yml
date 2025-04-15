@@ -1,0 +1,15 @@
+/robot/controller_manager:
+  ros__parameters:
+    update_rate: 50
+    
+    connector_and_vacuum_gripper_position_controller:
+      type: position_controllers/JointGroupPositionController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+/robot/connector_and_vacuum_gripper_position_controller:
+  ros__parameters:
+    joints:
+      - connector_motor
+      - vacuum_gripper_motor

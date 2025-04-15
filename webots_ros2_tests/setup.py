@@ -5,8 +5,8 @@ package_name = 'webots_ros2_tests'
 data_files = [
     ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
     ('share/' + package_name, ['package.xml']),
-    ('share/' + package_name + '/worlds', ['worlds/driver_test.wbt', 'worlds/.driver_test.wbproj']),
-    ('share/' + package_name + '/resource', ['resource/driver_test.urdf'])
+    ('share/' + package_name + '/worlds', ['worlds/driver_test.wbt', 'worlds/.driver_test.wbproj', 'worlds/connector_and_vacuum_gripper_test.wbt', 'worlds/.connector_and_vacuum_gripper_test.wbproj']),
+    ('share/' + package_name + '/resource', ['resource/driver_test.urdf', 'resource/connector_and_vacuum_gripper_test.urdf', 'resource/object_position.urdf.xacro', 'resource/connector_and_vacuum_gripper_test_ros2_control.yml'])
 ]
 
 setup(

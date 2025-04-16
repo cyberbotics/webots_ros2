@@ -142,7 +142,8 @@ def generate_test_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[{"robot_description": '<robot name=""><link name=""/></robot>'}],
+        parameters=[
+            {"robot_description": '<robot name=""><link name=""/></robot>'}],
     )
 
     connector_object_state_publisher = Node(
@@ -150,7 +151,8 @@ def generate_test_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[{"robot_description": '<robot name=""><link name=""/></robot>'}],
+        parameters=[
+            {"robot_description": '<robot name=""><link name=""/></robot>'}],
     )
 
     vacuum_gripper_object_state_publisher = Node(
@@ -158,7 +160,8 @@ def generate_test_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[{"robot_description": '<robot name=""><link name=""/></robot>'}],
+        parameters=[
+            {"robot_description": '<robot name=""><link name=""/></robot>'}],
     )
 
     robot_ros_control_spawners = [
@@ -185,7 +188,8 @@ def generate_test_description():
             launch.actions.RegisterEventHandler(
                 event_handler=launch.event_handlers.OnProcessExit(
                     target_action=webots,
-                    on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
+                    on_exit=[launch.actions.EmitEvent(
+                        event=launch.events.Shutdown())],
                 )
             ),
         ]
@@ -265,12 +269,13 @@ class TestConnectorAndVacuumGripper(TestWebots):
         joint_target.positions = [0.049, 0.0]
         joint_msg.points.clear()
         joint_msg.points.append(joint_target)
-        
+
         self.joint_publisher.publish(joint_msg)
         self.wait_for_position(0, 0.049)
 
         def on_message_received(message):
-            self.assertEqual(message.data, 1)  # Object must be connected, fail if not.
+            # Object must be connected, fail if not.
+            self.assertEqual(message.data, 1)
             return True
 
         self.wait_for_messages(

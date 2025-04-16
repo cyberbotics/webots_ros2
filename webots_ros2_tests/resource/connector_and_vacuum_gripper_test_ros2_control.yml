@@ -2,14 +2,28 @@
   ros__parameters:
     update_rate: 50
     
-    connector_and_vacuum_gripper_position_controller:
-      type: position_controllers/JointGroupPositionController
+    connector_and_vacuum_gripper_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-/robot/connector_and_vacuum_gripper_position_controller:
+/robot/connector_and_vacuum_gripper_trajectory_controller:
   ros__parameters:
     joints:
       - connector_motor
       - vacuum_gripper_motor
+
+    command_interfaces:
+      - position
+
+    state_interfaces:
+      - position
+
+    action_monitor_rate: 20.0
+
+    allow_partial_joints_goal: false
+    interpolate_from_desired_state: true
+    constraints:
+      stopped_velocity_tolerance: 0.01
+      goal_time: 0.0

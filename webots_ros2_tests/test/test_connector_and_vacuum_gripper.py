@@ -23,11 +23,12 @@ import time
 import pytest
 import rclpy
 from math import isclose
-from std_msgs.msg import Bool, Float64MultiArray
+from std_msgs.msg import Bool
 from webots_ros2_msgs.msg import IntStamped
 from webots_ros2_msgs.srv import GetBool
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PointStamped
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from launch import LaunchDescription
 import launch
 import launch_testing.actions
@@ -112,7 +113,7 @@ def generate_test_description():
         output="screen",
         prefix=controller_manager_prefix,
         arguments=[
-            "connector_and_vacuum_gripper_position_controller",
+            "connector_and_vacuum_gripper_trajectory_controller",
             "--param-file",
             robot_ros2_control_params,
         ]
@@ -203,8 +204,8 @@ class TestConnectorAndVacuumGripper(TestWebots):
     def setUp(self):
         self.__node = rclpy.create_node("connector_and_vacuum_gripper_tester")
         self.joint_publisher = self.__node.create_publisher(
-            Float64MultiArray,
-            "/robot/connector_and_vacuum_gripper_position_controller/commands",
+            JointTrajectory,
+            "/robot/connector_and_vacuum_gripper_trajectory_controller/joint_trajectory",
             1,
         )
         self.wait_for_clock(self.__node, messages_to_receive=20)
@@ -223,11 +224,13 @@ class TestConnectorAndVacuumGripper(TestWebots):
 
     def testConnector(self):
 
-        joint_msg = Float64MultiArray()
+        joint_msg = JointTrajectory()
+        joint_msg.joint_names = ["connector_motor", "vacuum_gripper_motor"]
 
-        joint_msg.data = [-0.049, 0.0]
-        joint_msg.layout.dim = []
-        joint_msg.layout.data_offset = 1
+        joint_target = JointTrajectoryPoint()
+
+        joint_target.positions = [-0.049, 0.0]
+        joint_msg.points.append(joint_target)
 
         time.sleep(5)
 
@@ -259,7 +262,10 @@ class TestConnectorAndVacuumGripper(TestWebots):
 
         self.assertTrue(is_locked_future.result().value)
 
-        joint_msg.data = [0.049, 0.0]
+        joint_target.positions = [0.049, 0.0]
+        joint_msg.points.clear()
+        joint_msg.points.append(joint_target)
+        
         self.joint_publisher.publish(joint_msg)
         self.wait_for_position(0, 0.049)
 

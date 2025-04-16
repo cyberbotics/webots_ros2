@@ -19,19 +19,4 @@
         </joint>
     </ros2_control>
 
-    <link name="base_link"/>
-    <link name="connector_link"/>
-    <link name="vacuum_gripper_link"/>
-
-    <joint name="connector_motor" type="prismatic">
-        <parent link="base_link"/>
-        <child link="connector_link"/>
-        <limit effort="10" lower="-0.05" upper="0.05" velocity="0.01"/>
-    </joint>
-    <joint name="vacuum_gripper_motor" type="prismatic">
-        <parent link="base_link"/>
-        <child link="vacuum_gripper_link"/>
-        <limit effort="10" lower="-0.05" upper="0.05" velocity="0.01"/>
-    </joint>
-
 </robot>

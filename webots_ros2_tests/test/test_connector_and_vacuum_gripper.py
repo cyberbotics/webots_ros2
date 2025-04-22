@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Test the `webots_ros2_driver` package."""
+"""Test the connector and vacuum gripper."""
 
 # Launch the test locally: launch_test src/webots_ros2/webots_ros2_tests/test/test_connector_and_vacuum_gripper.py
 

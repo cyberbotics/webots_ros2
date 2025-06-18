@@ -39,10 +39,15 @@ RUN apt-get update && apt-get install -y \
     gdb \
     git
 
-# HOTFIX: https://github.com/ros-controls/ros2_control/pull/1960
-RUN [ "${ROS_DISTRO}" = "humble" ] && wget -O /tmp/hotfix.deb http://snapshots.ros.org/humble/2024-08-28/ubuntu/pool/main/r/ros-humble-hardware-interface/ros-humble-hardware-interface_2.43.0-1jammy.20240823.145349_amd64.deb && \
-    apt install -y --allow-downgrades /tmp/hotfix.deb && \
-    rm -f /tmp/hotfix.deb || true
+# RUN mkdir -p /${DOCKERUSER}/ros2_libs_ws/src && \
+#     curl https://raw.githubusercontent.com/ros-controls/ros2_control/refs/heads/master/ros2_control.rolling.repos > /${DOCKERUSER}/ros2_libs_ws/src.repos && \
+#     vcs import /${DOCKERUSER}/ros2_libs_ws/src < /${DOCKERUSER}/ros2_libs_ws/src.repos && \
+#     git clone https://github.com/ros-controls/ros2_controllers.git /${DOCKERUSER}/ros2_libs_ws/src/ros2_controllers && \
+#     git clone --branch=remove/robot_description_param https://github.com/pal-robotics-forks/ros2_control.git /${DOCKERUSER}/ros2_libs_ws/src/ros2_control && \
+#     . /opt/ros/${ROS_DISTRO}/setup.sh && \
+#     rosdep install --from-paths /${DOCKERUSER}/ros2_libs_ws/src --ignore-src --rosdistro ${ROS_DISTRO} -y && \
+#     cd /${DOCKERUSER}/ros2_libs_ws && \
+#     colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 COPY ./docker/bashrc /tmp/bashrc
 COPY ./docker/webots.conf /${DOCKERUSER}/.config/Cyberbotics/Webots-R${WEBOTS_VERSION}.conf

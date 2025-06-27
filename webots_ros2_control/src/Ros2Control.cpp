@@ -36,7 +36,7 @@ const double CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS = 1.0;
 
 namespace webots_ros2_control {
 
-#if HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
+#if HARDWARE_INTERFACE_VERSION_MAJOR >= 5 || HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
   class WebotsResourceManager : public hardware_interface::ResourceManager {
   public:
     WebotsResourceManager(webots_ros2_driver::WebotsNode *node) :
@@ -118,7 +118,7 @@ namespace webots_ros2_control {
     }
 
     // Control Hardware
-#if HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
+#if HARDWARE_INTERFACE_VERSION_MAJOR >= 5 || HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
     std::unique_ptr<hardware_interface::ResourceManager> resourceManager =
       std::make_unique<webots_ros2_control::WebotsResourceManager>(node);
 #else

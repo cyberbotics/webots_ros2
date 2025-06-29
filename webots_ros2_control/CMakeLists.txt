@@ -70,13 +70,6 @@ else()
     controller_manager::controller_manager
     pluginlib::pluginlib
     rclcpp::rclcpp
-    webots_ros2_driver::webots_ros2_driver_imu
-    webots_ros2_driver::webots_ros2_driver_rgbd
-  )
-  target_link_directories(${PROJECT_NAME}
-    PUBLIC
-    ${CMAKE_INSTALL_PREFIX}/lib/controller
-    ${CMAKE_INSTALL_PREFIX}/../webots_ros2_driver/lib/controller
   )
 endif()
 
@@ -112,13 +105,6 @@ else()
     pluginlib::pluginlib
     rclcpp::rclcpp
     rclcpp_lifecycle::rclcpp_lifecycle
-    webots_ros2_driver::webots_ros2_driver_imu
-    webots_ros2_driver::webots_ros2_driver_rgbd
-  )
-  target_link_directories(${PROJECT_NAME}_system
-    PUBLIC
-    ${CMAKE_INSTALL_PREFIX}/lib/controller
-    ${CMAKE_INSTALL_PREFIX}/../webots_ros2_driver/lib/controller
   )
 endif()
 

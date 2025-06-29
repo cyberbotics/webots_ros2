@@ -194,7 +194,6 @@ add_dependencies(${PROJECT_NAME}_imu
   compile-lib-vehicle
 )
 install(TARGETS ${PROJECT_NAME}_imu
-  EXPORT export_${PROJECT_NAME}
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -232,7 +231,6 @@ add_dependencies(${PROJECT_NAME}_rgbd
   compile-lib-vehicle
 )
 install(TARGETS ${PROJECT_NAME}_rgbd
-  EXPORT export_${PROJECT_NAME}
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -318,8 +316,5 @@ ament_export_libraries(
   ${PROJECT_NAME}_rgbd
   ${WEBOTS_LIB_PATH}
 )
-
-# Export modern CMake targets
-ament_export_targets(export_${PROJECT_NAME})
 
 ament_package()

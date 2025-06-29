@@ -112,26 +112,45 @@ add_executable(driver
   src/utils/Math.cpp
   src/utils/Utils.cpp
 )
-ament_target_dependencies(driver
-  rosgraph_msgs
-  rclcpp
-  pluginlib
-  sensor_msgs
-  std_msgs
-  tf2_geometry_msgs
-  tf2_ros
-  vision_msgs
-  webots_ros2_msgs
-  tinyxml2_vendor
-  TinyXML2
-)
+
+if ($ENV{ROS_DISTRO} MATCHES "humble" OR $ENV{ROS_DISTRO} MATCHES "jazzy")
+  ament_target_dependencies(driver
+    rosgraph_msgs
+    rclcpp
+    pluginlib
+    sensor_msgs
+    std_msgs
+    tf2_geometry_msgs
+    tf2_ros
+    vision_msgs
+    webots_ros2_msgs
+    tinyxml2_vendor
+    TinyXML2
+  )
+  target_link_libraries(driver
+    ${WEBOTS_LIB}
+    ${Python_LIBRARIES}
+    yaml-cpp
+  )
+else()
+  target_link_libraries(driver
+    ${rosgraph_msgs_TARGETS}
+    rclcpp::rclcpp
+    pluginlib::pluginlib
+    ${sensor_msgs_TARGETS}
+    ${std_msgs_TARGETS}
+    tf2_geometry_msgs::tf2_geometry_msgs
+    tf2_ros::tf2_ros
+    ${vision_msgs_TARGETS}
+    ${webots_ros2_msgs_TARGETS}
+    tinyxml2::tinyxml2
+    ${WEBOTS_LIB}
+    ${Python_LIBRARIES}
+    yaml-cpp
+  )
+endif()
 add_dependencies(driver
   compile-lib-vehicle
-)
-target_link_libraries(driver
-  ${WEBOTS_LIB}
-  ${Python_LIBRARIES}
-  yaml-cpp
 )
 install(
   DIRECTORY include/
@@ -150,20 +169,32 @@ add_library(
   src/plugins/Ros2SensorPlugin.cpp
   src/utils/Utils.cpp
 )
-ament_target_dependencies(${PROJECT_NAME}_imu
-  rclcpp
-  sensor_msgs
-  webots_ros2_msgs
-  pluginlib
-  tf2_ros
-)
+if ($ENV{ROS_DISTRO} MATCHES "humble" OR $ENV{ROS_DISTRO} MATCHES "jazzy")
+  ament_target_dependencies(${PROJECT_NAME}_imu
+    rclcpp
+    sensor_msgs
+    webots_ros2_msgs
+    pluginlib
+    tf2_ros
+  )
+  target_link_libraries(${PROJECT_NAME}_imu
+    ${WEBOTS_LIB}
+  )
+else()
+  target_link_libraries(${PROJECT_NAME}_imu
+    rclcpp::rclcpp
+    ${sensor_msgs_TARGETS}
+    ${webots_ros2_msgs_TARGETS}
+    pluginlib::pluginlib
+    tf2_ros::tf2_ros
+    ${WEBOTS_LIB}
+  )
+endif()
 add_dependencies(${PROJECT_NAME}_imu
   compile-lib-vehicle
 )
-target_link_libraries(${PROJECT_NAME}_imu
-  ${WEBOTS_LIB}
-)
 install(TARGETS ${PROJECT_NAME}_imu
+  EXPORT export_${PROJECT_NAME}
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -178,19 +209,30 @@ add_library(
   src/plugins/Ros2SensorPlugin.cpp
   src/utils/Utils.cpp
 )
-ament_target_dependencies(${PROJECT_NAME}_rgbd
-  rclcpp
-  sensor_msgs
-  pluginlib
-  tf2_ros
-)
+if ($ENV{ROS_DISTRO} MATCHES "humble" OR $ENV{ROS_DISTRO} MATCHES "jazzy")
+  ament_target_dependencies(${PROJECT_NAME}_rgbd
+    rclcpp
+    sensor_msgs
+    pluginlib
+    tf2_ros
+  )
+  target_link_libraries(${PROJECT_NAME}_rgbd
+    ${WEBOTS_LIB}
+  )
+else()
+  target_link_libraries(${PROJECT_NAME}_rgbd
+    rclcpp::rclcpp
+    ${sensor_msgs_TARGETS}
+    pluginlib::pluginlib
+    tf2_ros::tf2_ros
+    ${WEBOTS_LIB}
+  )
+endif()
 add_dependencies(${PROJECT_NAME}_rgbd
   compile-lib-vehicle
 )
-target_link_libraries(${PROJECT_NAME}_rgbd
-  ${WEBOTS_LIB}
-)
 install(TARGETS ${PROJECT_NAME}_rgbd
+  EXPORT export_${PROJECT_NAME}
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -276,4 +318,8 @@ ament_export_libraries(
   ${PROJECT_NAME}_rgbd
   ${WEBOTS_LIB_PATH}
 )
+
+# Export modern CMake targets
+ament_export_targets(export_${PROJECT_NAME})
+
 ament_package()

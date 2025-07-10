@@ -167,7 +167,7 @@ namespace webots_ros2_control {
     }
 
     // Control Hardware
-#if HARDWARE_INTERFACE_VERSION_MAJOR >= 5 || HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
+#if HARDWARE_INTERFACE_VERSION_MAJOR > 4 || (HARDWARE_INTERFACE_VERSION_MAJOR == 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12)
     std::unique_ptr<hardware_interface::ResourceManager> resourceManager =
       std::make_unique<webots_ros2_control::WebotsResourceManager>(node);
 #else

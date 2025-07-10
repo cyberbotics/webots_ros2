@@ -85,7 +85,7 @@ namespace webots_ros2_control {
     pluginlib::ClassLoader<webots_ros2_control::Ros2ControlSystemInterface> mHardwareLoader;
     rclcpp::Logger mLogger;
   };
-#elif HARDWARE_INTERFACE_VERSION_MAJOR >= 5 || HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
+#elif HARDWARE_INTERFACE_VERSION_MAJOR == 5 || (HARDWARE_INTERFACE_VERSION_MAJOR == 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12)
   class WebotsResourceManager : public hardware_interface::ResourceManager {
   public:
     WebotsResourceManager(webots_ros2_driver::WebotsNode *node) :

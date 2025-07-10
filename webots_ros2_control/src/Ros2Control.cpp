@@ -48,7 +48,7 @@ namespace webots_ros2_control {
 
     WebotsResourceManager(const WebotsResourceManager &) = delete;
 
-    bool load_and_initialize_components(const hardware_interface::ResourceManagerParams & param) override {
+    bool load_and_initialize_components(const hardware_interface::ResourceManagerParams &param) override {
       components_are_loaded_and_initialized_ = true;
 
       std::vector<hardware_interface::HardwareInfo> controlHardware;
@@ -79,6 +79,7 @@ namespace webots_ros2_control {
 
       return components_are_loaded_and_initialized_;
     }
+
   private:
     webots_ros2_driver::WebotsNode *mNode;
     pluginlib::ClassLoader<webots_ros2_control::Ros2ControlSystemInterface> mHardwareLoader;

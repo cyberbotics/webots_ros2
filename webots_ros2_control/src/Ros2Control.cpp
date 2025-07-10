@@ -36,7 +36,55 @@ const double CONTROLLER_MANAGER_ALLOWED_SAMPLE_ERROR_MS = 1.0;
 
 namespace webots_ros2_control {
 
-#if HARDWARE_INTERFACE_VERSION_MAJOR >= 5 || HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
+#if HARDWARE_INTERFACE_VERSION_MAJOR >= 5 && HARDWARE_INTERFACE_VERSION_MINOR >= 3
+  class WebotsResourceManager : public hardware_interface::ResourceManager {
+  public:
+    WebotsResourceManager(webots_ros2_driver::WebotsNode *node) :
+      hardware_interface::ResourceManager(node->get_node_clock_interface(), node->get_node_logging_interface()),
+      mHardwareLoader("webots_ros2_control", "webots_ros2_control::Ros2ControlSystemInterface"),
+      mLogger(node->get_logger().get_child("WebotsResourceManager")) {
+      mNode = node;
+    }
+
+    WebotsResourceManager(const WebotsResourceManager &) = delete;
+
+    bool load_and_initialize_components(const hardware_interface::ResourceManagerParams & param) override {
+      components_are_loaded_and_initialized_ = true;
+
+      std::vector<hardware_interface::HardwareInfo> controlHardware;
+      try {
+        controlHardware = hardware_interface::parse_control_resources_from_urdf(param.robot_description);
+      } catch (const std::runtime_error &ex) {
+        throw std::runtime_error("URDF cannot be parsed by a `ros2_control` component parser: " + std::string(ex.what()));
+      }
+      for (unsigned int i = 0; i < controlHardware.size(); i++) {
+        const std::string pluginName = controlHardware[i].hardware_plugin_name;
+
+        std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface> webotsSystem;
+        try {
+          webotsSystem = std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(
+            mHardwareLoader.createUnmanagedInstance(pluginName));
+        } catch (pluginlib::PluginlibException &ex) {
+          RCLCPP_ERROR(mLogger, "The plugin failed to load for some reason. Error: %s\n", ex.what());
+          continue;
+        }
+
+        webotsSystem->init(mNode, controlHardware[i]);
+        hardware_interface::HardwareComponentParams component_params;
+        component_params.hardware_info = controlHardware[i];
+        component_params.clock = mNode->get_clock();
+        component_params.logger = mNode->get_logger();
+        import_component(std::move(webotsSystem), component_params);
+      }
+
+      return components_are_loaded_and_initialized_;
+    }
+  private:
+    webots_ros2_driver::WebotsNode *mNode;
+    pluginlib::ClassLoader<webots_ros2_control::Ros2ControlSystemInterface> mHardwareLoader;
+    rclcpp::Logger mLogger;
+  };
+#elif HARDWARE_INTERFACE_VERSION_MAJOR >= 5 || HARDWARE_INTERFACE_VERSION_MAJOR >= 4 && HARDWARE_INTERFACE_VERSION_MINOR >= 12
   class WebotsResourceManager : public hardware_interface::ResourceManager {
   public:
     WebotsResourceManager(webots_ros2_driver::WebotsNode *node) :

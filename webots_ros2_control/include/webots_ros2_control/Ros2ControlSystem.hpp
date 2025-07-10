@@ -54,6 +54,10 @@ namespace webots_ros2_control {
 
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(
       const hardware_interface::HardwareInfo &info) override;
+#if HARDWARE_INTERFACE_VERSION_MAJOR > 5 || (HARDWARE_INTERFACE_VERSION_MAJOR == 5 && HARDWARE_INTERFACE_VERSION_MINOR >= 3)
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(
+      const hardware_interface::HardwareComponentInterfaceParams &params) override;
+#endif
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(
       const rclcpp_lifecycle::State & /*previous_state*/) override;
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(

@@ -64,7 +64,7 @@ class TestROSbot(TestWebots):
         self.__node = rclpy.create_node('driver_tester')
 
     def testMovement(self):
-        use_twist_stamped = 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy'])
+        use_twist_stamped = 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy', 'kilted'])
 
         publisher = None
         if use_twist_stamped:

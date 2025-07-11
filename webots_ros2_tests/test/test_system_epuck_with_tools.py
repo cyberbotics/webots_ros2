@@ -36,7 +36,7 @@ def generate_test_description():
     initialize_webots_test()
     # If ROS_DISTRO is rolling, skip the test as some required packages are missing (cf. ci_after_init.bash)
     if 'ROS_DISTRO' in os.environ and (os.environ['ROS_DISTRO'] in ['rolling', 'jazzy', 'kilted']):
-        pytest.skip('ROS_DISTRO is rolling or jazzy, skipping this test')
+        pytest.skip('ROS_DISTRO is rolling, jazzy or kilted, skipping this test')
 
     epuck_with_tools_webots = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

@@ -183,7 +183,7 @@ namespace webots_ros2_control {
     }
     for (unsigned int i = 0; i < controlHardware.size(); i++) {
 // Necessary hotfix for renamed variables present in "hardware_interface" package for versions above 3.5 (#590)
-#if (HARDWARE_INTERFACE_VERSION_MAJOR >= 3 || HARDWARE_INTERFACE_VERSION_MAJOR >= 5) || HARDWARE_INTERFACE_VERSION_MAJOR >= 4
+#if HARDWARE_INTERFACE_VERSION_MAJOR >= 4 || HARDWARE_INTERFACE_VERSION_MAJOR >= 3 && HARDWARE_INTERFACE_VERSION_MINOR >= 5
       const std::string pluginName = controlHardware[i].hardware_plugin_name;
       auto webotsSystem =
         std::unique_ptr<webots_ros2_control::Ros2ControlSystemInterface>(mHardwareLoader->createUnmanagedInstance(pluginName));

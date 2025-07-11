@@ -98,6 +98,16 @@ namespace webots_ros2_control {
     }
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
   }
+#if HARDWARE_INTERFACE_VERSION_MAJOR > 5 || (HARDWARE_INTERFACE_VERSION_MAJOR == 5 && HARDWARE_INTERFACE_VERSION_MINOR >= 3)
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Ros2ControlSystem::on_init(
+    const hardware_interface::HardwareComponentInterfaceParams &params) {
+    if (hardware_interface::SystemInterface::on_init(params) !=
+        rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS) {
+      return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::ERROR;
+    }
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+  }
+#endif
 
   std::vector<hardware_interface::StateInterface> Ros2ControlSystem::export_state_interfaces() {
     std::vector<hardware_interface::StateInterface> interfaces;

@@ -50,14 +50,21 @@ target_include_directories(
   ${PROJECT_NAME}
   PRIVATE
   include
+  ${webots_ros2_driver_INCLUDE_DIRS}
 )
-ament_target_dependencies(
-  ${PROJECT_NAME}
-  hardware_interface
-  controller_manager
-  pluginlib
-  rclcpp
-  webots_ros2_driver
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+    hardware_interface::hardware_interface
+    controller_manager::controller_manager
+    pluginlib::pluginlib
+    rclcpp::rclcpp
+    webots_ros2_driver::webots_ros2_driver_imu
+    webots_ros2_driver::webots_ros2_driver_rgbd
+)
+target_link_directories(${PROJECT_NAME}
+  PUBLIC
+    ${CMAKE_INSTALL_PREFIX}/lib/controller
+    ${CMAKE_INSTALL_PREFIX}/../webots_ros2_driver/lib/controller
 )
 
 # Prevent pluginlib from using boost
@@ -74,14 +81,21 @@ target_include_directories(
   ${PROJECT_NAME}_system
   PRIVATE
   include
+  ${webots_ros2_driver_INCLUDE_DIRS}
 )
-ament_target_dependencies(
-  ${PROJECT_NAME}_system
-  hardware_interface
-  pluginlib
-  rclcpp
-  rclcpp_lifecycle
-  webots_ros2_driver
+target_link_libraries(${PROJECT_NAME}_system
+  PUBLIC
+    hardware_interface::hardware_interface
+    pluginlib::pluginlib
+    rclcpp::rclcpp
+    rclcpp_lifecycle::rclcpp_lifecycle
+    webots_ros2_driver::webots_ros2_driver_imu
+    webots_ros2_driver::webots_ros2_driver_rgbd
+)
+target_link_directories(${PROJECT_NAME}_system
+  PUBLIC
+    ${CMAKE_INSTALL_PREFIX}/lib/controller
+    ${CMAKE_INSTALL_PREFIX}/../webots_ros2_driver/lib/controller
 )
 
 # Prevent pluginlib from using boost

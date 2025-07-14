@@ -2,7 +2,7 @@
 Changelog for package webots_ros2_control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2025.0.1 (XXXX-XX-XX)
+2025.0.1 (2025-07-14)
 ------------------
 * Replaces ament_target_dependencies with target_link_libraries.
 * Adds ROS Kilted Kaiju support.

@@ -6,6 +6,8 @@ if($ENV{ROS_DISTRO} MATCHES "humble")
   add_compile_definitions(HUMBLE)
 elseif($ENV{ROS_DISTRO} MATCHES "jazzy")
   add_compile_definitions(JAZZY)
+elseif($ENV{ROS_DISTRO} MATCHES "kilted")
+  add_compile_definitions(KILTED)
 elseif($ENV{ROS_DISTRO} MATCHES "rolling")
   add_compile_definitions(ROLLING)
 endif()
@@ -50,15 +52,26 @@ target_include_directories(
   ${PROJECT_NAME}
   PRIVATE
   include
+  ${webots_ros2_driver_INCLUDE_DIRS}
 )
-ament_target_dependencies(
-  ${PROJECT_NAME}
-  hardware_interface
-  controller_manager
-  pluginlib
-  rclcpp
-  webots_ros2_driver
-)
+if ($ENV{ROS_DISTRO} MATCHES "humble" OR $ENV{ROS_DISTRO} MATCHES "jazzy")
+  ament_target_dependencies(
+    ${PROJECT_NAME}
+    hardware_interface
+    controller_manager
+    pluginlib
+    rclcpp
+    webots_ros2_driver
+  )
+else()
+  target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+    hardware_interface::hardware_interface
+    controller_manager::controller_manager
+    pluginlib::pluginlib
+    rclcpp::rclcpp
+  )
+endif()
 
 # Prevent pluginlib from using boost
 target_compile_definitions(${PROJECT_NAME} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
@@ -74,15 +87,26 @@ target_include_directories(
   ${PROJECT_NAME}_system
   PRIVATE
   include
+  ${webots_ros2_driver_INCLUDE_DIRS}
 )
-ament_target_dependencies(
-  ${PROJECT_NAME}_system
-  hardware_interface
-  pluginlib
-  rclcpp
-  rclcpp_lifecycle
-  webots_ros2_driver
-)
+if ($ENV{ROS_DISTRO} MATCHES "humble" OR $ENV{ROS_DISTRO} MATCHES "jazzy")
+  ament_target_dependencies(
+    ${PROJECT_NAME}_system
+    hardware_interface
+    pluginlib
+    rclcpp
+    rclcpp_lifecycle
+    webots_ros2_driver
+  )
+else()
+  target_link_libraries(${PROJECT_NAME}_system
+    PUBLIC
+    hardware_interface::hardware_interface
+    pluginlib::pluginlib
+    rclcpp::rclcpp
+    rclcpp_lifecycle::rclcpp_lifecycle
+  )
+endif()
 
 # Prevent pluginlib from using boost
 target_compile_definitions(${PROJECT_NAME}_system PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

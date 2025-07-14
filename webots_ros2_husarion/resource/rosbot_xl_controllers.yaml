@@ -33,7 +33,6 @@ rosbot_xl_base_controller:
         # min_velocity -  When unspecified, -max_velocity is used
         max_acceleration: 1.0 # m/s^2
         # min_acceleration - When unspecified, -max_acceleration is used.
-        max_jerk: 0.0 # m/s^3
 
     angular:
       z:
@@ -44,4 +43,3 @@ rosbot_xl_base_controller:
         # min_velocity -  When unspecified, -max_velocity is used
         max_acceleration: 4.0 # rad/s^2
         # min_acceleration - When unspecified, -max_acceleration is used.
-        max_jerk: 0.0 # rad/s^3

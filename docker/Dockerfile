@@ -39,11 +39,6 @@ RUN apt-get update && apt-get install -y \
     gdb \
     git
 
-# HOTFIX: https://github.com/ros-controls/ros2_control/pull/1960
-RUN [ "${ROS_DISTRO}" = "humble" ] && wget -O /tmp/hotfix.deb http://snapshots.ros.org/humble/2024-08-28/ubuntu/pool/main/r/ros-humble-hardware-interface/ros-humble-hardware-interface_2.43.0-1jammy.20240823.145349_amd64.deb && \
-    apt install -y --allow-downgrades /tmp/hotfix.deb && \
-    rm -f /tmp/hotfix.deb || true
-
 COPY ./docker/bashrc /tmp/bashrc
 COPY ./docker/webots.conf /${DOCKERUSER}/.config/Cyberbotics/Webots-R${WEBOTS_VERSION}.conf
 RUN cat /tmp/bashrc >> /${DOCKERUSER}/.bashrc

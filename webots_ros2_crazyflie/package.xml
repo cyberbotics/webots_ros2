@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>webots_ros2_crazyflie</name>
-  <version>2025.0.0</version>
+  <version>2025.0.1</version>
   <description>ROS2 package for Crazyflie webots simulator</description>
   <maintainer email="kimberly@bitcraze.io">Kimberly McGuire (Bitcraze AB)</maintainer>
   <license>MIT</license>

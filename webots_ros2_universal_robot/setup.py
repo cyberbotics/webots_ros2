@@ -30,7 +30,7 @@ for (path, _, sub_folder) in os.walk('resource'):
 
 setup(
     name=package_name,
-    version='2025.0.0',
+    version='2025.0.1',
     packages=['webots_ros2_universal_robot'],
     data_files=data_files,
     install_requires=['setuptools', 'launch'],

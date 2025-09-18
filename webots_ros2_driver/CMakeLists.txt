@@ -32,7 +32,7 @@ find_package(vision_msgs REQUIRED)
 find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
-find_package(yaml-cpp REQUIRED)
+find_package(yaml_cpp_vendor REQUIRED)
 
 if($ENV{ROS_DISTRO} MATCHES "humble")
   find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
@@ -48,48 +48,65 @@ elseif($ENV{ROS_DISTRO} MATCHES "rolling")
   find_package(Python 3.12 EXACT REQUIRED COMPONENTS Development)
 endif()
 
-add_custom_target(compile-lib-controller ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
+# <<< CROSS-PLATFORM CHANGE: detect prebuilt Webots.app on macOS
+if(APPLE AND EXISTS /Applications/Webots.app)
+  set(WEBOTS_PREBUILT TRUE)
+  set(WEBOTS_HOME /Applications/Webots.app/Contents)
+  include_directories(
+    ${WEBOTS_HOME}/include/controller/c
+    ${WEBOTS_HOME}/include/controller/cpp
+    ${Python_INCLUDE_DIRS}
+  )
+  link_directories(${WEBOTS_HOME}/lib/controller)
+  set(WEBOTS_LIB_BASE ${WEBOTS_HOME}/lib/controller)
+  set(WEBOTS_CONTROLLER_EXEC ${WEBOTS_HOME}/MacOS/webots-controller)
+else()
+  # <<< CROSS-PLATFORM CHANGE: source build paths for Linux or macOS source
+  set(WEBOTS_PREBUILT FALSE)
+  set(WEBOTS_LIB_BASE ${CMAKE_CURRENT_SOURCE_DIR}/webots/lib/controller)
+  include_directories(
+    include
+    webots/include/controller/c
+    webots/include/controller/cpp
+    ${Python_INCLUDE_DIRS}
+  )
+
+  # <<< CROSS-PLATFORM CHANGE: add custom targets for source builds
+  add_custom_target(compile-lib-controller ALL
+    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
+  )
+
+  add_custom_target(compile-lib-vehicle ALL
+    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+    DEPENDS compile-lib-controller
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
+  )
+
+  add_custom_target(compile-generic-window ALL
+    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+    DEPENDS compile-lib-controller
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/resources/projects/libraries/generic_robot_window
+  )
+  set(WEBOTS_CONTROLLER_EXEC webots/webots-controller)
+endif()
+
+file(GLOB WEBOTS_LIB_FILES
+  "${WEBOTS_LIB_BASE}/*Controller${CMAKE_SHARED_LIBRARY_SUFFIX}"
+  "${WEBOTS_LIB_BASE}/*CppController${CMAKE_SHARED_LIBRARY_SUFFIX}"
+  "${WEBOTS_LIB_BASE}/*driver${CMAKE_SHARED_LIBRARY_SUFFIX}"
+  "${WEBOTS_LIB_BASE}/*CppDriver${CMAKE_SHARED_LIBRARY_SUFFIX}"
+  "${WEBOTS_LIB_BASE}/*car${CMAKE_SHARED_LIBRARY_SUFFIX}"
+  "${WEBOTS_LIB_BASE}/*CppCar${CMAKE_SHARED_LIBRARY_SUFFIX}"
 )
+set(WEBOTS_LIB ${WEBOTS_LIB_FILES})
 
-add_custom_target(compile-lib-vehicle ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
-  DEPENDS compile-lib-controller
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
-)
-
-add_custom_target(compile-generic-window ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
-  DEPENDS compile-lib-controller
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/resources/projects/libraries/generic_robot_window
-)
-
-set(WEBOTS_LIB_BASE webots/lib/controller)
-
-include_directories(
-  include
-  webots/include/controller/c
-  webots/include/controller/cpp
-  ${Python_INCLUDE_DIRS}
-)
-
-link_directories(${WEBOTS_LIB_BASE})
-
-set(WEBOTS_LIB
-  ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
-  ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}
-  ${CMAKE_SHARED_LIBRARY_PREFIX}driver${CMAKE_SHARED_LIBRARY_SUFFIX}
-  ${CMAKE_SHARED_LIBRARY_PREFIX}CppDriver${CMAKE_SHARED_LIBRARY_SUFFIX}
-  ${CMAKE_SHARED_LIBRARY_PREFIX}car${CMAKE_SHARED_LIBRARY_SUFFIX}
-  ${CMAKE_SHARED_LIBRARY_PREFIX}CppCar${CMAKE_SHARED_LIBRARY_SUFFIX}
-)
-
-ament_python_install_package(controller
-  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python/controller)
-
-ament_python_install_package(vehicle
-  PACKAGE_DIR ${WEBOTS_LIB_BASE}/python/vehicle)
+# Only install Python packages if the source directories exist
+foreach(pkg IN ITEMS controller vehicle)
+  if(EXISTS ${WEBOTS_LIB_BASE}/python/${pkg})
+    ament_python_install_package(${pkg} PACKAGE_DIR ${WEBOTS_LIB_BASE}/python/${pkg})
+  endif()
+endforeach()
 
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR ${PROJECT_NAME})
@@ -153,9 +170,7 @@ else()
     yaml-cpp
   )
 endif()
-add_dependencies(driver
-  compile-lib-vehicle
-)
+
 install(
   DIRECTORY include/
   DESTINATION include
@@ -194,9 +209,7 @@ else()
     ${WEBOTS_LIB}
   )
 endif()
-add_dependencies(${PROJECT_NAME}_imu
-  compile-lib-vehicle
-)
+
 install(TARGETS ${PROJECT_NAME}_imu
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
@@ -231,9 +244,7 @@ else()
     ${WEBOTS_LIB}
   )
 endif()
-add_dependencies(${PROJECT_NAME}_rgbd
-  compile-lib-vehicle
-)
+
 install(TARGETS ${PROJECT_NAME}_rgbd
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
@@ -270,20 +281,26 @@ target_compile_definitions(${PROJECT_NAME}_rgbd PUBLIC "PLUGINLIB__DISABLE_BOOST
 pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_imu.xml)
 pluginlib_export_plugin_description_file(${PROJECT_NAME} webots_ros2_rgbd.xml)
 
-# Install ROS 2 nodes
-install(PROGRAMS ${PROJECT_NAME}/ros2_supervisor.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 # Install scripts
 install(
   DIRECTORY scripts/
   DESTINATION share/${PROJECT_NAME}/scripts
 )
 
-# Install webots-controller script
-install(
-  PROGRAMS webots/webots-controller
+# Install ROS 2 nodes
+install(PROGRAMS ${PROJECT_NAME}/ros2_supervisor.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Dynamic IMU and RGBD libraries: similar cross-platform treatment applies
+# <<< CROSS-PLATFORM CHANGE: add_dependencies only if source build
+if(NOT WEBOTS_PREBUILT)
+  add_dependencies(driver compile-lib-vehicle)
+  add_dependencies(${PROJECT_NAME}_imu compile-lib-vehicle)
+  add_dependencies(${PROJECT_NAME}_rgbd compile-lib-vehicle)
+endif()
+
+install(PROGRAMS ${WEBOTS_CONTROLLER_EXEC}
   DESTINATION share/${PROJECT_NAME}/scripts
 )
 

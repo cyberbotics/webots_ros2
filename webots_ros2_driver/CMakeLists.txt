@@ -48,7 +48,10 @@ elseif($ENV{ROS_DISTRO} MATCHES "rolling")
   find_package(Python 3.12 EXACT REQUIRED COMPONENTS Development)
 endif()
 
-# <<< CROSS-PLATFORM CHANGE: detect prebuilt Webots.app on macOS
+# Configure Webots library paths:
+# - Use system-installed Webots.app bundle on macOS
+# - Otherwise assume in-tree source build (Linux or macOS)
+
 if(APPLE AND EXISTS /Applications/Webots.app)
   set(WEBOTS_PREBUILT TRUE)
   set(WEBOTS_HOME /Applications/Webots.app/Contents)
@@ -61,7 +64,6 @@ if(APPLE AND EXISTS /Applications/Webots.app)
   set(WEBOTS_LIB_BASE ${WEBOTS_HOME}/lib/controller)
   set(WEBOTS_CONTROLLER_EXEC ${WEBOTS_HOME}/MacOS/webots-controller)
 else()
-  # <<< CROSS-PLATFORM CHANGE: source build paths for Linux or macOS source
   set(WEBOTS_PREBUILT FALSE)
   set(WEBOTS_LIB_BASE ${CMAKE_CURRENT_SOURCE_DIR}/webots/lib/controller)
   include_directories(
@@ -71,7 +73,7 @@ else()
     ${Python_INCLUDE_DIRS}
   )
 
-  # <<< CROSS-PLATFORM CHANGE: add custom targets for source builds
+  # Build Webots libraries from source
   add_custom_target(compile-lib-controller ALL
     COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller

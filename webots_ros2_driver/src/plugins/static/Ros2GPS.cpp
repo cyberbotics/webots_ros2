@@ -29,6 +29,7 @@ namespace webots_ros2_driver {
       mGPSPublisher = mNode->create_publisher<sensor_msgs::msg::NavSatFix>(mTopicName, rclcpp::SensorDataQoS().reliable());
       mGPSMessage.header.frame_id = mFrameName;
       mGPSMessage.position_covariance_type = sensor_msgs::msg::NavSatFix::COVARIANCE_TYPE_UNKNOWN;
+      mGPSMessage.status.status = sensor_msgs::msg::NavSatStatus::STATUS_FIX;
       mGPSMessage.status.service = sensor_msgs::msg::NavSatStatus::SERVICE_GPS;
     } else {
       mPointPublisher =

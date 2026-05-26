@@ -52,7 +52,7 @@ class _ConditionalSubstitution(Substitution):
 
 class WebotsLauncher(ExecuteProcess):
     def __init__(self, output='screen', world=None, gui=True, mode='realtime', stream=False, ros2_supervisor=False,
-                 port='1234', **kwargs):
+                 webots_port='1234', simulation_server_ip=None, simulation_server_port=2000, **kwargs):
         if sys.platform == 'win32':
             print('WARNING: Native webots_ros2 compatibility with Windows is deprecated and will be removed soon. Please use a '
                   'WSL (Windows Subsystem for Linux) environment instead.', file=sys.stderr)
@@ -62,7 +62,7 @@ class WebotsLauncher(ExecuteProcess):
         self.__has_shared_folder = has_shared_folder()
         self.__is_supervisor = ros2_supervisor
         if self.__is_supervisor:
-            self._supervisor = Ros2SupervisorLauncher(port=port)
+            self._supervisor = Ros2SupervisorLauncher(simulation_server_ip=simulation_server_ip, webots_port=webots_port)
 
         # Find Webots executable
         if not self.__has_shared_folder:
@@ -96,7 +96,10 @@ class WebotsLauncher(ExecuteProcess):
             stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
         else:
             stream_argument = "--stream=" + stream
-        port_argument = '--port=' + port
+        webots_port_argument = '--port=' + webots_port
+
+        simulation_server_ip_argument = "" if simulation_server_ip is None else "--simulation_server_ip=" + simulation_server_ip
+        simulation_server_port_argument = "" if simulation_server_port is None else "--simulation_server_port=" + str(simulation_server_port)
 
         xvfb_run_prefix = []
 
@@ -115,7 +118,9 @@ class WebotsLauncher(ExecuteProcess):
                     'python3',
                     webots_tcp_client,
                     stream_argument,
-                    port_argument,
+                    webots_port_argument,
+                    simulation_server_ip_argument,
+                    simulation_server_port_argument,
                     no_rendering,
                     stdout,
                     stderr,
@@ -135,7 +140,7 @@ class WebotsLauncher(ExecuteProcess):
                 cmd=xvfb_run_prefix + [
                     webots_path,
                     stream_argument,
-                    port_argument,
+                    webots_port_argument,
                     no_rendering,
                     stdout,
                     stderr,
@@ -259,7 +264,7 @@ class WebotsLauncher(ExecuteProcess):
 
 
 class Ros2SupervisorLauncher(Node):
-    def __init__(self, output='screen', respawn=True, port='1234', **kwargs):
+    def __init__(self, output='screen', respawn=True, simulation_server_ip=None, webots_port='1234', **kwargs):
         # Launch the Ros2Supervisor node
         super().__init__(
             package='webots_ros2_driver',
@@ -269,7 +274,7 @@ class Ros2SupervisorLauncher(Node):
             output=output,
             # Set WEBOTS_HOME to the webots_ros2_driver installation folder
             # to load the correct libController libraries from the Python API
-            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix(port) + 'Ros2Supervisor',
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix(ip_address=simulation_server_ip, port=webots_port) + 'Ros2Supervisor',
                             'WEBOTS_HOME': get_package_prefix('webots_ros2_driver')},
             respawn=respawn,
             **kwargs

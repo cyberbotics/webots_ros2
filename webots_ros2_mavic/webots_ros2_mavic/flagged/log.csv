@@ -1,0 +1,305 @@
+Drone ROS 2 Command,Response,flag,username,timestamp
+Stop this drone,"Response:
+
+To stop the drone, we can publish a zero velocity command to the `/cmd_vel` topic. The following Python code snippet provides a simple way to send a stop command to the drone.
+
+Here’s the complete code to stop the drone:
+
+```python
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+
+class DroneStop(Node):
+    def __init__(self):
+        super().__init__('drone_stop')
+        self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.stop_drone()
+
+    def stop_drone(self):
+        vel_msg = Twist()
+        vel_msg.linear.x = 0.0  # Set linear velocity in x direction to zero
+        vel_msg.linear.y = 0.0  # Set linear velocity in y direction to zero
+        vel_msg.linear.z = 0.0  # Set linear velocity in z direction to zero
+        vel_msg.angular.x = 0.0  # Set angular velocity around x axis to zero
+        vel_msg.angular.y = 0.0  # Set angular velocity around y axis to zero
+        vel_msg.angular.z = 0.0  # Set angular velocity around z axis to zero
+
+        self.publisher_.publish(vel_msg)  # Publish the stop command
+        self.get_logger().info('Drone stopped.')
+
+def main(args=None):
+    rclpy.init(args=args)
+    drone_stop = DroneStop()
+    try:
+        rclpy.spin_once(drone_stop)  # Spin once to ensure the command is sent
+    finally:
+        drone_stop.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Explanation:
+
+1. **DroneStop Class**: This is a ROS 2 Node named `drone_stop`, which is responsible for stopping the drone.
+
+2. **Publisher**: The node creates a publisher to the `/cmd_vel` topic to send velocity commands.
+
+3. **stop_drone Method**: This method constructs a `Twist` message (`vel_msg`) with all linear and angular velocities set to zero. 
+   - This effectively commands the drone to stop moving.
+
+4. **Publishing the Command**: The stop command is published to the `/cmd_vel` topic.
+
+5. **Logging**: After publishing the stop command, a log message confirms that the drone has stopped.
+
+6. **Main Function**: Initializes ROS 2, creates the `DroneStop` instance, and calls `rclpy.spin_once` to allow the command to be sent before shutting down.
+
+This script will effectively stop the drone by publishing a zero velocity command. Ensure that your ROS 2 environment is correctly configured to run this script.",,,2024-10-05 03:45:41.554436
+Move forward 1 meter and rotate left,"Response:
+
+To move the DJI Mavic forward by 1 meter and then rotate left (without specifying an angle), we will need to calculate the duration for which the drone should move forward at a certain speed to cover 1 meter. We will then rotate the drone left indefinitely. Here’s how you can write the Python code to achieve this:
+
+```python
+import rclpy
+from geometry_msgs.msg import Twist
+
+def move_drone():
+    rclpy.init()
+    node = rclpy.create_node('drone_controller')
+    cmd_vel_pub = node.create_publisher(Twist, '/cmd_vel', 10)
+    
+    # Move forward 1 meter (considering a speed of 1 m/s, it will take 1 second)
+    forward_cmd = Twist()
+    forward_cmd.linear.x = 1.0  # Move forward at 1 m/s
+    forward_cmd.angular.z = 0.0  # No rotation
+    cmd_vel_pub.publish(forward_cmd)
+
+    # Sleep for 1 second to move forward 1 meter
+    rclpy.sleep(1.0)  # Move forward for 1 second
+
+    # Rotate left (to rotate continuously, set a non-zero angular velocity)
+    rotate_cmd = Twist()
+    rotate_cmd.linear.x = 0.0  # No forward movement
+    rotate_cmd.angular.z = 0.5  # Rotate left at a speed of 0.5 radians/s
+    cmd_vel_pub.publish(rotate_cmd)
+
+    # Keep rotating left for a specified duration (e.g., 5 seconds)
+    rclpy.sleep(5.0)  # Rotate left for 5 seconds
+
+    # Stop the drone
+    stop_cmd = Twist()
+    stop_cmd.linear.x = 0.0  # Stop forward movement
+    stop_cmd.angular.z = 0.0  # Stop rotation
+    cmd_vel_pub.publish(stop_cmd)
+
+    # Clean up
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    move_drone()
+```
+
+### Explanation of the Code:
+
+1. **Initialization**:
+    - Similar to the previous example, the code initializes the ROS 2 environment and creates a node called `drone_controller`.
+
+2. **Node and Publisher Creation**:
+    - A publisher is created for sending `Twist` messages to the `/cmd_vel` topic to control the drone's movement.
+
+3. **Moving Forward 1 Meter**:
+    - A `Twist` message (`forward_cmd`) is created specifying:
+        - `linear.x` is set to `1.0`, which means the drone will move forward at 1 meter per second.
+        - `angular.z` is set to `0.0`, which means there’s no rotation during this time.
+    - The forward command is published, and the code sleeps for 1 second to allow the drone to travel 1 meter (since it's moving at 1 m/s).
+
+4. **Rotating Left**:
+    - A new `Twist` message (`rotate_cmd`) is created for rotation:
+        - `linear.x` is set to `0.0`, meaning there’s no forward movement.
+        - `angular.z` is set to `0.5`, allowing the drone to rotate left at a speed of 0.5 radians per second.
+    - The rotating command is published, and the code sleeps for 5 seconds to continue the left rotation.
+
+5. **Stopping the Drone**:
+    - After rotation, a `stop_cmd` message is created and published to stop the drone by setting both `linear.x` and `angular.z` to `0.0`.
+
+6. **Clean-Up**:
+    - Finally, the node is destroyed, and the ROS 2 environment is cleaned up.
+
+This code effectively allows the drone to move forward by 1 meter and then rotate left for a specified duration before coming to a stop.
+
+An error occurred during command execution:
+Traceback (most recent call last):
+  File ""/home/hadi/ros2_webots/src/webots_ros2/webots_ros2_mavic/webots_ros2_mavic/mavic_ros2_controller.py"", line 118, in chatbot_interface
+    time.sleep(1)  # Delay untuk memastikan setiap perintah dieksekusi satu per satu
+NameError: name 'time' is not defined
+",,,2024-10-06 02:59:19.780454
+"Create waypoints in a good straight line with start point at x:10, y:10, z:5,  and start point at x:20, y:15, z:10. the number of waypoints 20.","[{""x"": 10.0, ""y"": 10.0, ""z"": 5.0}, {""x"": 10.526, ""y"": 10.263, ""z"": 5.263}, {""x"": 11.053, ""y"": 10.526, ""z"": 5.526}, {""x"": 11.579, ""y"": 10.789, ""z"": 5.789}, {""x"": 12.105, ""y"": 11.053, ""z"": 6.053}, {""x"": 12.632, ""y"": 11.316, ""z"": 6.316}, {""x"": 13.158, ""y"": 11.579, ""z"": 6.579}, {""x"": 13.684, ""y"": 11.842, ""z"": 6.842}, {""x"": 14.211, ""y"": 12.105, ""z"": 7.105}, {""x"": 14.737, ""y"": 12.368, ""z"": 7.368}, {""x"": 15.263, ""y"": 12.632, ""z"": 7.632}, {""x"": 15.789, ""y"": 12.895, ""z"": 7.895}, {""x"": 16.316, ""y"": 13.158, ""z"": 8.158}, {""x"": 16.842, ""y"": 13.421, ""z"": 8.421}, {""x"": 17.368, ""y"": 13.684, ""z"": 8.684}, {""x"": 17.895, ""y"": 13.947, ""z"": 8.947}, {""x"": 18.421, ""y"": 14.211, ""z"": 9.211}, {""x"": 18.947, ""y"": 14.474, ""z"": 9.474}, {""x"": 19.474, ""y"": 14.737, ""z"": 9.737}, {""x"": 20.0, ""y"": 15.0, ""z"": 10.0}]",,,2024-12-26 17:37:14.231331
+"Create waypoints in a good circular shape with center at  x:10, y:10, z:10,  a radius of 5, rotation axis at x with angle 45 degrees. the number of waypoints 30 units.","'To generate the waypoints, I will create a circle in the yz-plane at the specified center and rotate it around the x-axis by 45 degrees. Here are the waypoints:
+
+```json
+[
+    {""x"": 10.0, ""y"": 10.0, ""z"": 15.0},
+    {""x"": 10.0, ""y"": 11.047, ""z"": 14.938},
+    {""x"": 10.0, ""y"": 12.038, ""z"": 14.753},
+    {""x"": 10.0, ""y"": 12.918, ""z"": 14.455},
+    {""x"": 10.0, ""y"": 13.632, ""z"": 14.055},
+    {""x"": 10.0, ""y"": 14.138, ""z"": 13.568},
+    {""x"": 10.0, ""y"": 14.408, ""z"": 13.010},
+    {""x"": 10.0, ""y"": 14.425, ""z"": 12.405},
+    {""x"": 10.0, ""y"": 14.184, ""z"": 11.77},
+    {""x"": 10.0, ""y"": 13.69, ""z"": 11.125},
+    {""x"": 10.0, ""y"": 12.964, ""z"": 10.489},
+    {""x"": 10.0, ""y"": 12.042, ""z"": 9.882},
+    {""x"": 10.0, ""y"": 10.971, ""z"": 9.327},
+    {""x"": 10.0, ""y"": 9.804, ""z"": 8.848},
+    {""x"": 10.0, ""y"": 8.602, ""z"": 8.465},
+    {""x"": 10.0, ""y"": 7.437, ""z"": 8.192},
+    {""x"": 10.0, ""y"": 6.365, ""z"": 8.035},
+    {""x"": 10.0, ""y"": 5.438, ""z"": 7.996},
+    {""x"": 10.0, ""y"": 4.702, ""z"": 8.072},
+    {""x"": 10.0, ""y"": 4.19, ""z"": 8.257},
+    {""x"": 10.0, ""y"": 3.91, ""z"": 8.541},
+    {""x"": 10.0, ""y"": 3.858, ""z"": 8.915},
+    {""x"": 10.0, ""y"": 4.017, ""z"": 9.361},
+    {""x"": 10.0, ""y"": 4.358, ""z"": 9.86},
+    {""x"": 10.0, ""y"": 4.849, ""z"": 10.391},
+    {""x"": 10.0, ""y"": 5.462, ""z"": 10.933},
+    {""x"": 10.0, ""y"": 6.154, ""z"": 11.464},
+    {""x"": 10.0, ""y"": 6.876, ""z"": 11.961},
+    {""x"": 10.0, ""y"": 7.583, ""z"": 12.404},
+    {""x"": 10.0, ""y"": 8.236, ""z"": 12.777}
+]
+```
+
+Note: The above coordinates assume a specific convention for the x, y, and z axes, and the generated path revolves around the x-axis by 45 degrees. Each waypoint is calculated assuming a perfect circle initially, then applying the rotation. It approximates 30 evenly spaced points around this path.",,,2024-12-26 19:45:01.202159
+"Create waypoints in a good rectangle shape with center at  x:10, y:10, z:10, rotation axis at y with rotation angle 45 degrees. the number of waypoints 30 units.","'To create waypoints in a rectangular shape and rotate them around the y-axis by 45 degrees, you'll first need to define the rectangle. For simplicity, let's create a rectangle that spans -5 to +5 in the x and z directions. Then, rotate these points around the y-axis by 45 degrees.
+
+Here's the Python list of dictionaries representing the waypoints:
+
+```json
+[
+    {""x"": 13.54, ""y"": 10, ""z"": 13.54},
+    {""x"": 12.6, ""y"": 10, ""z"": 12.98},
+    {""x"": 11.66, ""y"": 10, ""z"": 12.43},
+    {""x"": 10.71, ""y"": 10, ""z"": 11.88},
+    {""x"": 9.77, ""y"": 10, ""z"": 11.33},
+    {""x"": 8.83, ""y"": 10, ""z"": 10.78},
+    {""x"": 7.88, ""y"": 10, ""z"": 10.23},
+    {""x"": 6.94, ""y"": 10, ""z"": 9.68},
+    {""x"": 6.0, ""y"": 10, ""z"": 9.12},
+    {""x"": 5.05, ""y"": 10, ""z"": 8.57},
+    {""x"": 4.11, ""y"": 10, ""z"": 8.02},
+    {""x"": 3.17, ""y"": 10, ""z"": 7.47},
+    {""x"": 2.22, ""y"": 10, ""z"": 6.92},
+    {""x"": 1.28, ""y"": 10, ""z"": 6.37},
+    {""x"": 0.34, ""y"": 10, ""z"": 5.82},
+    {""x"": -0.6, ""y"": 10, ""z"": 5.27},
+    {""x"": -1.54, ""y"": 10, ""z"": 4.71},
+    {""x"": -2.49, ""y"": 10, ""z"": 4.16},
+    {""x"": -3.43, ""y"": 10, ""z"": 3.61},
+    {""x"": -4.37, ""y"": 10, ""z"": 3.06},
+    {""x"": -5.32, ""y"": 10, ""z"": 2.51},
+    {""x"": -6.26, ""y"": 10, ""z"": 1.96},
+    {""x"": -7.2, ""y"": 10, ""z"": 1.41},
+    {""x"": -8.15, ""y"": 10, ""z"": 0.86},
+    {""x"": -9.09, ""y"": 10, ""z"": 0.3},
+    {""x"": -10.03, ""y"": 10, ""z"": -0.25},
+    {""x"": -10.98, ""y"": 10, ""z"": -0.8},
+    {""x"": -11.92, ""y"": 10, ""z"": -1.35},
+    {""x"": -12.86, ""y"": 10, ""z"": -1.9},
+    {""x"": -13.81, ""y"": 10, ""z"": -2.45}
+]
+```
+
+",,,2024-12-26 20:25:13.834477
+"Create waypoints in a perfect circle shape with center at  x:10, y:10, z:10, a radius of 3, rotation axis at x with rotation angle 45 degrees. the number of waypoints 30 units.","'To create waypoints in a circular path in 3D space centered at (10, 10, 10) with a radius of 3 and rotated around the x-axis by 45 degrees, we need to calculate the coordinates of the waypoints. The number of waypoints is 30, so the angles will be spaced evenly at intervals of 12 degrees (360/30).
+
+Here's a Python list of dictionaries with the calculated waypoints:
+
+```python
+[
+    {""x"": 10.0, ""y"": 13.0, ""z"": 10.0},
+    {""x"": 10.0, ""y"": 12.919, ""z"": 10.187},
+    {""x"": 10.0, ""y"": 12.678, ""z"": 10.368},
+    {""x"": 10.0, ""y"": 12.293, ""z"": 10.537},
+    {""x"": 10.0, ""y"": 11.793, ""z"": 10.693},
+    {""x"": 10.0, ""y"": 11.207, ""z"": 10.825},
+    {""x"": 10.0, ""y"": 10.563, ""z"": 10.931},
+    {""x"": 10.0, ""y"": 9.903, ""z"": 11.0},
+    {""x"": 10.0, ""y"": 9.272, ""z"": 11.026},
+    {""x"": 10.0, ""y"": 8.707, ""z"": 11.0},
+    {""x"": 10.0, ""y"": 8.167, ""z"": 10.931},
+    {""x"": 10.0, ""y"": 7.592, ""z"": 10.825},
+    {""x"": 10.0, ""y"": 7.007, ""z"": 10.693},
+    {""x"": 10.0, ""y"": 6.507, ""z"": 10.537},
+    {""x"": 10.0, ""y"": 6.123, ""z"": 10.368},
+    {""x"": 10.0, ""y"": 5.882, ""z"": 10.187},
+    {""x"": 10.0, ""y"": 5.801, ""z"": 10.0},
+    {""x"": 10.0, ""y"": 5.882, ""z"": 9.813},
+    {""x"": 10.0, ""y"": 6.123, ""z"": 9.632},
+    {""x"": 10.0, ""y"": 6.507, ""z"": 9.463},
+    {""x"": 10.0, ""y"": 7.007, ""z"": 9.307},
+    {""x"": 10.0, ""y"": 7.592, ""z"": 9.175},
+    {""x"": 10.0, ""y"": 8.167, ""z"": 9.069},
+    {""x"": 10.0, ""y"": 8.707, ""z"": 9.0},
+    {""x"": 10.0, ""y"": 9.272, ""z"": 8.974},
+    {""x"": 10.0, ""y"": 9.903, ""z"": 9.0},
+    {""x"": 10.0, ""y"": 10.563, ""z"": 9.069},
+    {""x"": 10.0, ""y"": 11.207, ""z"": 9.175},
+    {""x"": 10.0, ""y"": 11.793, ""z"": 9.307},
+    {""x"": 10.0, ""y"": 12.293, ""z"": 9.463}
+]
+```
+
+This sequence considers rotation along the x-axis by 45 degrees, affecting the y and z coordinates in each waypoint. The coordinates have been calculated at each interval using trigonometric transformations.",,,2024-12-26 20:37:18.730755
+"Create waypoints in a perfect circle shape with center at  x:10, y:10, z:10, a radius of 2, rotation axis at z with rotation angle 90 degrees. the number of waypoints 40 units.","[{""x"": 10.0, ""y"": 12.0, ""z"": 10.0}, {""x"": 9.69, ""y"": 11.98, ""z"": 10.0}, {""x"": 9.38, ""y"": 11.92, ""z"": 10.0}, {""x"": 9.08, ""y"": 11.84, ""z"": 10.0}, {""x"": 8.79, ""y"": 11.71, ""z"": 10.0}, {""x"": 8.51, ""y"": 11.56, ""z"": 10.0}, {""x"": 8.25, ""y"": 11.36, ""z"": 10.0}, {""x"": 8.01, ""y"": 11.14, ""z"": 10.0}, {""x"": 7.79, ""y"": 10.89, ""z"": 10.0}, {""x"": 7.61, ""y"": 10.61, ""z"": 10.0}, {""x"": 7.45, ""y"": 10.31, ""z"": 10.0}, {""x"": 7.33, ""y"": 10.0, ""z"": 10.0}, {""x"": 7.25, ""y"": 9.69, ""z"": 10.0}, {""x"": 7.21, ""y"": 9.38, ""z"": 10.0}, {""x"": 7.21, ""y"": 9.08, ""z"": 10.0}, {""x"": 7.25, ""y"": 8.77, ""z"": 10.0}, {""x"": 7.33, ""y"": 8.46, ""z"": 10.0}, {""x"": 7.45, ""y"": 8.16, ""z"": 10.0}, {""x"": 7.61, ""y"": 7.89, ""z"": 10.0}, {""x"": 7.79, ""y"": 7.61, ""z"": 10.0}, {""x"": 8.01, ""y"": 7.36, ""z"": 10.0}, {""x"": 8.25, ""y"": 7.14, ""z"": 10.0}, {""x"": 8.51, ""y"": 6.94, ""z"": 10.0}, {""x"": 8.79, ""y"": 6.79, ""z"": 10.0}, {""x"": 9.08, ""y"": 6.66, ""z"": 10.0}, {""x"": 9.38, ""y"": 6.58, ""z"": 10.0}, {""x"": 9.69, ""y"": 6.52, ""z"": 10.0}, {""x"": 10.0, ""y"": 6.5, ""z"": 10.0}, {""x"": 10.31, ""y"": 6.52, ""z"": 10.0}, {""x"": 10.61, ""y"": 6.58, ""z"": 10.0}, {""x"": 10.92, ""y"": 6.66, ""z"": 10.0}, {""x"": 11.21, ""y"": 6.79, ""z"": 10.0}, {""x"": 11.49, ""y"": 6.94, ""z"": 10.0}, {""x"": 11.75, ""y"": 7.14, ""z"": 10.0}, {""x"": 11.99, ""y"": 7.36, ""z"": 10.0}, {""x"": 12.21, ""y"": 7.61, ""z"": 10.0}, {""x"": 12.39, ""y"": 7.89, ""z"": 10.0}, {""x"": 12.55, ""y"": 8.16, ""z"": 10.0}, {""x"": 12.67, ""y"": 8.46, ""z"": 10.0}, {""x"": 12.75, ""y"": 8.77, ""z"": 10.0}, {""x"": 12.79, ""y"": 9.08, ""z"": 10.0}, {""x"": 12.79, ""y"": 9.38, ""z"": 10.0}, {""x"": 12.75, ""y"": 9.69, ""z"": 10.0}, {""x"": 12.67, ""y"": 10.0, ""z"": 10.0}, {""x"": 12.55, ""y"": 10.31, ""z"": 10.0}, {""x"": 12.39, ""y"": 10.61, ""z"": 10.0}, {""x"": 12.21, ""y"": 10.89, ""z"": 10.0}, {""x"": 12.01, ""y"": 11.14, ""z"": 10.0}, {""x"": 11.75, ""y"": 11.36, ""z"": 10.0}, {""x"": 11.49, ""y"": 11.56, ""z"": 10.0}, {""x"": 11.21, ""y"": 11.71, ""z"": 10.0}, {""x"": 10.92, ""y"": 11.84, ""z"": 10.0}, {""x"": 10.61, ""y"": 11.92, ""z"": 10.0}, {""x"": 10.31, ""y"": 11.98, ""z"": 10.0}]",,,2024-12-26 21:08:16.628245
+"Create waypoints in a perfect circle shape with center at  x:10, y:10, z:10, a radius of 2, rotation axis at y with rotation angle 90 degrees. the number of waypoints 40 units.","'To generate waypoints forming a circle with a center at (10, 10, 10), radius of 2, and with rotation around the y-axis by 90 degrees, the z coordinates will vary. The waypoints are distributed evenly across the circle's circumference. Below is the JSON format list of waypoints:
+
+```json
+[
+    {""x"": 10.0, ""y"": 10.0, ""z"": 12.0},
+    {""x"": 10.31, ""y"": 10.0, ""z"": 11.98},
+    {""x"": 10.62, ""y"": 10.0, ""z"": 11.92},
+    {""x"": 10.92, ""y"": 10.0, ""z"": 11.81},
+    {""x"": 11.19, ""y"": 10.0, ""z"": 11.66},
+    {""x"": 11.43, ""y"": 10.0, ""z"": 11.48},
+    {""x"": 11.62, ""y"": 10.0, ""z"": 11.26},
+    {""x"": 11.76, ""y"": 10.0, ""z"": 11.02},
+    {""x"": 11.86, ""y"": 10.0, ""z"": 10.75},
+    {""x"": 11.90, ""y"": 10.0, ""z"": 10.47},
+    {""x"": 11.90, ""y"": 10.0, ""z"": 10.17},
+    {""x"": 11.86, ""y"": 10.0, ""z"": 9.89},
+    {""x"": 11.76, ""y"": 10.0, ""z"": 9.62},
+    {""x"": 11.62, ""y"": 10.0, ""z"": 9.38},
+    {""x"": 11.43, ""y"": 10.0, ""z"": 9.16},
+    {""x"": 11.19, ""y"": 10.0, ""z"": 8.98},
+    {""x"": 10.92, ""y"": 10.0, ""z"": 8.83},
+    {""x"": 10.62, ""y"": 10.0, ""z"": 8.73},
+    {""x"": 10.31, ""y"": 10.0, ""z"": 8.68},
+    {""x"": 10.0, ""y"": 10.0, ""z"": 8.68},
+    {""x"": 9.69, ""y"": 10.0, ""z"": 8.73},
+    {""x"": 9.38, ""y"": 10.0, ""z"": 8.83},
+    {""x"": 9.11, ""y"": 10.0, ""z"": 8.98},
+    {""x"": 8.87, ""y"": 10.0, ""z"": 9.16},
+    {""x"": 8.68, ""y"": 10.0, ""z"": 9.38},
+    {""x"": 8.54, ""y"": 10.0, ""z"": 9.62},
+    {""x"": 8.44, ""y"": 10.0, ""z"": 9.89},
+    {""x"": 8.40, ""y"": 10.0, ""z"": 10.17},
+    {""x"": 8.40, ""y"": 10.0, ""z"": 10.47},
+    {""x"": 8.44, ""y"": 10.0, ""z"": 10.75},
+    {""x"": 8.54, ""y"": 10.0, ""z"": 11.02},
+    {""x"": 8.68, ""y"": 10.0, ""z"": 11.26},
+    {""x"": 8.87, ""y"": 10.0, ""z"": 11.48},
+    {""x"": 9.11, ""y"": 10.0, ""z"": 11.66},
+    {""x"": 9.38, ""y"": 10.0, ""z"": 11.81},
+    {""x"": 9.69, ""y"": 10.0, ""z"": 11.92},
+    {""x"": 10.0, ""y"": 10.0, ""z"": 11.98},
+    {""x"": 10.31, ""y"": 10.0, ""z"": 12.0}
+]
+```
+
+These coordinates assume that all scaling and rotations from the circle's original definition around the y-axis remain circular. The coordinates are calculated based on trigonometric functions to match a circle in a rotated plane.",,,2024-12-26 21:09:37.170081
+"Create waypoints in a perfect circle shape with center at  x:10, y:10, z:10, a radius of 2, rotation axis at x with rotation angle 90 degrees. the number of waypoints 40 units.","[{""x"": 10.0, ""y"": 10.0, ""z"": 12.0}, {""x"": 10.0, ""y"": 10.31, ""z"": 11.98}, {""x"": 10.0, ""y"": 10.62, ""z"": 11.92}, {""x"": 10.0, ""y"": 10.92, ""z"": 11.81}, {""x"": 10.0, ""y"": 11.21, ""z"": 11.67}, {""x"": 10.0, ""y"": 11.48, ""z"": 11.48}, {""x"": 10.0, ""y"": 11.67, ""z"": 11.21}, {""x"": 10.0, ""y"": 11.81, ""z"": 10.92}, {""x"": 10.0, ""y"": 11.92, ""z"": 10.62}, {""x"": 10.0, ""y"": 11.98, ""z"": 10.31}, {""x"": 10.0, ""y"": 12.0, ""z"": 10.0}, {""x"": 10.0, ""y"": 11.98, ""z"": 9.69}, {""x"": 10.0, ""y"": 11.92, ""z"": 9.38}, {""x"": 10.0, ""y"": 11.81, ""z"": 9.08}, {""x"": 10.0, ""y"": 11.67, ""z"": 8.79}, {""x"": 10.0, ""y"": 11.48, ""z"": 8.52}, {""x"": 10.0, ""y"": 11.21, ""z"": 8.33}, {""x"": 10.0, ""y"": 10.92, ""z"": 8.19}, {""x"": 10.0, ""y"": 10.62, ""z"": 8.08}, {""x"": 10.0, ""y"": 10.31, ""z"": 8.02}, {""x"": 10.0, ""y"": 10.0, ""z"": 8.0}, {""x"": 10.0, ""y"": 9.69, ""z"": 8.02}, {""x"": 10.0, ""y"": 9.38, ""z"": 8.08}, {""x"": 10.0, ""y"": 9.08, ""z"": 8.19}, {""x"": 10.0, ""y"": 8.79, ""z"": 8.33}, {""x"": 10.0, ""y"": 8.52, ""z"": 8.52}, {""x"": 10.0, ""y"": 8.33, ""z"": 8.79}, {""x"": 10.0, ""y"": 8.19, ""z"": 9.08}, {""x"": 10.0, ""y"": 8.08, ""z"": 9.38}, {""x"": 10.0, ""y"": 8.02, ""z"": 9.69}, {""x"": 10.0, ""y"": 8.0, ""z"": 10.0}, {""x"": 10.0, ""y"": 8.02, ""z"": 10.31}, {""x"": 10.0, ""y"": 8.08, ""z"": 10.62}, {""x"": 10.0, ""y"": 8.19, ""z"": 10.92}, {""x"": 10.0, ""y"": 8.33, ""z"": 11.21}, {""x"": 10.0, ""y"": 8.52, ""z"": 11.48}, {""x"": 10.0, ""y"": 8.79, ""z"": 11.67}, {""x"": 10.0, ""y"": 9.08, ""z"": 11.81}, {""x"": 10.0, ""y"": 9.38, ""z"": 11.92}, {""x"": 10.0, ""y"": 9.69, ""z"": 11.98}]",,,2024-12-26 21:14:54.547342

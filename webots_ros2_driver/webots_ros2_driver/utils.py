@@ -84,29 +84,46 @@ def is_wsl():
     return 'microsoft-standard' in uname().release
 
 
-def get_wsl_ip_address():
+def get_default_gateway():
     try:
-        file = open('/etc/resolv.conf', 'r')
+        output = subprocess.run(
+            ['ip', 'route', 'show', 'default'],
+            check=True,
+            stdout=subprocess.PIPE,
+            universal_newlines=True
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+    for line in output.stdout.splitlines():
+        fields = line.split()
+        if not fields or fields[0] != 'default' or 'via' not in fields:
+            continue
+        gateway_index = fields.index('via') + 1
+        if gateway_index < len(fields):
+            return fields[gateway_index]
+    return None
+
+
+def get_wsl_ip_address():
+    # On WSL 2 the default gateway is the Windows host. The resolver can instead
+    # point to a VPN or DNS-tunneling endpoint, which is not reachable by Webots.
+    gateway = get_default_gateway()
+    if gateway:
+        return gateway
+
+    try:
+        with open('/etc/resolv.conf', 'r') as file:
+            for line in file:
+                if len(line) == 0 or line[0] == '#' or line[0] == ';':
+                    continue
+                tokens = line.split()
+                if len(tokens) > 1 and tokens[0] == 'nameserver' and tokens[1]:
+                    return tokens[1]
     except IOError:
         # /etc/resolv.conf doesn't exist, can't be read, etc.
-        # Use the default resolver configuration.
-        return '127.0.0.1'
-    try:
-        for line in file:
-            if len(line) == 0 or line[0] == '#' or line[0] == ';':
-                continue
-            tokens = line.split()
-            if len(tokens) == 0:
-                continue
-            if tokens[0] == 'nameserver':
-                file.close()
-                if len(tokens[1]) == 0:
-                    return '127.0.0.1'
-                if tokens[1] == '10.255.255.254':
-                    return get_host_ip()
-                return tokens[1]
-    finally:
-        file.close()
+        pass
+    return '127.0.0.1'
 
 
 def has_shared_folder():
@@ -132,15 +149,10 @@ def get_host_ip():
     if is_docker():
         return "host.docker.internal"
 
-    try:
-        output = subprocess.run(['ip', 'route'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
-        for line in output.stdout.split('\n'):
-            fields = line.split()
-            if fields and fields[0] == 'default':
-                return fields[2]
-        sys.exit('Unable to get host IP address.')
-    except subprocess.CalledProcessError:
-        sys.exit('Unable to get host IP address. \'ip route\' could not be executed.')
+    gateway = get_default_gateway()
+    if gateway:
+        return gateway
+    sys.exit('Unable to get host IP address. \'ip route show default\' returned no gateway.')
 
 
 def controller_protocol():

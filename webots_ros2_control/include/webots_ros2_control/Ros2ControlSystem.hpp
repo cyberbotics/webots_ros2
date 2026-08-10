@@ -52,11 +52,12 @@ namespace webots_ros2_control {
     Ros2ControlSystem();
     void init(webots_ros2_driver::WebotsNode *node, const hardware_interface::HardwareInfo &info) override;
 
-    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(
-      const hardware_interface::HardwareInfo &info) override;
 #if HARDWARE_INTERFACE_VERSION_MAJOR > 5 || (HARDWARE_INTERFACE_VERSION_MAJOR == 5 && HARDWARE_INTERFACE_VERSION_MINOR >= 3)
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(
       const hardware_interface::HardwareComponentInterfaceParams &params) override;
+#else
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_init(
+      const hardware_interface::HardwareInfo &info) override;
 #endif
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(
       const rclcpp_lifecycle::State & /*previous_state*/) override;

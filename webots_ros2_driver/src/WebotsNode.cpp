@@ -25,6 +25,7 @@
 
 #include <webots_ros2_driver/plugins/static/Ros2Camera.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Compass.hpp>
+#include <webots_ros2_driver/plugins/static/Ros2Connector.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2DistanceSensor.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2Emitter.hpp>
 #include <webots_ros2_driver/plugins/static/Ros2GPS.hpp>
@@ -260,6 +261,9 @@ namespace webots_ros2_driver {
           break;
         case WB_NODE_VACUUM_GRIPPER:
           plugin = std::make_shared<webots_ros2_driver::Ros2VacuumGripper>();
+          break;
+        case WB_NODE_CONNECTOR:
+          plugin = std::make_shared<webots_ros2_driver::Ros2Connector>();
           break;
       }
       if (plugin) {

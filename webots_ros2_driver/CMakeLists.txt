@@ -10,6 +10,8 @@ if($ENV{ROS_DISTRO} MATCHES "humble")
   add_compile_definitions(HUMBLE)
 elseif($ENV{ROS_DISTRO} MATCHES "jazzy")
   add_compile_definitions(JAZZY)
+elseif($ENV{ROS_DISTRO} MATCHES "lyrical")
+  add_compile_definitions(LYRICAL)
 elseif($ENV{ROS_DISTRO} MATCHES "rolling")
   add_compile_definitions(ROLLING)
 elseif($ENV{ROS_DISTRO} MATCHES "kilted")
@@ -40,6 +42,8 @@ elseif($ENV{ROS_DISTRO} MATCHES "jazzy")
   find_package(Python 3.12 EXACT REQUIRED COMPONENTS Development)
 elseif($ENV{ROS_DISTRO} MATCHES "kilted")
   find_package(Python 3.12 EXACT REQUIRED COMPONENTS Development)
+elseif($ENV{ROS_DISTRO} MATCHES "lyrical")
+  find_package(Python 3.14 EXACT REQUIRED COMPONENTS Development)
 elseif($ENV{ROS_DISTRO} MATCHES "rolling")
   find_package(Python 3.12 EXACT REQUIRED COMPONENTS Development)
 endif()
@@ -298,6 +302,7 @@ ament_export_include_directories(
   include
   include/webots/c
   include/webots/cpp
+  ${Python_INCLUDE_DIRS}
 )
 ament_export_dependencies(
   rclcpp

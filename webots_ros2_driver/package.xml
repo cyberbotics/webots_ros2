@@ -10,6 +10,8 @@
   <url type="repository">https://github.com/cyberbotics/webots_ros2</url>
 
   <build_depend>ros_environment</build_depend>
+  <build_depend>python3-dev</build_depend>
+  <build_export_depend>python3-dev</build_export_depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>python_cmake_module</buildtool_depend>

@@ -26,6 +26,7 @@ set(msg_files
   "msg/BoolStamped.msg"
   "msg/FloatStamped.msg"
   "msg/StringStamped.msg"
+  "msg/IntStamped.msg"
   "msg/CameraRecognitionObject.msg"
   "msg/CameraRecognitionObjects.msg"
   "msg/UrdfRobot.msg"

@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<robot name="connector_and_vacuum_gripper_test_robot_webots">
+
+    <webots>
+        <plugin type="webots_ros2_control::Ros2Control" />
+    </webots>
+
+    <ros2_control name="robot_control" type="system">
+        <hardware>
+            <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
+        </hardware>
+        <joint name="connector_motor">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+        <joint name="vacuum_gripper_motor">
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+        </joint>
+    </ros2_control>
+
+</robot>

@@ -1,0 +1,200 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
+
+WorldInfo {
+  info [
+    "Test of the connector and vaccuum gripper."
+  ]
+  title "ROS2 simulation of connector and vacuum gripper"
+  gravity 0.1
+  basicTimeStep 20
+}
+Viewpoint {
+  orientation 0.06793539504527396 0.21857545744612852 -0.9734523878969419 0.9173500595062111
+  position -0.7577203878145741 1.0983589397439193 0.35733599880928457
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+}
+Robot {
+  translation 0 0.5 0.05
+  children [
+    GPS {
+      name "connector_object_position"
+    }
+    Connector {
+      translation 0 0 0.05
+      rotation 0 1 0 -1.5707953071795862
+      name "passive_connector"
+      model "connector"
+      type "passive"
+      numberOfRotations 1
+    }
+    Shape {
+      appearance DEF GREEN Appearance {
+        material Material {
+          diffuseColor 0.341176 0.890196 0.537255
+        }
+      }
+      geometry DEF CYLINDER Cylinder {
+        height 0.1
+        radius 0.05
+      }
+    }
+  ]
+  name "connector_object"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+  physics Physics {
+    density 1
+    mass 10
+  }
+  controller "<extern>"
+}
+Robot {
+  translation 0 -0.5 0.05
+  children [
+    GPS {
+      name "vacuum_object_position"
+    }
+    Shape {
+      appearance DEF GREEN Appearance {
+        material Material {
+          diffuseColor 0.341176 0.890196 0.537255
+        }
+      }
+      geometry DEF CYLINDER Cylinder {
+        height 0.1
+        radius 0.05
+      }
+    }
+  ]
+  name "vacuum_gripper_object"
+  boundingObject Cylinder {
+    height 0.1
+    radius 0.05
+  }
+  physics Physics {
+    density 1
+    mass 10
+  }
+  controller "<extern>"
+}
+Robot {
+  translation 0 0 0.2
+  children [
+    Pose {
+      translation 0 0.5 0
+      children [
+        SliderJoint {
+          jointParameters JointParameters {
+            minStop -0.05
+            maxStop 0.05
+          }
+          device [
+            LinearMotor {
+              name "connector_motor"
+              controlPID 1 0 0
+              maxVelocity 0.01
+              minPosition -0.05
+              maxPosition 0.05
+            }
+            PositionSensor {
+              name "connector_motor_sensor"
+            }
+          ]
+          endPoint Solid {
+            children [
+              Connector {
+                translation 0 0 -0.05
+                rotation 0.7071067811865476 0 -0.7071067811865476 -3.1415853071795863
+                name "active_connector"
+                model "connector"
+                type "active"
+                numberOfRotations 1
+              }
+              Shape {
+                appearance DEF RED Appearance {
+                  material Material {
+                    diffuseColor 0.929412 0.2 0.231373
+                  }
+                }
+                geometry Cylinder {
+                  height 0.1
+                  radius 0.05
+                }
+              }
+            ]
+            name "connector_gripper"
+            boundingObject Cylinder {
+              height 0.1
+              radius 0.05
+            }
+            physics Physics {
+              density 100
+            }
+          }
+        }
+      ]
+    }
+    Pose {
+      translation 0 -0.5 0
+      children [
+        SliderJoint {
+          jointParameters JointParameters {
+            minStop -0.05
+            maxStop 0.05
+          }
+          device [
+            LinearMotor {
+              name "vacuum_gripper_motor"
+              controlPID 1 0 0
+              maxVelocity 0.01
+              minPosition -0.05
+              maxPosition 0.05
+            }
+            PositionSensor {
+              name "vacuum_gripper_motor_sensor"
+            }
+          ]
+          endPoint Solid {
+            children [
+              VacuumGripper {
+                translation 0 0 -0.05
+                rotation 1 0 0 3.141592653589793
+              }
+              Shape {
+                appearance DEF RED Appearance {
+                  material Material {
+                    diffuseColor 0.929412 0.2 0.231373
+                  }
+                }
+                geometry Cylinder {
+                  height 0.1
+                  radius 0.05
+                }
+              }
+            ]
+            name "vacuum_gripper"
+            boundingObject Cylinder {
+              height 0.1
+              radius 0.05
+            }
+            physics Physics {
+            }
+          }
+        }
+      ]
+    }
+  ]
+  name "connector_and_vacuum_gripper_test_robot"
+  controller "<extern>"
+}

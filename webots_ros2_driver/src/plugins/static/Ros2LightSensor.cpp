@@ -74,8 +74,8 @@ namespace webots_ros2_driver {
     // Find relative standard deviation in lookup table
     double relativeStd = NAN;
     for (int i = 0; i < mLookupTable.size() - 3; i += 3)
-      if ((mLookupTable[i + 1] < rawValue < mLookupTable[i + 3 + 1]) ||
-          (mLookupTable[i + 1] > rawValue > mLookupTable[i + 3 + 1])) {
+      if ((mLookupTable[i + 1] < rawValue && rawValue < mLookupTable[i + 3 + 1]) ||
+          (mLookupTable[i + 1] > rawValue && rawValue > mLookupTable[i + 3 + 1])) {
         relativeStd = mLookupTable[i + 2];
         break;
       }

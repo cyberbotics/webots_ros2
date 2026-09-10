@@ -49,12 +49,42 @@ elseif($ENV{ROS_DISTRO} MATCHES "rolling")
 endif()
 
 # Configure Webots library paths:
-# - Use system-installed Webots.app bundle on macOS
-# - Otherwise assume in-tree source build (Linux or macOS)
+# - macOS: use a prebuilt, UNIVERSAL Webots.app -- from WEBOTS_HOME, or /Applications, or
+#   auto-downloaded+cached from the official release (webots-<ver>.dmg). The in-tree webots/ copy
+#   has no macOS .app layout, so building it from source there is unsupported.
+# - Linux: build the vendored Webots controller libraries from the in-tree source.
 
-if(APPLE AND EXISTS /Applications/Webots.app)
+if(APPLE)
   set(WEBOTS_PREBUILT TRUE)
-  set(WEBOTS_HOME /Applications/Webots.app/Contents)
+  set(WEBOTS_VERSION "R2025a")
+  # Resolve a prebuilt Webots.app/Contents into WEBOTS_HOME:
+  #   1. $WEBOTS_HOME env (a Webots you already have),
+  #   2. a system install at /Applications/Webots.app,
+  #   3. otherwise auto-download the official macOS release and cache it (idempotent).
+  if(DEFINED ENV{WEBOTS_HOME} AND EXISTS "$ENV{WEBOTS_HOME}/lib/controller")
+    set(WEBOTS_HOME "$ENV{WEBOTS_HOME}")
+  elseif(EXISTS /Applications/Webots.app/Contents/lib/controller)
+    set(WEBOTS_HOME /Applications/Webots.app/Contents)
+  else()
+    if(DEFINED ENV{WEBOTS_CACHE_DIR})
+      set(_webots_cache "$ENV{WEBOTS_CACHE_DIR}")
+    else()
+      set(_webots_cache "$ENV{HOME}/.cache/webots")
+    endif()
+    set(_webots_app "${_webots_cache}/${WEBOTS_VERSION}/Webots.app")
+    if(NOT EXISTS "${_webots_app}/Contents/lib/controller")
+      message(STATUS "webots_ros2_driver: fetching Webots ${WEBOTS_VERSION} (macOS, universal) into ${_webots_cache} ...")
+      execute_process(
+        COMMAND bash "${CMAKE_CURRENT_SOURCE_DIR}/cmake/fetch_webots_macos.sh" "${WEBOTS_VERSION}" "${_webots_cache}"
+        RESULT_VARIABLE _webots_rc)
+      if(NOT _webots_rc EQUAL 0 OR NOT EXISTS "${_webots_app}/Contents/lib/controller")
+        message(FATAL_ERROR "webots_ros2_driver: could not obtain Webots ${WEBOTS_VERSION}. "
+          "Install Webots.app in /Applications, set WEBOTS_HOME, or check network access.")
+      endif()
+    endif()
+    set(WEBOTS_HOME "${_webots_app}/Contents")
+  endif()
+  message(STATUS "webots_ros2_driver: using prebuilt Webots at WEBOTS_HOME=${WEBOTS_HOME}")
   include_directories(
     ${WEBOTS_HOME}/include/controller/c
     ${WEBOTS_HOME}/include/controller/cpp

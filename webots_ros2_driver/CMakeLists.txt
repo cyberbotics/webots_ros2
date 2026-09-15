@@ -86,6 +86,7 @@ if(APPLE)
   endif()
   message(STATUS "webots_ros2_driver: using prebuilt Webots at WEBOTS_HOME=${WEBOTS_HOME}")
   include_directories(
+    include
     ${WEBOTS_HOME}/include/controller/c
     ${WEBOTS_HOME}/include/controller/cpp
     ${Python_INCLUDE_DIRS}

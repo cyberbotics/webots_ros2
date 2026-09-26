@@ -61,7 +61,7 @@ setup(
     ],
     description='E-puck2 driver for Webots simulated robot',
     license='Apache License, Version 2.0',
-    tests_require=['pytest'],
+    extras_require={'test': ['pytest']},
     entry_points={
         'console_scripts': [
             'epuck_node = webots_ros2_epuck.epuck_node:main',

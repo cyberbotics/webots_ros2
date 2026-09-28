@@ -36,7 +36,7 @@ setup(
     ],
     description='Tesla ROS2 interface for Webots.',
     license='Apache License, Version 2.0',
-    tests_require=['pytest'],
+    extras_require={'test': ['pytest']},
     entry_points={
         'console_scripts': [
             'lane_follower = webots_ros2_tesla.lane_follower:main'

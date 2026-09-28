@@ -29,5 +29,5 @@ setup(
     ],
     description='System tests for `webots_ros2` packages',
     license='Apache License, Version 2.0',
-    tests_require=['pytest']
+    extras_require={'test': ['pytest']}
 )

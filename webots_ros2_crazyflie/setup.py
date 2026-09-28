@@ -23,7 +23,7 @@ setup(
     maintainer_email='kimberly@bitcraze.io',
     description='ROS2 package for Crazyflie webots simulator',
     license='MIT',
-    tests_require=['pytest'],
+    extras_require={'test': ['pytest']},
     entry_points={
         'console_scripts': [
             'crazyflie_driver = webots_ros2_crazyflie.crazyflie_driver:main',

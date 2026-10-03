@@ -47,6 +47,7 @@ namespace webots_ros2_driver {
   private:
     void publishImage();
     void publishRecognition();
+    void publishSegmentation();
 
     WbDeviceTag mCamera;
 
@@ -59,6 +60,9 @@ namespace webots_ros2_driver {
     rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr mCameraInfoPublisher;
     sensor_msgs::msg::CameraInfo mCameraInfoMessage;
 
+    rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr mSegmentationPublisher;
+    sensor_msgs::msg::Image mSegmentationMessage;
+
     rclcpp::Publisher<vision_msgs::msg::Detection2DArray>::SharedPtr mRecognitionPublisher;
     rclcpp::Publisher<webots_ros2_msgs::msg::CameraRecognitionObjects>::SharedPtr mWebotsRecognitionPublisher;
     vision_msgs::msg::Detection2DArray mRecognitionMessage;
@@ -66,6 +70,7 @@ namespace webots_ros2_driver {
 
     bool mIsEnabled;
     bool mRecognitionIsEnabled;
+    bool mSegmentationIsEnabled;
   };
 
 }  // namespace webots_ros2_driver

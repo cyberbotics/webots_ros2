@@ -14,6 +14,7 @@
 
 #include <webots_ros2_driver/plugins/static/Ros2Lidar.hpp>
 
+#include <algorithm>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <sensor_msgs/msg/point_field.hpp>
 
@@ -35,9 +36,9 @@ namespace webots_ros2_driver {
       mLaserPublisher = mNode->create_publisher<sensor_msgs::msg::LaserScan>(mTopicName, rclcpp::SensorDataQoS().reliable());
       const int resolution = wb_lidar_get_horizontal_resolution(mLidar);
       mLaserMessage.header.frame_id = mFrameName;
-      mLaserMessage.angle_increment = -wb_lidar_get_fov(mLidar) / (resolution - 1);
-      mLaserMessage.angle_min = wb_lidar_get_fov(mLidar) / 2.0;
-      mLaserMessage.angle_max = -wb_lidar_get_fov(mLidar) / 2.0;
+      mLaserMessage.angle_increment = wb_lidar_get_fov(mLidar) / (resolution - 1);
+      mLaserMessage.angle_min = -wb_lidar_get_fov(mLidar) / 2.0;
+      mLaserMessage.angle_max = wb_lidar_get_fov(mLidar) / 2.0;
       mLaserMessage.time_increment = (double)wb_lidar_get_sampling_period(mLidar) / (1000.0 * resolution);
       mLaserMessage.scan_time = (double)wb_lidar_get_sampling_period(mLidar) / 1000.0;
       mLaserMessage.range_min = wb_lidar_get_min_range(mLidar);
@@ -129,7 +130,7 @@ namespace webots_ros2_driver {
   void Ros2Lidar::publishLaserScan() {
     auto rangeImage = wb_lidar_get_layer_range_image(mLidar, 0);
     if (rangeImage) {
-      memcpy(mLaserMessage.ranges.data(), rangeImage, mLaserMessage.ranges.size() * sizeof(float));
+      std::reverse_copy(rangeImage, rangeImage + mLaserMessage.ranges.size(), mLaserMessage.ranges.begin());
       mLaserMessage.header.stamp = mNode->get_clock()->now();
       mLaserPublisher->publish(mLaserMessage);
     }

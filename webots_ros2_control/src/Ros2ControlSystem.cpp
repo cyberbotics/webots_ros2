@@ -55,9 +55,6 @@ namespace webots_ros2_control {
       joint.controlPosition = false;
       joint.controlVelocity = false;
       joint.controlEffort = false;
-      joint.positionCommand = NAN;
-      joint.velocityCommand = NAN;
-      joint.effortCommand = NAN;
       joint.position = NAN;
       joint.velocity = NAN;
       joint.acceleration = NAN;
@@ -86,6 +83,37 @@ namespace webots_ros2_control {
         wb_motor_set_velocity(joint.motor, 0.0);
       }
 
+      // Create the state and command interface handles up front. The resource manager keeps
+      // shared ownership of these; read()/write() update their values through set_value()/get_value().
+      if (joint.sensor) {
+        joint.position_state = std::make_shared<hardware_interface::StateInterface>(
+          joint.name, hardware_interface::HW_IF_POSITION);
+        joint.velocity_state = std::make_shared<hardware_interface::StateInterface>(
+          joint.name, hardware_interface::HW_IF_VELOCITY);
+        joint.acceleration_state = std::make_shared<hardware_interface::StateInterface>(
+          joint.name, hardware_interface::HW_IF_ACCELERATION);
+        (void)joint.position_state->set_value(joint.position, true);
+        (void)joint.velocity_state->set_value(joint.velocity, true);
+        (void)joint.acceleration_state->set_value(joint.acceleration, true);
+      }
+      if (joint.motor) {
+        if (joint.controlPosition) {
+          joint.position_command = std::make_shared<hardware_interface::CommandInterface>(
+            joint.name, hardware_interface::HW_IF_POSITION);
+          (void)joint.position_command->set_value(std::numeric_limits<double>::quiet_NaN(), true);
+        }
+        if (joint.controlEffort) {
+          joint.effort_command = std::make_shared<hardware_interface::CommandInterface>(
+            joint.name, hardware_interface::HW_IF_EFFORT);
+          (void)joint.effort_command->set_value(std::numeric_limits<double>::quiet_NaN(), true);
+        }
+        if (joint.controlVelocity) {
+          joint.velocity_command = std::make_shared<hardware_interface::CommandInterface>(
+            joint.name, hardware_interface::HW_IF_VELOCITY);
+          (void)joint.velocity_command->set_value(std::numeric_limits<double>::quiet_NaN(), true);
+        }
+      }
+
       mJoints.push_back(joint);
     }
   }
@@ -110,34 +138,28 @@ namespace webots_ros2_control {
   }
 #endif
 
-  std::vector<hardware_interface::StateInterface> Ros2ControlSystem::export_state_interfaces() {
-    std::vector<hardware_interface::StateInterface> interfaces;
+  std::vector<hardware_interface::StateInterface::ConstSharedPtr> Ros2ControlSystem::on_export_state_interfaces() {
+    std::vector<hardware_interface::StateInterface::ConstSharedPtr> interfaces;
     for (Joint &joint : mJoints)
       if (joint.sensor) {
-        interfaces.emplace_back(
-          hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_POSITION, &(joint.position)));
-        interfaces.emplace_back(
-          hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_VELOCITY, &(joint.velocity)));
-        interfaces.emplace_back(
-          hardware_interface::StateInterface(joint.name, hardware_interface::HW_IF_ACCELERATION, &(joint.acceleration)));
+        interfaces.push_back(joint.position_state);
+        interfaces.push_back(joint.velocity_state);
+        interfaces.push_back(joint.acceleration_state);
       }
 
     return interfaces;
   }
 
-  std::vector<hardware_interface::CommandInterface> Ros2ControlSystem::export_command_interfaces() {
-    std::vector<hardware_interface::CommandInterface> interfaces;
+  std::vector<hardware_interface::CommandInterface::SharedPtr> Ros2ControlSystem::on_export_command_interfaces() {
+    std::vector<hardware_interface::CommandInterface::SharedPtr> interfaces;
     for (Joint &joint : mJoints)
       if (joint.motor) {
         if (joint.controlPosition)
-          interfaces.emplace_back(
-            hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_POSITION, &(joint.positionCommand)));
+          interfaces.push_back(joint.position_command);
         if (joint.controlEffort)
-          interfaces.emplace_back(
-            hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_EFFORT, &(joint.effortCommand)));
+          interfaces.push_back(joint.effort_command);
         if (joint.controlVelocity)
-          interfaces.emplace_back(
-            hardware_interface::CommandInterface(joint.name, hardware_interface::HW_IF_VELOCITY, &(joint.velocityCommand)));
+          interfaces.push_back(joint.velocity_command);
       }
     return interfaces;
   }
@@ -167,6 +189,10 @@ namespace webots_ros2_control {
           joint.acceleration = (velocity - joint.velocity) / deltaTime;
         joint.velocity = velocity;
         joint.position = position;
+
+        (void)joint.position_state->set_value(joint.position, true);
+        (void)joint.velocity_state->set_value(joint.velocity, true);
+        (void)joint.acceleration_state->set_value(joint.acceleration, true);
       }
     }
 
@@ -176,15 +202,16 @@ namespace webots_ros2_control {
   hardware_interface::return_type Ros2ControlSystem::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) {
     for (Joint &joint : mJoints) {
       if (joint.motor) {
-        if (joint.controlPosition && !std::isnan(joint.positionCommand))
-          wb_motor_set_position(joint.motor, joint.positionCommand);
-        if (joint.controlVelocity && !std::isnan(joint.velocityCommand)) {
+        double command;
+        if (joint.controlPosition && joint.position_command->get_value(command, true) && !std::isnan(command))
+          wb_motor_set_position(joint.motor, command);
+        if (joint.controlVelocity && joint.velocity_command->get_value(command, true) && !std::isnan(command)) {
           // In the position control mode the velocity cannot be negative.
-          const double velocityCommand = joint.controlPosition ? abs(joint.velocityCommand) : joint.velocityCommand;
+          const double velocityCommand = joint.controlPosition ? abs(command) : command;
           wb_motor_set_velocity(joint.motor, velocityCommand);
         }
-        if (joint.controlEffort && !std::isnan(joint.effortCommand))
-          wb_motor_set_torque(joint.motor, joint.effortCommand);
+        if (joint.controlEffort && joint.effort_command->get_value(command, true) && !std::isnan(command))
+          wb_motor_set_torque(joint.motor, command);
       }
     }
     return hardware_interface::return_type::OK;

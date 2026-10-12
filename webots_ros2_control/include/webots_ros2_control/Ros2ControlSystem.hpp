@@ -33,11 +33,8 @@
 
 namespace webots_ros2_control {
   struct Joint {
-    double positionCommand;
     double position;
-    double velocityCommand;
     double velocity;
-    double effortCommand;
     double acceleration;
     bool controlPosition;
     bool controlVelocity;
@@ -45,6 +42,13 @@ namespace webots_ros2_control {
     std::string name;
     WbDeviceTag motor;
     WbDeviceTag sensor;
+
+    hardware_interface::StateInterface::SharedPtr position_state;
+    hardware_interface::StateInterface::SharedPtr velocity_state;
+    hardware_interface::StateInterface::SharedPtr acceleration_state;
+    hardware_interface::CommandInterface::SharedPtr position_command;
+    hardware_interface::CommandInterface::SharedPtr velocity_command;
+    hardware_interface::CommandInterface::SharedPtr effort_command;
   };
 
   class Ros2ControlSystem : public Ros2ControlSystemInterface {
@@ -64,8 +68,8 @@ namespace webots_ros2_control {
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(
       const rclcpp_lifecycle::State & /*previous_state*/) override;
 
-    std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-    std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
+    std::vector<hardware_interface::StateInterface::ConstSharedPtr> on_export_state_interfaces() override;
+    std::vector<hardware_interface::CommandInterface::SharedPtr> on_export_command_interfaces() override;
     hardware_interface::return_type read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
     hardware_interface::return_type write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
 

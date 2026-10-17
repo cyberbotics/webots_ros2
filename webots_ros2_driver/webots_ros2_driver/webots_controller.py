@@ -25,6 +25,10 @@ from ament_index_python.packages import get_package_share_directory, get_package
 from webots_ros2_driver.utils import controller_protocol, controller_ip_address
 
 
+def _as_substitution(value):
+    return value if isinstance(value, Substitution) else TextSubstitution(text=str(value))
+
+
 class WebotsController(ExecuteProcess):
     def __init__(self, output='screen', respawn=False, remappings=[],
                  namespace='', parameters=[], robot_name='', port='1234', **kwargs):
@@ -33,31 +37,32 @@ class WebotsController(ExecuteProcess):
         protocol = controller_protocol()
         ip_address = controller_ip_address() if (protocol == 'tcp') else ''
 
-        robot_name_option = [] if not robot_name else ['--robot-name=' + robot_name]
+        robot_name_option = [] if not robot_name else [['--robot-name=', _as_substitution(robot_name)]]
         ip_address_option = [] if not ip_address else ['--ip-address=' + ip_address]
 
         ros_arguments = []
         for item in remappings:
             key, value = item
-            remap = f'{key}:={value}'
             ros_arguments.append('-r')
-            ros_arguments.append(remap)
+            ros_arguments.append([_as_substitution(key), ':=', _as_substitution(value)])
         if (namespace):
-            remap = f'__ns:=/{namespace}'
             ros_arguments.append('-r')
-            ros_arguments.append(remap)
+            ros_arguments.append(['__ns:=/', _as_substitution(namespace)])
         for item in parameters:
             if isinstance(item, dict):
                 for key, value in item.items():
-                    parameter = [f'{key}:=', value if isinstance(value, Substitution) else TextSubstitution(text=str(value))]
+                    parameter = [_as_substitution(key), ':=', _as_substitution(value)]
                     ros_arguments.append('-p')
                     ros_arguments.append(parameter)
-        file_parameters = [item for item in parameters if isinstance(item, str)]
+        file_parameters = [item for item in parameters if isinstance(item, (str, Substitution))]
 
         ros_args = ['--ros-args'] if ros_arguments else []
         params_file = ['--params-file'] if file_parameters else []
 
-        node_name = 'webots_controller' + (('_' + robot_name) if robot_name else '')
+        if isinstance(robot_name, Substitution):
+            node_name = ['webots_controller_', robot_name]
+        else:
+            node_name = 'webots_controller' + ('_' + robot_name if robot_name else '')
         super().__init__(
             output=output,
             cmd=[
@@ -65,7 +70,7 @@ class WebotsController(ExecuteProcess):
                 *robot_name_option,
                 ['--protocol=', protocol],
                 *ip_address_option,
-                ['--port=', port],
+                ['--port=', _as_substitution(port)],
                 'ros2',
                 *ros_args,
                 *ros_arguments,

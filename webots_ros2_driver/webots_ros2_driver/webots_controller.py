@@ -56,7 +56,7 @@ class WebotsController(ExecuteProcess):
                     ros_arguments.append(parameter)
         file_parameters = [item for item in parameters if isinstance(item, (str, Substitution))]
 
-        ros_args = ['--ros-args'] if ros_arguments else []
+        ros_args = ['--ros-args'] if ros_arguments or file_parameters else []
         params_file = ['--params-file'] if file_parameters else []
 
         if isinstance(robot_name, Substitution):

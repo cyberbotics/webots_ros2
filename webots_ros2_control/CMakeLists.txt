@@ -42,6 +42,39 @@ if(MSVC OR MSYS OR MINGW OR WIN32)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
+# macOS: Ros2Control.cpp calls libController C symbols (wb_robot_get_basic_time_step,
+# wb_robot_get_time, ...) that webots_ros2_driver links but does NOT re-export; macOS does not
+# chain DT_NEEDED, so these targets must link the Webots CppController library themselves or the
+# final link fails with "Undefined symbols: _wb_robot_get_*". webots_ros2_driver has already
+# resolved/fetched Webots by now, so just locate that WEBOTS_HOME (env, /Applications, or the
+# driver's ~/.cache/webots/<ver> download) and collect the controller dylibs.
+if(APPLE)
+  if(DEFINED ENV{WEBOTS_HOME} AND EXISTS "$ENV{WEBOTS_HOME}/lib/controller")
+    set(_wbc_home "$ENV{WEBOTS_HOME}")
+  elseif(EXISTS /Applications/Webots.app/Contents/lib/controller)
+    set(_wbc_home /Applications/Webots.app/Contents)
+  else()
+    if(DEFINED ENV{WEBOTS_CACHE_DIR})
+      set(_wbc_cache "$ENV{WEBOTS_CACHE_DIR}")
+    else()
+      set(_wbc_cache "$ENV{HOME}/.cache/webots")
+    endif()
+    file(GLOB _wbc_apps "${_wbc_cache}/*/Webots.app/Contents")
+    foreach(_a ${_wbc_apps})
+      if(EXISTS "${_a}/lib/controller")
+        set(_wbc_home "${_a}")
+      endif()
+    endforeach()
+  endif()
+  if(_wbc_home)
+    file(GLOB WEBOTS_CTRL_LIB
+      "${_wbc_home}/lib/controller/*CppController${CMAKE_SHARED_LIBRARY_SUFFIX}"
+      "${_wbc_home}/lib/controller/*Controller${CMAKE_SHARED_LIBRARY_SUFFIX}")
+  else()
+    message(WARNING "webots_ros2_control: could not locate Webots lib/controller; wb_robot_* may be unresolved.")
+  endif()
+endif()
+
 # webots_ros2 Plugin
 add_library(
   ${PROJECT_NAME}
@@ -70,6 +103,7 @@ else()
     controller_manager::controller_manager
     pluginlib::pluginlib
     rclcpp::rclcpp
+    ${WEBOTS_CTRL_LIB}
   )
 endif()
 
@@ -105,6 +139,7 @@ else()
     pluginlib::pluginlib
     rclcpp::rclcpp
     rclcpp_lifecycle::rclcpp_lifecycle
+    ${WEBOTS_CTRL_LIB}
   )
 endif()
 

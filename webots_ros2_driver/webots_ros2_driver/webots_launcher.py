@@ -23,11 +23,11 @@ import tempfile
 from pathlib import Path
 
 from launch.actions import ExecuteProcess
+from launch.conditions import IfCondition
 from launch_ros.actions import Node
 from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from launch.substitutions import TextSubstitution
-from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory, get_package_prefix
 
 from webots_ros2_driver.utils import (get_webots_home,
@@ -38,16 +38,33 @@ from webots_ros2_driver.utils import (get_webots_home,
                                       controller_url_prefix)
 
 
+def _as_substitution(value):
+    return value if isinstance(value, Substitution) else TextSubstitution(text=str(value))
+
+
 class _ConditionalSubstitution(Substitution):
     def __init__(self, *, condition, false_value='', true_value=''):
-        self.__condition = condition if isinstance(condition, Substitution) else TextSubstitution(text=str(condition))
-        self.__false_value = false_value if isinstance(false_value, Substitution) else TextSubstitution(text=false_value)
-        self.__true_value = true_value if isinstance(true_value, Substitution) else TextSubstitution(text=true_value)
+        self.__condition = _as_substitution(condition)
+        self.__false_value = _as_substitution(false_value)
+        self.__true_value = _as_substitution(true_value)
 
     def perform(self, context):
         if context.perform_substitution(self.__condition).lower() in ['false', '0', '']:
             return context.perform_substitution(self.__false_value)
         return context.perform_substitution(self.__true_value)
+
+
+class _StreamSubstitution(Substitution):
+    def __init__(self, value):
+        self.__value = _as_substitution(value)
+
+    def perform(self, context):
+        value = context.perform_substitution(self.__value)
+        if value.lower() in ['false', '0', '']:
+            return ''
+        if value.lower() in ['true', '1']:
+            return '--stream'
+        return '--stream=' + value
 
 
 class WebotsLauncher(ExecuteProcess):
@@ -61,8 +78,10 @@ class WebotsLauncher(ExecuteProcess):
         self.__is_wsl = is_wsl()
         self.__has_shared_folder = has_shared_folder()
         self.__is_supervisor = ros2_supervisor
-        if self.__is_supervisor:
-            self._supervisor = Ros2SupervisorLauncher(port=port)
+        if self.__is_supervisor or isinstance(self.__is_supervisor, Substitution):
+            supervisor_kwargs = {'condition': IfCondition(self.__is_supervisor)} \
+                if isinstance(self.__is_supervisor, Substitution) else {}
+            self._supervisor = Ros2SupervisorLauncher(port=port, **supervisor_kwargs)
 
         # Find Webots executable
         if not self.__has_shared_folder:
@@ -77,7 +96,7 @@ class WebotsLauncher(ExecuteProcess):
         else:
             webots_path = ''
 
-        mode = mode if isinstance(mode, Substitution) else TextSubstitution(text=mode)
+        mode = _as_substitution(mode)
 
         self.__world_copy = tempfile.NamedTemporaryFile(mode='w+', suffix='_world_with_URDF_robot.wbt', delete=False)
         self.__world = world
@@ -94,9 +113,11 @@ class WebotsLauncher(ExecuteProcess):
         minimize = _ConditionalSubstitution(condition=gui, false_value='--minimize')
         if isinstance(stream, bool):
             stream_argument = _ConditionalSubstitution(condition=stream, true_value='--stream')
+        elif isinstance(stream, Substitution):
+            stream_argument = _StreamSubstitution(stream)
         else:
-            stream_argument = "--stream=" + stream
-        port_argument = '--port=' + port
+            stream_argument = '--stream=' + stream
+        port_argument = ['--port=', _as_substitution(port)]
 
         xvfb_run_prefix = []
 
@@ -149,8 +170,8 @@ class WebotsLauncher(ExecuteProcess):
             )
 
     def execute(self, context: LaunchContext):
-        # User can give a PathJoinSubstitution world or an absolute path world
-        if isinstance(self.__world, PathJoinSubstitution):
+        # Resolve world substitutions before using the path with filesystem operations.
+        if isinstance(self.__world, Substitution):
             world_path = self.__world.perform(context)
             context.launch_configurations['world'] = self.__world_copy.name
         else:
@@ -210,7 +231,10 @@ class WebotsLauncher(ExecuteProcess):
             file.write(content)
 
         # Add the Ros2Supervisor
-        if self.__is_supervisor:
+        is_supervisor = self.__is_supervisor
+        if isinstance(is_supervisor, Substitution):
+            is_supervisor = IfCondition(is_supervisor).evaluate(context)
+        if is_supervisor:
             indent = '  '
             world_file = open(self.__world_copy.name, 'a')
             world_file.write('Robot {\n')
@@ -260,6 +284,12 @@ class WebotsLauncher(ExecuteProcess):
 
 class Ros2SupervisorLauncher(Node):
     def __init__(self, output='screen', respawn=True, port='1234', **kwargs):
+        if isinstance(port, Substitution):
+            url_prefix = controller_url_prefix('')
+            controller_url = [url_prefix[:-1], port, '/Ros2Supervisor'] if url_prefix else 'Ros2Supervisor'
+        else:
+            controller_url = controller_url_prefix(port) + 'Ros2Supervisor'
+
         # Launch the Ros2Supervisor node
         super().__init__(
             package='webots_ros2_driver',
@@ -269,7 +299,7 @@ class Ros2SupervisorLauncher(Node):
             output=output,
             # Set WEBOTS_HOME to the webots_ros2_driver installation folder
             # to load the correct libController libraries from the Python API
-            additional_env={'WEBOTS_CONTROLLER_URL': controller_url_prefix(port) + 'Ros2Supervisor',
+            additional_env={'WEBOTS_CONTROLLER_URL': controller_url,
                             'WEBOTS_HOME': get_package_prefix('webots_ros2_driver')},
             respawn=respawn,
             **kwargs

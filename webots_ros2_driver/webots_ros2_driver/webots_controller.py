@@ -34,10 +34,12 @@ class WebotsController(ExecuteProcess):
                  namespace='', parameters=[], robot_name='', port='1234', **kwargs):
         webots_controller = (os.path.join(get_package_share_directory('webots_ros2_driver'), 'scripts', 'webots-controller'))
 
+        self._robot_name = robot_name
+
         protocol = controller_protocol()
         ip_address = controller_ip_address() if (protocol == 'tcp') else ''
 
-        robot_name_option = [] if not robot_name else [['--robot-name=', _as_substitution(robot_name)]]
+        robot_name_option = [] if not self._robot_name else [['--robot-name=', _as_substitution(robot_name)]]
         ip_address_option = [] if not ip_address else ['--ip-address=' + ip_address]
 
         ros_arguments = []
@@ -85,6 +87,12 @@ class WebotsController(ExecuteProcess):
         )
 
     def execute(self, context: LaunchContext):
+        if self._robot_name:
+            robot_name = context.perform_substitution(_as_substitution(self._robot_name))
+            if not robot_name:
+                del self.cmd[1]
+                self._robot_name = ''
+
         return super().execute(context)
 
     def _shutdown_process(self, context, *, send_sigint):

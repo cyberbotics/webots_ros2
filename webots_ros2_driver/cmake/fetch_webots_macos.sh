@@ -9,8 +9,46 @@ VERSION="${1:?webots version required}"
 CACHE="${2:?cache dir required}"
 DEST="${CACHE}/${VERSION}"
 APP="${DEST}/Webots.app"
+LOCK="${DEST}.lock"
 
-if [ -d "${APP}/Contents/lib/controller" ]; then
+ready() { [ -d "${APP}/Contents/lib/controller" ]; }
+
+if ready; then
+  echo "fetch_webots_macos: ${APP} already present"; exit 0
+fi
+
+MNT=""; STAGE=""; HELD=0
+cleanup() {
+  if [ -n "${MNT}" ]; then
+    hdiutil detach "${MNT}" -quiet 2>/dev/null || true
+    rmdir "${MNT}" 2>/dev/null || true
+  fi
+  [ -n "${STAGE}" ] && rm -rf "${STAGE}"
+  [ "${HELD}" = 1 ] && rmdir "${LOCK}" 2>/dev/null
+  return 0
+}
+trap cleanup EXIT
+
+# Serialize cache population. Several packages can configure at once under colcon, and two
+# invocations would otherwise download into the same ${DMG}.part -- whoever renames it first
+# leaves the other's mv with no source, which aborts that configure. mkdir is atomic; flock(1)
+# does not exist on macOS.
+mkdir -p "${CACHE}"
+waited=0
+until mkdir "${LOCK}" 2>/dev/null; do
+  if ready; then
+    echo "fetch_webots_macos: ${APP} populated by a concurrent configure"; exit 0
+  fi
+  waited=$((waited + 1))
+  if [ "${waited}" -ge 1800 ]; then
+    echo "fetch_webots_macos: timed out waiting for ${LOCK} (remove it if stale)" >&2
+    exit 1
+  fi
+  sleep 1
+done
+HELD=1
+# Re-check under the lock: the previous holder may have just published.
+if ready; then
   echo "fetch_webots_macos: ${APP} already present"; exit 0
 fi
 
@@ -24,22 +62,17 @@ if [ ! -f "${DMG}" ]; then
 fi
 
 MNT="$(mktemp -d)"
-cleanup() { hdiutil detach "${MNT}" -quiet 2>/dev/null || true; rmdir "${MNT}" 2>/dev/null || true; }
-trap cleanup EXIT
 echo "fetch_webots_macos: mounting ${DMG}"
 hdiutil attach -nobrowse -noverify -quiet -mountpoint "${MNT}" "${DMG}"
-# Copy into a staging dir and publish only once it is complete. Copying straight into
-# ${APP} means an interrupted or failed copy can still leave ${APP}/Contents/lib/controller
-# present, and the idempotency check at the top of this script would then treat that
-# half-copied app as ready on every later run -- so the damage never repairs itself.
+# Stage the copy and publish only once complete, so an interrupted copy cannot leave a
+# half-populated Webots.app that the readiness check above would accept forever.
 STAGE="${APP}.staging.$$"
 rm -rf "${STAGE}"
-cleanup_stage() { rm -rf "${STAGE}"; }
-trap 'cleanup; cleanup_stage' EXIT
 echo "fetch_webots_macos: copying Webots.app -> ${STAGE}"
 cp -R "${MNT}/Webots.app" "${STAGE}"
 
-[ -d "${STAGE}/Contents/lib/controller" ] || { echo "fetch_webots_macos: extraction failed (no lib/controller)"; exit 1; }
+[ -d "${STAGE}/Contents/lib/controller" ] || { echo "fetch_webots_macos: extraction failed (no lib/controller)" >&2; exit 1; }
 rm -rf "${APP}"
 mv "${STAGE}" "${APP}"
+STAGE=""
 echo "fetch_webots_macos: ready -> ${APP}"

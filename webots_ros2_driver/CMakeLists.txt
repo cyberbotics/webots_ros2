@@ -362,6 +362,41 @@ install(
   PATTERN "*generic_robot_window*"
 )
 
+# macOS: bridge <prefix>/Contents/lib/controller -> <prefix>/lib/controller.
+#
+# Webots resolves its controller libraries relative to WEBOTS_HOME with a mandatory
+# `Contents` component on macOS, because WEBOTS_HOME normally points at Webots.app:
+#   - the webots-controller binary contains the literal
+#       DYLD_LIBRARY_PATH=%s/Contents/lib/controller:%s
+#   - lib/controller/python/controller/wb.py, darwin branch, loads
+#       os.path.join(WEBOTS_HOME, 'Contents', 'lib', 'controller', 'libController.dylib')
+#     (Linux uses lib/controller/libController.so, with no Contents -- which is why only
+#     macOS is affected)
+# But at runtime the ROS side sets WEBOTS_HOME to THIS PACKAGE'S PREFIX --
+# webots_controller.py and webots_launcher.py both pass
+# get_package_prefix('webots_ros2_driver') -- and the install above puts the libraries in
+# <prefix>/lib/controller. So <prefix>/Contents/lib/controller does not exist and nothing
+# can load libController.
+#
+# Reproduced on macOS 27.0 against a real Webots R2025a: with the libraries at
+# <prefix>/lib/controller, ctypes.cdll.LoadLibrary on the path wb.py builds fails
+# ("exists? False"); adding this symlink makes the same call succeed.
+#
+# A relative symlink is used rather than installing the libraries twice, which would
+# duplicate ~100 MB, and rather than moving them under Contents/, which would break the
+# flat lib/controller layout that CMAKE_INSTALL_RPATH ($ORIGIN/../controller) and the
+# ament exports below already rely on.
+if(WEBOTS_PREBUILT)
+  install(CODE "
+    file(MAKE_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/Contents/lib\")
+    execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E rm -f
+                    \"\${CMAKE_INSTALL_PREFIX}/Contents/lib/controller\")
+    execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E create_symlink
+                    ../../lib/controller
+                    \"\${CMAKE_INSTALL_PREFIX}/Contents/lib/controller\")
+  ")
+endif()
+
 # Prevent pluginlib from using boost
 target_compile_definitions(driver PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 target_compile_definitions(${PROJECT_NAME}_imu PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

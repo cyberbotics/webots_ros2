@@ -387,13 +387,20 @@ install(
 # flat lib/controller layout that CMAKE_INSTALL_RPATH ($ORIGIN/../controller) and the
 # ament exports below already rely on.
 if(WEBOTS_PREBUILT)
+  # $ENV{DESTDIR} must prefix every path here. CMAKE_INSTALL_PREFIX alone is the FINAL
+  # prefix, so under a staged install (DESTDIR=/tmp/stage, as package builders use) these
+  # commands would write into the live prefix instead of the staged tree -- polluting the
+  # real installation, possibly failing on permissions, and shipping a package with no
+  # bridge. Verified: with DESTDIR set, the unprefixed form created the symlink in the live
+  # prefix and left the staged tree without one.
   install(CODE "
-    file(MAKE_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/Contents/lib\")
+    set(_webots_dest \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}\")
+    file(MAKE_DIRECTORY \"\${_webots_dest}/Contents/lib\")
     execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E rm -f
-                    \"\${CMAKE_INSTALL_PREFIX}/Contents/lib/controller\")
+                    \"\${_webots_dest}/Contents/lib/controller\")
     execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E create_symlink
                     ../../lib/controller
-                    \"\${CMAKE_INSTALL_PREFIX}/Contents/lib/controller\")
+                    \"\${_webots_dest}/Contents/lib/controller\")
   ")
 endif()
 

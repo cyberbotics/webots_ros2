@@ -32,7 +32,20 @@ find_package(vision_msgs REQUIRED)
 find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
+# yaml_cpp_vendor does NOT export a yaml-cpp target -- its only job is to set yaml-cpp_DIR
+# (see yaml_cpp_vendor-extras.cmake), so find_package(yaml-cpp) is still required to import
+# one. Verified on a jazzy install: with the vendor alone, neither `yaml-cpp::yaml-cpp` nor
+# `yaml-cpp` is a target; adding find_package(yaml-cpp) makes yaml-cpp::yaml-cpp appear.
 find_package(yaml_cpp_vendor REQUIRED)
+find_package(yaml-cpp REQUIRED)
+# yaml-cpp 0.7, which Humble and Iron get from Ubuntu 22.04, exports the bare `yaml-cpp`
+# target; 0.8+ exports yaml-cpp::yaml-cpp. Unconditionally naming the namespaced one fails
+# CMake generation on those distros, and upstream CI still builds Humble.
+if(TARGET yaml-cpp::yaml-cpp)
+  set(YAML_CPP_TARGET yaml-cpp::yaml-cpp)
+else()
+  set(YAML_CPP_TARGET yaml-cpp)
+endif()
 
 if($ENV{ROS_DISTRO} MATCHES "humble")
   find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
@@ -54,6 +67,27 @@ endif()
 #   has no macOS .app layout, so building it from source there is unsupported.
 # - Linux: build the vendored Webots controller libraries from the in-tree source.
 
+# Accept either WEBOTS_HOME convention. Webots' own webots-controller binary takes the
+# .app ROOT and appends the rest itself -- "DYLD_LIBRARY_PATH=%s/Contents/lib/controller"
+# is a literal string inside that binary -- and that is the value the Webots docs tell
+# users to export, so /Applications/Webots.app is what people actually have set. The CMake
+# below wants the Contents dir, so normalize instead of rejecting: testing only
+# "$ENV{WEBOTS_HOME}/lib/controller" makes a correctly-set WEBOTS_HOME fail the check and
+# fall through to an unnecessary download (or a hard error offline).
+macro(_webots_resolve_home _out)
+  set(${_out} "")
+  if(DEFINED ENV{WEBOTS_HOME})
+    if(EXISTS "$ENV{WEBOTS_HOME}/lib/controller")
+      set(${_out} "$ENV{WEBOTS_HOME}")                  # already .../Webots.app/Contents
+    elseif(EXISTS "$ENV{WEBOTS_HOME}/Contents/lib/controller")
+      set(${_out} "$ENV{WEBOTS_HOME}/Contents")         # the .app root
+    else()
+      message(WARNING "WEBOTS_HOME is set to \"$ENV{WEBOTS_HOME}\" but neither "
+        "lib/controller nor Contents/lib/controller exists under it; ignoring it.")
+    endif()
+  endif()
+endmacro()
+
 if(APPLE)
   set(WEBOTS_PREBUILT TRUE)
   set(WEBOTS_VERSION "R2025a")
@@ -61,8 +95,9 @@ if(APPLE)
   #   1. $WEBOTS_HOME env (a Webots you already have),
   #   2. a system install at /Applications/Webots.app,
   #   3. otherwise auto-download the official macOS release and cache it (idempotent).
-  if(DEFINED ENV{WEBOTS_HOME} AND EXISTS "$ENV{WEBOTS_HOME}/lib/controller")
-    set(WEBOTS_HOME "$ENV{WEBOTS_HOME}")
+  _webots_resolve_home(WEBOTS_HOME)
+  if(WEBOTS_HOME)
+    # taken from the environment, already normalized
   elseif(EXISTS /Applications/Webots.app/Contents/lib/controller)
     set(WEBOTS_HOME /Applications/Webots.app/Contents)
   else()
@@ -106,33 +141,53 @@ else()
 
   # Build Webots libraries from source
   add_custom_target(compile-lib-controller ALL
-    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile 
+    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
   )
 
   add_custom_target(compile-lib-vehicle ALL
-    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile 
+    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
     DEPENDS compile-lib-controller
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
   )
 
   add_custom_target(compile-generic-window ALL
-    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile 
+    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
     DEPENDS compile-lib-controller
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/resources/projects/libraries/generic_robot_window
   )
   set(WEBOTS_CONTROLLER_EXEC webots/webots-controller)
 endif()
 
-file(GLOB WEBOTS_LIB_FILES
-  "${WEBOTS_LIB_BASE}/*Controller${CMAKE_SHARED_LIBRARY_SUFFIX}"
-  "${WEBOTS_LIB_BASE}/*CppController${CMAKE_SHARED_LIBRARY_SUFFIX}"
-  "${WEBOTS_LIB_BASE}/*driver${CMAKE_SHARED_LIBRARY_SUFFIX}"
-  "${WEBOTS_LIB_BASE}/*CppDriver${CMAKE_SHARED_LIBRARY_SUFFIX}"
-  "${WEBOTS_LIB_BASE}/*car${CMAKE_SHARED_LIBRARY_SUFFIX}"
-  "${WEBOTS_LIB_BASE}/*CppCar${CMAKE_SHARED_LIBRARY_SUFFIX}"
-)
-set(WEBOTS_LIB ${WEBOTS_LIB_FILES})
+# Prebuilt (macOS): the libraries are on disk already, so glob them -- a Webots.app ships
+# libController.dylib alongside libCppController.dylib etc. and an absolute path per file is
+# what we want to link.
+#
+# Source build (Linux): they are NOT on disk at configure time. The compile-lib-* targets
+# above produce them during the BUILD, and file(GLOB) is evaluated at CONFIGURE time, so
+# globbing here yields an empty WEBOTS_LIB on a clean checkout, `driver` links no Webots
+# library at all, and the link fails on undefined wb_* symbols. Keep upstream's plain
+# library names plus link_directories(), which the linker resolves after those targets run.
+if(WEBOTS_PREBUILT)
+  file(GLOB WEBOTS_LIB
+    "${WEBOTS_LIB_BASE}/*Controller${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    "${WEBOTS_LIB_BASE}/*CppController${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    "${WEBOTS_LIB_BASE}/*driver${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    "${WEBOTS_LIB_BASE}/*CppDriver${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    "${WEBOTS_LIB_BASE}/*car${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    "${WEBOTS_LIB_BASE}/*CppCar${CMAKE_SHARED_LIBRARY_SUFFIX}"
+  )
+else()
+  link_directories(${WEBOTS_LIB_BASE})
+  set(WEBOTS_LIB
+    ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}driver${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}CppDriver${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}car${CMAKE_SHARED_LIBRARY_SUFFIX}
+    ${CMAKE_SHARED_LIBRARY_PREFIX}CppCar${CMAKE_SHARED_LIBRARY_SUFFIX}
+  )
+endif()
 
 # Only install Python packages if the source directories exist
 foreach(pkg IN ITEMS controller vehicle)
@@ -184,7 +239,7 @@ if ($ENV{ROS_DISTRO} MATCHES "humble" OR $ENV{ROS_DISTRO} MATCHES "jazzy")
   target_link_libraries(driver
     ${WEBOTS_LIB}
     ${Python_LIBRARIES}
-    yaml-cpp::yaml-cpp
+    ${YAML_CPP_TARGET}
   )
 else()
   target_link_libraries(driver
@@ -200,7 +255,7 @@ else()
     tinyxml2::tinyxml2
     ${WEBOTS_LIB}
     ${Python_LIBRARIES}
-    yaml-cpp::yaml-cpp
+    ${YAML_CPP_TARGET}
   )
 endif()
 

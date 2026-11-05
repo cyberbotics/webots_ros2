@@ -30,6 +30,7 @@
   <depend>webots_ros2_msgs</depend>
   <depend>webots_ros2_importer</depend>
   <depend>yaml-cpp</depend>
+  <depend>yaml_cpp_vendor</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

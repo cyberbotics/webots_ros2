@@ -28,9 +28,18 @@ cleanup() { hdiutil detach "${MNT}" -quiet 2>/dev/null || true; rmdir "${MNT}" 2
 trap cleanup EXIT
 echo "fetch_webots_macos: mounting ${DMG}"
 hdiutil attach -nobrowse -noverify -quiet -mountpoint "${MNT}" "${DMG}"
-rm -rf "${APP}"
-echo "fetch_webots_macos: copying Webots.app -> ${APP}"
-cp -R "${MNT}/Webots.app" "${APP}"
+# Copy into a staging dir and publish only once it is complete. Copying straight into
+# ${APP} means an interrupted or failed copy can still leave ${APP}/Contents/lib/controller
+# present, and the idempotency check at the top of this script would then treat that
+# half-copied app as ready on every later run -- so the damage never repairs itself.
+STAGE="${APP}.staging.$$"
+rm -rf "${STAGE}"
+cleanup_stage() { rm -rf "${STAGE}"; }
+trap 'cleanup; cleanup_stage' EXIT
+echo "fetch_webots_macos: copying Webots.app -> ${STAGE}"
+cp -R "${MNT}/Webots.app" "${STAGE}"
 
-[ -d "${APP}/Contents/lib/controller" ] || { echo "fetch_webots_macos: extraction failed (no lib/controller)"; exit 1; }
+[ -d "${STAGE}/Contents/lib/controller" ] || { echo "fetch_webots_macos: extraction failed (no lib/controller)"; exit 1; }
+rm -rf "${APP}"
+mv "${STAGE}" "${APP}"
 echo "fetch_webots_macos: ready -> ${APP}"

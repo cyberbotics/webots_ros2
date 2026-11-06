@@ -23,6 +23,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 
 import rclpy
 import vehicle
@@ -33,7 +34,7 @@ from rclpy.time import Time
 from rclpy.node import Node
 from rclpy.qos import qos_profile_services_default
 from rosgraph_msgs.msg import Clock
-from std_msgs.msg import String
+from std_msgs.msg import Float64, String
 from webots_ros2_driver.utils import is_wsl, has_shared_folder, container_shared_folder, host_shared_folder
 sys.path.insert(1, os.path.join(os.path.dirname(webots_ros2_importer.__file__), 'urdf2webots'))
 from urdf2webots.importer import convertUrdfFile, convertUrdfContent  # noqa
@@ -56,6 +57,15 @@ class Ros2Supervisor(Node):
         # /clock topic
         self.create_timer(1 / 1000, self.__supervisor_step_callback)
         self.__clock_publisher = self.create_publisher(Clock, 'clock', 10)
+
+        # real_time_factor topic: simulated seconds elapsed per wall-clock second, averaged over each publishing period.
+        # This is the same ratio as the speed indicator of the Webots GUI, which the controller API does not expose.
+        # Pauses count as wall-clock time, so the period spanning a pause reports a lower factor.
+        self.__rtf_period = self.declare_parameter('real_time_factor_period', 1.0).value
+        if self.__rtf_period > 0:
+            self.__rtf_publisher = self.create_publisher(Float64, 'real_time_factor', 10)
+            self.__rtf_start_wall = time.monotonic()
+            self.__rtf_start_sim = self.__robot.getTime()
 
         # Spawn Nodes (URDF robots or Webots objects)
         root_node = self.__robot.getRoot()
@@ -273,6 +283,23 @@ class Ros2Supervisor(Node):
             clock_message = Clock()
             clock_message.clock = Time(seconds=self.__robot.getTime()).to_msg()
             self.__clock_publisher.publish(clock_message)
+            if self.__rtf_period > 0:
+                self.__publish_real_time_factor()
+
+    def __publish_real_time_factor(self):
+        wall = time.monotonic()
+        sim = self.__robot.getTime()
+        if sim < self.__rtf_start_sim:
+            # The simulation was reset: restart the averaging window.
+            self.__rtf_start_wall = wall
+            self.__rtf_start_sim = sim
+            return
+        elapsed_wall = wall - self.__rtf_start_wall
+        if elapsed_wall < self.__rtf_period:
+            return
+        self.__rtf_publisher.publish(Float64(data=(sim - self.__rtf_start_sim) / elapsed_wall))
+        self.__rtf_start_wall = wall
+        self.__rtf_start_sim = sim
 
 
 def main(args=None):

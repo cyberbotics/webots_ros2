@@ -50,9 +50,7 @@ class WebotsController(ExecuteProcess):
         ip_address = controller_ip_address() if (protocol == 'tcp') else ''
 
         cmd = [webots_controller]
-        self._robot_name_option_index = None
         if robot_name:
-            self._robot_name_option_index = len(cmd)
             cmd.append(['--robot-name=', _as_substitution(robot_name)])
 
         cmd.append(['--protocol=', protocol])
@@ -111,11 +109,12 @@ class WebotsController(ExecuteProcess):
 
     def execute(self, context: LaunchContext):
         indices_to_remove = []
-        if self._robot_name_option_index is not None:
-            robot_name = context.perform_substitution(_as_substitution(self._robot_name))
-            if not robot_name:
-                indices_to_remove.append(self._robot_name_option_index)
-                self._robot_name_option_index = None
+        robot_name = context.perform_substitution(_as_substitution(self._robot_name))
+        if not robot_name:
+            raise RuntimeError(
+                'WebotsController requires a non-empty robot_name. '
+                'Set the robot_name launch argument to the target Webots robot name.'
+            )
 
         if self._namespace_argument_indices is not None:
             namespace = context.perform_substitution(_as_substitution(self._namespace))

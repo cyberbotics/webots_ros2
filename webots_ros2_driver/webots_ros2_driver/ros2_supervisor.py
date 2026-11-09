@@ -66,6 +66,7 @@ class Ros2Supervisor(Node):
             self.__rtf_publisher = self.create_publisher(Float64, 'real_time_factor', 10)
             self.__rtf_start_wall = time.monotonic()
             self.__rtf_start_sim = self.__robot.getTime()
+            self.__rtf_last_sim = self.__rtf_start_sim
 
         # Spawn Nodes (URDF robots or Webots objects)
         root_node = self.__robot.getRoot()
@@ -289,8 +290,12 @@ class Ros2Supervisor(Node):
     def __publish_real_time_factor(self):
         wall = time.monotonic()
         sim = self.__robot.getTime()
-        if sim < self.__rtf_start_sim:
-            # The simulation was reset: restart the averaging window.
+        # Compare with the previous step, not the window start, so that a reset is detected
+        # even when the simulated time jumps back to a value still ahead of the window start.
+        reset = sim < self.__rtf_last_sim
+        self.__rtf_last_sim = sim
+        if reset:
+            # The simulation was reset: discard the interrupted window and start a new one.
             self.__rtf_start_wall = wall
             self.__rtf_start_sim = sim
             return

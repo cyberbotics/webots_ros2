@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-# Fetch the official Webots macOS release (a universal, prebuilt Webots.app) and cache it, so
-# webots_ros2_driver can link the prebuilt controller/vehicle/window libraries on macOS instead of
-# building the stripped in-tree copy from source (which has no proper .app layout on macOS).
-#   usage: fetch_webots_macos.sh <VERSION e.g. R2025a> <CACHE_DIR>
-# Idempotent: no-op if <CACHE_DIR>/<VERSION>/Webots.app is already present.
+# Download the official Webots macOS release into <CACHE_DIR>/<VERSION>/Webots.app (no-op if present).
+#   usage: fetch_webots_macos.sh <VERSION> <CACHE_DIR>
 set -euo pipefail
 VERSION="${1:?webots version required}"
 CACHE="${2:?cache dir required}"
@@ -29,10 +26,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Serialize cache population. Several packages can configure at once under colcon, and two
-# invocations would otherwise download into the same ${DMG}.part -- whoever renames it first
-# leaves the other's mv with no source, which aborts that configure. mkdir is atomic; flock(1)
-# does not exist on macOS.
+# Serialize concurrent configures (mkdir is atomic; macOS has no flock)
 mkdir -p "${CACHE}"
 waited=0
 until mkdir "${LOCK}" 2>/dev/null; do
@@ -64,8 +58,7 @@ fi
 MNT="$(mktemp -d)"
 echo "fetch_webots_macos: mounting ${DMG}"
 hdiutil attach -nobrowse -noverify -quiet -mountpoint "${MNT}" "${DMG}"
-# Stage the copy and publish only once complete, so an interrupted copy cannot leave a
-# half-populated Webots.app that the readiness check above would accept forever.
+# Publish only a complete copy
 STAGE="${APP}.staging.$$"
 rm -rf "${STAGE}"
 echo "fetch_webots_macos: copying Webots.app -> ${STAGE}"

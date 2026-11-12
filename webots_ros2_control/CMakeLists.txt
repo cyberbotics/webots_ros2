@@ -42,10 +42,6 @@ if(MSVC OR MSYS OR MINGW OR WIN32)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
-# macOS: Ros2Control.cpp calls wb_robot_* symbols that webots_ros2_driver links but does not
-# re-export, and macOS does not chain DT_NEEDED. The driver installs and exports the Webots
-# controller libraries, so link those rather than searching for an external Webots.app.
-
 # webots_ros2 Plugin
 add_library(
   ${PROJECT_NAME}
@@ -74,6 +70,7 @@ else()
     controller_manager::controller_manager
     pluginlib::pluginlib
     rclcpp::rclcpp
+    # wb_robot_* come from the Webots libraries; macOS does not resolve them transitively
     ${webots_ros2_driver_LIBRARIES}
   )
 endif()

@@ -70,6 +70,8 @@ else()
     controller_manager::controller_manager
     pluginlib::pluginlib
     rclcpp::rclcpp
+    # wb_robot_* come from the Webots libraries; macOS does not resolve them transitively
+    ${webots_ros2_driver_LIBRARIES}
   )
 endif()
 
@@ -105,6 +107,7 @@ else()
     pluginlib::pluginlib
     rclcpp::rclcpp
     rclcpp_lifecycle::rclcpp_lifecycle
+    ${webots_ros2_driver_LIBRARIES}
   )
 endif()
 

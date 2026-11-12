@@ -33,6 +33,12 @@ find_package(webots_ros2_msgs REQUIRED)
 find_package(tinyxml2_vendor REQUIRED)
 find_package(TinyXML2 REQUIRED)
 find_package(yaml-cpp REQUIRED)
+# yaml-cpp 0.7 (Ubuntu 22.04) exports `yaml-cpp`, 0.8+ exports `yaml-cpp::yaml-cpp`
+if(TARGET yaml-cpp::yaml-cpp)
+  set(YAML_CPP_TARGET yaml-cpp::yaml-cpp)
+else()
+  set(YAML_CPP_TARGET yaml-cpp)
+endif()
 
 if($ENV{ROS_DISTRO} MATCHES "humble")
   find_package(Python 3.10 EXACT REQUIRED COMPONENTS Development)
@@ -48,34 +54,7 @@ elseif($ENV{ROS_DISTRO} MATCHES "rolling")
   find_package(Python 3.12 EXACT REQUIRED COMPONENTS Development)
 endif()
 
-add_custom_target(compile-lib-controller ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
-)
-
-add_custom_target(compile-lib-vehicle ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
-  DEPENDS compile-lib-controller
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
-)
-
-add_custom_target(compile-generic-window ALL
-  COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
-  DEPENDS compile-lib-controller
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/resources/projects/libraries/generic_robot_window
-)
-
-set(WEBOTS_LIB_BASE webots/lib/controller)
-
-include_directories(
-  include
-  webots/include/controller/c
-  webots/include/controller/cpp
-  ${Python_INCLUDE_DIRS}
-)
-
-link_directories(${WEBOTS_LIB_BASE})
-
+# macOS links the libraries of a prebuilt Webots.app; elsewhere they are built from webots/
 set(WEBOTS_LIB
   ${CMAKE_SHARED_LIBRARY_PREFIX}Controller${CMAKE_SHARED_LIBRARY_SUFFIX}
   ${CMAKE_SHARED_LIBRARY_PREFIX}CppController${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -83,6 +62,91 @@ set(WEBOTS_LIB
   ${CMAKE_SHARED_LIBRARY_PREFIX}CppDriver${CMAKE_SHARED_LIBRARY_SUFFIX}
   ${CMAKE_SHARED_LIBRARY_PREFIX}car${CMAKE_SHARED_LIBRARY_SUFFIX}
   ${CMAKE_SHARED_LIBRARY_PREFIX}CppCar${CMAKE_SHARED_LIBRARY_SUFFIX}
+)
+
+if(APPLE)
+  file(STRINGS webots/resources/version.txt WEBOTS_VERSION LIMIT_COUNT 1)
+  string(STRIP "${WEBOTS_VERSION}" WEBOTS_VERSION)
+  option(WEBOTS_DOWNLOAD "Download Webots ${WEBOTS_VERSION} for macOS when no Webots.app is found" OFF)
+  if(DEFINED ENV{WEBOTS_CACHE_DIR})
+    set(WEBOTS_CACHE_DIR "$ENV{WEBOTS_CACHE_DIR}")
+  else()
+    set(WEBOTS_CACHE_DIR "$ENV{HOME}/.cache/webots")
+  endif()
+  set(_webots_cached "${WEBOTS_CACHE_DIR}/${WEBOTS_VERSION}/Webots.app/Contents")
+
+  # WEBOTS_HOME may name either Webots.app or its Contents directory
+  set(_webots_candidates)
+  if(DEFINED ENV{WEBOTS_HOME})
+    list(APPEND _webots_candidates "$ENV{WEBOTS_HOME}/Contents" "$ENV{WEBOTS_HOME}")
+  endif()
+  list(APPEND _webots_candidates /Applications/Webots.app/Contents)
+  if(WEBOTS_DOWNLOAD)
+    list(APPEND _webots_candidates "${_webots_cached}")
+  endif()
+  unset(WEBOTS_HOME)
+  foreach(_home IN LISTS _webots_candidates)
+    if(EXISTS "${_home}/lib/controller")
+      set(WEBOTS_HOME "${_home}")
+      break()
+    endif()
+  endforeach()
+
+  if(NOT WEBOTS_HOME AND WEBOTS_DOWNLOAD)
+    execute_process(
+      COMMAND bash "${CMAKE_CURRENT_SOURCE_DIR}/cmake/fetch_webots_macos.sh" "${WEBOTS_VERSION}" "${WEBOTS_CACHE_DIR}"
+      RESULT_VARIABLE _webots_rc)
+    if(_webots_rc EQUAL 0 AND EXISTS "${_webots_cached}/lib/controller")
+      set(WEBOTS_HOME "${_webots_cached}")
+    endif()
+  endif()
+  if(NOT WEBOTS_HOME)
+    message(FATAL_ERROR "Webots.app not found. Install Webots ${WEBOTS_VERSION} in /Applications, "
+      "point WEBOTS_HOME at it, or configure with -DWEBOTS_DOWNLOAD=ON to download it.")
+  endif()
+
+  file(STRINGS "${WEBOTS_HOME}/resources/version.txt" _found_version LIMIT_COUNT 1)
+  string(STRIP "${_found_version}" _found_version)
+  if(NOT _found_version STREQUAL WEBOTS_VERSION)
+    message(WARNING "Using Webots ${_found_version} at ${WEBOTS_HOME}; this package expects ${WEBOTS_VERSION}.")
+  endif()
+  message(STATUS "Using Webots ${_found_version} at ${WEBOTS_HOME}")
+
+  set(WEBOTS_PREBUILT TRUE)
+  set(WEBOTS_INCLUDE_BASE ${WEBOTS_HOME}/include/controller)
+  set(WEBOTS_LIB_BASE ${WEBOTS_HOME}/lib/controller)
+  set(WEBOTS_CONTROLLER_EXEC ${WEBOTS_HOME}/MacOS/webots-controller)
+  list(TRANSFORM WEBOTS_LIB PREPEND "${WEBOTS_LIB_BASE}/")
+else()
+  add_custom_target(compile-lib-controller ALL
+    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/src/controller
+  )
+
+  add_custom_target(compile-lib-vehicle ALL
+    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+    DEPENDS compile-lib-controller
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/projects/default/libraries/vehicle
+  )
+
+  add_custom_target(compile-generic-window ALL
+    COMMAND ${CMAKE_COMMAND} -E env "WEBOTS_HOME=${CMAKE_CURRENT_SOURCE_DIR}/webots" make release -f Makefile > /dev/null 2>&1
+    DEPENDS compile-lib-controller
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/webots/resources/projects/libraries/generic_robot_window
+  )
+
+  set(WEBOTS_PREBUILT FALSE)
+  set(WEBOTS_INCLUDE_BASE webots/include/controller)
+  set(WEBOTS_LIB_BASE webots/lib/controller)
+  set(WEBOTS_CONTROLLER_EXEC webots/webots-controller)
+  link_directories(${WEBOTS_LIB_BASE})
+endif()
+
+include_directories(
+  include
+  ${WEBOTS_INCLUDE_BASE}/c
+  ${WEBOTS_INCLUDE_BASE}/cpp
+  ${Python_INCLUDE_DIRS}
 )
 
 ament_python_install_package(controller
@@ -134,7 +198,7 @@ if ($ENV{ROS_DISTRO} MATCHES "humble" OR $ENV{ROS_DISTRO} MATCHES "jazzy")
   target_link_libraries(driver
     ${WEBOTS_LIB}
     ${Python_LIBRARIES}
-    yaml-cpp
+    ${YAML_CPP_TARGET}
   )
 else()
   target_link_libraries(driver
@@ -150,12 +214,12 @@ else()
     tinyxml2::tinyxml2
     ${WEBOTS_LIB}
     ${Python_LIBRARIES}
-    yaml-cpp
+    ${YAML_CPP_TARGET}
   )
 endif()
-add_dependencies(driver
-  compile-lib-vehicle
-)
+if(NOT WEBOTS_PREBUILT)
+  add_dependencies(driver compile-lib-vehicle)
+endif()
 install(
   DIRECTORY include/
   DESTINATION include
@@ -194,9 +258,9 @@ else()
     ${WEBOTS_LIB}
   )
 endif()
-add_dependencies(${PROJECT_NAME}_imu
-  compile-lib-vehicle
-)
+if(NOT WEBOTS_PREBUILT)
+  add_dependencies(${PROJECT_NAME}_imu compile-lib-vehicle)
+endif()
 install(TARGETS ${PROJECT_NAME}_imu
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
@@ -231,9 +295,9 @@ else()
     ${WEBOTS_LIB}
   )
 endif()
-add_dependencies(${PROJECT_NAME}_rgbd
-  compile-lib-vehicle
-)
+if(NOT WEBOTS_PREBUILT)
+  add_dependencies(${PROJECT_NAME}_rgbd compile-lib-vehicle)
+endif()
 install(TARGETS ${PROJECT_NAME}_rgbd
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
@@ -263,6 +327,18 @@ install(
   PATTERN "*generic_robot_window*"
 )
 
+# The launcher and Python bindings load <WEBOTS_HOME>/Contents/lib/controller on macOS,
+# and WEBOTS_HOME is this package's prefix at runtime
+if(WEBOTS_PREBUILT)
+  install(CODE "
+    set(_dest \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}\")
+    file(MAKE_DIRECTORY \"\${_dest}/Contents/lib\")
+    file(REMOVE \"\${_dest}/Contents/lib/controller\")
+    execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E create_symlink
+      ../../lib/controller \"\${_dest}/Contents/lib/controller\")
+  ")
+endif()
+
 # Prevent pluginlib from using boost
 target_compile_definitions(driver PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 target_compile_definitions(${PROJECT_NAME}_imu PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
@@ -283,7 +359,7 @@ install(
 
 # Install webots-controller script
 install(
-  PROGRAMS webots/webots-controller
+  PROGRAMS ${WEBOTS_CONTROLLER_EXEC}
   DESTINATION share/${PROJECT_NAME}/scripts
 )
 

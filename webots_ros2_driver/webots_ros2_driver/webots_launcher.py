@@ -100,8 +100,7 @@ class WebotsLauncher(ExecuteProcess):
 
         self.__world_copy = tempfile.NamedTemporaryFile(mode='w+', suffix='_world_with_URDF_robot.wbt', delete=False)
         self.__world = world
-        if not isinstance(world, Substitution):
-            world = TextSubstitution(text=self.__world_copy.name)
+        world = TextSubstitution(text=self.__world_copy.name)
 
         if self.__is_wsl:
             wsl_tmp_path = subprocess.check_output(['wslpath', '-w', self.__world_copy.name]).strip().decode('utf-8')
@@ -173,7 +172,6 @@ class WebotsLauncher(ExecuteProcess):
         # Resolve world substitutions before using the path with filesystem operations.
         if isinstance(self.__world, Substitution):
             world_path = self.__world.perform(context)
-            context.launch_configurations['world'] = self.__world_copy.name
         else:
             world_path = self.__world
 

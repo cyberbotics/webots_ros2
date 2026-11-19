@@ -105,7 +105,7 @@ if(APPLE)
       "point WEBOTS_HOME at it, or configure with -DWEBOTS_DOWNLOAD=ON to download it.")
   endif()
 
-  file(STRINGS "${WEBOTS_HOME}/resources/version.txt" _found_version LIMIT_COUNT 1)
+  file(STRINGS "${WEBOTS_HOME}/Resources/version.txt" _found_version LIMIT_COUNT 1)
   string(STRIP "${_found_version}" _found_version)
   if(NOT _found_version STREQUAL WEBOTS_VERSION)
     message(WARNING "Using Webots ${_found_version} at ${WEBOTS_HOME}; this package expects ${WEBOTS_VERSION}.")
